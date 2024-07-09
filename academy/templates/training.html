@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Training Detail{% endblock %}
+{% block content %}
+
+
+<div class="breadcrumb">
+  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+  <span class="breadcrumb-separator"></span>
+  <span class="breadcrumb-item current">Training</span>
+</div>
+
+<div class="training-container2">
+  <h2 class="training-heading2">{{ training.title }}</h2>
+  <div class="training-row2">
+    <div class="training-content">
+      <ul>
+        <li>{{ training.texts }}</li>
+        {% if training.pdf_document %}
+        <li><strong>PDF Document:</strong></li>
+        <a href="{{ training.pdf_document.url }}">
+        <li><button class="download-btn pixel-corners">
+          <div class="button-content">
+            <div class="svg-container">
+              <svg
+                class="download-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479 6.908l-4-4h3v-4h2v4h3l-4 4z"
+                ></path>
+              </svg>
+            </div>
+            <div class="download-text-container">
+              <div class="text">Download</div>
+            </div>
+          </div>
+        </button>
+        </li>
+      </a>
+        {% endif %}
+        {% if training.video_url %}
+        <li><strong>Video URL:</strong></li>
+        <a href="{{ training.video_url }}">
+        <li><button class="video-btn">
+          PLAY
+        </button></li>
+      </a>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  <br><br>
+  {% if training.job %}
+  <a href="{% url 'core:singlejob' training.job.id %}" class="btn">Go to Job</a>
+  {% endif %}
+</div>
+{% endblock %}

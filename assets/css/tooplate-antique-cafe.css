@@ -1,0 +1,232 @@
+/*
+
+Tooplate 2126 Antique Cafe
+
+https://www.tooplate.com/view/2126-antique-cafe
+
+*/
+
+
+body {
+    font-family: 'Raleway', sans-serif;
+    background-color: #666;
+}
+
+p a {
+	color: #6F8FAF;
+}
+
+p a:hover {
+	color: #9FF;
+}
+
+#about p a { color: #066; }
+#about p a:hover { color: #F36; }
+
+#contact p a { color: #066; }
+
+footer span a { color: #FFF; }
+
+.tm-logo-font {
+    font-family: 'Oswald', sans-serif;
+}
+
+.tm-container {
+    max-width: 1200px;
+}
+
+.parallax-window {
+    min-height: 950px;
+    background: transparent;
+    background-color: #E5E8E8;
+}
+
+.tm-text-yellow {
+    color: #000;
+}
+
+.tm-text-gold {
+    color: #9FF;
+}
+
+.tm-text-brown {
+    color: #544639;
+}
+
+.tm-text-green {
+    color: #70AEC3;
+}
+
+a.tm-bg-green:hover {
+    background-color: #0a8585;
+}
+
+.tm-bg-brown {
+    background-color: #6F8FAF;
+}
+
+.tm-bg-green {
+    background-color: #6F8FAF;
+}
+
+.tm-border-gold {
+    border-color: #02f6fb;
+}
+
+.tm-intro-width {
+    max-width: 520px;
+}
+
+.tm-item-container {
+    max-width: 520px;
+}
+
+.input:focus {
+    outline: none !important;
+    border:1px solid #02f6fb;
+    box-shadow: 0 0 10px #2d2f92;
+}
+
+input::placeholder,
+textarea::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(214, 212, 212);
+    opacity: 1; /* Firefox */
+}
+  
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgb(214, 212, 212);
+}
+  
+input::-ms-input-placeholder,
+textarea::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgb(214, 212, 212);
+}
+
+#tm-nav {
+    z-index: 1000;
+    transition: all 0.3s ease;
+    background-color: #2d2f92;
+}
+
+#tm-nav ul {
+    font-size: 1.0rem; /* Adjust the value as needed */
+}
+
+#tm-nav ul li {
+    margin: 0 0.5rem; /* Adjust the value as needed */
+}
+
+#tm-nav.scroll {
+    background-color: #2d2f92;
+}
+
+#tm-nav.scroll a,
+#tm-nav.scroll li,
+#tm-nav.scroll button {
+    color: #fff;
+}
+
+#tm-nav li a {
+    border-bottom-color: transparent;
+    transition: all 0.3s ease;
+}
+#tm-nav a,
+#tm-nav li,
+#tm-nav button {
+    color: #fff;
+}
+
+#tm-nav li a.current,
+#tm-nav li a:hover {
+      border-bottom: 4px solid #02f6fb;
+}
+
+.tm-text-2xl {
+    font-size: 1.2rem;
+    line-height: 2rem;
+}
+
+@media (min-width: 768px) {
+    #tm-nav.scroll .tm-container {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+
+@media (max-width: 767px) {
+    #tm-nav {
+        width: auto;
+        right: 0;
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 639px) {
+    .parallax-window {
+        min-height: 600px;
+    }
+}
+
+@media (max-width: 370px) {
+    .tm-menu-item {
+        flex-direction: column;
+    }
+
+    .tm-menu-item-2 {
+        flex-direction: column-reverse;
+    }
+
+    .tm-menu-item img {
+        margin-bottom: 10px;
+    }
+
+    .tm-menu-item-2 img {
+        margin-bottom: 10px;
+    }
+}
+
+/* base.html */
+/* Style the dropdown button */
+.dropbtn {
+    background-color: #2d2f92;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 9px 11px;
+  }
+
+  /* Dropdown content (hidden by default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #2d2f92;
+    min-width: 90px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    color: white;
+    padding: 9px 11px;
+    text-decoration: none;
+    display: block;
+  }
+
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {
+    background-color: #E6F6C8;
+    color: black; /* Added this line */
+  }
+
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  .dropdown:hover .dropbtn {
+    background-color: #2d2f92;
+    color: black;
+  }

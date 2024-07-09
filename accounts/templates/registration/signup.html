@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Register | Login</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/indexsign.css' %}">
+	<style>
+		.popup {
+			display: none;
+			position: fixed;
+			z-index: 9999;
+			left: 50%;
+			top: 20px;
+			transform: translateX(-50%);
+			background-color: #fff;
+			color: #000;
+			padding: 10px 20px;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+		}
+		
+		.popup-message {
+			margin-bottom: 5px;
+		}
+		
+		.popup-message.success {
+			color: green;
+		}
+		
+		.popup-message.error {
+			color: red;
+		}
+		
+		.popup-message.warning {
+			color: orange;
+		}
+	</style>
+</head>
+<body>
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form action="/accounts/signup/" method="POST">
+			{% csrf_token %}
+			<h2>Create Account</h2>
+			
+			<input type="text" name="username" placeholder="Username" required><br>
+			<input type="email" name="email" placeholder="email"><br>
+			<input type="password" name="password1" placeholder="Password" required><br>
+			<input type="password" name="password2" placeholder="Confirm Password" required><br>
+			<label for="user_type">Register as:</label>
+			<select name="user_type" id="user_type">
+				<option value="freelancer">Freelancer</option>
+				<option value="client">Client</option>
+				
+			</select>
+			<br>
+			<button type="submit" id="my-button">Sign Up</button>
+		</form>
+		
+	</div>
+	<div class="form-container sign-in-container">
+		<form action="/accounts/login/" method="POST">
+			{% csrf_token %}
+			<h1>Sign in</h1>
+			<input type="text" name="username" placeholder="Username" required><br>
+			<input type="password" name="password" placeholder="Password" required><br>
+			<button type="submit" id="my-button">Submit</button>
+		</form>
+		
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>We’re thrilled to see you again! Log in to find top freelancers or access exciting projects tailored just for you.</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Join our community today! Create an account to hire talented freelancers or find your next project opportunity.</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			</div>			
+		</div>
+	</div>
+</div>
+{% if messages %}
+<div id="message-popup" class="popup">
+    {% for message in messages %}
+    <div class="popup-message{% if message.tags %} {{ message.tags }}{% endif %}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+<script src="{% static 'js/indexsign.js' %}"></script>
+<!-- Add this at the end of your HTML file -->
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var popup = document.getElementById('message-popup');
+        if (popup) {
+            popup.style.display = 'block';
+            setTimeout(function() {
+                popup.style.display = 'none';
+            }, 5000); // Hide the pop-up after 5 seconds (adjust as needed)
+        }
+    });
+</script>
+
+</body>
+</html>
+
+
