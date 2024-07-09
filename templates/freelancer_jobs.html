@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Jobs{% endblock %}
+{% block content %}
+
+ <div class="breadcrumb">
+        <a href="{% url 'core:client_index' %}" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator"></span>
+        <span class="breadcrumb-item current">Jobs</span>
+      </div>
+
+
+      <div class="freelancer-jobs-container">
+        <div class="header-container1">
+            <h2>My Jobs</h2>
+        </div>
+        {% if freelancer_jobs %}
+        {% for job in freelancer_jobs %}
+        <div class="job-item1">
+            <ul class="list-group1 list-group-flush">
+                <li class="list-group-item1">
+                    <div class="job-info1">
+                        <strong>Title:</strong> {{ job.title }}
+                    </div>
+                </li>
+                <li class="list-group-item1">
+                    <div class="job-info1">
+                        <strong>Description:</strong> {{ job.description }}
+                    </div>
+                </li>
+                <li class="list-group-item1">
+                    <div class="job-info1">
+                        <strong>Price:</strong> ${{ job.price }}
+                    </div>
+                </li>
+                <li class="list-group-item1">
+                    <div class="job-info1">
+                        <strong>Deadline:</strong> {{ job.deadline_date }}
+                    </div>
+                </li>
+                <li class="list-group-item1">
+                    <div class="job-info1">
+                        <strong>Status:</strong>
+                        {% if job.status == 'open' %}
+                        <span class="status-open">{{ job.get_status_display }}</span>
+                        {% elif job.status == 'in_progress' %}
+                        <span class="status-in-progress">{{ job.get_status_display }}</span>
+                        {% else %}
+                        <span class="status-completed">{{ job.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h2>There are No Jobs Currently Avaliable. Come Back Later...</h2>
+        {% endif %}
+    </div>
+{% endblock %}

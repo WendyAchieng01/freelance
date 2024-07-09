@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+{% if message_name %}
+<center>
+  <h2>Thanks {{ message_name }}!</h2>
+  <p>We received your email and will respond shortly...</p>
+</center>
+<br><br><br>
+{% else %}
+<div class="breadcrumb">
+  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+  <span class="breadcrumb-separator"></span>
+  <span class="breadcrumb-item current">Contact</span>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="contact-container">
+        <div class="contact-info">
+          <h2 class="mb-4" style="font-size: 24px;">Contact Us</h2>
+          <p class="lead">For inquiries, collaborations, or any questions, feel free to reach out to us via the contact form or directly at our provided email address, and we'll be delighted to assist you promptly.</p>
+          <p class="mb-4">
+            <strong>Tel:</strong> <a href="tel:+254725830334">+254 725 830 334</a><br>
+            <strong>Email:</strong> <a href="mailto:nilltechsolutions14@gmail.com">nilltechsolutions14@gmail.com</a>
+          </p>
+          <p class="mb-4">
+            <a href="https://www.google.com/maps" target="_blank" class="btn-primary ">
+              <i class="fas fa-map-marked-alt mr-2"></i> Open Maps
+            </a>
+          </p>
+        </div>
+        <div class="contact-form">
+          <h3 class="mb-4">Get in Touch</h3>
+          <form action="{% url 'core:contact' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="name" class="form-control" placeholder="Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="message_email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <textarea rows="6" name="message" class="form-control" placeholder="Message..." required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg">Send it</button>
+            </div>
+        </form>        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

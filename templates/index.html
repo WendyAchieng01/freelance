@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title %}Index | NTS{% endblock %}
+{% block content %}
+<style>
+  /* Adjusting the column widths */
+.col.small {
+  flex: 0 0 15%;
+  max-width: 15%;
+}
+
+.col.medium {
+  flex: 0 0 20%;
+  max-width: 20%;
+}
+
+.col.large {
+  flex: 0 0 30%;
+  max-width: 30%;
+}
+
+@media (max-width: 768px) {
+  .col.small, .col.medium, .col.large {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+</style>
+
+    <main>
+      <div class="w-100 overflow-hidden bg-gray-100" id="top">
+  
+<div class="container position-relative">
+  <div class="col-12 col-lg-8 mt-0 h-100 position-absolute top-0 end-0 bg-cover" data-aos="fade-left" style="background-image: url(/static/images/webp/interior11.webp);">
+    
+  </div>
+    <div class="row">
+
+      <div class="col-lg-7 py-vh-6 position-relative" data-aos="fade-right">
+        <h1 class="display-1 fw-bold mt-5">Transform Your Passion into Profit!</h1>
+        <p class="lead">Connect with top clients, showcase your skills, and take control of your freelance journey. Start making an impact today.</p>
+        <a href="{% url 'core:jobs' %}" class="btn btn-dark btn-xl shadow me-3 rounded-0 my-5">Get Started</a>
+      </div>
+      
+
+
+
+</div>
+</div>
+
+</div>
+
+<div class="py-vh-5 w-100 overflow-hidden" id="services">
+  <div class="container">
+    <div class="row d-flex justify-content-end">
+      <div class="col-lg-8" data-aos="fade-down">
+        <h2 class="display-6">Unlock Your Freelancing Potential: Embrace the Freedom, Showcase Your Talents, and Thrive in the Gig Economy</h2>
+      </div>
+    </div>
+    <div class="row d-flex align-items-center">
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <span class="h5 fw-lighter">01.</span>
+        <h3 class="py-5 border-top border-dark">Build Your Brand</h3>
+        <p>Create a compelling portfolio and profile to showcase your unique skills and experience. Stand out from the crowd and attract clients that align with your expertise.</p>
+        <a href="#" class="link-fancy">Learn More</a>
+      </div>
+
+      <div class="col-md-6 col-lg-4 py-vh-4 pb-0" data-aos="fade-up" data-aos-delay="400">
+        <span class="h5 fw-lighter">02.</span>
+        <h3 class="py-5 border-top border-dark">Flexible Work Opportunities</h3>
+        <p>Enjoy the freedom of choosing projects that fit your schedule and interests. Achieve the work-life balance you desire while pursuing your passion.</p>
+        <a href="#" class="link-fancy">Learn More</a>
+      </div>
+
+      <div class="col-md-6 col-lg-4 py-vh-6 pb-0" data-aos="fade-up" data-aos-delay="600">
+        <span class="h5 fw-lighter">03.</span>
+        <h3 class="py-5 border-top border-dark">Seamless Project Management</h3>
+        <p>Collaborate with clients efficiently through our user-friendly platform. Streamline communication, track progress, and get paid on time.</p>
+        <a href="#" class="link-fancy">Learn More</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="py-vh-4 bg-gray-100 w-100 overflow-hidden" id="aboutus">
+  <div class="container">
+      
+<div class="row d-flex justify-content-between align-items-center">
+  <div class="col-lg-6">
+  <div class="row gx-5 d-flex">
+    <div class="col-md-11">
+      <div class="shadow ratio ratio-16x9 rounded bg-cover bp-center align-self-end" data-aos="fade-right" style="background-image: url(/static/images/webp/people15.webp);--bs-aspect-ratio: 50%;">
+      </div>
+    </div>
+    <div class="col-md-5 offset-md-1">
+      <div class="shadow ratio ratio-1x1 rounded bg-cover mt-5 bp-center float-end" data-aos="fade-up" style="background-image: url(/static/images/webp/interior42.webp);">
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="col-12 shadow ratio rounded bg-cover mt-5 bp-center" data-aos="fade-left" style="background-image: url(/static/images/webp/people4.webp);--bs-aspect-ratio: 150%;">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-4">
+  <h3 class="py-5 border-top border-dark" data-aos="fade-left">Elevate Your Online Presence to New Heights</h3>
+  <p data-aos="fade-left" data-aos-delay="200">Craft a captivating digital showcase that embodies the essence of your expertise and passion. Leave a lasting impression on potential clients with a portfolio that speaks volumes.</p>
+  <p>
+    <a href="{% url 'core:jobs' %}" class="link-fancy link-dark" data-aos="fade-left" data-aos-delay="400">Start Building Your Legacy</a>
+  </p>
+</div>
+</div>
+
+  </div>
+</div>
+
+<div class="py-vh-5 w-100 overflow-hidden" id="numbers">
+  <div class="container">
+    <div class="row d-flex justify-content-between align-items-center">
+      <div class="col-lg-5">
+        <h3 class="py-5 border-top border-dark" data-aos="fade-right">Unveiling Our Impactful Numbers</h3>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="display-6 mb-5" data-aos="fade-down">Every statistic tells a story, and ours speak volumes about our journey.</h2>
+          </div>
+          <div class="col-lg-6" data-aos="fade-up">
+            <div class="display-1 fw-bold py-4">42%</div>
+            <p class="text-black-50">Increase in Project Success Rate. This percentage symbolizes the dedication and quality of work of our freelancers, ensuring client satisfaction every step of the way.</p>
+          </div>
+          <div class="col-lg-6" data-aos="fade-up">
+            <div class="display-1 fw-bold py-4">+300</div>
+            <p class="text-black-50">New Projects Completed. Each project completed signifies a successful collaboration between our clients and freelancers, driving innovation and growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="position-relative overflow-hidden w-100 bg-light" id="gallery">
+  <div class="container-fluid">
+    <div class="row overflow-scroll">
+      <div class="col-12">
+        <div class="row vw-100 px-0 py-vh-5 d-flex align-items-center scrollx">
+          <div class="col small" data-aos="fade-up">
+            <img src="{% static 'images/webp/pic1.jpg' %}" class="rounded shadow img-fluid" alt="nice gallery image" width="512" height="341">
+          </div>
+
+          <div class="col medium" data-aos="fade-up" data-aos-delay="200">
+            <img src="{% static 'images/webp/pic2.jpg' %}" class="img-fluid rounded shadow" alt="nice gallery image" width="1164" height="776">
+          </div>
+
+          <div class="col large" data-aos="fade-up" data-aos-delay="400">
+            <img src="{% static 'images/webp/pic3.jpg' %}" class="img-fluid rounded shadow" alt="nice gallery image" width="844" height="1054">
+          </div>
+
+          <div class="col medium" data-aos="fade-up" data-aos-delay="600">
+            <img src="{% static 'images/webp/pic6.jpg' %}" class="img-fluid rounded shadow" alt="nice gallery image" width="844" height="562">
+          </div>
+
+          <div class="col small" data-aos="fade-up" data-aos-delay="800">
+            <img src="{% static 'images/webp/pic5.jpg' %}" class="rounded shadow img-fluid" alt="nice gallery image" width="512" height="341">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container py-vh-4 w-100 overflow-hidden">
+  <div class="row d-flex justify-content-center align-items-center">
+    <div class="col-lg-5">
+      <h3 class="py-5 border-top border-dark" data-aos="fade-right">Success Stories from Clients</h3>
+    </div>
+    <div class="col-md-7" data-aos="fade-left">
+      <blockquote>
+        <div class="fs-4 my-3 fw-light pt-4 border-bottom pb-3">"Working with freelancers from this platform has been a game-changer for our business. We've been able to tap into a diverse pool of talent and expertise, allowing us to tackle projects more efficiently and cost-effectively than ever before. The platform's intuitive interface and seamless communication tools have made collaboration a breeze."</div>
+        <img src="{% static 'images/webp/person11.webp' %}" width="64" height="64" class="images-fluid rounded-circle me-3" alt="" data-aos="fade">
+        <span><span class="fw-bold">Sarah Johnson,</span> Marketing Director at TechSavvy Inc.</span>
+      </blockquote>
+    </div>
+  </div>
+</div>
+
+<div class="py-vh-6 bg-gray-900 text-light w-100 overflow-hidden" id="workwithus">
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <div class="row d-flex justify-content-center text-center">
+        <div class="col-lg-8 text-center" data-aos="fade">
+          <p class="text-secondary lead">Let´s start a project together!</p>
+          <h2 class="display-6 mb-5">We're ready to turn your ideas into reality, are you?</h2>
+        </div>
+        <div class="col-12">
+          <a href="#" class="btn btn-warning btn-xl shadow me-3 mt-4" data-aos="fade-down">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="bg-light w-100 overflow-hidden" id="testimonials">
+  <div class="container py-vh-6">
+    <div class="row d-flex justify-content-center">
+      <div class="col-12 col-lg-10 col-xl-8 text-center">
+  <h2 class="display-6">Trusted by Professionals Worldwide</h2>
+  <p class="lead">Our platform connects top-notch freelancers with businesses seeking exceptional talent. Hear what our satisfied clients and freelancers have to say.</p>
+</div>
+<div class="col-12 mt-4">
+  <div class="row row-cols-1 row-cols-md-2 g-5 d-flex align-items-center">
+
+    <div class="col-12 col-lg-6 col-xl-4" data-aos="fade-right">
+      <div class="card p-4 mt-3 border-0">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
+  <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z"/>
+</svg>
+</div>
+          <blockquote class="blockquote">
+            <p>"As a freelancer, this platform has opened up a world of opportunities for me. The user-friendly interface and powerful search tools make it easy to find projects that align with my skills and interests."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <div>
+              <span class="h6 fw-5">Sarah Johnson</span><br>
+              <small class="text-muted">Freelance Web Developer</small>
+            </div>
+            <img src="{% static 'images/webp/person9.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-4">
+      <div class="card p-4 shadow mt-3 border-0" data-aos="fade-down">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+</svg>
+</div>
+          <blockquote class="blockquote">
+            <p>"Finding reliable and talented freelancers used to be a challenging task, but this platform has made it incredibly easy. The vast pool of skilled professionals, combined with the comprehensive filtering and rating system, ensures that we can find the perfect fit for our projects every time."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <p class="card-text">
+              <span class="h6 fw-5">Michael Thompson</span><br>
+              <small class="text-muted">Marketing Manager, TechCorp</small>
+            </p>
+            <img src="{% static 'images/webp/person3.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-4">
+      <div class="card p-4 mt-3 border-0" data-aos="fade-left">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+</svg>
+</div>
+          <blockquote class="blockquote">
+            <p>"As a small business owner, I was initially hesitant about hiring freelancers, but this platform has proven to be a game-changer. The ability to find specialized talents for short-term projects has allowed me to scale my business effectively without the overhead of full-time employees."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <p class="card-text">
+              <span class="h6 fw-5">Emily Davis</span><br>
+              <small class="text-muted">Owner, Design Studio</small>
+            </p>
+            <img src="{% static 'images/webp/person8.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-4">
+      <div class="card p-4 mt-3 border-0" data-aos="fade-right">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
+  <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+</svg>
+</div>
+          <blockquote class="blockquote">
+            <p>"As a freelance writer, finding consistent work can be a challenge. This platform has provided me with a steady stream of projects and clients, allowing me to focus on delivering high-quality content without the stress of constantly searching for new opportunities."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <p class="card-text">
+              <span class="h6 fw-5">Jessica Wilson</span><br>
+              <small class="text-muted">Freelance Content Writer</small>
+            </p>
+            <img src="{% static 'images/webp/person14.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-4">
+      <div class="card p-4 mt-3 border-0" data-aos="fade-up">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-half" viewBox="0 0 16 16">
+  <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z"/>
+</svg>
+</div>
+          <blockquote class="blockquote">
+            <p>"As a digital marketing agency, we often need to bring in specialized talent for specific projects. This platform has been a lifesaver, allowing us to quickly find and hire top-notch freelancers with the exact skills we need."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <p class="card-text">
+              <span class="h6 fw-5">David Miller</span><br>
+              <small class="text-muted">Managing Partner, Digital Mavens</small>
+            </p>
+            <img src="{% static 'images/webp/person13.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-4">
+      <div class="card p-4 shadow mt-3 border-0" data-aos="fade-left">
+        <div class="card-body">
+          <div class="text-dark py-2 fs-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+</svg>
+
+</div>
+          <blockquote class="blockquote">
+            <p>"As a freelance graphic designer, finding high-quality projects that align with my skills and artistic vision can be challenging. This platform has been a game-changer, allowing me to connect with clients who value my work and provide me with the creative freedom I crave."</p>
+          </blockquote>
+          <div class="d-flex justify-content-between border-top pt-3">
+            <p class="card-text">
+              <span class="h6 fw-5">Sophia Martinez</span><br>
+              <small class="text-muted">Freelance Graphic Designer</small>
+            </p>
+            <img src="{% static 'images/webp/person18.webp' %}" width="48" height="48" class="rounded-circle" alt="" data-aos="fade">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<div class="small py-vh-3 w-100 overflow-hidden">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-lg-4 border-end" data-aos="fade-up">
+  <div class="d-flex">
+    <div class="col-md-3 flex-fill pt-3 pe-3 pe-md-0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-box-seam" viewbox="0 0 16 16">
+        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+      </svg>
+    </div>
+    <div class="col-md-9 flex-fill">
+      <h3 class="h5 my-2">Global Reach</h3>
+      <p>Connect with talented freelancers from around the world. Our platform offers a diverse pool of professionals, allowing you to find the perfect fit for your project, regardless of location.</p>
+    </div>
+  </div>
+</div>
+<div class="col-md-6 col-lg-4 border-end" data-aos="fade-up" data-aos-delay="200">
+  <div class="d-flex">
+    <div class="col-md-3 flex-fill pt-3 pt-3 pe-3 pe-md-0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-card-checklist" viewbox="0 0 16 16">
+        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+        <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+      </svg>
+    </div>
+    <div class="col-md-9 flex-fill">
+      <h3 class="h5 my-2">Secure Payments</h3>
+      <p>Our platform ensures secure and transparent transactions between clients and freelancers. We prioritize the security of your financial information to ensure safe and reliable transactions.</p>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+  <div class="d-flex">
+    <div class="col-md-3 flex-fill pt-3 pt-3 pe-3 pe-md-0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-window-sidebar" viewbox="0 0 16 16">
+        <path d="M2.5 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm1 .5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+        <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v2H1V3a1 1 0 0 1 1-1h12zM1 13V6h4v8H2a1 1 0 0 1-1-1zm5 1V6h9v7a1 1 0 0 1-1 1H6z"/>
+      </svg>
+    </div>
+    <div class="col-md-9 flex-fill">
+      <h3 class="h5 my-2">Online Support</h3>
+      <p>Our online support team is available 24/7 to assist you with any questions or concerns you may have. Simply reach out to us, and we'll provide you with the support you need.</p>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+
+    </main>
+
+    {% endblock %}

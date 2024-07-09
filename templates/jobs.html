@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Jobs{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="breadcrumb">
+  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+  <span class="breadcrumb-separator"></span>
+  <span class="breadcrumb-item current">Jobs</span>
+</div>
+<div class="container jobs-container">
+  <h2 class="text-center jobs-heading">Available Jobs</h2>
+  <div class="row jobs-row">
+    {% for job in jobs %}
+    <div class="col-md-6 col-lg-6 jobs-col">
+      <div class="card job-card">
+        {% if job.trainings.exists %}
+        <a href="{% url 'academy:training' job.trainings.first.id %}" class="stretched-link">
+        {% else %}
+        <a href="{% url 'core:singlejob' job.id %}" class="stretched-link">
+        {% endif %}
+          <div class="card-body job-card-body">
+            <h5 class="card-title job-card-title">{{ job.title }}</h5>
+            <p class="card-text job-card-text">Price: ${{ job.price }}</p>
+            <p class="card-text job-card-text">Deadline: {{ job.deadline_date }}</p>
+          </div>
+        </a>
+        <button class="bid-now-btn" data-job-id="{{ job.id }}">
+            <i class="fa fa-hand-pointer-o"></i>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script src="{% static 'js/ind.js' %}"></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('.bid-now-btn').click(function() {
+      var jobId = $(this).data('job-id');
+      $.ajax({
+        url: "{% url 'core:bid_on_job' 0 %}".replace('0', jobId),
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        success: function(data) {
+          alert(data.message);
+        },
+        error: function(xhr, errmsg, err) {
+          console.log(xhr.status + ': ' + xhr.responseText);
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

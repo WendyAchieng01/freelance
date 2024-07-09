@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About{% endblock %}
+{% block content %}
+
+<div class="breadcrumb">
+  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+  <span class="breadcrumb-separator"></span>
+  <span class="breadcrumb-item current">About</span>
+</div>
+
+<main>
+  <div class="py-vh-5 w-100 overflow-hidden" id="services">
+<div class="container">
+<div class="row d-flex justify-content-center">
+  <div class="col-12 col-lg-10 col-xl-8">
+    <h1 class="display-1 fw-bold border-bottom border-dark pb-4">About our company</h1>
+    <p class="lead py-vh-2">
+      At our freelance company, we're a dedicated team of professionals driven by passion and expertise. With years of experience in diverse fields, we thrive on delivering top-notch services tailored to meet your specific needs. From graphic design to web development, writing to marketing, we've got you covered. Our mission is simple: to provide exceptional freelance solutions that exceed expectations and foster long-term partnerships.
+    </p>
+  </div>
+  <div class="col-12">
+    <figure class="py-vh-2 pt-0">
+      <blockquote class="blockquote blockquote-xl">
+        <p>"Connecting talents with opportunities, where passion meets precision, and creativity knows no bounds."</p>
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        Freelance Pro in
+        <cite title="Source Title">Your Path to Success</cite>
+      </figcaption>
+    </figure>
+</div>
+
+<div class="col-12 py-vh-3 my-5 bg-gray-900 text-light px-5">
+    <div class="row d-flex align-items-center px-5">
+      <div class="col-12 col-lg-5 text-end d-flex justify-content-end">
+        <h2 class="border-bottom border-light pb-4 text-end me-5">Empowering Clients and Freelancers Alike:</h2>
+      </div>
+      <div class="col-12 col-lg-7">
+        <p class="border-bottom border-dark pb-5 mb-5 text-light" style="--bs-text-opacity: .5;">
+          As a client, you’re seeking more than just skills; you’re looking for dedication, innovation, and reliability. Our platform connects you with top-tier freelancers who bring your projects to life with unmatched expertise and creativity. Whether you need a stunning website, a captivating marketing campaign, or intricate data analysis, our freelancers deliver results that exceed expectations. Collaborate with professionals who are passionate about their craft, and watch your ideas transform into reality.
+        </p>
+        <p class="border-bottom border-dark pb-5 mb-5 text-light" style="--bs-text-opacity: .5;">
+          For freelancers, our community offers more than just gigs; it’s a gateway to growth and fulfillment. Join a network of like-minded professionals and access opportunities that align with your skills and aspirations. Showcase your portfolio, connect with clients from diverse industries, and build a reputation that sets you apart. Enjoy the freedom to choose projects that excite you, and earn competitively while honing your craft in a supportive and dynamic environment.
+        </p>
+        <p class="text-light" style="--bs-text-opacity: .5;">
+          Our platform fosters a collaborative spirit, where clients and freelancers thrive together. With tools designed to enhance communication, streamline project management, and ensure secure transactions, we create a seamless experience for all. Clients can easily post projects, review proposals, and select the best talent. Freelancers can bid on jobs that match their expertise, deliver high-quality work, and receive timely payments. Together, we’re redefining the future of work, one successful project at a time.
+        </p>
+      </div>
+    </div>
+</div>
+
+</div>
+</div>
+</div>
+
+</main>
+
+{% endblock %}

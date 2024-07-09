@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block title %}Freelancer Form {% endblock %}
+{% block content %}
+<body>
+    <br><br><br>
+    <div class="shadow-wrap mt-5 ">
+        <div class="form-wrap">
+            <h2>Freelancer Information</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+    
+{% endblock %}
+

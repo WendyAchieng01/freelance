@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Initiate Payment</h2>
+  <p>Please complete the payment to post your job.</p>
+
+  <form method="post" action="{% url 'payment:initiate_payment' %}">
+    {% csrf_token %}
+    <input type="hidden" name="amount" value="{{ amount }}">
+    <input type="hidden" name="email" value="{{ email }}">
+
+    <!-- Other payment form fields -->
+
+    <button type="submit">Pay Now</button>
+  </form>
+{% endblock %}
