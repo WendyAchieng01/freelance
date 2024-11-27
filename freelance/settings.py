@@ -15,9 +15,6 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import ssl
 import socket
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
 DEBUG = True
 
@@ -36,6 +33,7 @@ ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "accounts:signup"
+LOGIN_URL = '/' 
 
 # Application definition
 
@@ -50,7 +48,6 @@ INSTALLED_APPS = [
     'accounts',
     'academy',
     'invoicemgmt',
-    'anymail',
     'payment',
     'payments',
     'paypal.standard.ipn',
@@ -92,14 +89,10 @@ WSGI_APPLICATION = 'freelance.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -151,19 +144,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MAILGUN_API_KEY = os.environ.get('MAILGUN_API_KEY')
-MAILGUN_SENDER_DOMAIN = os.environ.get('MAILGUN_SENDER_DOMAIN')
-
-ANYMAIL = {
-    "MAILGUN_API_KEY": MAILGUN_API_KEY,
-    "MAILGUN_SENDER_DOMAIN": MAILGUN_SENDER_DOMAIN,
-}
-
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-
-PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY')
-PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = 'sk_live_e54b19c2cba0b1407340100aa4d2f7341f548b19'
+PAYSTACK_PUBLIC_KEY = 'pk_live_0b56e9bcbe587357694251936f3e5aefd8ba5bc6'
 
 
 MESSAGE_TAGS = {
@@ -176,3 +158,13 @@ MESSAGE_TAGS = {
 
 # PayPal Settings
 PAYPAL_TEST = True  # Use sandbox mode during testing
+
+#Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'nyanambaobadiah@gmail.com'
+EMAIL_HOST_PASSWORD = 'zhsjrvgavghxetps'
+EMAIL_USE_TLS = True
+
+

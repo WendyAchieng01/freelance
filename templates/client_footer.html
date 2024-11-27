@@ -1,0 +1,100 @@
+{% load static %}
+<footer>
+    <div class="container small border-top">
+      <div class="row py-5 d-flex justify-content-between">
+  
+  <div class="col-12 col-lg-6 col-xl-3 border-end p-5">
+      <img src="{% static 'images/logo/logo.jpg' %}" alt="Nill Tech Solutions Logo" class="logo">
+    <address class="text-secondary mt-3">
+      <strong>Nill Tech, Inc.</strong><br>
+      Kimathi Street<br>
+      Nairobi, Kenya<br>
+      <abbr title="Phone">P:</abbr>
+      (254) 725-830334
+    </address>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-3 border-end p-5">
+    <h3 class="h6 mb-3">Company</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" aria-current="page" href="{% url 'core:client_index' %}">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="{% url 'core:client_about' %}">About Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="{% url 'academy:client_academy' %}">Academy</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="{% url 'core:client_contact' %}">Contact Us</a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-3 border-end p-5">
+    <h3 class="h6 mb-3">Careers</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" aria-current="page" href="{% url 'accounts:update_info' %}">My Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="{% url 'core:create_job' %}">Post Jobs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="{% url 'core:client_posted_jobs' %}">My Projects</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="#">Terms and Conditions</a>
+      </li>
+  
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" href="#">FAQ</a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-3 p-5">
+    <h3 class="h6 mb-3">Subpages</h3>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link link-secondary ps-0" aria-current="page" href="404.html">404 System Page</a>
+        <a class="nav-link link-secondary ps-0" aria-current="page" href="register.html">Register System Page</a>
+              <a class="nav-link link-secondary ps-0" aria-current="page" href="content.html">Simple Text Content Page</a>
+      </li>
+    </ul>
+  </div>
+  </div>
+  </div>
+  
+  <div class="container text-center py-3 small">© <a href="#" class="link-fancy" target="_blank">Nill Tech Solutions</a>
+  </div>
+  </footer>
+  
+      <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/aos.js' %}"></script>
+  <script src="{% static 'js/ind.js' %}"></script>
+   <script>
+   AOS.init({
+     duration: 800, // values from 0 to 3000, with step 50ms
+   });
+   </script>
+  
+   <script>
+    let scrollpos = window.scrollY
+    const header = document.querySelector(".navbar")
+    const header_height = header.offsetHeight
+  
+    const add_class_on_scroll = () => header.classList.add("scrolled", "shadow-sm")
+    const remove_class_on_scroll = () => header.classList.remove("scrolled", "shadow-sm")
+  
+    window.addEventListener('scroll', function() {
+      scrollpos = window.scrollY;
+  
+      if (scrollpos >= header_height) { add_class_on_scroll() }
+      else { remove_class_on_scroll() }
+  
+      console.log(scrollpos)
+    })
+  </script>
+  
+    </body>
+  </html>
+  
