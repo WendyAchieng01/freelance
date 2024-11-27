@@ -9,9 +9,10 @@ class ResponseForm(forms.ModelForm):
 class CreateJobForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ['title', 'description', 'price', 'deadline_date', 'max_freelancers']
+        fields = ['title', 'category', 'description', 'price', 'deadline_date', 'max_freelancers']
         widgets = {
-            'deadline_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+            'deadline_date': forms.DateInput(attrs={'type': 'date'}),
+            'category': forms.Select(choices=Job.CATEGORY_CHOICES)
         }
 
 class JobAttemptForm(forms.ModelForm):

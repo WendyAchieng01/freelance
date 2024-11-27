@@ -8,8 +8,9 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+import json
 from payment.views import initiate_payment
+from django.db.models import F, Count
 
 
 # Create your views here.
@@ -24,49 +25,42 @@ def freelancer_index(request):
 @login_required
 def jobs(request):
     if request.user.is_authenticated:
-        # Get the jobs where the freelancer has not submitted a response and the status is not 'completed'
-        jobs = Job.objects.prefetch_related('trainings').exclude(responses__user=request.user).exclude(status='completed')
+        category = request.GET.get('category')
 
-        return render(request, 'jobs.html', {'jobs': jobs})
+        # Exclude jobs that have reached their max freelancers
+        jobs = Job.objects.prefetch_related('trainings') \
+            .annotate(num_responses=Count('responses')) \
+            .exclude(responses__user=request.user) \
+            .exclude(status='completed') \
+            .exclude(num_responses__gte=F('max_freelancers'))  # Exclude jobs with max responses reached
+
+        if category:
+            jobs = jobs.filter(category=category)
+
+        # Calculate remaining slots for each job
+        for job in jobs:
+            job.remaining_slots = job.max_freelancers - job.responses.count()
+
+        categories = dict(Job.CATEGORY_CHOICES)
+        
+        return render(request, 'jobs.html', {
+            'jobs': jobs,
+            'categories': categories,
+            'selected_category': category
+        })
     else:
         return redirect('accounts:login')
-    
-@login_required
-def bid_on_job(request, job_id):
-    if request.method == 'POST':
-        job = Job.objects.get(id=job_id)
-        user = request.user
 
-        # Check if the freelancer has already bid on this job
-        existing_notification = Notification.objects.filter(
-            recipient=job.client.user,
-            message__contains=f"{user.username} has bid on your job: {job.title}",
-            job=job,
-            freelancer=user
-        ).exists()
-
-        if existing_notification:
-            # Freelancer has already bid on this job
-            return JsonResponse({
-                'success': False,
-                'message': 'You have already bid on this job.'
-            })
-
-        # Create a new notification instance
-        notification = Notification.objects.create(
-            recipient=job.client.user,
-            message=f"{user.username} has bid on your job: {job.title}",
-            job=job,
-            freelancer=user  # Store the freelancer who bid on the job
-        )
-
-        return JsonResponse({'success': True, 'message': 'Bid submitted successfully.'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 @login_required
 def singlejob(request, job_id):
-    job = get_object_or_404(Job, pk=job_id)
+    job = get_object_or_404(Job.objects.annotate(num_responses=Count('responses')), pk=job_id)
+
+    # Check if the job has reached its maximum number of freelancers
+    if job.num_responses >= job.max_freelancers:
+        messages.error(request, 'This job has reached the maximum number of freelancers.')
+        return redirect('core:jobs')
+
     form = ResponseForm(request.POST or None, request.FILES or None)
 
     # Check if the user has already submitted a response for this job
@@ -134,6 +128,36 @@ def is_client(user):
 
 @login_required
 @user_passes_test(is_client)
+def client_about(request):
+    return render(request, 'client_about.html')
+
+
+@login_required
+@user_passes_test(is_client)
+def client_contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        # Send the email
+        try:
+            send_mail(
+                'Contact Form Submission', # Subject
+                f'Name: {name}\nEmail: {email}\n\nMessage: {message}', # Message
+                email, # From email
+                ['wendyachieng98@gmail.com'], # To email(s)
+                fail_silently=False,
+            )
+            messages.success(request, 'Your message has been sent. Thank you!')
+        except Exception as e:
+            messages.error(request, 'An error occurred while sending the email.')
+            print(e)
+
+    return render(request, 'client_contact.html')
+
+@login_required
+@user_passes_test(is_client)
 def client_index(request):
     if request.user.is_authenticated:
         jobs = Job.objects.all()
@@ -149,20 +173,34 @@ def create_job(request):
         if form.is_valid():
             amount = form.cleaned_data['price']
             email = request.user.email
-
-            # Redirect to the payment initiation view with the required data
             return initiate_payment(request, amount=amount, email=email, job_form=form)
     else:
         form = CreateJobForm()
 
-    return render(request, 'create_job.html', {'form': form})
+    categories = dict(Job.CATEGORY_CHOICES)
+    return render(request, 'create_job.html', {
+        'form': form,
+        'categories': categories
+    })
 
-@login_required 
-@user_passes_test(is_client) 
-def client_posted_jobs(request): 
-    client_profile = Profile.objects.get(user=request.user, user_type='client') 
-    client_jobs = client_profile.jobs.filter(payment__verified=True)  # Filter out jobs with verified payments
-    return render(request, 'client_posted_jobs.html', {'client_jobs': client_jobs})
+@login_required
+@user_passes_test(is_client)
+def client_posted_jobs(request):
+    client_profile = Profile.objects.get(user=request.user, user_type='client')
+    category = request.GET.get('category')
+    
+    client_jobs = client_profile.jobs.filter(payment__verified=True)
+    
+    if category:
+        client_jobs = client_jobs.filter(category=category)
+    
+    categories = dict(Job.CATEGORY_CHOICES)
+    
+    return render(request, 'client_posted_jobs.html', {
+        'client_jobs': client_jobs,
+        'categories': categories,
+        'selected_category': category
+    })
 
 @login_required
 @user_passes_test(is_client)
@@ -200,13 +238,7 @@ def job_responses(request, job_id):
     return render(request, 'job_responses.html', context)
 
 
-@login_required
-@user_passes_test(lambda u: u.profile.user_type == 'client')
-def client_responses(request):
-    client_profile = Profile.objects.get(user=request.user, user_type='client')
-    client_jobs = client_profile.jobs.all()
-    responses = Response.objects.filter(job__in=client_jobs)
-    return render(request, 'job_responses.html', {'responses': responses})
+
 
 @login_required
 @user_passes_test(lambda u: u.profile.user_type == 'freelancer')
@@ -229,57 +261,35 @@ def freelancer_job_attempt(request, job_id):
     return render(request, 'freelancer_job_attempt.html', {'form': form, 'job': job})
 
 @login_required
-@user_passes_test(is_client)
+@user_passes_test(lambda u: u.profile.user_type == 'client')
 def mark_response_as_done(request):
-    job_id = request.POST.get('job_id')
-
-    try:
-        job = Job.objects.get(pk=job_id)
-        job.status = 'completed'
-        job.save()
-        
-        return JsonResponse({'status': 'success'})
-    except Job.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Job not found'})
-
-
-@login_required
-@user_passes_test(is_client)
-def view_notifications(request):
-    user = request.user
-    notifications = Notification.objects.filter(recipient=user).order_by('-created_at')
-    context = {
-        'notifications': notifications
-    }
-    return render(request, 'notification.html', context)
-
-
-@login_required
-@user_passes_test(is_client)
-def client_about(request):
-    return render(request, 'client_about.html')
-
-
-@login_required
-@user_passes_test(is_client)
-def client_contact(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-
-        # Send the email
+    if request.method == "POST":
         try:
-            send_mail(
-                'Contact Form Submission', # Subject
-                f'Name: {name}\nEmail: {email}\n\nMessage: {message}', # Message
-                email, # From email
-                ['wendyachieng98@gmail.com'], # To email(s)
-                fail_silently=False,
-            )
-            messages.success(request, 'Your message has been sent. Thank you!')
-        except Exception as e:
-            messages.error(request, 'An error occurred while sending the email.')
-            print(e)
+            data = json.loads(request.body)  # Parse the JSON payload
+            job_id = data.get("job_id")  # Retrieve job_id from the parsed JSON
 
-    return render(request, 'client_contact.html')
+            if not job_id:
+                return JsonResponse({"status": "error", "message": "Job ID not provided."})
+
+            # Verify job ownership and update status
+            job = Job.objects.get(pk=job_id, client=request.user.profile)
+            job.status = "completed"
+            job.save()
+
+            return JsonResponse({"status": "success"})
+        except Job.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Job not found or you are not authorized."})
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON payload."})
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
+
+
+
+@login_required
+@user_passes_test(lambda u: u.profile.user_type == 'client')
+def client_responses(request):
+    client_profile = Profile.objects.get(user=request.user, user_type='client')
+    client_jobs = client_profile.jobs.all()
+    responses = Response.objects.filter(job__in=client_jobs)
+    return render(request, 'job_responses.html', {'responses': responses})

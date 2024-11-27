@@ -66,7 +66,7 @@
 
     <nav id="navScroll" class="navbar navbar-expand-lg navbar-light fixed-top" tabindex="0">
   <div class="container">
-    <a class="navbar-brand pe-4 fs-4" href="/">
+    <a class="navbar-brand pe-4 fs-4" href="{% url 'core:index' %}">
       <img src="{% static 'images/logo/logo.jpg' %}" alt="Nill Tech Solutions Logo" class="logo">
       <span class="ms-1 fw-bolder">Nill Tech</span>
 </a>
@@ -96,10 +96,6 @@
                 Academy
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'core:view_notifications' %}">
-                <i class="fa-solid fa-bell"></i>
-              </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'core:client_contact' %}">
@@ -153,6 +149,7 @@
       </div>
 
       <div class="job-responses-container">
+        <meta name="csrf-token" content="{{ csrf_token }}">
         <h1 class="job-responses-title">Responses for Your Jobs</h1>
         {% regroup responses by job as job_responses %}
         {% for job in job_responses %}
@@ -323,26 +320,48 @@
           imagePopup.style.display = "none";
         }
       });
-
-      // Get all the "Mark as Done" buttons
+    </script>
+    <script>
       const markDoneBtns = document.querySelectorAll(".mark-done-btn");
 
-      // Add a click event listener to each button
       markDoneBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          // Toggle the "done" class on the button
-          btn.classList.toggle("done");
-
-          // Change the button text based on the class
-          if (btn.classList.contains("done")) {
-            btn.textContent = "Done";
-          } else {
-            btn.textContent = "Mark as Done";
+        btn.addEventListener("click", async () => {
+          const jobId = btn.getAttribute("data-job-id"); // Get job ID from the button
+      
+          if (!jobId) {
+            alert("Job ID not found.");
+            return;
+          }
+      
+          const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+      
+          try {
+            const response = await fetch("/core/mark_response_as_done/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+              },
+              body: JSON.stringify({ job_id: jobId }), // Send the job ID
+            });
+      
+            const data = await response.json();
+      
+            if (data.status === "success") {
+              btn.classList.add("done");
+              btn.textContent = "Done";
+              btn.disabled = true;
+            } else {
+              alert(data.message || "Failed to mark job as done.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again later.");
           }
         });
       });
+      
     </script>
-    
       </body>
     </html>
     

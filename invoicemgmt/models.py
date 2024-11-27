@@ -24,7 +24,7 @@ class Invoice(models.Model):
     ]
 
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invoices')
-    invoice_number = models.CharField(max_length=20, unique=True)
+    invoice_number = models.PositiveIntegerField(unique=True, null=True, blank=True)  # Use a numeric field
     invoice_date = models.DateField(default=timezone.now)
     due_date = models.DateField()
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)    
@@ -41,24 +41,17 @@ class Invoice(models.Model):
         return total
 
     def save(self, *args, **kwargs):
-            if not self.invoice_number:
-                # Use a database sequence to generate a unique invoice number
-                with transaction.atomic():
-                    try:
-                        # Get the next value from the sequence
-                        from django.db import connection
-                        cursor = connection.cursor()
-                        cursor.execute("SELECT nextval('invoice_number_sequence')")
-                        next_value = cursor.fetchone()[0]
-                        self.invoice_number = str(next_value).zfill(6)  # Format as string with leading zeros if necessary
-                    except IntegrityError:
-                        # Handle the case where the sequence is not initialized
-                        # You may need to create the sequence in your database manually
-                        # For PostgreSQL, you can create a sequence using:
-                        # CREATE SEQUENCE invoice_number_sequence START 1;
-                        self.invoice_number = "000001"
-            super().save(*args, **kwargs)
+        # Generate invoice_number if not already set
+        if not self.invoice_number:
+            last_invoice = Invoice.objects.order_by('invoice_number').last()
+            self.invoice_number = (last_invoice.invoice_number + 1) if last_invoice else 1
 
-            # Calculate the total amount before saving the instance
-            self.total_amount = self.get_total_amount()
-            super().save(*args, **kwargs)
+        # Save the instance first to ensure it has a primary key
+        super().save(*args, **kwargs)
+
+        # Calculate total_amount using related objects
+        self.total_amount = self.get_total_amount()
+
+        # Save again to update the total_amount
+        super().save(*args, **kwargs)
+

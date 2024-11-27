@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as auth_login
 from .forms import UpdateUserForm, ChangePasswordForm, ClientForm, FreelancerForm, UserInfoForm
 from django.contrib import messages
 from django.contrib.auth.models import User, auth 
@@ -8,25 +8,35 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        identifier = request.POST['username']
         password = request.POST['password']
 
-        user = auth.authenticate(username=username, password=password)
+        # Check if the identifier is an email or username
+        try:
+            user = User.objects.get(Q(username=identifier) | Q(email=identifier))
+        except User.DoesNotExist:
+            user = None
 
         if user is not None:
-            auth.login(request, user)
+            # Authenticate using username
+            user = authenticate(username=user.username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
             user_profile = Profile.objects.get(user=user)
             if user_profile.user_type == 'freelancer':
                 return redirect('core:index')
             else:
                 return redirect('core:client_index')
         else:
-            messages.info(request, 'Invalid Credentials')
-            return redirect('accounts:signup')
+            messages.info(request, 'Invalid credentials. Please check your username/email and password.')
+            # Render the same template with an error message
+            return render(request, 'registration/signup.html')
     else:
         return render(request, 'registration/signup.html')
 
@@ -154,29 +164,25 @@ def update_user(request):
         messages.success(request, "You Must Be Logged In To Access This Page!!")
         return redirect('accounts:login')
 
+@login_required
 def update_password(request):
-    if request.user.is_authenticated:
-        current_user = request.user
-        #Did they fill out the form
-        if request.method == 'POST':
-            form = ChangePasswordForm(current_user, request.POST)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Your Password Has Been Updated...")
-                #login(request, current_user)
-                return redirect('accounts:update_user')
-            else:
-                for error in list(form.errors.values()):
-                    messages.error(request, error)
-                    return redirect('accounts:update_password')
+    current_user = request.user
+
+    if request.method == 'POST':
+        form = ChangePasswordForm(current_user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your password has been updated successfully.")
+            return redirect('accounts:update_user')  
         else:
-            form = ChangePasswordForm(current_user)
-            return render(request, "registration/update_password.html", {'form':form})
-        
-    else: 
-        messages.success(request, "You Must Be Logged In To View That Page!!!")
-        return redirect('core:index')
-    
+            for error in form.errors.values():
+                messages.error(request, error)
+
+    else:
+        form = ChangePasswordForm(current_user)
+
+    return render(request, "registration/update_password.html", {'form': form})
+
 def update_info(request):
     if request.user.is_authenticated:
         current_user = Profile.objects.get(user__id=request.user.id)
@@ -265,3 +271,4 @@ def client_update_info(request):
         return redirect('accounts:login')
 
     return render(request, 'client/client_update_info.html', {'form': form})
+

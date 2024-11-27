@@ -4,8 +4,22 @@ from django.contrib.auth.models import User
 from accounts.models import Profile
 
 
-# Create your models here.
+# Create your models her
 class Job(models.Model):
+    CATEGORY_CHOICES = (
+        ('data_entry', 'Data Entry'),
+        ('translation', 'Translation'),
+        ('transcription', 'Transcription and Captioning'),
+        ('graphics', 'Graphics'),
+        ('writing', 'Writing and Editing'),
+        ('web_dev', 'App and Web Development'),
+        ('project_mgmt', 'IT Project Management'),
+        ('testing', 'Software Testing'),
+        ('virtual_assist', 'Virtual Assistance'),
+        ('social_media', 'Social Media Management'),
+        ('ai_training', 'AI Model Training'),
+    )
+
     STATUS_CHOICES = (
         ('open', 'Open'),
         ('in_progress', 'In Progress'),
@@ -13,6 +27,11 @@ class Job(models.Model):
     )
 
     title = models.CharField(max_length=100)
+    category = models.CharField(
+        max_length=20, 
+        choices=CATEGORY_CHOICES,
+        default='data_entry'  # Set default category to 'Data Entry'
+    )
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     posted_date = models.DateField(auto_now_add=True)
@@ -20,15 +39,14 @@ class Job(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
     max_freelancers = models.IntegerField(default=1)
-    
-    
+
     @property
     def is_max_freelancers_reached(self):
         return self.attempts.count() >= self.max_freelancers
 
     def __str__(self):
-        return self.title
-    
+        return f"{self.title} ({self.get_category_display()})"  
+
 class Response(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='responses')
     user = models.ForeignKey(User, on_delete=models.CASCADE)

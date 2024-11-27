@@ -1,5 +1,6 @@
 from django.urls import include, path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'accounts'
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path('freelancer_form/<int:user_id>/', views.freelancer_form, name='freelancer_form'),
     path('client_form/<int:user_id>/', views.client_form, name='client_form'),
     path('update-profile-pic/', views.update_profile_pic, name='update_profile_pic'),
-    # Add the empty path at the end
+    
+
     path("", views.signup, name="signup"),
 ]

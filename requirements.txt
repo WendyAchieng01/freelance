@@ -1,0 +1,14 @@
+asgiref==3.8.1
+certifi==2024.8.30
+chardet==5.2.0
+charset-normalizer==3.4.0
+Django==5.1.2
+django-paypal==2.1
+idna==3.10
+pillow==10.4.0
+psycopg2-binary==2.9.9
+pytz==2024.2
+reportlab==4.2.5
+requests==2.32.3
+sqlparse==0.5.1
+urllib3==2.2.3
