@@ -22,4 +22,6 @@ urlpatterns = [
     path("job_responses/<int:job_id>/", views.job_responses, name="job_responses"),
     path('mark_response_as_done/', views.mark_response_as_done, name='mark_response_as_done'),
     path('delete-job/<int:job_id>/', views.delete_job, name='delete_job'),
+
+    
 ]

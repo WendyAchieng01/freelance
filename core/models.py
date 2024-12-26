@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from accounts.models import Profile
 
@@ -29,8 +30,7 @@ class Job(models.Model):
     title = models.CharField(max_length=100)
     category = models.CharField(
         max_length=20, 
-        choices=CATEGORY_CHOICES,
-        default='data_entry'  # Set default category to 'Data Entry'
+        choices=CATEGORY_CHOICES
     )
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -48,15 +48,17 @@ class Job(models.Model):
         return f"{self.title} ({self.get_category_display()})"  
 
 class Response(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='responses')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    email = models.EmailField()
-    password = models.CharField(max_length=10)
-    security_answer = models.CharField(max_length=100)
-    number_of_items = models.IntegerField()
-    phone_number = models.CharField(max_length=15)
-    device_used = models.CharField(max_length=50)
-    screenshot = models.ImageField(upload_to='response_screenshots/')
+    job = models.ForeignKey(Job, related_name='responses', on_delete=models.CASCADE)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    extra_data = models.JSONField(null=True, blank=True) 
+
+
+    class Meta:
+        unique_together = ('job', 'user',)
+
+    def __str__(self):
+        return f"Response by {self.user.username} for {self.job.title}"
 
 class JobAttempt(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='attempts')
@@ -66,16 +68,14 @@ class JobAttempt(models.Model):
     class Meta:
         unique_together = ('job', 'freelancer',)
 
-class Notification(models.Model):
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    message = models.TextField()
-    job = models.ForeignKey('Job', on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)
-    freelancer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications', null=True)
 
-    class Meta:
-        ordering = ['-created_at']
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    notification_type = models.CharField(max_length=50)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Notification for {self.recipient.username}: {self.message}"
+        return f"Notification for {self.user.username}: {self.message}"
+        
