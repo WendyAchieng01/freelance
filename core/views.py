@@ -56,18 +56,18 @@ def jobs(request):
 def singlejob(request, job_id):
     job = get_object_or_404(Job.objects.annotate(num_responses=Count('responses')), pk=job_id)
 
-    # Check if the job has reached its maximum number of freelancers
+    # Prevent further responses if max freelancers reached
     if job.num_responses >= job.max_freelancers:
         messages.error(request, 'This job has reached the maximum number of freelancers.')
         return redirect('core:jobs')
 
-    form = ResponseForm(request.POST or None, request.FILES or None)
-
-    # Check if the user has already submitted a response for this job
-    user_response = job.responses.filter(user=request.user).first()
-    if user_response:
+    # Check if the user already responded
+    if job.responses.filter(user=request.user).exists():
         messages.warning(request, 'You have already submitted a response for this job.')
         return redirect('core:jobs')
+
+    # Instantiate form with job category
+    form = ResponseForm(request.POST or None, request.FILES or None, job_category=job.category)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -75,9 +75,7 @@ def singlejob(request, job_id):
             response.user = request.user
             response.job = job
             response.save()
-
-            messages.success(request, 'Task has been uploaded.')
-            # Redirect to the list of jobs
+            messages.success(request, 'Response submitted successfully.')
             return redirect('core:jobs')
 
     responses = job.responses.all()
@@ -231,6 +229,8 @@ def delete_job(request, job_id):
 def job_responses(request, job_id):
     job = get_object_or_404(Job, pk=job_id)
     responses = job.responses.all()
+    
+    # Pass responses with extra_data to the template
     context = {
         'job': job,
         'responses': responses,
@@ -293,3 +293,4 @@ def client_responses(request):
     client_jobs = client_profile.jobs.all()
     responses = Response.objects.filter(job__in=client_jobs)
     return render(request, 'job_responses.html', {'responses': responses})
+

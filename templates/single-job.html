@@ -27,16 +27,43 @@
           {% csrf_token %}
           {% for field in form %}
           <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-            {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-            {% endif %}
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.help_text %}
+              <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
           </div>
           {% endfor %}
+      
+          {% if job.category == 'data_entry' %}
+          <div class="form-group">
+              {{ form.tools_required.label_tag }}
+              {{ form.tools_required }}
+              {% if form.tools_required.help_text %}
+              <small class="form-text text-muted">{{ form.tools_required.help_text }}</small>
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ form.platforms_used.label_tag }}
+              {{ form.platforms_used }}
+              {% if form.platforms_used.help_text %}
+              <small class="form-text text-muted">{{ form.platforms_used.help_text }}</small>
+              {% endif %}
+          </div>
+          {% elif job.category == 'translation' %}
+          <div class="form-group">
+              {{ form.source_language.label_tag }}
+              {{ form.source_language }}
+          </div>
+          <div class="form-group">
+              {{ form.target_language.label_tag }}
+              {{ form.target_language }}
+          </div>
+          {% endif %}
+      
           <button type="submit" class="submit-button">Submit Response</button>
-        </form>
-      </div>
+      </form>
+      </div>    
     </div>
   </div>
 </div>
