@@ -79,31 +79,43 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:index' %}" aria-label="Go to the homepage">
-            Home
-          </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
+               href="{% url 'core:index' %}" 
+               aria-label="Go to the homepage">
+                Home
+            </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:freelancer_jobs' %}">
-            My Projects
-          </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'freelancer_jobs' %}active{% endif %}" 
+               href="{% url 'core:freelancer_jobs' %}">
+                My Projects
+            </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:jobs' %}">
-            Find Work
-          </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'jobs' %}active{% endif %}" 
+               href="{% url 'core:jobs' %}">
+                Find Work
+            </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:about' %}">
-            About Us
-          </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
+               href="{% url 'core:about' %}">
+                About Us
+            </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'core:contact' %}">
-            Support
-          </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" 
+               href="{% url 'core:contact' %}">
+                Support
+            </a>
         </li>
-      </ul>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'my_chats' %}active{% endif %}" 
+               href="{% url 'core:my_chats' %}">
+                My Chats
+            </a>
+        </li>
+    </ul>
       
     <div class="dropdown">
       <button class="dropbtn link-dark pb-1 link-fancy me-2">
@@ -133,16 +145,19 @@
 </nav>
 
         
-        <div>
-          {% if messages %}
+<div>
+  {% if not in_chat_room %}
+      {% if messages %}
           {% for message in messages %}
-          <div class="my-alert alert-warning alert-dismissible fade show" role="alert" style="background-color: white; color: black; text-align: center;">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+              <div class="my-alert alert-warning alert-dismissible fade show" role="alert" style="background-color: white; color: black; text-align: center;">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
           {% endfor %}
-          {% endif %}
-      </div>
+      {% endif %}
+  {% endif %}
+</div>
+
       {% endblock %}
 {% block content %}
 
@@ -216,7 +231,7 @@
 </div>
 </div>
 
-<div class="container text-center py-3 small">© <a href="#" class="link-fancy" target="_blank">2024 Nill Tech Solutions</a>
+<div class="container text-center py-3 small">© <a href="#" class="link-fancy" target="_blank">2025 Nill Tech Solutions</a>
 </div>
 </footer>
 

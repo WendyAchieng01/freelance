@@ -1,0 +1,54 @@
+.shadow-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.form-wrap {
+  padding: 20px;
+}
+
+.form-wrap h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-wrap form p {
+  margin-bottom: 10px;
+}
+
+.form-wrap form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-wrap form input[type="text"],
+.form-wrap form input[type="email"],
+.form-wrap form input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* The button is styled using Bootstrap classes, no need to redefine here */
+.form-wrap form button {
+  display: block;
+  width: 100%;
+  font-size: 16px;
+}
+
+@media (max-width: 576px) {
+  .shadow-wrap {
+    padding: 10px;
+  }
+
+  .form-wrap {
+    padding: 10px;
+  }
+}

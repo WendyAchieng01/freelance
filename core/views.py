@@ -11,6 +11,7 @@ from django.urls import reverse
 import json
 from payment.views import initiate_payment
 from django.db.models import F, Count
+from django.core.exceptions import PermissionDenied
 
 
 # Create your views here.
@@ -294,3 +295,52 @@ def client_responses(request):
     responses = Response.objects.filter(job__in=client_jobs)
     return render(request, 'job_responses.html', {'responses': responses})
 
+@login_required
+@user_passes_test(lambda u: u.profile.user_type == 'client')
+def accept_response(request, job_id, response_id):
+    if request.method == 'POST':
+        response = get_object_or_404(Response, id=response_id, job_id=job_id)
+        freelancer = response.user.profile
+
+        # Check if a chat already exists
+        chat, created = Chat.objects.get_or_create(
+            job=response.job,
+            client=request.user.profile,
+            freelancer=freelancer
+        )
+
+        return JsonResponse({
+            'status': 'success',
+            'chat_id': chat.id,
+            'message': 'Chat initiated successfully.',
+        })
+    
+@login_required
+def my_chats(request):
+    """View for listing all chats for the current user"""
+    if request.user.profile.user_type == 'freelancer':
+        chats = Chat.objects.filter(freelancer=request.user.profile)
+    else:
+        chats = Chat.objects.filter(client=request.user.profile)
+        
+    return render(request, 'my_chats.html', {
+        'chats': chats
+    })
+
+@login_required
+def chat_room(request, chat_id):
+    """View for the chat room"""
+    chat = get_object_or_404(Chat, id=chat_id)
+    
+    # Security check - only allow participants to access the chat
+    if request.user.profile not in [chat.client, chat.freelancer]:
+        raise PermissionDenied
+    
+    # Get chat history
+    messages = chat.messages.all().order_by('timestamp')
+    
+    return render(request, 'chat_room.html', {
+        'chat': chat,
+        'messages': messages,
+        'in_chat_room': True  # Add this context variable
+    })

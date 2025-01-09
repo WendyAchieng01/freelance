@@ -69,13 +69,23 @@ class JobAttempt(models.Model):
         unique_together = ('job', 'freelancer',)
 
 
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
-    notification_type = models.CharField(max_length=50)
-    is_read = models.BooleanField(default=False)
+class Chat(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='chats')
+    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='client_chats')
+    freelancer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='freelancer_chats')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Notification for {self.user.username}: {self.message}"
-        
+        return f"Chat between {self.client.user.username} and {self.freelancer.user.username} for {self.job.title}"
+
+class Message(models.Model):
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"Message from {self.sender.username} at {self.timestamp}"

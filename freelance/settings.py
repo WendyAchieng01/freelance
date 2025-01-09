@@ -41,6 +41,7 @@ LOGIN_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     'payment',
     'payments',
     'paypal.standard.ipn',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'freelance.wsgi.application'
+ASGI_APPLICATION = 'freelance.asgi.application'
 
 
 # Database
@@ -171,6 +174,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'nyanambaobadiah@gmail.com'
 EMAIL_HOST_PASSWORD = 'zhsjrvgavghxetps'
 EMAIL_USE_TLS = True
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 django_heroku.settings(locals())

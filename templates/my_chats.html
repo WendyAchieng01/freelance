@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+
+{% block navbar %}
+
+    {% if request.user.profile.user_type == 'client' %}
+
+        {% include 'client_navbar.html' %}
+
+    {% else %}
+
+        {{ block.super }}  
+
+    {% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="chat-container1">
+    <h1 class="chat-header">My Chats</h1>
+    
+    <div class="chat-list">
+        {% for chat in chats %}
+            <div class="chat-item">
+                <a href="{% url 'core:chat_room' chat.id %}" class="chat-link">
+                    <div class="chat-content">
+                        <div class="chat-details">
+                            <h2 class="chat-title">{{ chat.job.title }}</h2>
+                            <p class="chat-user">
+                                {% if request.user.profile.user_type == 'freelancer' %}
+                                    Client: {{ chat.client.user.username }}
+                                {% else %}
+                                    Freelancer: {{ chat.freelancer.user.username }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if chat.messages.exists %}
+                            <p class="chat-timestamp">
+                                Last message: {{ chat.messages.last.timestamp|timesince }} ago
+                            </p>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <p class="no-chats">No active chats found.</p>
+        {% endfor %}
+    </div>
+</div>
+ 
+{% endblock %}
