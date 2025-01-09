@@ -22,6 +22,7 @@ urlpatterns = [
     path("job_responses/<int:job_id>/", views.job_responses, name="job_responses"),
     path('mark_response_as_done/', views.mark_response_as_done, name='mark_response_as_done'),
     path('delete-job/<int:job_id>/', views.delete_job, name='delete_job'),
-
-    
+    path('accept_response/<int:job_id>/<int:response_id>/', views.accept_response, name='accept_response'),
+    path('my-chats/', views.my_chats, name='my_chats'),
+    path('chat/<int:chat_id>/', views.chat_room, name='chat_room'),
 ]

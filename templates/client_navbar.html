@@ -16,6 +16,9 @@
               <li class="nav-item"><a class="nav-link" href="{% url 'core:client_responses' %}">Responses</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'academy:client_academy' %}">Academy</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'core:client_contact' %}">Work With Us</a></li>
+              <li><a class="nav-item"><a class="nav-link" href="{% url 'core:my_chats' %}" class="{% if request.resolver_match.url_name == 'my_chats' %}active{% endif %}">
+                Active Chats
+            </a></li>
           </ul>
           <div class="dropdown">
               <button class="dropbtn link-dark pb-1 link-fancy me-2">
