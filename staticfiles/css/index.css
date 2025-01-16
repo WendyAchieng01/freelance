@@ -2564,36 +2564,41 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Full screen height */
-  background-color: #f3f4f6; /* Light background color for contrast */
+  min-height: 100vh; 
+  background-color: #f3f4f6; 
+  padding-top: 150px;
+  padding-bottom: 50px;
 }
 
 .chat-window {
   display: flex;
   flex-direction: column;
-  width: 90%; /* Reduce width to fit smaller screens */
-  max-width: 600px; /* Set a max width */
-  height: 80vh; /* Compact height */
+  width: 90%; 
+  max-width: 600px; 
+  height: 80vh; 
   border: 1px solid #e5e7eb;
-  border-radius: 12px; /* Rounded corners */
+  border-radius: 12px;
   background-color: #ffffff;
-  padding: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+  padding: 16px; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: auto; 
+  overflow: hidden; 
 }
 
 /* Messages Container (Scroll Area) */
 .messages-container {
-  flex: 1; /* Takes up remaining space */
-  overflow-y: auto; /* Enables vertical scrolling */
-  padding-right: 10px;
-  margin-bottom: 16px;
-  scrollbar-width: thin; /* For modern browsers */
-  scrollbar-color: #cbd5e1 transparent; /* Optional styling for scrollbar */
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0; 
+  margin-right: 0; 
+  box-sizing: border-box; 
+  scrollbar-width: thin; 
+  scrollbar-color: #cbd5e1 transparent;
 }
 
 /* Webkit Scrollbar Styling */
 .messages-container::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 
 .messages-container::-webkit-scrollbar-thumb {
@@ -2605,39 +2610,40 @@ select {
   background: transparent;
 }
 
-/* Chat Messages */
 .chat-message {
   display: flex;
   flex-direction: column;
-  max-width: 70%;
+  width: 100%;
   margin: 8px 0;
 }
 
 .message-sent {
-  align-self: flex-end; /* Align sent messages to the right */
+  align-items: flex-end; 
+  justify-content: flex-end;
 }
 
 .message-received {
-  align-self: flex-start; /* Align received messages to the left */
+  align-self: flex-start;
+  text-align: left; 
 }
 
 .message-content-wrapper {
   display: flex;
   flex-direction: column;
-}
-
-.message-sender {
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.message-content {
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
-  font-size: 14px;
-  word-wrap: break-word;
-  max-width: 100%;
+  max-width: 80%; 
+  margin-left: 0; 
+}
+
+.message-sent .message-content {
+  background-color: #bfdbfe; 
+  color: #1f2937;
+}
+
+.message-received .message-content {
+  background-color: #f3f4f6; 
+  color: #1f2937;
 }
 
 .bg-blue-100 {
@@ -2657,7 +2663,6 @@ select {
   text-align: right;
 }
 
-/* Chat Input */
 .chat-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -2707,62 +2712,189 @@ select {
   background-color: #2563eb;
 }
 
-/* Adjust Attachments Container */
 .attachment-item {
   display: flex;
   align-items: center;
-  gap: 4px; /* Reduce gap between icon and text */
+  gap: 4px; 
   background-color: #ffffff;
-  padding: 4px 8px; /* Smaller padding */
+  padding: 4px 8px; 
   border-radius: 8px;
-  font-size: 12px; /* Smaller font size */
+  font-size: 12px; 
 }
 
 .attachment-item svg {
-  width: 16px; /* Smaller icon size */
+  width: 16px; 
   height: 16px;
 }
 
 .attachment-item p {
   font-size: 12px;
-  color: #4b5563; /* Slightly darker text */
+  color: #4b5563; 
 }
 
-.attachment-item .download-btn {
-  font-size: 12px; /* Smaller font for download button */
-  padding: 2px 8px; /* Compact padding */
-  color: #2563eb; /* Blue for contrast */
+.attdwnbtn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition-duration: 0.3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
+  text-decoration: none; 
 }
 
-.attachment-item .download-btn:hover {
-  color: #1e3a8a; /* Darker blue on hover */
+.attdwnbtn .svgIcon {
+  fill: #2A4379;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 768px) {
+.attdwnbtn .icon2 {
+  width: 18px;
+  height: 5px;
+  border-bottom: 2px solid #2A4379;
+  border-left: 2px solid #2A4379;
+  border-right: 2px solid #2A4379;
+}
+
+.attdwnbtn:hover {
+  background-color: #2A4379;
+  transition-duration: 0.3s;
+}
+
+.attdwnbtn:hover .icon2 {
+  border-bottom: 2px solid black;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
+
+.attdwnbtn:hover .svgIcon {
+  fill: black;
+  animation: slide-in-top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+/* Responsive for tablets (768px to 1024px) */
+@media (max-width: 1024px) {
+  .chat-fullscreen {
+    padding-top: 100px;
+    padding-bottom: 30px;
+  }
+
   .chat-window {
-    height: 85vh;
+    width: 95%;
+    height: 75vh;
+    padding: 12px;
   }
 
-  .chat-message {
-    max-width: 85%;
+  .messages-container {
+    padding-right: 8px;
   }
 
-  .message-content {
+  .attachment-item p {
+    font-size: 10px;
+  }
+
+  .chat-send-button {
     font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .chat-input {
+    font-size: 12px;
+    padding: 10px;
   }
 }
 
-@media screen and (max-width: 480px) {
+/* Responsive for small screens (480px to 768px) */
+@media (max-width: 768px) {
+  .chat-fullscreen {
+    padding-top: 80px;
+    padding-bottom: 20px;
+  }
+
   .chat-window {
-    height: 90vh;
+    height: 70vh;
+    padding: 10px;
   }
 
-  .chat-message {
-    max-width: 90%;
+  .messages-container {
+    padding-right: 5px;
   }
 
-  .message-content {
+  .attachment-item p {
+    font-size: 9px;
+  }
+
+  .attdwnbtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .chat-send-button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .chat-input {
+    font-size: 12px;
     padding: 8px;
+  }
+}
+
+/* Responsive for extra-small screens (less than 480px) */
+@media (max-width: 480px) {
+  .chat-fullscreen {
+    padding-top: 60px;
+    padding-bottom: 10px;
+  }
+
+  .chat-window {
+    width: 100%;
+    height: 65vh;
+    padding: 8px;
+  }
+
+  .messages-container {
+    padding-right: 4px;
+  }
+
+  .attachment-item p {
+    font-size: 8px;
+  }
+
+  .attdwnbtn {
+    width: 35px;
+    height: 35px;
+  }
+
+  .chat-send-button {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .chat-input {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  .attach-file-label {
+    font-size: 10px;
+    padding: 4px 8px;
   }
 }
