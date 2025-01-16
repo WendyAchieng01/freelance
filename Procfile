@@ -1,1 +1,1 @@
-web: gunicorn freelance.wsgi
+web: daphne freelance.asgi:application
