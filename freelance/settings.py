@@ -182,6 +182,29 @@ CHANNEL_LAYERS = {
     }
 }
 
+#for attachment files
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+#for heroku csrf_token
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://nilltech-174d9b1d5794.herokuapp.com/',
+    'https://www.nilltechsolutions.com',
+    'https://nilltechsolutions.com'  
+]
+
+# Session and Cookie Settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# If you're behind a proxy like Heroku's router
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Additional security settings recommended for production
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
 
 django_heroku.settings(locals())
