@@ -115,6 +115,7 @@
 </div>
 
 <script>
+    // Get necessary DOM elements
     const currentUserId = parseInt(document.getElementById('chat-container').dataset.userId);
     const chatWindow = document.getElementById('chat-window');
     const messageInput = document.getElementById('message-input');
@@ -122,9 +123,18 @@
     const fileUpload = document.getElementById('file-upload');
     const fileList = document.getElementById('file-list');
 
-    // Dynamically set protocol for WebSocket based on current page protocol
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/{{ chat.id }}/`);
+    // Set up WebSocket connection
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    let chatSocket = new WebSocket(`${protocol}//${window.location.host}/ws/chat/{{ chat.id }}/`);
+
+    // WebSocket event handlers
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection established');
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
@@ -150,8 +160,18 @@
                                 <p class="text-sm text-gray-900 truncate">${att.filename}</p>
                             </div>
                             <a href="${att.url}" 
-                               class="download-btn px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                                Download
+                            class="attdwnbtn">
+                                <svg
+                                class="svgIcon"
+                                viewBox="0 0 384 512"
+                                height="1em"
+                                xmlns="http://www.w3.org/2000/svg"
+                                >
+                                <path
+                                    d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
+                                ></path>
+                                </svg>
+                                <span class="icon2"></span>
                             </a>
                         </div>
                     `).join('')}
@@ -188,8 +208,32 @@
         `).join('');
     });
 
+    // Helper function for HTTP submission
+    async function submitViaHttp(formData) {
+        try {
+            const response = await fetch(window.location.pathname, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+
+            if (response.ok) {
+                messageInput.value = '';
+                fileUpload.value = '';
+                fileList.innerHTML = '';
+            } else {
+                throw new Error('Network response was not ok');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send message. Please try again.');
+        }
+    }
+
     // Handle form submission
-    chatForm.addEventListener('submit', function(e) {
+    chatForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const messageContent = messageInput.value.trim();
@@ -201,37 +245,62 @@
 
         const formData = new FormData(this);
 
-        // Send via WebSocket if no files, otherwise use regular form submission
-        if (files.length === 0) {
-            chatSocket.send(JSON.stringify({
-                'message': messageContent
-            }));
-            messageInput.value = '';
-        } else {
-            fetch(window.location.pathname, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => {
-                if (response.ok) {
+        try {
+            if (files.length === 0) {
+                if (chatSocket.readyState === WebSocket.OPEN) {
+                    chatSocket.send(JSON.stringify({
+                        'message': messageContent
+                    }));
                     messageInput.value = '';
-                    fileUpload.value = '';
-                    fileList.innerHTML = '';
+                } else {
+                    console.error('WebSocket is not connected');
+                    await submitViaHttp(formData);
                 }
-            });
+            } else {
+                await submitViaHttp(formData);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
         }
     });
 
+    // Setup WebSocket reconnection
+    function setupWebSocketReconnection() {
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        function reconnect() {
+            if (retryCount < maxRetries) {
+                retryCount++;
+                console.log(`Attempting to reconnect... (${retryCount}/${maxRetries})`);
+                
+                const newSocket = new WebSocket(`${protocol}//${window.location.host}/ws/chat/{{ chat.id }}/`);
+                
+                newSocket.onopen = function() {
+                    console.log('Reconnected successfully');
+                    chatSocket = newSocket;
+                    retryCount = 0;
+                };
+
+                newSocket.onclose = function() {
+                    setTimeout(reconnect, 3000);
+                };
+            } else {
+                console.error('Max reconnection attempts reached');
+            }
+        }
+
+        chatSocket.onclose = function(e) {
+            console.log('WebSocket closed. Attempting to reconnect...');
+            setTimeout(reconnect, 1000);
+        };
+    }
+
+    setupWebSocketReconnection();
+
     // Auto-scroll to bottom on load
     chatWindow.scrollTop = chatWindow.scrollHeight;
-
-    // Handle WebSocket connection errors
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
 </script>
 
 {% endblock %}
