@@ -30,9 +30,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    'nilltech-174d9b1d5794.herokuapp.com', 
+    'www.nilltechsolutions.com', 
+    'nilltechsolutions.com'
+]
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "accounts:signup"
@@ -188,23 +194,23 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 #for heroku csrf_token
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
-    'https://nilltech-174d9b1d5794.herokuapp.com/',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://nilltech-174d9b1d5794.herokuapp.com',
     'https://www.nilltechsolutions.com',
-    'https://nilltechsolutions.com'  
+    'https://nilltechsolutions.com'
 ]
 
-# Session and Cookie Settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# Secure cookies and redirects
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
-# If you're behind a proxy like Heroku's router
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = not DEBUG
 
-# Additional security settings recommended for production
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-
+# HSTS settings for production
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 
 django_heroku.settings(locals())
