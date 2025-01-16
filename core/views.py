@@ -12,7 +12,9 @@ import json
 from payment.views import initiate_payment
 from django.db.models import F, Count
 from django.core.exceptions import PermissionDenied
-
+from django.http import FileResponse
+from django.core.files.storage import default_storage
+import os
 
 # Create your views here.
 @login_required
@@ -329,18 +331,47 @@ def my_chats(request):
 
 @login_required
 def chat_room(request, chat_id):
-    """View for the chat room"""
     chat = get_object_or_404(Chat, id=chat_id)
     
-    # Security check - only allow participants to access the chat
     if request.user.profile not in [chat.client, chat.freelancer]:
         raise PermissionDenied
     
-    # Get chat history
-    messages = chat.messages.all().order_by('timestamp')
+    if request.method == 'POST':
+        content = request.POST.get('message', '').strip()
+        files = request.FILES.getlist('attachments')
+        
+        if content or files:
+            message = Message.objects.create(
+                chat=chat,
+                sender=request.user,
+                content=content
+            )
+            
+            for file in files:
+                MessageAttachment.objects.create(
+                    message=message,
+                    file=file,
+                    filename=file.name,
+                    file_size=file.size,
+                    content_type=file.content_type
+                )
     
+    messages = chat.messages.all().order_by('timestamp')
     return render(request, 'chat_room.html', {
         'chat': chat,
         'messages': messages,
-        'in_chat_room': True  # Add this context variable
+        'in_chat_room': True
     })
+
+@login_required
+def download_attachment(request, attachment_id):
+    attachment = get_object_or_404(MessageAttachment, id=attachment_id)
+    
+    # Security check - only chat participants can download
+    if request.user.profile not in [attachment.message.chat.client, attachment.message.chat.freelancer]:
+        raise PermissionDenied
+    
+    response = FileResponse(attachment.file)
+    response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
+    response['Content-Type'] = attachment.content_type
+    return response

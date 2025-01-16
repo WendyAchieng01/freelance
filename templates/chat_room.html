@@ -31,90 +31,207 @@
                 </h3>
             </div>
 
-            <div id="chat-window" class="chat-window h-[80%] overflow-y-auto p-4">
-                {% for message in messages %}
-                    <div
-                        class="chat-message {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %}"
-                    >
-                        <div class="message-content-wrapper">
-                            <div class="message-content">
-                                {{ message.content }}
-                            </div>
-                            <div class="message-timestamp">{{ message.timestamp|date:"g:i A" }}</div>
+            <!-- Chat Window -->
+            <div id="chat-window" class="chat-window h-[80%] flex flex-col overflow-hidden p-4">
+                <!-- Messages Container (Scrollable Area) -->
+                <div class="messages-container flex-1 overflow-y-auto">
+                    {% for message in messages %}
+                      <div class="chat-message {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %} mb-4">
+                        <div class="message-content-wrapper {% if message.sender == request.user %}ml-auto{% endif %} max-w-[80%]">
+                          <div class="message-sender text-sm text-gray-600 mb-1">
+                            {{ message.sender.username }}
+                          </div>
+                          <div class="message-content p-3 rounded-lg {% if message.sender == request.user %}bg-blue-100{% else %}bg-gray-100{% endif %}">
+                            {{ message.content }}
+                            {% if message.attachments.all %}
+                              <div class="attachments-container mt-2 border-t border-gray-200 pt-2">
+                                {% for attachment in message.attachments.all %}
+                                  <div class="attachment-item flex items-center gap-2 bg-white/50 p-2 rounded-lg mt-1">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                    </svg>
+                                    <div class="flex-1 min-w-0">
+                                      <p class="text-sm text-gray-900 truncate">
+                                        {{ attachment.filename }}
+                                      </p>
+                                    </div>
+                                    <a href="{% url 'core:download_attachment' attachment.id %}" class="attdwnbtn">
+                                        <svg
+                                          class="svgIcon"
+                                          viewBox="0 0 384 512"
+                                          height="1em"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                          <path
+                                            d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
+                                          ></path>
+                                        </svg>
+                                        <span class="icon2"></span>
+                                      </a>                                      
+
+                                  </div>
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                          </div>
+                          <div class="message-timestamp text-xs text-gray-500 mt-1">
+                            {{ message.timestamp|date:"g:i A" }}
+                          </div>
                         </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  
+
+                <!-- Chat Input Area -->
+                <form method="POST" class="chat-input-wrapper p-4 border-t bg-white" enctype="multipart/form-data" id="chat-form">
+                    {% csrf_token %}
+                    <div class="flex items-center">
+                        <textarea
+                            name="message"
+                            id="message-input"
+                            class="chat-input flex-1 bg-gray-100 border border-gray-300 rounded-lg p-3 text-md focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
+                            placeholder="Type your message..."
+                        ></textarea>
+                        <label for="file-upload" class="cursor-pointer ml-3">
+                            <span class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
+                                Attach Files
+                            </span>
+                            <input id="file-upload" name="attachments" type="file" multiple 
+                                class="hidden" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx"/>
+                        </label>
+                        <button
+                            type="submit"
+                            class="chat-send-button bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ml-3"
+                        >
+                            Send
+                        </button>
                     </div>
-                {% endfor %}
+                </form>
             </div>
 
-            <form method="POST" class="chat-input-wrapper p-4 border-t">
-                {% csrf_token %}
-                <textarea
-                    name="message"
-                    class="chat-input w-full h-20 bg-gray-100 border-none rounded-lg text-md focus:ring-0 focus:outline-none resize-none"
-                    placeholder="Type your message..."
-                    required
-                ></textarea>
-                <div class="flex justify-end mt-2">
-                    <button
-                        type="submit"
-                        class="chat-send-button bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    >
-                        Send
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
 
-
-
-
 <script>
-    // Get user ID from data attribute
     const currentUserId = parseInt(document.getElementById('chat-container').dataset.userId);
-    
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/{{ chat.id }}/'
-    );
     const chatWindow = document.getElementById('chat-window');
-    const messageInput = document.getElementById('chat-message');
-    const sendButton = document.getElementById('send-message');
+    const messageInput = document.getElementById('message-input');
+    const chatForm = document.getElementById('chat-form');
+    const fileUpload = document.getElementById('file-upload');
+    const fileList = document.getElementById('file-list');
+
+    // Dynamically set protocol for WebSocket based on current page protocol
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/{{ chat.id }}/`);
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const messageElement = document.createElement('div');
-        messageElement.classList.add('message', data.user_id === currentUserId ? 'sent' : 'received', 'mb-3');
+        const isSentMessage = data.user_id === currentUserId;
+        
+        messageElement.classList.add(
+            'chat-message',
+            isSentMessage ? 'message-sent' : 'message-received',
+            'mb-4'
+        );
+        
+        let attachmentsHtml = '';
+        if (data.attachments && data.attachments.length > 0) {
+            attachmentsHtml = `
+                <div class="attachments-container mt-2 border-t border-gray-200 pt-2">
+                    ${data.attachments.map(att => `
+                        <div class="attachment-item flex items-center gap-2 bg-white/50 p-2 rounded-lg mt-1">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900 truncate">${att.filename}</p>
+                            </div>
+                            <a href="${att.url}" 
+                               class="download-btn px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:underline">
+                                Download
+                            </a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
         
         messageElement.innerHTML = `
-            <div class="font-semibold text-sm">${data.username}</div>
-            <div class="bg-${data.user_id === currentUserId ? 'blue-100' : 'gray-100'} rounded-lg p-3 inline-block max-w-md">
-                ${data.message}
+            <div class="message-content-wrapper ${isSentMessage ? 'ml-auto' : ''} max-w-[80%]">
+                <div class="message-sender text-sm text-gray-600 mb-1">
+                    ${data.username}
+                </div>
+                <div class="message-content p-3 rounded-lg ${isSentMessage ? 'bg-blue-100' : 'bg-gray-100'}">
+                    ${data.message}
+                    ${attachmentsHtml}
+                </div>
+                <div class="message-timestamp text-xs text-gray-500 mt-1">
+                    ${new Date().toLocaleTimeString()}
+                </div>
             </div>
-            <div class="text-xs text-gray-500">${new Date().toLocaleTimeString()}</div>
         `;
         
         chatWindow.appendChild(messageElement);
         chatWindow.scrollTop = chatWindow.scrollHeight;
     };
 
-    function sendMessage() {
-        const message = messageInput.value;
-        if (message) {
+    // Handle file selection
+    fileUpload.addEventListener('change', function() {
+        const files = Array.from(this.files);
+        fileList.innerHTML = files.map(file => `
+            <span class="inline-block bg-gray-100 rounded px-2 py-1 text-sm mr-2 mb-2">
+                ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+            </span>
+        `).join('');
+    });
+
+    // Handle form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const messageContent = messageInput.value.trim();
+        const files = fileUpload.files;
+
+        if (!messageContent && files.length === 0) {
+            return;
+        }
+
+        const formData = new FormData(this);
+
+        // Send via WebSocket if no files, otherwise use regular form submission
+        if (files.length === 0) {
             chatSocket.send(JSON.stringify({
-                'message': message
+                'message': messageContent
             }));
             messageInput.value = '';
+        } else {
+            fetch(window.location.pathname, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    messageInput.value = '';
+                    fileUpload.value = '';
+                    fileList.innerHTML = '';
+                }
+            });
         }
-    }
+    });
 
-    sendButton.onclick = sendMessage;
-    messageInput.onkeypress = function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    };
-
+    // Auto-scroll to bottom on load
     chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Handle WebSocket connection errors
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
 </script>
+
 {% endblock %}
