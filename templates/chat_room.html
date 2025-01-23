@@ -22,7 +22,7 @@
         <div class="relative bg-white h-full">
             <div class="flex items-center justify-between p-4 border-b">
                 <h3 class="text-lg font-semibold text-gray-900">
-                    Chat with: 
+                    Chat with:
                     {% if request.user.profile == chat.client %}
                         {{ chat.freelancer.user.username }}
                     {% else %}
@@ -36,52 +36,42 @@
                 <!-- Messages Container (Scrollable Area) -->
                 <div class="messages-container flex-1 overflow-y-auto">
                     {% for message in messages %}
-                      <div class="chat-message {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %} mb-4">
+                    <div class="chat-message {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %} mb-4">
                         <div class="message-content-wrapper {% if message.sender == request.user %}ml-auto{% endif %} max-w-[80%]">
-                          <div class="message-sender text-sm text-gray-600 mb-1">
-                            {{ message.sender.username }}
-                          </div>
-                          <div class="message-content p-3 rounded-lg {% if message.sender == request.user %}bg-blue-100{% else %}bg-gray-100{% endif %}">
-                            {{ message.content }}
-                            {% if message.attachments.all %}
-                              <div class="attachments-container mt-2 border-t border-gray-200 pt-2">
-                                {% for attachment in message.attachments.all %}
-                                  <div class="attachment-item flex items-center gap-2 bg-white/50 p-2 rounded-lg mt-1">
-                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                    </svg>
-                                    <div class="flex-1 min-w-0">
-                                      <p class="text-sm text-gray-900 truncate">
-                                        {{ attachment.filename }}
-                                      </p>
-                                    </div>
-                                    <a href="{% url 'core:download_attachment' attachment.id %}" class="attdwnbtn">
-                                        <svg
-                                          class="svgIcon"
-                                          viewBox="0 0 384 512"
-                                          height="1em"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path
-                                            d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
-                                          ></path>
+                            <div class="message-sender text-sm text-gray-600 mb-1">
+                                {{ message.sender.username }}
+                            </div>
+                            <div class="message-content p-3 rounded-lg {% if message.sender == request.user %}bg-blue-100{% else %}bg-gray-100{% endif %}">
+                                {{ message.content }}
+                                {% if message.attachments.all %}
+                                <div class="attachments-container mt-2 border-t border-gray-200 pt-2">
+                                    {% for attachment in message.attachments.all %}
+                                    <div class="attachment-item flex items-center gap-2 bg-white/50 p-2 rounded-lg mt-1">
+                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
                                         </svg>
-                                        <span class="icon2"></span>
-                                      </a>                                      
-
-                                  </div>
-                                {% endfor %}
-                              </div>
-                            {% endif %}
-                          </div>
-                          <div class="message-timestamp text-xs text-gray-500 mt-1">
-                            {{ message.timestamp|date:"g:i A" }}
-                          </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm text-gray-900 truncate">
+                                                {{ attachment.filename }}
+                                            </p>
+                                        </div>
+                                        <a href="{% url 'core:download_attachment' attachment.id %}" class="attdwnbtn">
+                                            <svg class="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="message-timestamp text-xs text-gray-500 mt-1">
+                                {{ message.timestamp|date:"g:i A" }}
+                            </div>
                         </div>
-                      </div>
+                    </div>
                     {% endfor %}
-                  </div>
-                  
+                </div>
 
                 <!-- Chat Input Area -->
                 <form method="POST" class="chat-input-wrapper p-4 border-t bg-white" enctype="multipart/form-data" id="chat-form">
@@ -109,10 +99,10 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>
+
 
 <script>
     // Get necessary DOM elements
