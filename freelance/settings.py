@@ -12,13 +12,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-from urllib import request
 from django.contrib.messages import constants as messages
 import ssl
 import socket
 import django_heroku
 import dj_database_url
 from decouple import config
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -216,9 +216,7 @@ SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-import logging
-logger = logging.getLogger(__name__)
-logger.debug(f"Secure: {request.is_secure()}, Host: {request.get_host()}")
+
 
 
 django_heroku.settings(locals())
