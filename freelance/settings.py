@@ -177,11 +177,13 @@ PAYPAL_TEST = True  # Use sandbox mode during testing
 
 #Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'nyanambaobadiah@gmail.com'
-EMAIL_HOST_PASSWORD = 'zhsjrvgavghxetps'
+EMAIL_HOST = 'smtp.zoho.com'  
+EMAIL_PORT = 587  
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False 
+EMAIL_HOST_USER = 'info@nilltechsolutions.com'  
+EMAIL_HOST_PASSWORD = 'nillsol12@'  
+DEFAULT_FROM_EMAIL = 'info@nilltechsolutions.com'   
 
 
 CHANNEL_LAYERS = {

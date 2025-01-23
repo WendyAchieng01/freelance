@@ -9,12 +9,17 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 import json
+from freelance import settings
 from payment.views import initiate_payment
 from django.db.models import F, Count
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse
 from django.core.files.storage import default_storage
 import os
+from django.db.models import Prefetch
+from itertools import groupby
+from operator import attrgetter
+from django.views.decorators.http import require_http_methods
 
 # Create your views here.
 @login_required
@@ -319,14 +324,34 @@ def accept_response(request, job_id, response_id):
     
 @login_required
 def my_chats(request):
-    """View for listing all chats for the current user"""
+    """View for listing all chats grouped by jobs for the current user"""
     if request.user.profile.user_type == 'freelancer':
-        chats = Chat.objects.filter(freelancer=request.user.profile)
+        chats = Chat.objects.filter(
+            freelancer=request.user.profile
+        ).select_related(
+            'job', 'client__user', 'freelancer__user'
+        ).order_by('job_id')
     else:
-        chats = Chat.objects.filter(client=request.user.profile)
-        
+        chats = Chat.objects.filter(
+            client=request.user.profile
+        ).select_related(
+            'job', 'client__user', 'freelancer__user'
+        ).order_by('job_id')
+    
+    # Group chats by job
+    grouped_chats = []
+    for job_id, chats_in_job in groupby(chats, key=attrgetter('job_id')):
+        chats_list = list(chats_in_job)
+        if chats_list:
+            # Get the job object from the first chat
+            job = chats_list[0].job
+            grouped_chats.append({
+                'job': job,  # This includes all job fields including status
+                'chats': chats_list
+            })
+    
     return render(request, 'my_chats.html', {
-        'chats': chats
+        'grouped_chats': grouped_chats
     })
 
 @login_required
@@ -375,3 +400,70 @@ def download_attachment(request, attachment_id):
     response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
     response['Content-Type'] = attachment.content_type
     return response
+
+
+
+@login_required
+@require_http_methods(["POST"])
+def mark_job_completed(request, job_id):
+    try:
+        # Add debug logging
+        print(f"Attempting to mark job {job_id} as completed")
+        print(f"Request user: {request.user.username}")
+        
+        job = get_object_or_404(Job, id=job_id)
+        print(f"Found job: {job.title}")
+        print(f"Job client: {job.client}")
+        print(f"User profile: {request.user.profile}")
+        
+        # Check if the user is the client of the job
+        if request.user.profile != job.client:
+            print("Permission denied: User is not the job client")
+            return JsonResponse(
+                {'error': 'Permission denied: Only the job client can mark it as completed'},
+                status=403
+            )
+            
+        print(f"Current job status: {job.status}")
+        job.status = 'completed'
+        job.save()
+        print(f"Job saved with new status: {job.status}")
+        
+        # Send email to admin
+        admin_email = "info@nilltechsolutions.com"
+        subject = f"Job Marked as Completed: {job.title}"
+        message = (
+            f"Dear Admin,\n\n"
+            f"The following job has been marked as completed by the client:\n\n"
+            f"Job Title: {job.title}\n"
+            f"Client: {request.user.username} ({request.user.email})\n\n"
+            f"Please review the job status.\n\n"
+            f"Best regards,\n"
+            f"NillTech Solutions"
+        )
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [admin_email],
+            fail_silently=False,
+        )
+        print("Admin email sent successfully")
+        
+        return JsonResponse({
+            'message': 'Job marked as completed successfully.',
+            'job_id': job_id,
+            'status': 'completed'
+        })
+    except Job.DoesNotExist:
+        print(f"Job {job_id} not found")
+        return JsonResponse({
+            'error': f'Job {job_id} not found'
+        }, status=404)
+    except Exception as e:
+        import traceback
+        print(f"Error marking job as completed: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'error': str(e)
+        }, status=400)
