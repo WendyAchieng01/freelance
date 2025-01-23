@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from accounts.models import Profile
-from core.forms import CreateJobForm, JobAttemptForm, ResponseForm
+from core.forms import CreateJobForm, ResponseForm
 from core.models import *
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
@@ -245,28 +245,6 @@ def job_responses(request, job_id):
     }
     return render(request, 'job_responses.html', context)
 
-
-
-
-@login_required
-@user_passes_test(lambda u: u.profile.user_type == 'freelancer')
-def freelancer_job_attempt(request, job_id):
-    job = get_object_or_404(Job, pk=job_id)
-    if job.is_max_freelancers_reached:
-        return JsonResponse({'status': 'error', 'message': 'Maximum number of freelancers reached.'})
-
-    if request.method == 'POST':
-        form = JobAttemptForm(request.POST)
-        if form.is_valid():
-            attempt = form.save(commit=False)
-            attempt.freelancer = request.user.profile
-            attempt.job = job
-            attempt.save()
-            return JsonResponse({'status': 'success'})
-    else:
-        form = JobAttemptForm()
-
-    return render(request, 'freelancer_job_attempt.html', {'form': form, 'job': job})
 
 @login_required
 @user_passes_test(lambda u: u.profile.user_type == 'client')
