@@ -60,15 +60,6 @@ class Response(models.Model):
     def __str__(self):
         return f"Response by {self.user.username} for {self.job.title}"
 
-class JobAttempt(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='attempts')
-    freelancer = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('job', 'freelancer',)
-
-
 
 class Chat(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='chats')

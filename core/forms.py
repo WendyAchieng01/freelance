@@ -1,5 +1,5 @@
 from django import forms
-from .models import Job, JobAttempt, Response
+from .models import Job, Response
 
 class ResponseForm(forms.ModelForm):
     class Meta:
@@ -152,9 +152,5 @@ class CreateJobForm(forms.ModelForm):
             'category': forms.Select(choices=Job.CATEGORY_CHOICES)
         }
 
-class JobAttemptForm(forms.ModelForm):
-    class Meta:
-        model = JobAttempt
-        fields = ['freelancer',]
 
 
