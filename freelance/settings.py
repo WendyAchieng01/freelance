@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from urllib import request
 from django.contrib.messages import constants as messages
 import ssl
 import socket
@@ -212,5 +213,12 @@ CSRF_COOKIE_SECURE = not DEBUG and not DEVELOPMENT
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG and not DEVELOPMENT else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG and not DEVELOPMENT
 SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+import logging
+logger = logging.getLogger(__name__)
+logger.debug(f"Secure: {request.is_secure()}, Host: {request.get_host()}")
+
 
 django_heroku.settings(locals())
