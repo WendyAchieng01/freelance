@@ -112,16 +112,15 @@ def contact(request):
         message_email = request.POST.get('message_email')
         message = request.POST.get('message')
 
-        # Send email using django-anymail and Mailgun
         send_mail(
             'Contact Form Submission from {}'.format(name),
             'From: {}\n{}'.format(message_email, message),
-            message_email,  # Sender's email
-            ['wendyachieng98@gmail.com'],  # Recipient's email
+            'info@nilltechsolutions.com',  
+            ['info@nilltechsolutions.com'],  
             fail_silently=False,
         )
         messages.success(request, 'Your message has been sent. Thank you!')
-        return HttpResponseRedirect(reverse('core:contact'))  # Redirect to a success page
+        return HttpResponseRedirect(reverse('core:contact'))  
     else:
         return render(request, 'contact.html')
     
@@ -146,19 +145,18 @@ def client_contact(request):
         email = request.POST.get('email')
         message = request.POST.get('message')
 
-        # Send the email
         try:
             send_mail(
-                'Contact Form Submission', # Subject
-                f'Name: {name}\nEmail: {email}\n\nMessage: {message}', # Message
-                email, # From email
-                ['wendyachieng98@gmail.com'], # To email(s)
+                'Contact Form Submission', 
+                f'Name: {name}\nEmail: {email}\n\nMessage: {message}', 
+                'info@nilltechsolutions.com',  
+                ['info@nilltechsolutions.com'],  
                 fail_silently=False,
             )
             messages.success(request, 'Your message has been sent. Thank you!')
         except Exception as e:
             messages.error(request, 'An error occurred while sending the email.')
-            print(e)
+            print(e)  
 
     return render(request, 'client_contact.html')
 
