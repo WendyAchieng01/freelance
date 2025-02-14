@@ -5,7 +5,7 @@ from django.core.validators import FileExtensionValidator
 from accounts.models import Profile
 
 
-# Create your models her
+# Create your models here
 class Job(models.Model):
     CATEGORY_CHOICES = (
         ('data_entry', 'Data Entry'),

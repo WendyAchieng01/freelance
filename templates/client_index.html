@@ -18,7 +18,7 @@
         <div class="col-lg-7 py-vh-6 position-relative" data-aos="fade-right">
             <h1 class="display-1 fw-bold mt-5">Find Top Talent Effortlessly!</h1>
             <p class="lead">Collaborate with expert freelancers to achieve your business goals. Post your project and get matched with professionals in no time.</p>
-            <a href="#" class="btn btn-dark btn-xl shadow me-3 rounded-0 my-5">Post a Project</a>
+            <a href="{% url 'core:client_posted_jobs' %}" class="btn btn-dark btn-xl shadow me-3 rounded-0 my-5">Post a Project</a>
           </div>
           
 
@@ -175,7 +175,7 @@
             <h2 class="display-6 mb-5">We're ready to turn your ideas into reality, are you?</h2>
           </div>
           <div class="col-12">
-            <a href="#" class="btn btn-warning btn-xl shadow me-3 mt-4" data-aos="fade-down">Get in touch</a>
+            <a href="{% url 'core:contact' %}" class="btn btn-warning btn-xl shadow me-3 mt-4" data-aos="fade-down">Get in touch</a>
           </div>
         </div>
       </div>
