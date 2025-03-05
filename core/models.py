@@ -39,6 +39,11 @@ class Job(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
     max_freelancers = models.IntegerField(default=1)
+    preferred_freelancer_level = models.CharField(max_length=50, choices=(
+        ('entry', 'Entry Level'),
+        ('intermediate', 'Intermediate'),
+        ('expert', 'Expert')
+    ), default='intermediate')
 
     @property
     def is_max_freelancers_reached(self):

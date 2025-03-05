@@ -1,0 +1,117 @@
+
+
+<style>
+    .verification-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    .verification-card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      padding: 2rem;
+    }
+    .verification-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .verification-icon {
+      font-size: 3rem;
+      color: #4a6cf7;
+      margin: 1rem 0;
+    }
+    .verification-message {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .verification-steps {
+      background-color: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+    }
+    .verification-steps h3 {
+      margin-top: 0;
+    }
+    .verification-steps ol {
+      margin-bottom: 0;
+    }
+    .verification-notice {
+      background-color: #fff8e5;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      border-left: 4px solid #ffc107;
+    }
+    .verification-notice p {
+      font-weight: 600;
+      margin-top: 0;
+    }
+    .verification-footer {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn-outline {
+      background-color: transparent;
+      color: #4a6cf7;
+      border: 1px solid #4a6cf7;
+    }
+    .btn-outline:hover {
+      background-color: #4a6cf7;
+      color: white;
+    }
+  </style>
+
+<div class="verification-container">
+  <div class="verification-card">
+    <div class="verification-header">
+      <h1>Verify Your Email</h1>
+      <div class="verification-icon">
+        <i class="fa fa-envelope-open-text"></i>
+      </div>
+    </div>
+    <div class="verification-content">
+      <p class="verification-message">
+        Thanks for signing up, <strong>{{ username }}</strong>!
+      </p>
+      <p>We've sent a verification email to <strong>{{ email }}</strong>.</p>
+      <div class="verification-steps">
+        <h3>Next steps:</h3>
+        <ol>
+          <li>Check your inbox for an email from us</li>
+          <li>Click the verification link in the email</li>
+          <li>Once verified, you can complete your profile</li>
+        </ol>
+      </div>
+      <div class="verification-notice">
+        <p><i class="fa fa-info-circle"></i> Didn't receive the email?</p>
+        <ul>
+          <li>Check your spam or junk folder</li>
+          <li>Make sure you entered the correct email address</li>
+          <li>
+            <a href="{% url 'accounts:resend_verification' user_id=user_id %}" class="btn btn-secondary">
+              Resend Verification Email
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="verification-footer">
+      <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Return to Sign In</a>
+      <a href="{% url 'core:index' %}" class="btn btn-outline">Go to Homepage</a>
+    </div>
+  </div>
+</div>
+

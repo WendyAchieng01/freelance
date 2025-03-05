@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    {% include 'client_navbar.html' %}
+{% endblock %}
+{% block content %}
+
+<h2>Client Portfolio</h2>
+
+<div>
+    <h3>Welcome, {{ profile.profile.user.username }}</h3>
+    <p><strong>Company Name:</strong> {{ profile.company_name }}</p>
+    <p><strong>Industry:</strong> {{ profile.get_industry_display }}</p>
+    <p><strong>Project Budget:</strong> ${{ profile.project_budget }}</p>
+    <p><strong>Preferred Freelancer Level:</strong> {{ profile.get_preferred_freelancer_level_display }}</p>
+    <p><strong>Website:</strong> <a href="{{ profile.company_website }}" target="_blank">{{ profile.company_website }}</a></p>
+
+    <h4>Languages Spoken:</h4>
+    <ul>
+        {% for language in profile.languages.all %}
+            <li>{{ language.name }}</li>
+        {% empty %}
+            <li>No languages added yet.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'accounts:edit_profile' user_id=request.user.id %}">Edit Profile</a>
+</div>
+
+{% endblock %}
