@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Portfolio{% endblock %}
+{% block content %}
+
+<div class="breadcrumb">
+  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+  <span class="breadcrumb-separator"></span>
+  <span class="breadcrumb-item current">Portfolio</span>
+</div>
+
+<h2>Freelancer Dashboard</h2>
+
+<div>
+    <h3>Welcome, {{ profile.profile.user.username }}</h3>
+    <p><strong>Bio:</strong> {{ profile.profile.bio }}</p>
+    <p><strong>Location:</strong> {{ profile.profile.location }}</p>
+    <p><strong>Phone:</strong> {{ profile.profile.phone }}</p>
+    <p><strong>Hourly Rate:</strong> ${{ profile.hourly_rate }}</p>
+    <p><strong>Experience:</strong> {{ profile.experience_years }} years</p>
+    <p><strong>Availability:</strong> {{ profile.get_availability_display }}</p>
+    
+    <h4>Skills:</h4>
+    <ul>
+        {% for skill in profile.skills.all %}
+            <li>{{ skill.name }}</li>
+        {% empty %}
+            <li>No skills added yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Languages:</h4>
+    <ul>
+        {% for language in profile.languages.all %}
+            <li>{{ language.name }}</li>
+        {% empty %}
+            <li>No languages added yet.</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Portfolio:</strong> <a href="{{ profile.portfolio_link }}" target="_blank">{{ profile.portfolio_link }}</a></p>
+
+    <a href="{% url 'accounts:edit_profile' user_id=request.user.id %}">Edit Profile</a>
+</div>
+
+{% endblock %}
