@@ -2514,6 +2514,68 @@ select {
   margin-top: clamp(15px, 3vw, 20px);
 }
 
+    .chat-container1 {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .chat-header {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .job-group {
+        margin-bottom: 30px;
+    }
+
+    .job-header {
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .job-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1f2937;
+    }
+
+    .chat-list {
+        border: 1px solid #e5e7eb;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .chat-item {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .chat-item:last-child {
+        border-bottom: none;
+    }
+
+    .chat-link {
+        display: block;
+        padding: 15px;
+        text-decoration: none;
+        color: #374151;
+        transition: background-color 0.2s;
+    }
+
+    .chat-link:hover {
+        background-color: #f9fafb;
+    }
+
+    .chat-user {
+        font-size: 16px;
+    }
+
+    .no-chats {
+        text-align: center;
+        padding: 30px;
+        color: #6b7280;
+    }
+
 @media (max-width: 640px) {
   .chat-container1 {
     width: 100%;
@@ -2715,9 +2777,9 @@ select {
 .custom-button {
   color: black;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 15px;
   border: none;
-  background: none;
+  background-color: #FFFDD0;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   position: relative;
