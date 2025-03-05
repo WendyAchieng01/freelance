@@ -189,6 +189,7 @@ class Skill(models.Model):
 class Language(models.Model):
     LANGUAGE_CHOICES = (
         ('english', 'English'),
+        ('swahili', 'Swahili'),
         ('spanish', 'Spanish'),
         ('french', 'French'),
         ('german', 'German'),
