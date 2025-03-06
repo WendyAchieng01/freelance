@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     'payments',
     'paypal.standard.ipn',
     'channels',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -157,6 +159,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dfg91rvuz',
+    'API_KEY': '178486747621657',
+    'API_SECRET': 'PRtOMuSCWZMsuRaLK3U-OVm_4ag'
+}
+
+# Set the default file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -197,8 +207,6 @@ CHANNEL_LAYERS = {
     }
 }
 
-#for attachment files
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 #for heroku csrf_token
 # CSRF Settings
