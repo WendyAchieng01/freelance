@@ -1,29 +1,214 @@
 {% extends 'base.html' %}
+
 {% block navbar %}
     {% include 'client_navbar.html' %}
 {% endblock %}
+
 {% block content %}
+<div class="breadcrumb">
+    <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+    <span class="breadcrumb-separator"></span>
+    <span class="breadcrumb-item current">Portfolio</span>
+  </div>
 
-<h2>Client Portfolio</h2>
-
-<div>
-    <h3>Welcome, {{ profile.profile.user.username }}</h3>
-    <p><strong>Company Name:</strong> {{ profile.company_name }}</p>
-    <p><strong>Industry:</strong> {{ profile.get_industry_display }}</p>
-    <p><strong>Project Budget:</strong> ${{ profile.project_budget }}</p>
-    <p><strong>Preferred Freelancer Level:</strong> {{ profile.get_preferred_freelancer_level_display }}</p>
-    <p><strong>Website:</strong> <a href="{{ profile.company_website }}" target="_blank">{{ profile.company_website }}</a></p>
-
-    <h4>Languages Spoken:</h4>
-    <ul>
-        {% for language in profile.languages.all %}
-            <li>{{ language.name }}</li>
-        {% empty %}
-            <li>No languages added yet.</li>
-        {% endfor %}
-    </ul>
-
-    <a href="{% url 'accounts:edit_profile' user_id=request.user.id %}">Edit Profile</a>
-</div>
-
+  <style>
+      .portfolio-container {
+          max-width: 1200px;
+          margin: 40px auto;
+          padding: 20px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 40px;
+          background-color: #f9f9f9;
+          border-radius: 10px;
+      }
+      .column-left, .column-right {
+          flex: 1;
+          min-width: 300px;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          padding: 2rem;
+      }
+      .column-left {
+          flex: 2; 
+      }
+      .section-title {
+          font-size: 1.5rem;
+          color: #333;
+          margin-bottom: 1rem;
+          border-bottom: 2px solid #1e7e34;
+          padding-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+      .info-item {
+          font-size: 1rem;
+          margin-bottom: 0.75rem;
+          color: #555;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+      .info-item strong {
+          color: #333;
+      }
+      .list-group-item {
+          border: none;
+          padding: 0.5rem 0;
+          color: #555;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+      .btn-update, .btn-action {
+          background-color: #1e7e34;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          font-size: 1rem;
+          font-weight: bold;
+          border-radius: 5px;
+          transition: background-color 0.3s;
+          display: inline-block;
+          text-decoration: none;
+          color: white;
+      }
+      .btn-update:hover, .btn-action:hover {
+          background-color: #166628;
+          color: white;
+      }
+      .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+          margin-top: 1.5rem;
+      }
+      .stat-box {
+          background-color: #f0f7ff;
+          padding: 1rem;
+          border-radius: 8px;
+          text-align: center;
+          color: #1e4d8c;
+      }
+      .activity-list {
+          max-height: 200px;
+          overflow-y: auto;
+          margin-top: 1rem;
+      }
+      .activity-item {
+          padding: 0.5rem 0;
+          border-bottom: 1px solid #eee;
+      }
+      .text-center-wrapper {
+          text-align: center;
+          margin-top: 1.5rem;
+      }
+      @media (max-width: 768px) {
+          .column-left, .column-right {
+              flex: 1 1 100%;
+              margin-bottom: 20px;
+          }
+          .portfolio-container {
+              padding: 15px;
+          }
+      }
+  </style>
+  
+  <div class="d-flex justify-content-center align-items-center min-vh-100">
+      <div class="portfolio-container">
+          <!-- Left Column: General Profile Info + Stats -->
+          <div class="column-left">
+              <h2 class="text-primary text-center mb-4">Client Portfolio</h2>
+              <h3 class="text-dark text-center mb-3">Welcome, {{ profile.profile.user.username }}</h3>
+  
+              {% if profile.profile.profile_pic %}
+                  <img src="{{ profile.profile.profile_pic.url }}" alt="Profile Picture" class="profile-pic">
+              {% else %}
+                  <p class="text-muted text-center">No profile picture uploaded.</p>
+              {% endif %}
+  
+              <div class="mt-3">
+                  <p class="info-item"><span>📧</span><strong>Email:</strong> {{ profile.profile.user.email }}</p>
+                  <p class="info-item"><span>📞</span><strong>Phone:</strong> {{ profile.profile.phone }}</p>
+                  <p class="info-item"><span>📍</span><strong>Location:</strong> {{ profile.profile.location|default:"Not provided" }}</p>
+                  <p class="info-item"><span>✍️</span><strong>Bio:</strong> {{ profile.profile.bio|default:"No bio available" }}</p>
+                  <p class="info-item"><span>💳</span><strong>Payment Method:</strong> {{ profile.profile.pay_id }} ({{ profile.profile.pay_id_no }})</p>
+                  <p class="info-item"><span>🆔</span><strong>ID Number:</strong> {{ profile.profile.id_card|default:"Not provided" }}</p>
+                  <p class="info-item"><span>👤</span><strong>User Type:</strong> {{ profile.profile.user_type|capfirst }}</p>
+                  <p class="info-item"><span>📱</span><strong>Device:</strong> {{ profile.profile.device|default:"Not specified" }}</p>
+              </div>
+  
+              <!-- Stats Section -->
+              <h3 class="section-title mt-4"><span>📊</span>Stats Overview</h3>
+              <div class="stats-grid">
+                  <div class="stat-box">
+                      <h4>Projects Posted</h4>
+                      <p>8</p> <!-- Placeholder, replace with real data -->
+                  </div>
+                  <div class="stat-box">
+                      <h4>Freelancers Hired</h4>
+                      <p>5</p> <!-- Placeholder -->
+                  </div>
+                  <div class="stat-box">
+                      <h4>Total Spent</h4>
+                      <p>$3,200</p> <!-- Placeholder -->
+                  </div>
+              </div>
+          </div>
+  
+          <!-- Right Column: Client Details + Activity -->
+          <div class="column-right">
+              <h3 class="section-title"><span>🏢</span>Client Details</h3>
+              <div class="mt-3">
+                  <p class="info-item"><span>🏭</span><strong>Company Name:</strong> {{ profile.company_name }}</p>
+                  <p class="info-item"><span>📋</span><strong>Industry:</strong> {{ profile.get_industry_display }}</p>
+                  <p class="info-item"><span>💰</span><strong>Project Budget:</strong> ${{ profile.project_budget }}</p>
+                  <p class="info-item"><span>🌟</span><strong>Preferred Freelancer Level:</strong> {{ profile.get_preferred_freelancer_level_display }}</p>
+                  <p class="info-item"><span>🌐</span><strong>Website:</strong> 
+                      <a href="{{ profile.company_website }}" target="_blank" class="text-info">
+                          {{ profile.company_website }}
+                      </a>
+                  </p>
+              </div>
+  
+              <h4 class="section-title mt-3"><span>🗣️</span>Languages Spoken</h4>
+              <ul class="list-group">
+                  {% for language in profile.languages.all %}
+                      <li class="list-group-item"><span>✔️</span>{{ language.name }}</li>
+                  {% empty %}
+                      <li class="list-group-item text-muted">No languages added yet.</li>
+                  {% endfor %}
+              </ul>
+  
+              <!-- Recent Activity Section -->
+              <h3 class="section-title mt-4"><span>⏰</span>Recent Activity</h3>
+              <div class="activity-list">
+                  <div class="activity-item">Posted project "App Development" - Mar 11, 2025</div>
+                  <div class="activity-item">Hired freelancer for "Web Design" - Mar 9, 2025</div>
+                  <div class="activity-item">Payment sent $800 - Mar 7, 2025</div>
+                  <!-- Replace with real data from your models -->
+              </div>
+  
+              <!-- Action Buttons -->
+              <div class="text-center-wrapper">
+                  <a href="{% url 'core:create_job' %}" class="btn-action mr-2">Post Project</a>
+                  <a href="{% url 'core:my_chats' %}" class="btn-action">Messages</a>
+                  <div class="mt-3">
+                      {% if profile.profile.user.id %}
+                          <a href="{% url 'accounts:client_form' user_id=profile.profile.user.id %}" class="btn-update">
+                              Edit Profile
+                          </a>
+                      {% elif user.id %}
+                          <a href="{% url 'accounts:client_form' user_id=user.id %}" class="btn-update">
+                              Edit Profile
+                          </a>
+                      {% else %}
+                          <p class="text-danger">Cannot edit profile: User ID not found</p>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 {% endblock %}

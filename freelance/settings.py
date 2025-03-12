@@ -45,7 +45,8 @@ ALLOWED_HOSTS = [
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "accounts:signup"
-LOGIN_URL = 'accounts:signup' 
+LOGIN_URL = '/' 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -64,8 +65,6 @@ INSTALLED_APPS = [
     'payments',
     'paypal.standard.ipn',
     'channels',
-    'cloudinary',
-    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +102,6 @@ ASGI_APPLICATION = 'freelance.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 DATABASES = {
     'default': {
@@ -111,10 +109,6 @@ DATABASES = {
         'NAME': BASE_DIR / "db.sqlite3",
     }
 }
-
-# Use PostgreSQL when deployed to Heroku
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -159,14 +153,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dfg91rvuz',
-    'API_KEY': '178486747621657',
-    'API_SECRET': 'PRtOMuSCWZMsuRaLK3U-OVm_4ag'
-}
-
-# Set the default file storage
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -207,6 +193,8 @@ CHANNEL_LAYERS = {
     }
 }
 
+#for attachment files
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 #for heroku csrf_token
 # CSRF Settings

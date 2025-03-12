@@ -34,7 +34,7 @@ class FreelancerForm(forms.Form):
     languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        label="Languages Spoken",
+        label="Languages Spoken*",
         required=True,
     )
     
@@ -59,7 +59,7 @@ class FreelancerForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     pay_id_no = forms.CharField(
-        label="Pay ID Number", 
+        label="Pay ID Number*", 
         max_length=20, 
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
@@ -68,7 +68,7 @@ class FreelancerForm(forms.Form):
         queryset=Skill.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=True,
-        label="Skills"
+        label="Skills*"
     )
     portfolio_link = forms.URLField(
         label="Portfolio URL (Optional)",
@@ -139,16 +139,30 @@ class ClientForm(forms.Form):
         label="",
         choices=(
             ('technology', 'Technology'),
-            ('marketing', 'Marketing'),
             ('finance', 'Finance'),
             ('healthcare', 'Healthcare'),
             ('education', 'Education'),
             ('retail', 'Retail'),
-            ('other', 'Other')
+            ('manufacturing', 'Manufacturing'),
+            ('entertainment', 'Entertainment'),
+            ('marketing', 'Marketing'),
+            ('consulting', 'Consulting'),
+            ('non_profit', 'Non-Profit'),
+            ('government', 'Government'),
+            ('legal', 'Legal Services'),
+            ('real_estate', 'Real Estate'),
+            ('hospitality', 'Hospitality'),
+            ('transportation', 'Transportation'),
+            ('agriculture', 'Agriculture'),
+            ('energy', 'Energy'),
+            ('telecom', 'Telecommunications'),
+            ('media', 'Media'),
+            ('other', 'Other'),
         ),
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     languages = forms.ModelMultipleChoiceField(
+        label="Languages Spoken*",
         queryset=Language.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=True, 
@@ -168,18 +182,18 @@ class ClientForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     pay_id_no = forms.CharField(
-        label="",
+        label="Pay ID Number*",
         max_length=20,
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Pay ID Number (Optional)'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Pay ID Number'})
     )
     company_website = forms.URLField(
         label="",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Website (Optional)'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''})
     )
     project_budget = forms.DecimalField(
-        label="",
+        label="Budget*",
         min_value=0,
         required=True,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Project Budget (USD)'})
@@ -225,24 +239,6 @@ class ClientForm(forms.Form):
         
         return user
     
-class UpdateUserForm(UserChangeForm):
-	password = None
-	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}), required=False)
-	first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}), required=False)
-	last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}), required=False)
-
-	class Meta:
-		model = User
-		fields = ('username', 'first_name', 'last_name', 'email')
-
-	def __init__(self, *args, **kwargs):
-		super(UpdateUserForm, self).__init__(*args, **kwargs)
-
-		self.fields['username'].widget.attrs['class'] = 'form-control'
-		self.fields['username'].widget.attrs['placeholder'] = 'User Name'
-		self.fields['username'].label = ''
-		self.fields['username'].help_text = '<span class="form-text text-muted"><small>Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small></span>'
-
 
 class ChangePasswordForm(SetPasswordForm):
 	class Meta:
@@ -262,28 +258,6 @@ class ChangePasswordForm(SetPasswordForm):
 		self.fields['new_password2'].label = ''
 		self.fields['new_password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
             
-
-class UserInfoForm(forms.ModelForm):
-    pay_id = forms.ChoiceField(label="", choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')), widget=forms.Select(attrs={'class':'form-control'}))
-    pay_id_no = forms.CharField(label="", max_length=20, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Pay ID Number'}))
-    profile_pic = forms.ImageField(label="Profile Picture", required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
-
-    def clean_profile_pic(self):
-            profile_pic = self.cleaned_data.get('profile_pic')
-            if profile_pic and not profile_pic.name:
-                self.add_error('profile_pic', 'Please select a profile picture.')
-            return profile_pic
-
-    class Meta:
-        model = Profile
-        fields = ('phone', 'location', 'bio', 'profile_pic', 'pay_id', 'pay_id_no', 'id_card')
-        widgets = {
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location'}),
-            'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Bio'}),
-            'id_card': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'National ID'}),
-        }
-
 
 class ProfileForm(forms.ModelForm):
     class Meta:
