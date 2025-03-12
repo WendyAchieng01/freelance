@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login
-from .forms import UpdateUserForm, ChangePasswordForm, ClientForm, FreelancerForm, UserInfoForm
+from .forms import ChangePasswordForm, ClientForm, FreelancerForm
 from django.contrib import messages
 from django.contrib.auth.models import User, auth 
 from django.db import transaction
@@ -248,51 +248,82 @@ def profile_creation(request):
 
 
 def client_form(request, user_id):
-    user = User.objects.get(pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
+    profile, created = Profile.objects.get_or_create(user=user)
+    
+    try:
+        client_profile = ClientProfile.objects.get(profile=profile)
+    except ClientProfile.DoesNotExist:
+        client_profile = None
 
     if request.method == 'POST':
-        form = ClientForm(request.POST)
+        form = ClientForm(request.POST, request.FILES)
         
         if form.is_valid():
             # Process form data
-            # First, ensure user profile exists
-            profile, created = Profile.objects.get_or_create(user=user)
-            
-            # Update profile fields
             profile.user_type = 'client'
-            profile.phone = form.cleaned_data['phone_number']
-            profile.location = form.cleaned_data['location']
-            profile.pay_id = form.cleaned_data['pay_id']
-            profile.pay_id_no = form.cleaned_data['pay_id_no']
+            profile.phone = form.cleaned_data.get('phone_number', '')
+            profile.location = form.cleaned_data.get('location', '')
+            profile.profile_pic = form.cleaned_data.get('photo')
             profile.save()
             
-            # Now create or update the ClientProfile
-            client_profile, created = ClientProfile.objects.get_or_create(profile=profile)
-            client_profile.company_name = form.cleaned_data['company_name']
-            client_profile.company_website = form.cleaned_data['company_website']
-            client_profile.industry = form.cleaned_data['industry']
-            client_profile.project_budget = form.cleaned_data['project_budget']
-            client_profile.preferred_freelancer_level = form.cleaned_data['preferred_freelancer_level']
+            # Create or update the ClientProfile
+            if not client_profile:
+                client_profile = ClientProfile(profile=profile)
+            
+            # Use the company name from the form if provided, otherwise use the username
+            client_profile.company_name = form.cleaned_data.get('company_name') or client_profile.profile.user.username
+            client_profile.industry = form.cleaned_data.get('industry', '')
+            client_profile.project_budget = form.cleaned_data.get('project_budget', 0)
+            client_profile.preferred_freelancer_level = form.cleaned_data.get('preferred_freelancer_level', '')
+            client_profile.company_website = form.cleaned_data.get('company_website', '')
             client_profile.save()
             
-            # Handle M2M relationship for languages after saving
-            if form.cleaned_data['languages']:
+            # Handle languages (M2M relationship)
+            if form.cleaned_data.get('languages'):
                 client_profile.languages.set(form.cleaned_data['languages'])
             
-            # Redirect to the index page
             return redirect('core:client_index')
     else:
-        # Pre-populate the form with the user's data from the session
-        signup_data = request.session.get('signup_data', {})
-        form = ClientForm(initial={
-            'email': signup_data.get('email', ''),
-            'company_name': signup_data.get('company_name', ''),  # Add this line
-        })
+        # Pre-populate the form with existing data
+        initial_data = {
+            'name': user.get_full_name() or user.username,
+            'email': user.email,
+        }
+        
+        # Add profile data if it exists
+        if profile:
+            initial_data.update({
+                'phone_number': profile.phone or '',
+                'location': profile.location or '',
+            })
+        
+        # Add client-specific data if it exists
+        if client_profile:
+            initial_data.update({
+                'company_name': client_profile.profile.user.username or '',
+                'industry': client_profile.industry or '',
+                'project_budget': client_profile.project_budget or 0,
+                'preferred_freelancer_level': client_profile.preferred_freelancer_level or '',
+                'company_website': client_profile.company_website or '',
+            })
+            
+            # For M2M field (languages)
+            if client_profile.languages.exists():
+                initial_data['languages'] = client_profile.languages.all()
+        
+        form = ClientForm(initial=initial_data)
     
     return render(request, 'registration/client_form.html', {'form': form})
 
 def freelancer_form(request, user_id):
-    user = User.objects.get(pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
+    profile, created = Profile.objects.get_or_create(user=user)
+    
+    try:
+        freelancer_profile = FreelancerProfile.objects.get(profile=profile)
+    except FreelancerProfile.DoesNotExist:
+        freelancer_profile = None
 
     if request.method == 'POST':
         form = FreelancerForm(request.POST, request.FILES)
@@ -324,33 +355,42 @@ def freelancer_form(request, user_id):
             if form.cleaned_data['languages']:
                 freelancer_profile.languages.set(form.cleaned_data['languages'])
             
-            # Redirect to the index page
+            
             return redirect('core:index')
     else:
-        # Pre-populate the form with the user's data from the session
-        signup_data = request.session.get('signup_data', {})
-        form = FreelancerForm(initial={
-            'name': signup_data.get('username', ''),
-            'email': signup_data.get('email', ''),
-        })
+        # Pre-populate the form with existing data
+        initial_data = {
+            'name': user.get_full_name() or user.username,
+            'email': user.email,
+        }
+        
+        # Add profile data if it exists
+        if profile:
+            initial_data.update({
+                'phone_number': profile.phone or '',
+                'location': profile.location or '',
+                'pay_id': profile.pay_id or '',
+                'pay_id_no': profile.pay_id_no or '',
+            })
+        
+        # Add freelancer-specific data if it exists
+        if freelancer_profile:
+            initial_data.update({
+                'portfolio_link': freelancer_profile.portfolio_link or '',
+                'experience_years': freelancer_profile.experience_years or 0,
+                'hourly_rate': freelancer_profile.hourly_rate or 0,
+                'availability': freelancer_profile.availability or '',
+            })
+            
+            # For M2M fields, pre-select the existing values
+            if freelancer_profile.skills.exists():
+                initial_data['skills'] = freelancer_profile.skills.all()
+            if freelancer_profile.languages.exists():
+                initial_data['languages'] = freelancer_profile.languages.all()
+        
+        form = FreelancerForm(initial=initial_data)
     
     return render(request, 'registration/freelancer_form.html', {'form': form})
-
-def update_user(request):
-    if request.user.is_authenticated:
-        current_user = User.objects.get(id=request.user.id)
-        user_form = UpdateUserForm(request.POST or None, instance=current_user)
-
-        if user_form.is_valid():
-            user_form.save()
-
-            messages.success(request, "User Has Been Updated")
-            return redirect('core:index')
-        return render(request, 'registration/update_user.html', {'user_form':user_form})
-    
-    else: 
-        messages.success(request, "You Must Be Logged In To Access This Page!!")
-        return redirect('accounts:login')
 
 @login_required
 def update_password(request):
@@ -371,24 +411,6 @@ def update_password(request):
 
     return render(request, "registration/update_password.html", {'form': form})
 
-def update_info(request):
-    if request.user.is_authenticated:
-        current_user = Profile.objects.get(user__id=request.user.id)
-        form = UserInfoForm(request.POST or None, request.FILES or None, instance=current_user)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your Info Has Been Updated")
-            return redirect('core:index')
-        else:
-            # You can remove or modify the logger.error line if you want
-            print("Form is not valid: ", form.errors)
-
-    else:
-        messages.success(request, "You Must Be Logged In To Access This Page!!")
-        return redirect('accounts:login')
-
-    return render(request, 'registration/update_info.html', {'form': form})
 
 @csrf_exempt
 @login_required
@@ -402,21 +424,7 @@ def update_profile_pic(request):
             return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'})
 
-def client_update_user(request):
-    if request.user.is_authenticated:
-        current_user = User.objects.get(id=request.user.id)
-        user_form = UpdateUserForm(request.POST or None, instance=current_user)
 
-        if user_form.is_valid():
-            user_form.save()
-
-            messages.success(request, "User Has Been Updated")
-            return redirect('core:index')
-        return render(request, 'client/client_update_user.html', {'user_form':user_form})
-    
-    else: 
-        messages.success(request, "You Must Be Logged In To Access This Page!!")
-        return redirect('accounts:login')
 
 def client_update_password(request):
     if request.user.is_authenticated:
@@ -441,62 +449,26 @@ def client_update_password(request):
         messages.success(request, "You Must Be Logged In To View That Page!!!")
         return redirect('core:index')
     
-def client_update_info(request):
-    if request.user.is_authenticated:
-        current_user = Profile.objects.get(user__id=request.user.id)
-        form = UserInfoForm(request.POST or None, request.FILES or None, instance=current_user)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your Info Has Been Updated")
-            return redirect('core:index')
-        else:
-            # You can remove or modify the logger.error line if you want
-            print("Form is not valid: ", form.errors)
-
-    else:
-        messages.success(request, "You Must Be Logged In To Access This Page!!")
-        return redirect('accounts:login')
-
-    return render(request, 'client/client_update_info.html', {'form': form})
-
-
-@login_required
-def edit_profile(request, user_id):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-
-    if profile.user_type == 'freelancer':
-        freelancer_profile, created = FreelancerProfile.objects.get_or_create(profile=profile)
-        form = FreelancerForm(instance=freelancer_profile)
-    else:
-        client_profile, created = ClientProfile.objects.get_or_create(profile=profile)
-        form = ClientForm(instance=client_profile)
-
-    if request.method == "POST":
-        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
-        user_form = form.__class__(request.POST, instance=form.instance)
-
-        if profile_form.is_valid() and user_form.is_valid():
-            profile_form.save()
-            user_form.save()
-            return redirect('core:index')  
-
-    profile_form = ProfileForm(instance=profile)
-    return render(request, 'registration/edit_portfolio.html', {
-        'profile_form': profile_form,
-        'user_form': form
-    })
 
 @login_required
 def freelancer_portfolio(request, user_id):
     user = get_object_or_404(User, id=user_id)
     profile, created = Profile.objects.get_or_create(user=user)
+    # Make sure FreelancerProfile exists
     freelancer_profile, created = FreelancerProfile.objects.get_or_create(profile=profile)
-    return render(request, 'registration/freelancer_portfolio.html', {'profile': freelancer_profile})
+    
+    # Pass the profile object, not the freelancer_profile
+    return render(request, 'registration/freelancer_portfolio.html', {'profile': profile})
+
 
 @login_required
 def client_portfolio(request, user_id):
     user = get_object_or_404(User, id=user_id)
     profile, created = Profile.objects.get_or_create(user=user)
-    client_profile, created = ClientProfile.objects.get_or_create(profile=profile)
+    
+    try:
+        client_profile = ClientProfile.objects.get(profile=profile)
+    except ClientProfile.DoesNotExist:
+        client_profile = None
+    
     return render(request, 'registration/client_portfolio.html', {'profile': client_profile})

@@ -3,44 +3,222 @@
 {% block title %}Portfolio{% endblock %}
 {% block content %}
 
+
 <div class="breadcrumb">
   <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
   <span class="breadcrumb-separator"></span>
   <span class="breadcrumb-item current">Portfolio</span>
 </div>
-
-<h2>Freelancer Dashboard</h2>
-
-<div>
-    <h3>Welcome, {{ profile.profile.user.username }}</h3>
-    <p><strong>Bio:</strong> {{ profile.profile.bio }}</p>
-    <p><strong>Location:</strong> {{ profile.profile.location }}</p>
-    <p><strong>Phone:</strong> {{ profile.profile.phone }}</p>
-    <p><strong>Hourly Rate:</strong> ${{ profile.hourly_rate }}</p>
-    <p><strong>Experience:</strong> {{ profile.experience_years }} years</p>
-    <p><strong>Availability:</strong> {{ profile.get_availability_display }}</p>
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        background-color: #f9f9f9; 
+        border-radius: 10px;
+    }
+    .column-left, .column-right {
+        flex: 1;
+        min-width: 300px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+    .column-left {
+        flex: 2; 
+    }
     
-    <h4>Skills:</h4>
-    <ul>
-        {% for skill in profile.skills.all %}
-            <li>{{ skill.name }}</li>
-        {% empty %}
-            <li>No skills added yet.</li>
-        {% endfor %}
-    </ul>
+    .section-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #1e7e34;
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; 
+    }
+    .info-item {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .info-item strong {
+        color: #333;
+    }
+    .list-group-item {
+        border: none;
+        padding: 0.5rem 0;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-update, .btn-action {
+        background-color: #1e7e34;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        display: inline-block;
+        text-decoration: none;
+        color: white;
+    }
+    .btn-update:hover, .btn-action:hover {
+        background-color: #166628;
+        color: white;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .stat-box {
+        background-color: #f0f7ff;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        color: #1e4d8c;
+    }
+    .activity-list {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 1rem;
+    }
+    .activity-item {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    .text-center-wrapper {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .column-left, .column-right {
+            flex: 1 1 100%;
+            margin-bottom: 20px;
+        }
+        .dashboard-container {
+            padding: 15px;
+        }
+    }
+</style>
 
-    <h4>Languages:</h4>
-    <ul>
-        {% for language in profile.languages.all %}
-            <li>{{ language.name }}</li>
-        {% empty %}
-            <li>No languages added yet.</li>
-        {% endfor %}
-    </ul>
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+    <div class="dashboard-container">
+    <div class="column-left">
+            <h2 class="text-primary text-center mb-4">Freelancer Dashboard</h2>
+            <h3 class="text-dark text-center mb-3">{{ profile.user.username }}'s Profile</h3>
 
-    <p><strong>Portfolio:</strong> <a href="{{ profile.portfolio_link }}" target="_blank">{{ profile.portfolio_link }}</a></p>
+            {% if profile.profile_pic %}
+                <img src="{{ profile.profile_pic.url }}" alt="Profile Picture" class="profile-pic">
+            {% else %}
+                <p class="text-muted text-center">No profile picture uploaded.</p>
+            {% endif %}
 
-    <a href="{% url 'accounts:edit_profile' user_id=request.user.id %}">Edit Profile</a>
+            <div class="mt-3">
+                <p class="info-item"><span>📧</span><strong>Email:</strong> {{ profile.user.email }}</p>
+                <p class="info-item"><span>📞</span><strong>Phone:</strong> {{ profile.phone }}</p>
+                <p class="info-item"><span>📍</span><strong>Location:</strong> {{ profile.location|default:"Not provided" }}</p>
+                <p class="info-item"><span>✍️</span><strong>Bio:</strong> {{ profile.bio|default:"No bio available" }}</p>
+                <p class="info-item"><span>💳</span><strong>Payment Method:</strong> {{ profile.pay_id }} ({{ profile.pay_id_no }})</p>
+                <p class="info-item"><span>🆔</span><strong>ID Number:</strong> {{ profile.id_card|default:"Not provided" }}</p>
+                <p class="info-item"><span>👤</span><strong>User Type:</strong> {{ profile.user_type|capfirst }}</p>
+                <p class="info-item"><span>📱</span><strong>Device:</strong> {{ profile.device|default:"Not specified" }}</p>
+            </div>
+
+            <!-- Stats Section -->
+            <h3 class="section-title mt-4"><span>📊</span>Stats Overview</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Jobs Completed</h4>
+                    <p>14</p> <!-- Placeholder, replace with real data -->
+                </div>
+                <div class="stat-box">
+                    <h4>Total Earnings</h4>
+                    <p>$2,500</p> <!-- Placeholder -->
+                </div>
+                <div class="stat-box">
+                    <h4>Rating</h4>
+                    <p>4.8 ★</p> <!-- Placeholder -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Freelancer Details, Portfolio, Activity -->
+        <div class="column-right">
+            {% if profile.user_type == 'freelancer' and profile.freelancer_profile %}
+                <h3 class="section-title"><span>💼</span>Freelancer Details</h3>
+                <div class="mt-3">
+                    <p class="info-item"><span>⏳</span><strong>Experience:</strong> {{ profile.freelancer_profile.experience_years }} years</p>
+                    <p class="info-item"><span>💰</span><strong>Hourly Rate:</strong> ${{ profile.freelancer_profile.hourly_rate }}</p>
+                    <p class="info-item"><span>🕒</span><strong>Availability:</strong> {{ profile.freelancer_profile.availability|title }}</p>
+                </div>
+
+                <h4 class="section-title mt-3"><span>🛠️</span>Skills</h4>
+                <ul class="list-group">
+                    {% for skill in profile.freelancer_profile.skills.all %}
+                        <li class="list-group-item"><span>✔️</span>{{ skill }}</li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No skills listed</li>
+                    {% endfor %}
+                </ul>
+
+                <h4 class="section-title mt-3"><span>🌐</span>Languages</h4>
+                <ul class="list-group">
+                    {% for language in profile.freelancer_profile.languages.all %}
+                        <li class="list-group-item"><span>🗣️</span>{{ language }}</li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No languages listed</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if profile.user_type == 'freelancer' and profile.freelancer_profile.portfolio_link %}
+                <h3 class="section-title mt-4"><span>📁</span>Portfolio</h3>
+                <p class="info-item">
+                    <strong>Portfolio Link:</strong> 
+                    <a href="{{ profile.freelancer_profile.portfolio_link }}" target="_blank" class="text-info">
+                        {{ profile.freelancer_profile.portfolio_link }}
+                    </a>
+                </p>
+            {% endif %}
+
+            <!-- Recent Activity Section -->
+            <h3 class="section-title mt-4"><span>⏰</span>Recent Activity</h3>
+            <div class="activity-list">
+                <div class="activity-item">Completed project "Website Redesign" - Mar 10, 2025</div>
+                <div class="activity-item">Received payment of $500 - Mar 8, 2025</div>
+                <div class="activity-item">Applied for "Logo Design" job - Mar 5, 2025</div>
+                <!-- Replace with real data from your models -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center-wrapper">
+                <a href="{% url 'core:freelancer_jobs' %}" class="btn-action mr-2">View Jobs</a>
+                <a href="{% url 'core:my_chats' %}" class="btn-action">Messages</a>
+                <div class="mt-3">
+                    {% if profile.user.id %}
+                        <a href="{% url 'accounts:freelancer_form' profile.user.id %}" class="btn-update">
+                            Update Profile
+                        </a>
+                    {% else %}
+                        <p class="text-danger">Error: User ID not found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}
+

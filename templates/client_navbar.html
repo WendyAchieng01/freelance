@@ -35,9 +35,10 @@
                   </svg>
               </button>
               <div class="dropdown-content">
-                  <a href="{% url 'accounts:client_update_user' %}"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                <a href="{% url 'accounts:client_portfolio' user.id %}">
+                    <i class="fa-solid fa-lock"></i> Portfolio
+                </a>
                   <a href="{% url 'accounts:client_update_password' %}"><i class="fa-solid fa-lock"></i> Password</a>
-                  <a href="{% url 'accounts:client_update_info' %}"><i class="fa-regular fa-user"></i> Update Profile</a>
                   <form id="logoutForm" action="{% url 'accounts:logout' %}" method="post">
                       {% csrf_token %}
                       <button type="submit" class="dropdown-item"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
