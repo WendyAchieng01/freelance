@@ -228,6 +228,67 @@ def resend_verification(request, user_id):
     
     return redirect('accounts:verification_pending')
 
+def update_email(request, user_id):
+    """
+    Update user's email and resend verification link
+    """
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(pk=user_id, is_active=False)
+            new_email = request.POST.get('new_email')
+            
+            # Check if the new email is already taken
+            if User.objects.filter(email=new_email).exclude(pk=user_id).exists():
+                messages.error(request, 'This email is already taken by another user.')
+                return redirect('accounts:verification_pending')
+            
+            # Update the user's email
+            user.email = new_email
+            user.save()
+            
+            # Update the email in session data
+            if 'signup_data' in request.session:
+                request.session['signup_data']['email'] = new_email
+                request.session.modified = True
+            
+            # Generate new verification token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Build verification URL
+            current_site = get_current_site(request)
+            verification_url = reverse('accounts:verify_email', kwargs={'uidb64': uid, 'token': token})
+            verification_link = f'http://{current_site.domain}{verification_url}'
+            
+            # Send verification email
+            subject = 'Verify your email address'
+            message = f'''
+            Hi {user.username},
+            
+            Your email has been updated. Please click the link below to verify your new email address:
+            
+            {verification_link}
+            
+            This link will expire in 24 hours.
+            
+            If you didn't request this change, please contact us immediately.
+            '''
+            
+            send_mail(
+                subject,
+                message,
+                'info@nilltechsolutions.com',
+                [new_email],
+                fail_silently=False,
+            )
+            
+            messages.success(request, f'Your email has been updated to {new_email}. A new verification email has been sent.')
+            
+        except User.DoesNotExist:
+            messages.error(request, 'User not found or already verified.')
+        
+    return redirect('accounts:verification_pending')
+
 def profile_creation(request):
     """
     Display the profile creation page with buttons to redirect to appropriate form.
