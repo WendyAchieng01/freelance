@@ -17,7 +17,7 @@ urlpatterns = [
     path('update-profile-pic/', views.update_profile_pic, name='update_profile_pic'),
     path('portfolio/freelancer/<int:user_id>/', views.freelancer_portfolio, name='freelancer_portfolio'),
     path('portfolio/client/<int:user_id>/', views.client_portfolio, name='client_portfolio'),
-
+    path('update-email/<int:user_id>/', views.update_email, name='update_email'),
     path('profile_creation/', views.profile_creation, name='profile_creation'),
 
     path("", views.signup, name="signup"),
