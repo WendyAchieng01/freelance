@@ -1,27 +1,29 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from accounts.models import Profile
+from accounts.models import FreelancerProfile, Profile
 from core.forms import CreateJobForm, ResponseForm
 from core.models import *
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, FileResponse
 from django.urls import reverse
 import json
 from freelance import settings
 from payment.views import initiate_payment
 from django.db.models import F, Count
 from django.core.exceptions import PermissionDenied
-from django.http import FileResponse
 from django.core.files.storage import default_storage
 import os
 from django.db.models import Prefetch
 from itertools import groupby
 from operator import attrgetter
 from django.views.decorators.http import require_http_methods
+from .matching import match_freelancers_to_job, recommend_jobs_to_freelancer
+from django.contrib.auth import get_user_model
 
-# Create your views here.
+User = get_user_model()
+
 @login_required
 def freelancer_index(request):
     if request.user.is_authenticated:
@@ -34,49 +36,51 @@ def freelancer_index(request):
 def jobs(request):
     if request.user.is_authenticated:
         category = request.GET.get('category')
-
-        # Exclude jobs that have reached their max freelancers
         jobs = Job.objects.prefetch_related('trainings') \
             .annotate(num_responses=Count('responses')) \
             .exclude(responses__user=request.user) \
             .exclude(status='completed') \
-            .exclude(num_responses__gte=F('max_freelancers'))  # Exclude jobs with max responses reached
-
+            .exclude(num_responses__gte=F('max_freelancers'))
+        
         if category:
             jobs = jobs.filter(category=category)
-
-        # Calculate remaining slots for each job
+        
         for job in jobs:
             job.remaining_slots = job.max_freelancers - job.responses.count()
+        
+        # Add recommended jobs for freelancers
+        recommended_jobs = []
+        if hasattr(request.user, 'profile') and request.user.profile.user_type == 'freelancer':
+            try:
+                freelancer_profile = request.user.profile.freelancer_profile  # Access through profile
+                recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile)
+            except FreelancerProfile.DoesNotExist:
+                # Handle case where freelancer profile doesn't exist yet
+                recommended_jobs = []
 
         categories = dict(Job.CATEGORY_CHOICES)
-        
         return render(request, 'jobs.html', {
             'jobs': jobs,
             'categories': categories,
-            'selected_category': category
+            'selected_category': category,
+            'recommended_jobs': recommended_jobs
         })
-    else:
-        return redirect('accounts:login')
-
+    return redirect('accounts:login')
 
 @login_required
 def singlejob(request, job_id):
     job = get_object_or_404(Job.objects.annotate(num_responses=Count('responses')), pk=job_id)
-
-    # Prevent further responses if max freelancers reached
+    
     if job.num_responses >= job.max_freelancers:
         messages.error(request, 'This job has reached the maximum number of freelancers.')
         return redirect('core:jobs')
-
-    # Check if the user already responded
+    
     if job.responses.filter(user=request.user).exists():
         messages.warning(request, 'You have already submitted a response for this job.')
         return redirect('core:jobs')
-
-    # Instantiate form with job category
+    
     form = ResponseForm(request.POST or None, request.FILES or None, job_category=job.category)
-
+    
     if request.method == 'POST':
         if form.is_valid():
             response = form.save(commit=False)
@@ -85,21 +89,26 @@ def singlejob(request, job_id):
             response.save()
             messages.success(request, 'Response submitted successfully.')
             return redirect('core:jobs')
-
+    
     responses = job.responses.all()
-    return render(request, 'single-job.html', {'job': job, 'form': form, 'responses': responses})
-
+    return render(request, 'single-job.html', {
+        'job': job,
+        'form': form,
+        'responses': responses
+    })
 
 @login_required
 def freelancer_jobs(request):
-    # Get the current freelancer's profile
     freelancer_profile = Profile.objects.get(user=request.user, user_type='freelancer')
-
-    # Get the jobs where the freelancer has submitted a response
     freelancer_jobs = Job.objects.filter(responses__user=request.user)
-
-    return render(request, 'freelancer_jobs.html', {'freelancer_jobs': freelancer_jobs})
-
+    
+    # Add recommended jobs
+    recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile.freelancer_profile)
+    
+    return render(request, 'freelancer_jobs.html', {
+        'freelancer_jobs': freelancer_jobs,
+        'recommended_jobs': recommended_jobs
+    })
     
 @login_required
 def about(request):
@@ -166,8 +175,7 @@ def client_index(request):
     if request.user.is_authenticated:
         jobs = Job.objects.all()
         return render(request, 'client_index.html', {'jobs': jobs})
-    else:
-        return redirect('accounts:login')
+    return redirect('accounts:login')
 
 @login_required
 @user_passes_test(is_client)
@@ -180,7 +188,6 @@ def create_job(request):
             return initiate_payment(request, amount=amount, email=email, job_form=form)
     else:
         form = CreateJobForm()
-
     categories = dict(Job.CATEGORY_CHOICES)
     return render(request, 'create_job.html', {
         'form': form,
@@ -192,14 +199,16 @@ def create_job(request):
 def client_posted_jobs(request):
     client_profile = Profile.objects.get(user=request.user, user_type='client')
     category = request.GET.get('category')
-    
     client_jobs = client_profile.jobs.filter(payment__verified=True)
     
     if category:
         client_jobs = client_jobs.filter(category=category)
     
-    categories = dict(Job.CATEGORY_CHOICES)
+    # Add matched freelancers (only those who responded) for each job
+    for job in client_jobs:
+        job.matched_freelancers = match_freelancers_to_job(job)
     
+    categories = dict(Job.CATEGORY_CHOICES)
     return render(request, 'client_posted_jobs.html', {
         'client_jobs': client_jobs,
         'categories': categories,
@@ -443,3 +452,14 @@ def mark_job_completed(request, job_id):
         return JsonResponse({
             'error': str(e)
         }, status=400)
+    
+@login_required
+@user_passes_test(is_client)
+def job_matches(request, job_id):
+    job = get_object_or_404(Job, pk=job_id, client__user=request.user)
+    matches = match_freelancers_to_job(job, max_matches=10)
+    
+    return render(request, 'job_matches.html', {
+        'job': job,
+        'matches': matches
+    })

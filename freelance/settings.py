@@ -38,7 +38,7 @@ DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1', 
-    'nilltech-174d9b1d5794.herokuapp.com', 
+    'https://web-production-b953.up.railway.app/',
     'www.nilltechsolutions.com', 
     'nilltechsolutions.com'
 ]
@@ -109,6 +109,14 @@ DATABASES = {
         'NAME': BASE_DIR / "db.sqlite3",
     }
 }
+
+# Use PostgreSQL in production (Railway)
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -201,7 +209,7 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://nilltech-174d9b1d5794.herokuapp.com',
+    'https://web-production-b953.up.railway.app/'
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com'
 ]

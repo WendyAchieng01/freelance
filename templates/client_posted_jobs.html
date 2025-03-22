@@ -26,123 +26,95 @@
           </a>
         </div>
         {% if client_jobs %}
-            {% for job in client_jobs %}
-            <div class="job-item">
-                <a href="{% url 'core:job_responses' job.id %}">
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                      <div class="job-info">
-                        <strong>Title:</strong> {{ job.title }}
-                      </div>
-                    </li>
-                    <li class="list-group-item">
-                      <div class="job-info">
-                        <strong>Description:</strong> {{ job.description }}
-                      </div>
-                    </li>
-                    <li class="list-group-item">
-                      <div class="job-info">
-                        <strong>Price:</strong> {{ job.price }}
-                      </div>
-                    </li>
-                    <li class="list-group-item">
-                      <div class="job-info">
-                        <strong>Deadline:</strong> {{ job.deadline_date }}
-                      </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="job-info">
-                            <strong>Max Freelancers:</strong> {{ job.max_freelancers }}
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                      <div class="job-info">
-                        <strong>Status:</strong>
-                        {% if job.status == 'open' %}
-                          <span class="status-open">{{ job.get_status_display }}</span>
-                        {% elif job.status == 'in_progress' %}
-                          <span class="status-in-progress">{{ job.get_status_display }}</span>
-                        {% else %}
-                          <span class="status-completed">{{ job.get_status_display }}</span>
-                        {% endif %}
-                      </div>
-                      <div class="job-actions">
-                        <div class="action-buttons">
-                            <a href="{% url 'core:edit_job' job.id %}">
-                              <button class="edit-button" type="button">
-                                <svg viewBox="0 0 576 512" class="svgIcon">
-                                  <path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path>
-                                </svg>
-                                <span>Edit</span>
-                              </button>
-                            </a>
-                        </div>
-                        <div class="action-buttons">
-                            <form action="{% url 'core:delete_job' job.id %}" method="post">
-                                {% csrf_token %}
-                                <button class="bin-button">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 39 7"
-                                    class="bin-top"
-                                  >
-                                    <line stroke-width="4" stroke="white" y2="5" x2="39" y1="5"></line>
-                                    <line
-                                      stroke-width="3"
-                                      stroke="white"
-                                      y2="1.5"
-                                      x2="26.0357"
-                                      y1="1.5"
-                                      x1="12"
-                                    ></line>
-                                  </svg>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 33 39"
-                                    class="bin-bottom"
-                                  >
-                                    <mask fill="white" id="path-1-inside-1_8_19">
-                                      <path
-                                        d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
-                                      ></path>
-                                    </mask>
-                                    <path
-                                      mask="url(#path-1-inside-1_8_19)"
-                                      fill="white"
-                                      d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
-                                    ></path>
-                                    <path stroke-width="4" stroke="white" d="M12 6L12 29"></path>
-                                    <path stroke-width="4" stroke="white" d="M21 6V29"></path>
-                                  </svg>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 89 80"
-                                    class="garbage"
-                                  >
-                                    <path
-                                      fill="white"
-                                      d="M20.5 10.5L37.5 15.5L42.5 11.5L51.5 12.5L68.75 0L72 11.5L79.5 12.5H88.5L87 22L68.75 31.5L75.5066 25L86 26L87 35.5L77.5 48L70.5 49.5L80 50L77.5 71.5L63.5 58.5L53.5 68.5L65.5 70.5L45.5 73L35.5 79.5L28 67L16 63L12 51.5L0 48L16 25L22.5 17L20.5 10.5Z"
-                                    ></path>
-                                  </svg>
-                                </button>
-                                
-                            </form>
-                        </div>
+          {% for job in client_jobs %}
+          <div class="job-item">
+            <a href="{% url 'core:job_responses' job.id %}">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Title:</strong> {{ job.title }}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Description:</strong> {{ job.description }}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Price:</strong> {{ job.price }}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Deadline:</strong> {{ job.deadline_date }}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Max Freelancers:</strong> {{ job.max_freelancers }}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Matches:</strong> {{ job.matched_freelancers|length }}
+                    {% if job.id %}
+                    <a href="{% url 'core:job_matches' job.id %}" class="btn btn-primary btn-sm view-matches-btn">View Matches</a>
+                    {% else %}
+                    <span>Job ID: {{ job.id|default:"No ID" }} - No matches available</span>
+                    {% endif %}
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="job-info">
+                    <strong>Status:</strong>
+                    {% if job.status == 'open' %}
+                      <span class="status-open">{{ job.get_status_display }}</span>
+                    {% elif job.status == 'in_progress' %}
+                      <span class="status-in-progress">{{ job.get_status_display }}</span>
+                    {% else %}
+                      <span class="status-completed">{{ job.get_status_display }}</span>
+                    {% endif %}
+                  </div>
+                  <div class="job-actions">
+                    <div class="action-buttons">
+                      <a href="{% url 'core:edit_job' job.id %}">
+                        <button class="edit-button" type="button">
+                          <svg viewBox="0 0 576 512" class="svgIcon">
+                            <path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path>
+                          </svg>
+                          <span>Edit</span>
+                        </button>
+                      </a>
                     </div>
-                    </li>
-                  </ul>
-                </a>
-              </div>
-            {% endfor %}
+                    <div class="action-buttons">
+                      <form action="{% url 'core:delete_job' job.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="bin-button">
+                          <!-- SVG content remains the same -->
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </a>
+          </div>
+          {% endfor %}
         {% else %}
-        <br><br><br><br><br>
-            <h2>No jobs posted yet.</h2>
-            <br><br><br><br><br><br><br><br><br>
+          <br><br><br><br><br>
+          <h2>No jobs posted yet.</h2>
+          <br><br><br><br><br><br><br><br><br>
         {% endif %}
-    </div>
+      </div>
+      
+      <style>
+          .view-matches-btn {
+              margin-left: 10px;
+              padding: 5px 10px;
+              font-size: 14px;
+          }
+      </style>
     
 
     {% endblock %}

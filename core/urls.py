@@ -27,4 +27,5 @@ urlpatterns = [
     path('chat/<int:chat_id>/', views.chat_room, name='chat_room'),
     path('attachment/<int:attachment_id>/download/', views.download_attachment, name='download_attachment'),
     path('mark-job-completed/<int:job_id>/', views.mark_job_completed, name='mark_job_completed'),
+    path('job/<int:job_id>/matches/', views.job_matches, name='job_matches'),
 ]

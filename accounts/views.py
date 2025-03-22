@@ -16,6 +16,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+import logging
 
 def login(request):
     if request.method == 'POST':
@@ -511,16 +512,30 @@ def client_update_password(request):
         return redirect('core:index')
     
 
+logger = logging.getLogger(__name__)
+
 @login_required
 def freelancer_portfolio(request, user_id):
+    logger.debug(f"Request headers: {request.headers}")
     user = get_object_or_404(User, id=user_id)
     profile, created = Profile.objects.get_or_create(user=user)
-    # Make sure FreelancerProfile exists
     freelancer_profile, created = FreelancerProfile.objects.get_or_create(profile=profile)
-    
-    # Pass the profile object, not the freelancer_profile
-    return render(request, 'registration/freelancer_portfolio.html', {'profile': profile})
 
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        logger.debug("AJAX request detected")
+        data = {
+            'username': user.username,
+            'skills': list(freelancer_profile.skills.values_list('name', flat=True)),
+            'languages': list(freelancer_profile.languages.values_list('name', flat=True)),
+            'experience_years': freelancer_profile.experience_years,
+            'hourly_rate': float(freelancer_profile.hourly_rate),
+            'availability': freelancer_profile.availability,
+            'portfolio_link': freelancer_profile.portfolio_link if freelancer_profile.portfolio_link else None
+        }
+        return JsonResponse(data)
+    
+    logger.debug("Returning HTML response")
+    return render(request, 'registration/freelancer_portfolio.html', {'profile': profile})
 
 @login_required
 def client_portfolio(request, user_id):
