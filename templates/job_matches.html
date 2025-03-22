@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    {% include 'client_navbar.html' %}
+{% endblock %}
+{% block content %}
+
+      <div class="breadcrumb">
+        <a href="{% url 'core:client_index' %}" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator"></span>
+        <span class="breadcrumb-item current">About</span>
+      </div>
+
+<div class="container job-matches-container">
+    <h2 class="text-center matches-heading">{{ job.title }} - Responding Freelancer Matches</h2>
+        
+    <div class="job-details-card">
+        <p class="job-details-info"><strong>Category:</strong> {{ job.get_category_display }}</p>
+        <p class="job-details-info"><strong>Price:</strong> ${{ job.price }}</p>
+        <p class="job-details-info"><strong>Deadline:</strong> {{ job.deadline_date }}</p>
+        <p class="job-details-info"><strong>Max Freelancers:</strong> {{ job.max_freelancers }}</p>
+    </div>
+
+    {% if matches %}
+    <div class="matches-row">
+        {% for freelancer, score in matches %}
+        <div class="match-card">
+            <div class="card-body match-card-body">
+                <h5 class="card-title match-card-title">{{ freelancer.profile.user.username }}</h5>
+                <p class="card-text match-card-text"><strong>Match Score:</strong> {{ score }}%</p>
+                <p class="card-text match-card-text"><strong>Hourly Rate:</strong> ${{ freelancer.hourly_rate }}</p>
+                <p class="card-text match-card-text"><strong>Experience:</strong> {{ freelancer.experience_years }} years</p>
+                <p class="card-text match-card-text"><strong>Availability:</strong> {{ freelancer.get_availability_display }}</p>
+                <p class="card-text match-card-text"><strong>Skills:</strong> {{ freelancer.skills.all|join:", " }}</p>
+                <p class="card-text match-card-text"><strong>Languages:</strong> {{ freelancer.languages.all|join:", " }}</p>
+                {% if freelancer.portfolio_link %}
+                <p class="card-text match-card-text"><a href="{{ freelancer.portfolio_link }}" target="_blank">View Portfolio</a></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center no-matches">No suitable freelancers found for this job yet.</p>
+    {% endif %}
+
+    <div class="back-link">
+        <a href="{% url 'core:client_posted_jobs' %}" class="btn btn-secondary">Back to Posted Jobs</a>
+    </div>
+</div>
+
+<style>
+    .job-matches-container {
+        padding: 20px;
+    }
+    .matches-heading {
+        margin-bottom: 20px;
+    }
+    .job-details-card {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .matches-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .match-card {
+        flex: 1 1 300px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .match-card-body {
+        padding: 15px;
+    }
+    .match-card-title {
+        margin-bottom: 10px;
+    }
+    .match-card-text {
+        margin-bottom: 5px;
+    }
+    .no-matches {
+        margin: 20px 0;
+    }
+    .back-link {
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+     {% block footer %}
+        {% include 'client_footer.html' %}
+     {% endblock %}
