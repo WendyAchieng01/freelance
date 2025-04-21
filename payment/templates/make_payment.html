@@ -18,7 +18,7 @@
         <div class="payment-title text-center mb-4">
             <h4>Select a <span style="color: #2d2f92">Payment</span> method</h4>
         </div>
-        <form action="#">
+        <form>
                 <div class="payment-methods">
                     <label for="mpesa" class="payment-method">
                         <input type="radio" name="payment" id="mpesa">
@@ -64,50 +64,55 @@
             </div>
         </form>
     </div>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const mpesaRadio = document.getElementById('mpesa');
-            const visaRadio = document.getElementById('visa');
-            const paypalRadio = document.getElementById('paypal');
-        
-            mpesaRadio.addEventListener('click', function() {
-                payWithPaystack();
-            });
-        
-            visaRadio.addEventListener('click', function() {
-                payWithPaystack();
-            });
-
-            paypalRadio.addEventListener('click', function() {
-                // Redirect to the job_purchase view for PayPal
-                window.location.href = "{% url 'payments:job_purchase' job_id %}";
-            });
-        });
-        
-        function payWithPaystack() {
-            let currency = "KES";
-            let plan = "";
-            let ref = "{{ payment.ref }}";
-            let amount = "{{ payment.amount }}";
-            let obj = {
+            // Get all payment method radio buttons
+            const paymentRadios = document.querySelectorAll('input[name="payment"]');
+            const paymentData = {
                 key: "{{ paystack_pub_key }}",
                 email: "{{ payment.email }}",
                 amount: "{{ amount_value }}",
-                ref: ref,
-                callback: function (response) {
+                ref: "{{ payment.ref }}",
+                currency: "KES",
+                callback: function(response) {
                     window.location.href = "{% url 'payment:verify_payment' payment.ref %}";
                 },
+                onClose: function() {
+                    console.log('Payment window closed');
+                }
             };
-            if (Boolean(currency)) {
-                obj.currency = currency.toUpperCase();
+        
+            // Add click handler to each radio button
+            paymentRadios.forEach(radio => {
+                radio.addEventListener('click', function() {
+                    // Handle different payment methods
+                    switch(this.id) {
+                        case 'mpesa':
+                        case 'visa':
+                            payWithPaystack(paymentData);
+                            break;
+                        case 'paypal':
+                            window.location.href = "{% url 'payments:initiate_response_payment' job_id response_id %}";
+                            break;
+                        case 'binance':
+                            // Add Binance handling if needed
+                            console.log('Binance selected - implementation pending');
+                            break;
+                    }
+                });
+            });
+        
+            function payWithPaystack(config) {
+                try {
+                    var handler = PaystackPop.setup(config);
+                    handler.openIframe();
+                } catch (error) {
+                    console.error('Paystack initialization failed:', error);
+                }
             }
-            if (Boolean(plan)) {
-                obj.plan = plan;
-            }
-            var handler = PaystackPop.setup(obj);
-            handler.openIframe();
-        }
-      </script>
+        });
+        </script>
 
     {% endblock %}
     {% block footer %}

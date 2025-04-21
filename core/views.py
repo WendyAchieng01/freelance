@@ -1,3 +1,4 @@
+from venv import logger
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from accounts.models import FreelancerProfile, Profile
@@ -183,11 +184,17 @@ def create_job(request):
     if request.method == 'POST':
         form = CreateJobForm(request.POST)
         if form.is_valid():
-            amount = form.cleaned_data['price']
-            email = request.user.email
-            return initiate_payment(request, amount=amount, email=email, job_form=form)
+            # Save the job without payment verification
+            job = form.save(commit=False)
+            job.client = request.user.profile
+            job.status = 'open'  # Ensure status is set to open
+            job.save()
+            
+            messages.success(request, 'Job posted successfully!')
+            return redirect('core:client_posted_jobs')
     else:
         form = CreateJobForm()
+    
     categories = dict(Job.CATEGORY_CHOICES)
     return render(request, 'create_job.html', {
         'form': form,
@@ -199,7 +206,9 @@ def create_job(request):
 def client_posted_jobs(request):
     client_profile = Profile.objects.get(user=request.user, user_type='client')
     category = request.GET.get('category')
-    client_jobs = client_profile.jobs.filter(payment__verified=True)
+    
+    # Remove payment verification filter
+    client_jobs = client_profile.jobs.all()
     
     if category:
         client_jobs = client_jobs.filter(category=category)
@@ -252,33 +261,6 @@ def job_responses(request, job_id):
     }
     return render(request, 'job_responses.html', context)
 
-
-@login_required
-@user_passes_test(lambda u: u.profile.user_type == 'client')
-def mark_response_as_done(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)  # Parse the JSON payload
-            job_id = data.get("job_id")  # Retrieve job_id from the parsed JSON
-
-            if not job_id:
-                return JsonResponse({"status": "error", "message": "Job ID not provided."})
-
-            # Verify job ownership and update status
-            job = Job.objects.get(pk=job_id, client=request.user.profile)
-            job.status = "completed"
-            job.save()
-
-            return JsonResponse({"status": "success"})
-        except Job.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "Job not found or you are not authorized."})
-        except json.JSONDecodeError:
-            return JsonResponse({"status": "error", "message": "Invalid JSON payload."})
-
-    return JsonResponse({"status": "error", "message": "Invalid request method."})
-
-
-
 @login_required
 @user_passes_test(lambda u: u.profile.user_type == 'client')
 def client_responses(request):
@@ -291,22 +273,53 @@ def client_responses(request):
 @user_passes_test(lambda u: u.profile.user_type == 'client')
 def accept_response(request, job_id, response_id):
     if request.method == 'POST':
-        response = get_object_or_404(Response, id=response_id, job_id=job_id)
-        freelancer = response.user.profile
-
-        # Check if a chat already exists
-        chat, created = Chat.objects.get_or_create(
-            job=response.job,
-            client=request.user.profile,
-            freelancer=freelancer
-        )
-
-        return JsonResponse({
-            'status': 'success',
-            'chat_id': chat.id,
-            'message': 'Chat initiated successfully.',
-        })
+        try:
+            # Fetch the specific response and associated job
+            response = get_object_or_404(Response, id=response_id, job_id=job_id)
+            job = response.job
+            
+            # Check if this user is the job owner
+            if job.client.user != request.user:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'You are not authorized to accept responses for this job.'
+                })
+            
+            # Get the client and freelancer profiles
+            client_profile = request.user.profile  # The logged-in client
+            freelancer_profile = response.user.profile  # The freelancer who submitted the response
+            
+            # Create a new chat for communication
+            chat = Chat.objects.create(
+                job=job,
+                client=client_profile,  # Set the client
+                freelancer=freelancer_profile  # Set the freelancer
+            )
+            
+            # Update job to mark selected freelancer
+            job.selected_freelancer = response.user
+            job.status = 'in_progress'
+            job.save()
+            
+            return JsonResponse({
+                'status': 'success',
+                'chat_id': chat.id,
+                'message': 'Response accepted successfully'
+            })
+            
+        except Exception as e:
+            # Log the error and return an error response
+            logger.error(f"Error in accept_response: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': 'An unexpected error occurred. Please try again.'
+            })
     
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method.'
+    })
+
 @login_required
 def my_chats(request):
     """View for listing all chats grouped by jobs for the current user"""

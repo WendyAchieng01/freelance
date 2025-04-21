@@ -74,7 +74,10 @@ def calculate_match_score(job, freelancer):
     elif freelancer_rate <= client_budget * 1.2:
         score += weights['rate'] * 0.5
     
-    job_languages = set(job.client.client_profile.languages.all())
+    job_languages = set()
+    if hasattr(job.client, 'client_profile'):
+        job_languages = set(job.client.client_profile.languages.all())
+
     freelancer_languages = set(freelancer.languages.all())
     if job_languages and freelancer_languages:
         lang_overlap = len(job_languages.intersection(freelancer_languages))

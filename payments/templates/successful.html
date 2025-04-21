@@ -1,3 +1,4 @@
+<!-- successful.html -->
 {% extends 'base.html' %}
 {% block navbar %}
     {% include 'client_navbar.html' %}
@@ -5,7 +6,7 @@
 {% block content %}
 
   <div class="breadcrumb">
-    <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+    <a href="{% url 'core:client_index' %}" class="breadcrumb-item">Home</a>
     <span class="breadcrumb-separator"></span>
     <span class="breadcrumb-item current">Payment Successful</span>
   </div>
@@ -18,13 +19,15 @@
             <p class="product-detail">Description: {{ job.description }}</p>
         </div>
     </div>
-    <form action="{% url 'payments:verify_payment' job_id %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Verify Payment</button>
+    <p>{{ messages }}</p>
+    <form action="{% url 'payments:verify_payment' job_id response_id %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Verify Payment</button>
     </form>
+    <p>If payment isn't verified yet, please wait a few seconds and try again.</p>
   </div>
 
-  {% endblock %}
-     {% block footer %}
-        {% include 'client_footer.html' %}
-     {% endblock %}
+{% endblock %}
+{% block footer %}
+    {% include 'client_footer.html' %}
+{% endblock %}

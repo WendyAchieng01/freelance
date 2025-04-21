@@ -16,7 +16,27 @@
 
 <div class="container jobs-container">
   <h2 class="text-center jobs-heading">Available Jobs</h2>
-  
+  {% if user.profile.user_type == 'freelancer' and recommended_jobs %}
+  <div class="recommended-jobs-container">
+    <h2 class="text-center jobs-heading">Recommended Jobs For You</h2>
+    <div class="row jobs-row">
+      {% for job, score in recommended_jobs %}
+      <div class="col-md-6 col-lg-6 jobs-col">
+        <div class="card job-card recommended-job">
+          <a href="{% url 'core:singlejob' job.id %}" class="stretched-link">
+            <div class="card-body job-card-body">
+              <h5 class="card-title job-card-title">{{ job.title }}</h5>
+              <p class="card-text job-card-text">Match Score: {{ score }}%</p>
+              <p class="card-text job-card-text">Price: ${{ job.price }}</p>
+              <p class="card-text job-card-text">Deadline: {{ job.deadline_date }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
   {% if jobs %}
   <div class="row jobs-row">
     {% for job in jobs %}
@@ -44,27 +64,7 @@
   <p class="text-center">No jobs available at the moment.</p>
   {% endif %}
 
-  {% if user.profile.user_type == 'freelancer' and recommended_jobs %}
-  <div class="recommended-jobs-container">
-    <h2 class="text-center jobs-heading">Recommended Jobs For You</h2>
-    <div class="row jobs-row">
-      {% for job, score in recommended_jobs %}
-      <div class="col-md-6 col-lg-6 jobs-col">
-        <div class="card job-card recommended-job">
-          <a href="{% url 'core:singlejob' job.id %}" class="stretched-link">
-            <div class="card-body job-card-body">
-              <h5 class="card-title job-card-title">{{ job.title }}</h5>
-              <p class="card-text job-card-text">Match Score: {{ score }}%</p>
-              <p class="card-text job-card-text">Price: ${{ job.price }}</p>
-              <p class="card-text job-card-text">Deadline: {{ job.deadline_date }}</p>
-            </div>
-          </a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
+  
 </div>
 
 

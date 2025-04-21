@@ -20,16 +20,16 @@ class Job(models.Model):
         ('social_media', 'Social Media Management'),
         ('ai_training', 'AI Model Training'),
     )
-
+    
     STATUS_CHOICES = (
         ('open', 'Open'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
     )
-
+    
     title = models.CharField(max_length=100)
     category = models.CharField(
-        max_length=20, 
+        max_length=20,
         choices=CATEGORY_CHOICES
     )
     description = models.TextField()
@@ -44,13 +44,26 @@ class Job(models.Model):
         ('intermediate', 'Intermediate'),
         ('expert', 'Expert')
     ), default='intermediate')
-
+    
+    # New field to track selected freelancer
+    selected_freelancer = models.ForeignKey(
+        User, 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='selected_jobs'
+    )
+    
+    # New field to track payment status (optional, depending on your payment flow)
+    payment_verified = models.BooleanField(default=False)
+    
     @property
     def is_max_freelancers_reached(self):
-        return self.attempts.count() >= self.max_freelancers
-
+        return self.responses.count() >= self.max_freelancers
+    
     def __str__(self):
-        return f"{self.title} ({self.get_category_display()})"  
+        return f"{self.title} ({self.get_category_display()})"
+    
 
 class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

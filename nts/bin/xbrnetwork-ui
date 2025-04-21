@@ -1,4 +1,4 @@
-#!/home/wendy/Documents/Projects/freelance/nts/bin/python
+#!/home/wendy/Documents/Projects/freelance/nts/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
