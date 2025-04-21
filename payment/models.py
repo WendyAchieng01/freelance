@@ -12,6 +12,7 @@ class Payment(models.Model):
     verified = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='payment') 
+    extra_data = models.JSONField(default=dict, blank=True, null=True)
 
     class Meta:
         ordering = ('-date_created',)

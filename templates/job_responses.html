@@ -169,34 +169,23 @@
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Accept button functionality
-  const acceptButtons = document.querySelectorAll('.accept-btn');
-  
-  acceptButtons.forEach(button => {
-    button.addEventListener('click', function () {
-      const jobId = this.dataset.jobId;
-      const responseId = this.dataset.responseId;
+{% url 'payment:initiate_response_payment' 0 0 as payment_url_template %}
 
-      fetch(`/core/accept_response/${jobId}/${responseId}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          initializeChat(data.chat_id);
-        } else {
-          alert('Error initiating chat: ' + data.message);
-        }
-      })
-      .catch(error => console.error('Error:', error));
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Accept button functionality
+    const acceptButtons = document.querySelectorAll('.accept-btn');
+    
+    acceptButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const jobId = this.dataset.jobId;
+        const responseId = this.dataset.responseId;
+        
+        // Use the Django-generated URL pattern and replace the placeholders
+        const paymentUrl = "{{ payment_url_template }}".replace('0/0', `${jobId}/${responseId}`);
+        window.location.href = paymentUrl;
+      });
     });
-  });
 
   function initializeChat(chatId) {
     const chatPopup = document.createElement('div');

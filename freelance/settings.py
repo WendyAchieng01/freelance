@@ -15,7 +15,6 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 import ssl
 import socket
-import django_heroku
 import dj_database_url
 from decouple import config
 
@@ -171,8 +170,9 @@ STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PAYSTACK_SECRET_KEY = 'sk_live_e54b19c2cba0b1407340100aa4d2f7341f548b19'
-PAYSTACK_PUBLIC_KEY = 'pk_live_0b56e9bcbe587357694251936f3e5aefd8ba5bc6'
+
+PAYSTACK_SECRET_KEY = 'sk_test_fe4eb40364e4a71a3b387c7a334861ed7977538f'
+PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 
 
 MESSAGE_TAGS = {
@@ -229,4 +229,3 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 
-django_heroku.settings(locals())

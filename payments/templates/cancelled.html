@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block title %}Payment Cancelled{% endblock %}
+{% block navbar %}
+    {% include 'client_navbar.html' %}
+{% endblock %}
 {% block content %}
 
   <div class="breadcrumb">
-    <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+    <a href="{% url 'core:client_index' %}" class="breadcrumb-item">Home</a>
     <span class="breadcrumb-separator"></span>
     <span class="breadcrumb-item current">Payment Cancelled</span>
   </div>
@@ -17,7 +18,10 @@
             <p class="product-detail">Description: {{ job.description }}</p>
         </div>
     </div>
-    <a href="{% url 'payments:job_purchase' job.id %}" class="btn  retry-button">Retry Payment</a>
+    <a href="{% url 'payments:initiate_response_payment' job_id response_id %}" class="btn  retry-button">Retry Payment</a>
   </div>
 
-{% endblock %}
+  {% endblock %}
+  {% block footer %}
+      {% include 'client_footer.html' %}
+  {% endblock %}

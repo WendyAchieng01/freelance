@@ -20,7 +20,6 @@ urlpatterns = [
     path('client/contact/', views.client_contact, name='client_contact'),
     path('client/posted_jobs/', views.client_posted_jobs, name='client_posted_jobs'),
     path("job_responses/<int:job_id>/", views.job_responses, name="job_responses"),
-    path('mark_response_as_done/', views.mark_response_as_done, name='mark_response_as_done'),
     path('delete-job/<int:job_id>/', views.delete_job, name='delete_job'),
     path('accept_response/<int:job_id>/<int:response_id>/', views.accept_response, name='accept_response'),
     path('my-chats/', views.my_chats, name='my_chats'),
