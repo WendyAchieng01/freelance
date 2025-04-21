@@ -128,3 +128,4 @@ lineItemContainer.addEventListener("click", (event) => {
     event.target.closest(".line-item-form").remove();
   }
 });
+
