@@ -113,6 +113,32 @@
               padding: 15px;
           }
       }
+      /* In your CSS file */
+        .review {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: #ddd;
+            font-size: 1.2em;
+        }
+
+        .star.filled {
+            color: #ffcc00;
+        }
+
+        .rating-summary {
+            margin-bottom: 20px;
+        }
   </style>
   
   <div class="d-flex justify-content-center align-items-center min-vh-100">
@@ -169,6 +195,24 @@
                       <a href="{{ profile.company_website }}" target="_blank" class="text-info">
                           {{ profile.company_website }}
                       </a>
+                  </p>
+                  <p>
+                    <!-- Somewhere in your user profile template -->
+                    <div class="profile-reviews">
+                        <h3>Reviews</h3>
+                        <div class="rating-summary">
+                            <p>Average Rating: {{ avg_rating|floatformat:1 }} / 5 ({{ review_count }} reviews)</p>
+                            <!-- Star display similar to user_reviews.html -->
+                        </div>
+                        
+                        <a href="{% url 'core:user_reviews' user_profile.username %}" class="btn btn-sm btn-primary">View All Reviews</a>
+                        
+                        {% if user.is_authenticated and user != user_profile %}
+                            <a href="{% url 'core:create_review' user_profile.username %}" class="btn btn-sm btn-success">
+                                {% if has_reviewed %}Edit Your Review{% else %}Write a Review{% endif %}
+                            </a>
+                        {% endif %}
+                    </div>
                   </p>
               </div>
   

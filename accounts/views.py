@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login
+
+from core.models import Review
 from .forms import ChangePasswordForm, ClientForm, FreelancerForm
 from django.contrib import messages
 from django.contrib.auth.models import User, auth 
@@ -556,8 +558,20 @@ def freelancer_portfolio(request, user_id):
         }
         return JsonResponse(data)
     
+    has_rated_freelancer = False
+    if request.user.is_authenticated and request.user != profile.user:
+        has_rated_freelancer = Review.objects.filter(
+            reviewer=request.user, 
+            recipient=profile.user
+        ).exists()
+
     logger.debug("Returning HTML response")
-    return render(request, 'registration/freelancer_portfolio.html', {'profile': profile})
+    return render(request, 'registration/freelancer_portfolio.html', {
+        'profile': profile,
+        'user_profile': user,
+        'has_rated_freelancer': has_rated_freelancer,
+    })
+
 
 @login_required
 def client_portfolio(request, user_id):
@@ -569,4 +583,16 @@ def client_portfolio(request, user_id):
     except ClientProfile.DoesNotExist:
         client_profile = None
     
-    return render(request, 'registration/client_portfolio.html', {'profile': client_profile})
+    # Check if the current user has already rated this client
+    has_rated_client = False
+    if request.user.is_authenticated and request.user != user:
+        has_rated_client = Review.objects.filter(
+            reviewer=request.user, 
+            recipient=user
+        ).exists()
+    
+    return render(request, 'registration/client_portfolio.html', {
+        'profile': client_profile, 
+        'user_profile': user,
+        'has_rated_client': has_rated_client
+    })

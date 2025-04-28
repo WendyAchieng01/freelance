@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="review-form-container">
+    <div class="review-form">
+        <h2 class="review-form-title">
+            {% if is_update %}Edit{% else %}Create{% endif %} Review for {{ recipient.username }}
+        </h2>
+        
+        <form method="post" class="review-form-fields">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.rating.label_tag }}
+                <div class="star-rating-selector">
+                    {{ form.rating }}
+                </div>
+                {% if form.rating.errors %}
+                    <div class="form-error">{{ form.rating.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.comment.label_tag }}
+                {{ form.comment }}
+                {% if form.comment.errors %}
+                    <div class="form-error">{{ form.comment.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <a href="{% url 'core:user_reviews' recipient.username %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .review-form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .review-form {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .review-form-title {
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .review-form-fields {
+        margin-top: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .star-rating-selector {
+        margin-bottom: 10px;
+    }
+    
+    .star-rating-selector select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-height: 120px;
+        font-family: inherit;
+        font-size: 16px;
+    }
+    
+    .form-error {
+        color: #d9534f;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    
+    .form-actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+    
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn:active {
+        transform: translateY(1px);
+    }
+    
+    .btn-primary {
+        background-color: #4a89dc;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #3a79cc;
+    }
+    
+    .btn-secondary {
+        background-color: #e4e7ea;
+        color: #333;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #d4d7da;
+    }
+</style>
+{% endblock %}

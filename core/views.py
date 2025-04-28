@@ -16,12 +16,14 @@ from django.db.models import F, Count
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 import os
+from .forms import ReviewForm
 from django.db.models import Prefetch
 from itertools import groupby
 from operator import attrgetter
 from django.views.decorators.http import require_http_methods
 from .matching import match_freelancers_to_job, recommend_jobs_to_freelancer
 from django.contrib.auth import get_user_model
+from django.http import FileResponse, Http404
 
 User = get_user_model()
 
@@ -106,9 +108,19 @@ def freelancer_jobs(request):
     # Add recommended jobs
     recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile.freelancer_profile)
     
+    # Add review status for each job
+    jobs_with_review_status = []
+    for job in freelancer_jobs:
+        has_rated = job.client.user.reviews_received.filter(reviewer=request.user).exists()
+        jobs_with_review_status.append({
+            'job': job,
+            'has_rated': has_rated
+        })
+    
     return render(request, 'freelancer_jobs.html', {
-        'freelancer_jobs': freelancer_jobs,
-        'recommended_jobs': recommended_jobs
+        'freelancer_jobs': jobs_with_review_status,
+        'recommended_jobs': recommended_jobs,
+        'user': request.user
     })
     
 @login_required
@@ -254,10 +266,20 @@ def job_responses(request, job_id):
     job = get_object_or_404(Job, pk=job_id)
     responses = job.responses.all()
     
+    # Add review status for each response
+    responses_with_review_status = []
+    for response in responses:
+        has_rated = response.user.reviews_received.filter(reviewer=request.user).exists() if response.user else False
+        responses_with_review_status.append({
+            'response': response,
+            'has_rated': has_rated
+        })
+    
     # Pass responses with extra_data to the template
     context = {
         'job': job,
-        'responses': responses,
+        'responses': responses_with_review_status,
+        'user': request.user  # Ensure user is passed for template checks
     }
     return render(request, 'job_responses.html', context)
 
@@ -267,7 +289,20 @@ def client_responses(request):
     client_profile = Profile.objects.get(user=request.user, user_type='client')
     client_jobs = client_profile.jobs.all()
     responses = Response.objects.filter(job__in=client_jobs)
-    return render(request, 'job_responses.html', {'responses': responses})
+    
+    # Add review status for each response
+    responses_with_review_status = []
+    for response in responses:
+        has_rated = response.user.reviews_received.filter(reviewer=request.user).exists() if response.user else False
+        responses_with_review_status.append({
+            'response': response,
+            'has_rated': has_rated
+        })
+    
+    return render(request, 'job_responses.html', {
+        'responses': responses_with_review_status,
+        'user': request.user
+    })
 
 @login_required
 @user_passes_test(lambda u: u.profile.user_type == 'client')
@@ -476,3 +511,120 @@ def job_matches(request, job_id):
         'job': job,
         'matches': matches
     })
+
+
+def download_response_file(request, response_id, filename):
+    """
+    View to handle downloading of response attachments
+    """
+    # Get the response object
+    response = get_object_or_404(Response, id=response_id)
+    
+    # Get the associated job
+    job = response.job
+    
+    # Check if user has permission to download
+    # Allow access if user is:
+    # 1. Staff member
+    # 2. Freelancer who submitted the response
+    # 3. Client who posted the job (through Profile)
+    is_client = hasattr(request.user, 'profile') and request.user.profile == job.client
+    
+    if not (request.user.is_staff or 
+            request.user == response.user or 
+            is_client):
+        raise Http404("You don't have permission to access this file")
+    
+    # Get file path from extra_data
+    if 'sample_work' in response.extra_data and 'path' in response.extra_data['sample_work']:
+        file_path = response.extra_data['sample_work']['path']
+        
+        # Security check to ensure the requested filename matches
+        if os.path.basename(file_path) != filename:
+            raise Http404("File not found")
+        
+        # Check if file exists
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            # Return the file
+            return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=filename)
+    
+    # File not found
+    raise Http404("File not found")
+
+
+@login_required
+def create_review(request, username):
+    recipient = get_object_or_404(User, username=username)
+    
+    # Prevent users from reviewing themselves
+    if request.user == recipient:
+        messages.error(request, "You cannot review yourself.")
+        return redirect('accounts:freelancer_portfolio', recipient.id)
+    
+    # Check if the reviewer and recipient have a completed job together
+    if request.user.profile.user_type == 'client':
+        # Client reviewing freelancer
+        has_completed_job = Job.objects.filter(
+            client=request.user.profile,
+            selected_freelancer=recipient,
+            status='completed'
+        ).exists()
+    else:
+        # Freelancer reviewing client
+        has_completed_job = Job.objects.filter(
+            client=recipient.profile,
+            selected_freelancer=request.user,
+            status='completed'
+        ).exists()
+    
+    if not has_completed_job:
+        messages.error(request, "You can only review users you have completed a job with.")
+        return redirect('core:freelancer_jobs', recipient.id)
+    
+    # Check if review already exists
+    existing_review = Review.objects.filter(reviewer=request.user, recipient=recipient).first()
+    
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=existing_review)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.reviewer = request.user
+            review.recipient = recipient
+            review.save()
+            messages.success(request, "Your review has been saved.")
+            return redirect('core:freelancer_jobs', recipient.id)
+    else:
+        form = ReviewForm(instance=existing_review)
+    
+    return render(request, 'create_review.html', {
+        'form': form,
+        'recipient': recipient,
+        'is_update': existing_review is not None
+    })
+
+def user_reviews(request, username):
+    user = get_object_or_404(User, username=username)
+    reviews = Review.objects.filter(recipient=user).order_by('-created_at')
+    
+    # Calculate average rating
+    avg_rating = reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
+    
+    return render(request, 'user_reviews.html', {  # Fixed template path
+        'user_profile': user,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'review_count': reviews.count()
+    })
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, reviewer=request.user)
+    
+    if request.method == 'POST':
+        username = review.recipient.username
+        review.delete()
+        messages.success(request, "Your review has been deleted.")
+        # Change this redirect
+        return redirect('core:index', review.recipient.id)
+    
+    return render(request, 'delete_review.html', {'review': review})  # Fixed template path

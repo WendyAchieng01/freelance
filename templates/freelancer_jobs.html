@@ -15,46 +15,59 @@
             <h2>My Jobs</h2>
         </div>
         {% if freelancer_jobs %}
-        {% for job in freelancer_jobs %}
-        <div class="job-item1">
-            <ul class="list-group1 list-group-flush">
-                <li class="list-group-item1">
-                    <div class="job-info1">
-                        <strong>Title:</strong> {{ job.title }}
-                    </div>
-                </li>
-                <li class="list-group-item1">
-                    <div class="job-info1">
-                        <strong>Description:</strong> {{ job.description }}
-                    </div>
-                </li>
-                <li class="list-group-item1">
-                    <div class="job-info1">
-                        <strong>Price:</strong> ${{ job.price }}
-                    </div>
-                </li>
-                <li class="list-group-item1">
-                    <div class="job-info1">
-                        <strong>Deadline:</strong> {{ job.deadline_date }}
-                    </div>
-                </li>
-                <li class="list-group-item1">
-                    <div class="job-info1">
-                        <strong>Status:</strong>
-                        {% if job.status == 'open' %}
-                        <span class="status-open">{{ job.get_status_display }}</span>
-                        {% elif job.status == 'in_progress' %}
-                        <span class="status-in-progress">{{ job.get_status_display }}</span>
-                        {% else %}
-                        <span class="status-completed">{{ job.get_status_display }}</span>
-                        {% endif %}
-                    </div>
-                </li>
-            </ul>
-        </div>
-        {% endfor %}
+            {% for job_data in freelancer_jobs %}
+            <div class="job-item1">
+                <ul class="list-group1 list-group-flush">
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            <strong>Title:</strong> {{ job_data.job.title }}
+                        </div>
+                    </li>
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            <strong>Description:</strong> {{ job_data.job.description }}
+                        </div>
+                    </li>
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            <strong>Price:</strong> ${{ job_data.job.price }}
+                        </div>
+                    </li>
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            <strong>Deadline:</strong> {{ job_data.job.deadline_date }}
+                        </div>
+                    </li>
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            <strong>Status:</strong>
+                            {% if job_data.job.status == 'open' %}
+                            <span class="status-open">{{ job_data.job.get_status_display }}</span>
+                            {% elif job_data.job.status == 'in_progress' %}
+                            <span class="status-in-progress">{{ job_data.job.get_status_display }}</span>
+                            {% else %}
+                            <span class="status-completed">{{ job_data.job.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% if job_data.job.status == 'completed' %}
+                    <li class="list-group-item1">
+                        <div class="job-info1">
+                            {% if user.is_authenticated %}
+                                {% if job_data.has_rated %}
+                                    <a href="{% url 'core:create_review' job_data.job.client.user.username %}" class="btn btn-secondary">Edit Your Review for {{ job_data.job.client.user.username }}</a>
+                                {% else %}
+                                    <a href="{% url 'core:create_review' job_data.job.client.user.username %}" class="btn btn-primary">Rate the Client</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endfor %}
         {% else %}
-        <h2>There are No Jobs Currently Avaliable. Come Back Later...</h2>
+            <h2>There are No Jobs Currently Available. Come Back Later...</h2>
         {% endif %}
     </div>
 {% endblock %}

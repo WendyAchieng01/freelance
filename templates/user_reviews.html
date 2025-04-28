@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br>
+<div class="reviews-container">
+    <div class="user-reviews">
+        <h2 class="reviews-title">Reviews for {{ user_profile.username }}</h2>
+        
+        <div class="rating-summary">
+            <div class="rating-info">
+                <div class="average-rating">
+                    <span class="rating-number">{{ avg_rating|floatformat:1 }}</span>
+                    <span class="rating-max">/5</span>
+                </div>
+                <div class="star-rating large">
+                    {% for i in '12345'|make_list %}
+                        {% if forloop.counter <= avg_rating|add:0.5|floatformat:0 %}
+                            <span class="star filled">★</span>
+                        {% else %}
+                            <span class="star">★</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="review-count">
+                    <span>{{ review_count }} review{{ review_count|pluralize }}</span>
+                </div>
+            </div>
+        </div>
+        
+        {% if reviews %}
+            <div class="reviews-list">
+                {% for review in reviews %}
+                    <div class="review">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <span class="reviewer">{{ review.reviewer.username }}</span>
+                                <span class="date">{{ review.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="rating">
+                                {% for i in '12345'|make_list %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span class="star filled">★</span>
+                                    {% else %}
+                                        <span class="star">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="comment">{{ review.comment }}</div>
+                        {% if user == review.reviewer %}
+                            <div class="review-actions">
+                                <a href="{% url 'core:create_review' user_profile.username %}" class="btn btn-sm btn-secondary">Edit</a>
+                                <a href="{% url 'core:delete_review' review.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-reviews">
+                <p>No reviews yet.</p>
+            </div>
+        {% endif %}
+        
+        <div class="page-actions">
+            <a href="{% url 'core:create_review' user_profile.username %}" class="btn btn-primary">Write a Review</a>
+            <a href="{% url 'accounts:freelancer_portfolio' user_profile.id %}" class="btn btn-secondary">Back to Profile</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reviews-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .user-reviews {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .reviews-title {
+        color: #333;
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+    }
+    
+    .rating-summary {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .rating-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .average-rating {
+        display: flex;
+        align-items: baseline;
+    }
+    
+    .rating-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+    }
+    
+    .rating-max {
+        font-size: 1.2rem;
+        color: #777;
+        margin-left: 2px;
+    }
+    
+    .star-rating {
+        margin: 10px 0;
+    }
+    
+    .star-rating.large .star {
+        font-size: 1.8rem;
+    }
+    
+    .star {
+        color: #ddd;
+        font-size: 1.2rem;
+        margin: 0 1px;
+    }
+    
+    .star.filled {
+        color: #ffb52e;
+    }
+    
+    .review-count {
+        color: #777;
+        font-size: 0.95rem;
+    }
+    
+    .reviews-list {
+        margin-top: 20px;
+    }
+    
+    .review {
+        border-bottom: 1px solid #eee;
+        padding: 20px 0;
+    }
+    
+    .review:last-child {
+        border-bottom: none;
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    
+    .reviewer-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .reviewer {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.05rem;
+    }
+    
+    .date {
+        color: #888;
+        font-size: 0.85rem;
+        margin-top: 4px;
+    }
+    
+    .comment {
+        line-height: 1.6;
+        color: #444;
+    }
+    
+    .review-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .btn-primary {
+        background-color: #4a89dc;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #3a79cc;
+    }
+    
+    .btn-secondary {
+        background-color: #e4e7ea;
+        color: #333;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #d4d7da;
+    }
+    
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #d43c2b;
+    }
+    
+    .no-reviews {
+        margin: 30px 0;
+        text-align: center;
+        color: #888;
+        font-style: italic;
+    }
+    
+    .page-actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+    }
+    
+    @media (max-width: 600px) {
+        .review-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .rating {
+            margin-top: 10px;
+        }
+        
+        .page-actions {
+            flex-direction: column;
+        }
+        
+        .page-actions .btn {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+{% endblock %}
