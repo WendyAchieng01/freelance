@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from accounts.models import Profile
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.conf import settings
 
 
 # Create your models here
@@ -115,3 +117,25 @@ class MessageAttachment(models.Model):
 
     def __str__(self):
         return f"Attachment: {self.filename}"
+    
+class Review(models.Model):
+    RATING_CHOICES = (
+        (1, '1 - Poor'),
+        (2, '2 - Below Average'),
+        (3, '3 - Average'),
+        (4, '4 - Good'),
+        (5, '5 - Excellent'),
+    )
+    
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reviews_given', on_delete=models.CASCADE)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='reviews_received', on_delete=models.CASCADE)
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], choices=RATING_CHOICES)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('reviewer', 'recipient')  # Prevents multiple reviews from same user
+    
+    def __str__(self):
+        return f"{self.reviewer.username}'s review for {self.recipient.username}"

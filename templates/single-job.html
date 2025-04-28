@@ -1,71 +1,94 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}{{ job.title }}{% endblock %}
-
 {% block content %}
-
 <div class="breadcrumb">
-  <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
-  <span class="breadcrumb-separator"></span>
-  <span class="breadcrumb-item current">Jobs</span>
+    <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+    <span class="breadcrumb-separator"></span>
+    <span class="breadcrumb-item current">Jobs</span>
 </div>
 
 <div class="job-details-container">
-  <div class="job-details-row">
-    <div class="job-details-col">
-      <div class="job-details-card">
-        <h2 class="job-details-heading">{{ job.title }}</h2>
-        <p class="job-details-lead">{{ job.description }}</p>
-        <p class="job-details-info"><strong>Price:</strong> ${{ job.price }}</p>
-        <p class="job-details-info"><strong>Deadline:</strong> {{ job.deadline_date }}</p>
-      </div>
-      
-      <div class="submit-response-card">
-        <h3 class="submit-response-heading">Submit Your Response</h3>
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {% for field in form %}
-          <div class="form-group">
-              {{ field.label_tag }}
-              {{ field }}
-              {% if field.help_text %}
-              <small class="form-text text-muted">{{ field.help_text }}</small>
-              {% endif %}
-          </div>
-          {% endfor %}
-      
-          {% if job.category == 'data_entry' %}
-          <div class="form-group">
-              {{ form.tools_required.label_tag }}
-              {{ form.tools_required }}
-              {% if form.tools_required.help_text %}
-              <small class="form-text text-muted">{{ form.tools_required.help_text }}</small>
-              {% endif %}
-          </div>
-          <div class="form-group">
-              {{ form.platforms_used.label_tag }}
-              {{ form.platforms_used }}
-              {% if form.platforms_used.help_text %}
-              <small class="form-text text-muted">{{ form.platforms_used.help_text }}</small>
-              {% endif %}
-          </div>
-          {% elif job.category == 'translation' %}
-          <div class="form-group">
-              {{ form.source_language.label_tag }}
-              {{ form.source_language }}
-          </div>
-          <div class="form-group">
-              {{ form.target_language.label_tag }}
-              {{ form.target_language }}
-          </div>
-          {% endif %}
-      
-          <button type="submit" class="submit-button">Submit Response</button>
-        </form>
-      </div>    
-    </div>
-  </div>
-</div>
+    <div class="job-details-row">
+        <div class="job-details-col">
+            <div class="job-details-card">
+                <h2 class="job-details-heading">{{ job.title }}</h2>
+                <p class="job-details-lead">{{ job.description }}</p>
+                <p class="job-details-info"><strong>Price:</strong> ${{ job.price }}</p>
+                <p class="job-details-info"><strong>Deadline:</strong> {{ job.deadline_date }}</p>
+                <p class="job-details-info"><strong>Category:</strong> {{ job.get_category_display }}</p>
+                <p class="job-details-info"><strong>Status:</strong> {{ job.get_status_display }}</p>
+                <p class="job-details-info"><strong>Posted on:</strong> {{ job.posted_date }}</p>
+                <p class="job-details-info"><strong>Preferred Level:</strong> {{ job.get_preferred_freelancer_level_display }}</p>
+            </div>
 
+            <div class="submit-response-card">
+                <h3 class="submit-response-heading">Submit Your Response</h3>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    {% if job.category == 'data_entry' %}
+                    <div class="form-group">
+                        {{ form.tools_required.label_tag }}
+                        {{ form.tools_required }}
+                        {% if form.tools_required.help_text %}
+                        <small class="form-text text-muted">{{ form.tools_required.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.platforms_used.label_tag }}
+                        {{ form.platforms_used }}
+                        {% if form.platforms_used.help_text %}
+                        <small class="form-text text-muted">{{ form.platforms_used.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    {% elif job.category == 'translation' %}
+                    <div class="form-group">
+                        {{ form.source_language.label_tag }}
+                        {{ form.source_language }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.target_language.label_tag }}
+                        {{ form.target_language }}
+                    </div>
+                    {% endif %}
+                    
+                    <button type="submit" class="submit-button">Submit Response</button>
+                </form>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% if job.status == 'completed' %}
+                    {% if job.client == user or user == job.selected_freelancer %}
+                    <div class="reviews-section">
+                        <h3>Reviews</h3>
+                        {% if job.client == user and job.selected_freelancer %}
+                        <div class="review-option">
+                            <a href="{% url 'submit_review' job_id=job.id reviewee_id=job.selected_freelancer.id %}" class="review-link btn">
+                                Review {{ job.selected_freelancer.username }}
+                            </a>
+                        </div>
+                        {% elif user == job.selected_freelancer %}
+                        <div class="review-option">
+                            <a href="{% url 'submit_review' job_id=job.id reviewee_id=job.client.id %}" class="review-link btn">
+                                Review {{ job.client.username }}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -27,4 +27,8 @@ urlpatterns = [
     path('attachment/<int:attachment_id>/download/', views.download_attachment, name='download_attachment'),
     path('mark-job-completed/<int:job_id>/', views.mark_job_completed, name='mark_job_completed'),
     path('job/<int:job_id>/matches/', views.job_matches, name='job_matches'),
+    path('responses/<int:response_id>/download/<str:filename>/', views.download_response_file, name='download_response_file'),
+    path('user/<str:username>/reviews/', views.user_reviews, name='user_reviews'),
+    path('user/<str:username>/review/', views.create_review, name='create_review'),
+    path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
 ]

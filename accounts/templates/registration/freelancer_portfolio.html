@@ -136,6 +136,22 @@
                 <p class="info-item"><span>👤</span><strong>User Type:</strong> {{ profile.user_type|capfirst }}</p>
                 <p class="info-item"><span>📱</span><strong>Device:</strong> {{ profile.device|default:"Not specified" }}</p>
             </div>
+            <!-- Somewhere in your user profile template -->
+            <div class="profile-reviews">
+                <h3>Reviews</h3>
+                <div class="rating-summary">
+                    <p>Average Rating: {{ avg_rating|floatformat:1 }} / 5 ({{ review_count }} reviews)</p>
+                    <!-- Star display similar to user_reviews.html -->
+                </div>
+                
+                <a href="{% url 'core:user_reviews' user_profile.username %}" class="btn btn-sm btn-primary">View All Reviews</a>
+                
+                {% if user.is_authenticated and user != user_profile %}
+                    <a href="{% url 'core:create_review' user_profile.username %}" class="btn btn-sm btn-success">
+                        {% if has_reviewed %}Edit Your Review{% else %}Write a Review{% endif %}
+                    </a>
+                {% endif %}
+            </div>
 
             <!-- Stats Section -->
             <h3 class="section-title mt-4"><span>📊</span>Stats Overview</h3>
@@ -221,4 +237,3 @@
     </div>
 </div>
 {% endblock %}
-

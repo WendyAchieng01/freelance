@@ -98,6 +98,33 @@
     color: #2980b9;
     text-decoration: underline;
   }
+  /* Add this to your CSS file */
+.file-attachment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-info i {
+  font-size: 20px;
+  color: #dc3545; /* Red for PDF, adjust color based on file type */
+}
+
+.file-size {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
 </style>
 
 <div class="breadcrumb">
@@ -108,55 +135,143 @@
 
 <div class="job-responses-container">
   <meta name="csrf-token" content="{{ csrf_token }}">
-  <h1 class="job-responses-title">Responses for Your Jobs</h1>
-  {% regroup responses by job as job_responses %}
-  {% for job in job_responses %}
-    <div class="job-response-group">
-      <h2>{{ job.grouper.title }}</h2>
-      <p>Attempted by {{ job.list|length }} freelancers</p>
-      <div class="job-response-list">
-        {% for response in job.list %}
-          <div class="job-response-item">
-            <h3>Response by {{ response.user.username|default:'Unknown User' }}</h3>
-            <p><strong>Submitted At:</strong> {{ response.submitted_at }}</p>
-            <h4>Response Details:</h4>
-            <ul>
-              {% for key, value in response.extra_data.items %}
-                <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
-              {% endfor %}
-            </ul>
-
-            {% if job.grouper.status != 'completed' %}
-              <div class="response-actions">
-                <button 
-                  class="btn-accept accept-btn" 
-                  data-job-id="{{ job.grouper.id }}" 
-                  data-response-id="{{ response.id }}">
-                  Accept
-                </button>
-                <button 
-                  class="btn-ghost reject-btn" 
-                  data-job-id="{{ job.grouper.id }}" 
-                  data-response-id="{{ response.id }}">
-                  Reject
-                </button>
-                {% if response.user %}
-                  <a href="{% url 'accounts:freelancer_portfolio' response.user.id %}" 
-                     class="btn-view-profile" 
-                     data-user-id="{{ response.user.id }}"
-                     data-url="{% url 'accounts:freelancer_portfolio' response.user.id %}">
-                    View Profile
-                  </a>
-                {% else %}
-                  <span>No user associated with this response</span>
-                {% endif %}
+  {% if job %}
+    <h1 class="job-responses-title">Responses for {{ job.title }}</h1>
+    <p>Attempted by {{ responses|length }} freelancers</p>
+    <div class="job-response-list">
+      {% for response_data in responses %}
+        <div class="job-response-item">
+          <h3>Response by {{ response_data.response.user.username|default:'Unknown User' }}</h3>
+          <p><strong>Submitted At:</strong> {{ response_data.response.submitted_at }}</p>
+          <h4>Response Details:</h4>
+          <ul>
+            {% for key, value in response_data.response.extra_data.items %}
+              <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
+            {% endfor %}
+          </ul>
+          {% if response_data.response.extra_data.sample_work %}
+          <div class="file-attachment">
+              <div class="file-info">
+                  <i class="fa fa-file-pdf"></i>
+                  <span>{{ response_data.response.extra_data.sample_work.filename }}</span>
+                  <span class="file-size">({{ response_data.response.extra_data.sample_work.size|filesizeformat }})</span>
               </div>
-            {% endif %}
+              <a href="{% url 'core:download_response_file' response_id=response_data.response.id filename=response_data.response.extra_data.sample_work.filename %}" 
+                class="btn btn-primary btn-sm">
+                  <i class="fa fa-download"></i> Download
+              </a>
           </div>
-        {% endfor %}
-      </div>
+          {% endif %}
+          {% if job.status == 'completed' and response_data.response.user %}
+          <div class="rating-button-container">
+              {% if response_data.has_rated %}
+                  <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-secondary">Edit Your Review for {{ response_data.response.user.username }}</a>
+              {% else %}
+                  <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-primary">Rate This Freelancer</a>
+              {% endif %}
+          </div>
+          {% endif %}
+          {% if job.status != 'completed' %}
+            <div class="response-actions">
+              <button 
+                class="btn-accept accept-btn" 
+                data-job-id="{{ job.id }}" 
+                data-response-id="{{ response_data.response.id }}">
+                Accept
+              </button>
+              <button 
+                class="btn-ghost reject-btn" 
+                data-job-id="{{ job.id }}" 
+                data-response-id="{{ response_data.response.id }}">
+                Reject
+              </button>
+              {% if response_data.response.user %}
+                <a href="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}" 
+                   class="btn-view-profile" 
+                   data-user-id="{{ response_data.response.user.id }}"
+                   data-url="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}">
+                  View Profile
+                </a>
+              {% else %}
+                <span>No user associated with this response</span>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
+  {% else %}
+    <h1 class="job-responses-title">Responses for Your Jobs</h1>
+    {% regroup responses by response.job as job_responses %}
+    {% for job in job_responses %}
+      <div class="job-response-group">
+        <h2>{{ job.grouper.title }}</h2>
+        <p>Attempted by {{ job.list|length }} freelancers</p>
+        <div class="job-response-list">
+          {% for response_data in job.list %}
+            <div class="job-response-item">
+              <h3>Response by {{ response_data.response.user.username|default:'Unknown User' }}</h3>
+              <p><strong>Submitted At:</strong> {{ response_data.response.submitted_at }}</p>
+              <h4>Response Details:</h4>
+              <ul>
+                {% for key, value in response_data.response.extra_data.items %}
+                  <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
+                {% endfor %}
+              </ul>
+              {% if response_data.response.extra_data.sample_work %}
+              <div class="file-attachment">
+                  <div class="file-info">
+                      <i class="fa fa-file-pdf"></i>
+                      <span>{{ response_data.response.extra_data.sample_work.filename }}</span>
+                      <span class="file-size">({{ response_data.response.extra_data.sample_work.size|filesizeformat }})</span>
+                  </div>
+                  <a href="{% url 'core:download_response_file' response_id=response_data.response.id filename=response_data.response.extra_data.sample_work.filename %}" 
+                    class="btn btn-primary btn-sm">
+                      <i class="fa fa-download"></i> Download
+                  </a>
+              </div>
+              {% endif %}
+              {% if job.grouper.status == 'completed' and response_data.response.user %}
+              <div class="rating-button-container">
+                  {% if response_data.has_rated %}
+                      <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-secondary">Edit Your Review for {{ response_data.response.user.username }}</a>
+                  {% else %}
+                      <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-primary">Rate This Freelancer</a>
+                  {% endif %}
+              </div>
+              {% endif %}
+              {% if job.grouper.status != 'completed' %}
+                <div class="response-actions">
+                  <button 
+                    class="btn-accept accept-btn" 
+                    data-job-id="{{ job.grouper.id }}" 
+                    data-response-id="{{ response_data.response.id }}">
+                    Accept
+                  </button>
+                  <button 
+                    class="btn-ghost reject-btn" 
+                    data-job-id="{{ job.grouper.id }}" 
+                    data-response-id="{{ response_data.response.id }}">
+                    Reject
+                  </button>
+                  {% if response_data.response.user %}
+                    <a href="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}" 
+                       class="btn-view-profile" 
+                       data-user-id="{{ response_data.response.user.id }}"
+                       data-url="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}">
+                      View Profile
+                    </a>
+                  {% else %}
+                    <span>No user associated with this response</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
 </div>
 
 <!-- Modal for profile popup (outside the loop) -->
