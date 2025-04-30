@@ -356,6 +356,40 @@ def accept_response(request, job_id, response_id):
     })
 
 @login_required
+@user_passes_test(is_client)
+def reject_response(request, job_id, response_id):
+    """
+    Handle rejection of a job response.
+    This frees up a slot for another freelancer to apply.
+    """
+    # Check if request method is POST
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        
+    job = get_object_or_404(Job, pk=job_id)
+    response = get_object_or_404(Response, pk=response_id, job=job)
+    
+    # Ensure the user is the client who posted the job
+    if job.client.user != request.user:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    try:
+        # Delete the response to free up the slot
+        response.delete()
+        
+        # Make sure to get the fresh count after deletion
+        job.refresh_from_db()  # Refresh the job object to get the latest data
+        remaining_slots = job.max_freelancers - job.responses.count()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Response rejected successfully',
+            'remaining_slots': remaining_slots
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
 def my_chats(request):
     """View for listing all chats grouped by jobs for the current user"""
     if request.user.profile.user_type == 'freelancer':
