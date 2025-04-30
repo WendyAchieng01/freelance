@@ -1,9 +1,107 @@
 {% extends 'base.html' %}
+{% load job_extras %}
 {% block navbar %}
     {% include 'client_navbar.html' %}
 {% endblock %}
 {% block content %}
 <style>
+  /* Add these styles to your CSS file */
+
+  /* Job Overview Section */
+  .job-overview-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+  }
+
+  .job-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .stat-item {
+    background-color: #e9ecef;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  /* Notification System */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeIn 0.3s, fadeOut 0.3s 4.7s;
+    max-width: 80%;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* Response Actions */
+  .response-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .btn-accept, .btn-ghost, .btn-view-profile {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-accept {
+    background-color: #28a745;
+    color: white;
+    border: none;
+  }
+
+  .btn-accept:hover {
+    background-color: #218838;
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+  }
+
+  .btn-ghost:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .btn-view-profile {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .btn-view-profile:hover {
+    background-color: #007bff;
+    color: white;
+  }
   .modal {
     display: none;
     position: fixed;
@@ -136,8 +234,21 @@
 <div class="job-responses-container">
   <meta name="csrf-token" content="{{ csrf_token }}">
   {% if job %}
-    <h1 class="job-responses-title">Responses for {{ job.title }}</h1>
-    <p>Attempted by {{ responses|length }} freelancers</p>
+    <div class="job-overview-section">
+      <h2>{{ job.title }}</h2>
+      <div class="job-stats">
+        <span class="stat-item">
+          <strong>Category:</strong> {{ job.get_category_display }}
+        </span>
+        <span class="stat-item">
+          <strong>Status:</strong> {{ job.get_status_display }}
+        </span>
+        <span class="stat-item">
+          <strong>Slots remaining:</strong> <span class="remaining-slots">{{ job|remaining_attempts }}</span> of {{ job.max_freelancers }}
+        </span>
+      </div>
+    </div>
+    
     <div class="job-response-list">
       {% for response_data in responses %}
         <div class="job-response-item">
@@ -200,76 +311,73 @@
         </div>
       {% endfor %}
     </div>
+    
   {% else %}
     <h1 class="job-responses-title">Responses for Your Jobs</h1>
     {% regroup responses by response.job as job_responses %}
     {% for job in job_responses %}
-      <div class="job-response-group">
-        <h2>{{ job.grouper.title }}</h2>
-        <p>Attempted by {{ job.list|length }} freelancers</p>
-        <div class="job-response-list">
-          {% for response_data in job.list %}
-            <div class="job-response-item">
-              <h3>Response by {{ response_data.response.user.username|default:'Unknown User' }}</h3>
-              <p><strong>Submitted At:</strong> {{ response_data.response.submitted_at }}</p>
-              <h4>Response Details:</h4>
-              <ul>
-                {% for key, value in response_data.response.extra_data.items %}
-                  <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
-                {% endfor %}
-              </ul>
-              {% if response_data.response.extra_data.sample_work %}
-              <div class="file-attachment">
-                  <div class="file-info">
-                      <i class="fa fa-file-pdf"></i>
-                      <span>{{ response_data.response.extra_data.sample_work.filename }}</span>
-                      <span class="file-size">({{ response_data.response.extra_data.sample_work.size|filesizeformat }})</span>
-                  </div>
-                  <a href="{% url 'core:download_response_file' response_id=response_data.response.id filename=response_data.response.extra_data.sample_work.filename %}" 
-                    class="btn btn-primary btn-sm">
-                      <i class="fa fa-download"></i> Download
-                  </a>
+    <div class="job-response-list">
+      {% for response_data in responses %}
+        <div class="job-response-item">
+          <h3>Response by {{ response_data.response.user.username|default:'Unknown User' }}</h3>
+          <p><strong>Submitted At:</strong> {{ response_data.response.submitted_at }}</p>
+          <h4>Response Details:</h4>
+          <ul>
+            {% for key, value in response_data.response.extra_data.items %}
+              <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
+            {% endfor %}
+          </ul>
+          {% if response_data.response.extra_data.sample_work %}
+          <div class="file-attachment">
+              <div class="file-info">
+                  <i class="fa fa-file-pdf"></i>
+                  <span>{{ response_data.response.extra_data.sample_work.filename }}</span>
+                  <span class="file-size">({{ response_data.response.extra_data.sample_work.size|filesizeformat }})</span>
               </div>
+              <a href="{% url 'core:download_response_file' response_id=response_data.response.id filename=response_data.response.extra_data.sample_work.filename %}" 
+                class="btn btn-primary btn-sm">
+                  <i class="fa fa-download"></i> Download
+              </a>
+          </div>
+          {% endif %}
+          {% if job.status == 'completed' and response_data.response.user %}
+          <div class="rating-button-container">
+              {% if response_data.has_rated %}
+                  <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-secondary">Edit Your Review for {{ response_data.response.user.username }}</a>
+              {% else %}
+                  <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-primary">Rate This Freelancer</a>
               {% endif %}
-              {% if job.grouper.status == 'completed' and response_data.response.user %}
-              <div class="rating-button-container">
-                  {% if response_data.has_rated %}
-                      <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-secondary">Edit Your Review for {{ response_data.response.user.username }}</a>
-                  {% else %}
-                      <a href="{% url 'core:create_review' response_data.response.user.username %}" class="btn btn-primary">Rate This Freelancer</a>
-                  {% endif %}
-              </div>
-              {% endif %}
-              {% if job.grouper.status != 'completed' %}
-                <div class="response-actions">
-                  <button 
-                    class="btn-accept accept-btn" 
-                    data-job-id="{{ job.grouper.id }}" 
-                    data-response-id="{{ response_data.response.id }}">
-                    Accept
-                  </button>
-                  <button 
-                    class="btn-ghost reject-btn" 
-                    data-job-id="{{ job.grouper.id }}" 
-                    data-response-id="{{ response_data.response.id }}">
-                    Reject
-                  </button>
-                  {% if response_data.response.user %}
-                    <a href="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}" 
-                       class="btn-view-profile" 
-                       data-user-id="{{ response_data.response.user.id }}"
-                       data-url="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}">
-                      View Profile
-                    </a>
-                  {% else %}
-                    <span>No user associated with this response</span>
-                  {% endif %}
-                </div>
+          </div>
+          {% endif %}
+          {% if job.status != 'completed' %}
+            <div class="response-actions">
+              <button 
+                class="btn-accept accept-btn" 
+                data-job-id="{{ job.id }}" 
+                data-response-id="{{ response_data.response.id }}">
+                Accept
+              </button>
+              <button 
+                class="btn-ghost reject-btn" 
+                data-job-id="{{ job.id }}" 
+                data-response-id="{{ response_data.response.id }}">
+                Reject
+              </button>
+              {% if response_data.response.user %}
+                <a href="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}" 
+                   class="btn-view-profile" 
+                   data-user-id="{{ response_data.response.user.id }}"
+                   data-url="{% url 'accounts:freelancer_portfolio' response_data.response.user.id %}">
+                  View Profile
+                </a>
+              {% else %}
+                <span>No user associated with this response</span>
               {% endif %}
             </div>
-          {% endfor %}
+          {% endif %}
         </div>
-      </div>
+      {% endfor %}
+    </div>
     {% endfor %}
   {% endif %}
 </div>
@@ -406,6 +514,103 @@
     }
   };
 });
+</script>
+<script>
+  // Add this to your existing JavaScript file or in a script tag in your template
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to all reject buttons
+    const rejectButtons = document.querySelectorAll('.reject-btn');
+    
+    rejectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const jobId = this.dataset.jobId;
+            const responseId = this.dataset.responseId;
+            
+            if (confirm('Are you sure you want to reject this response? This will free up a slot for another freelancer.')) {
+                // Get CSRF token
+                const csrftoken = getCookie('csrftoken');
+                
+                // Send AJAX request to reject the response
+                fetch(`/core/reject_response/${jobId}/${responseId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    // Empty body since we're not sending any data
+                    body: JSON.stringify({})
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Remove the response element from the DOM
+                        const responseItem = this.closest('.job-response-item');
+                        responseItem.remove();
+                        
+                        // Update the remaining slots counter if it exists on the page
+                        const remainingSlotsElement = document.querySelector('.remaining-slots');
+                        if (remainingSlotsElement) {
+                            remainingSlotsElement.textContent = data.remaining_slots;
+                        }
+                        
+                        // If there's a job-list page with this job, update its remaining slots display too
+                        const jobCardSlots = document.querySelector(`.job-card[data-job-id="${jobId}"] .remaining-slots`);
+                        if (jobCardSlots) {
+                            jobCardSlots.textContent = data.remaining_slots;
+                        }
+                        
+                        // Show success message
+                        showNotification('Response rejected successfully. A slot has been freed up for another freelancer.', 'success');
+                    } else {
+                        showNotification('Error: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('An error occurred while processing your request.', 'error');
+                });
+            }
+        });
+    });
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Helper function to show notifications
+    function showNotification(message, type) {
+        // You can implement this according to your UI notification system
+        // This is a simple example that adds a temporary message to the page
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} notification`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+  });
 </script>
 {% endblock %}
 {% block footer %}
