@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    {% include 'client_navbar.html' %}
+{% endblock %}
+{% block content %}
+
+  <div class="breadcrumb">
+    <a href="{% url 'core:client_index' %}" class="breadcrumb-item">Home</a>
+    <span class="breadcrumb-separator"></span>
+    <span class="breadcrumb-item current">Payment Cancelled</span>
+  </div>
+
+  <div class="center-container2">
+    <h1 class="payment-success-title">Payment failed for job: {{ job.title }}</h1>
+    <div class="product-container">
+        <div class="products">
+            <p class="product-detail">Price: ${{ job.price }}</p>
+            <p class="product-detail">Description: {{ job.description }}</p>
+        </div>
+    </div>
+    <a href="{% url 'payments:initiate_response_payment' job_id response_id %}" class="btn  retry-button">Retry Payment</a>
+  </div>
+
+  {% endblock %}
+  {% block footer %}
+      {% include 'client_footer.html' %}
+  {% endblock %}

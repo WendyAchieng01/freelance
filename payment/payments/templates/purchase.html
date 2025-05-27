@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    {% include 'client_navbar.html' %}
+{% endblock %}
+{% block content %}
+
+<div class="breadcrumb">
+    <a href="{% url 'core:index' %}" class="breadcrumb-item">Home</a>
+    <span class="breadcrumb-separator"></span>
+    <span class="breadcrumb-item current">Paypal Purchase</span>
+  </div>
+
+  <div class="center-container">
+    <div class="product-details">
+        <h1 class="product-name">Product: {{ job.title }}</h1>
+        <p class="product-price">Price: ${{ job.price }}</p>
+    </div>
+
+    <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+        {{ form }}
+    </form>
+    </div>
+
+
+    {% endblock %}
+    {% block footer %}
+       {% include 'client_footer.html' %}
+    {% endblock %}

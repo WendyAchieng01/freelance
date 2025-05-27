@@ -66,6 +66,19 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.title} ({self.get_category_display()})"
     
+    
+"""JobAssignment is used in the wallet app to automatically track jobs assigned to a freelancer"""
+
+
+class JobAssignment(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    freelancer = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='pending')
+
+    class Meta:
+        unique_together = ['job', 'freelancer']
+
 
 class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

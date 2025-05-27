@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from datetime import timedelta
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
@@ -17,6 +18,7 @@ import ssl
 import socket
 import dj_database_url
 from decouple import config
+#from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
 
 
@@ -30,8 +32,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
+DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
+#DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
 
 
 ALLOWED_HOSTS = [
@@ -56,14 +58,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #api
+    'api',    
+    
+    #custom
     'core',
     'accounts',
     'academy',
     'invoicemgmt',
     'payment',
     'payments',
+    'wallet',
+    
+    #pypi
     'paypal.standard.ipn',
     'channels',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -185,6 +198,8 @@ MESSAGE_TAGS = {
 
 # PayPal Settings
 PAYPAL_TEST = True  # Use sandbox mode during testing
+PAYPAL_SANDBOX = True
+#PAYPAL_IPN_STRICT = False #temporarily
 
 #Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -227,5 +242,64 @@ SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    #'BLACKLIST_ENABLED': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Freelancer Platform API',
+    'DESCRIPTION': 'API for managing and testing freelancer-client platform.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'SECURITY': [
+        {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    ],
+    #'ENUM_NAME_OVERRIDES': ENUM_NAME_OVERRIDES,
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
