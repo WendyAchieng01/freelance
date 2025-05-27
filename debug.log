@@ -1,0 +1,52 @@
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listen failure: Couldn't listen on 127.0.0.1:8000: [Errno 98] Address already in use.
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 40804]
+HTTP 200 response started for ['127.0.0.1', 40804]
+HTTP close for ['127.0.0.1', 40804]
+HTTP response complete for ['127.0.0.1', 40804]
+[mHTTP GET / 200 [0.06, 127.0.0.1:40804][0m
+HTTP b'GET' request for ['127.0.0.1', 40804]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 40804]
+HTTP close for ['127.0.0.1', 40804]
+HTTP response complete for ['127.0.0.1', 40804]
+[33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:40804][0m
+HTTP b'GET' request for ['127.0.0.1', 40804]
+HTTP 200 response started for ['127.0.0.1', 40804]
+HTTP close for ['127.0.0.1', 40804]
+HTTP response complete for ['127.0.0.1', 40804]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:40804][0m
+HTTP b'GET' request for ['127.0.0.1', 40804]
+HTTP 200 response started for ['127.0.0.1', 40804]
+HTTP response chunk for ['127.0.0.1', 40804]
+HTTP response chunk for ['127.0.0.1', 40804]
+HTTP response chunk for ['127.0.0.1', 40804]
+HTTP response chunk for ['127.0.0.1', 40804]
+HTTP close for ['127.0.0.1', 40804]
+HTTP response complete for ['127.0.0.1', 40804]
+[mHTTP GET /api/v1/schema/ 200 [0.18, 127.0.0.1:40804][0m
+HTTP b'POST' request for ['127.0.0.1', 41314]
+HTTP 201 response started for ['127.0.0.1', 41314]
+HTTP close for ['127.0.0.1', 41314]
+HTTP response complete for ['127.0.0.1', 41314]
+[mHTTP POST /api/v1/accounts/auth/register/ 201 [6.98, 127.0.0.1:41314][0m
