@@ -365,3 +365,25 @@ class ClientFormSerializer(serializers.ModelSerializer):
             client_profile.languages.set(validated_data['languages'])
 
         return client_profile
+
+
+
+class ClientListSerializer(serializers.ModelSerializer):
+    languages = LanguageSerializer(many=True)
+    email = serializers.EmailField(source='profile.user.email')
+    phone_number = serializers.CharField(source='profile.phone')
+    location = serializers.CharField(source='profile.location')
+
+    class Meta:
+        model = ClientProfile
+        fields = [
+            'company_name',
+            'email',
+            'phone_number',
+            'industry',
+            'languages',
+            'location',
+            'company_website',
+            'project_budget',
+            'preferred_freelancer_level',
+        ]

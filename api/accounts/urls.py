@@ -29,6 +29,7 @@ urlpatterns = [
      path('freelancer-form/', views.FreelancerFormView.as_view(), name='freelancer-form'),
      path('client-form/', views.ClientFormView.as_view(), name='client-form'),
      path('frelancers/', views.ListFreelancersView.as_view(), name='list-freelancers'),
+     path('clients/', views.ClientListView.as_view(), name='list-clients'),
      # Resources
      path('', include(router.urls)),
 ]
