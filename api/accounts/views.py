@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions,generics
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -19,7 +19,7 @@ from django.utils.encoding import force_bytes
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
-from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, CanReview
+from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly
 
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,
@@ -470,25 +470,25 @@ class LanguageViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ListFreelancersView(generics.ListAPIView):
+    queryset = FreelancerProfile.objects.select_related('profile__user').all()
+    serializer_class = FreelancerFormSerializer
+    permission_classes = [permissions.IsAuthenticated]  # or customize
+
+    def get_queryset(self):
+        return FreelancerProfile.objects.filter(profile__user__profile__user_type='freelancer')
+
+
+
 class FreelancerFormView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,
+                          IsFreelancerOrAdminOrClientReadOnly]
 
     def get_object(self, user):
         try:
             return user.profile.freelancer_profile
         except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
             return None
-
-    def check_access(self, request, target_user, require_owner_or_admin=False):
-        if not target_user:
-            return Response({"error": "User not found."}, status=404)
-
-        if require_owner_or_admin and not (
-            request.user == target_user or request.user.is_staff
-        ):
-            return Response({"error": "Permission denied."}, status=403)
-
-        return None
 
     @extend_schema(
         responses={200: FreelancerFormSerializer},
@@ -498,15 +498,20 @@ class FreelancerFormView(APIView):
         user_id = request.query_params.get('id')
         email = request.query_params.get('email')
 
+        # Determine which user's profile to fetch
         if user_id:
-            user = User.objects.filter(id=user_id).first()
+            target_user = User.objects.filter(id=user_id).first()
         elif email:
-            user = User.objects.filter(email=email).first()
+            target_user = User.objects.filter(email=email).first()
         else:
-            user = request.user
+            target_user = request.user  # fallback to self
 
-        freelancer_profile = self.get_object(user)
-        if not freelancer_profile:
+        if not target_user:
+            return Response({"error": "User not found."}, status=404)
+
+        try:
+            freelancer_profile = target_user.profile.freelancer_profile
+        except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
             return Response({"error": "Freelancer profile not found."}, status=404)
 
         serializer = FreelancerFormSerializer(freelancer_profile)
@@ -516,10 +521,11 @@ class FreelancerFormView(APIView):
         request=FreelancerFormSerializer,
         responses={200: OpenApiResponse(
             description="Freelancer profile created/updated")},
-        description="Create or update freelancer profile"
+        description="Create or update freelancer profile."
     )
     def post(self, request):
-        freelancer_profile = self.get_object(request.user)
+        user = request.user
+        freelancer_profile = self.get_object(user)
 
         if freelancer_profile:
             serializer = FreelancerFormSerializer(
@@ -529,7 +535,12 @@ class FreelancerFormView(APIView):
                 data=request.data, context={'request': request})
 
         if serializer.is_valid():
-            serializer.save()
+            instance = serializer.save()
+            if 'languages' in serializer.validated_data:
+                instance.languages.set(serializer.validated_data['languages'])
+            if 'skills' in serializer.validated_data:
+                instance.skills.set(serializer.validated_data['skills'])
+
             return Response({"message": "Freelancer profile created/updated"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -537,7 +548,7 @@ class FreelancerFormView(APIView):
     @extend_schema(
         responses={204: OpenApiResponse(
             description="Freelancer profile deleted")},
-        description="Delete freelancer profile"
+        description="Delete freelancer profile."
     )
     def delete(self, request):
         freelancer_profile = self.get_object(request.user)
@@ -557,37 +568,23 @@ class ClientFormView(APIView):
         except (Profile.DoesNotExist, ClientProfile.DoesNotExist):
             return None
 
-    def check_access(self, request, target_user, require_owner_or_admin=False):
-        if not target_user:
-            return Response({"error": "User not found."}, status=404)
-
-        if require_owner_or_admin and not (
-            request.user == target_user or request.user.is_staff
-        ):
-            return Response({"error": "Permission denied."}, status=403)
-
-        return None  # access allowed
-
     @extend_schema(
         responses={200: ClientFormSerializer},
-        description="Retrieve client profile form data."
+        description="Retrieve client profile by user ID or email."
     )
     def get(self, request):
-        # Allow query by id or email (only owner or admin can access by id)
         user_id = request.query_params.get('id')
         email = request.query_params.get('email')
 
         if user_id:
             user = User.objects.filter(id=user_id).first()
-            access_denied = self.check_access(
-                request, user, require_owner_or_admin=True)
-            if access_denied:
-                return access_denied
         elif email:
             user = User.objects.filter(email=email).first()
-            # All authenticated users can get by email, so no owner/admin check
         else:
-            user = request.user  # default to current user
+            user = request.user
+
+        if not user:
+            return Response({"error": "User not found."}, status=404)
 
         client_profile = self.get_object(user)
         if not client_profile:
@@ -598,20 +595,13 @@ class ClientFormView(APIView):
 
     @extend_schema(
         request=ClientFormSerializer,
-        responses={
-            200: OpenApiResponse(description="Client profile created/updated."),
-            400: OpenApiResponse(description="Invalid input.")
-        },
+        responses={200: OpenApiResponse(
+            description="Client profile created/updated")},
         description="Create or update client profile."
     )
     def post(self, request):
-        # Only owner or admin can create/update profile for a user
-        access_denied = self.check_access(
-            request, request.user, require_owner_or_admin=True)
-        if access_denied:
-            return access_denied
-
         client_profile = self.get_object(request.user)
+
         if client_profile:
             serializer = ClientFormSerializer(
                 client_profile, data=request.data, context={'request': request})
@@ -620,29 +610,21 @@ class ClientFormView(APIView):
                 data=request.data, context={'request': request})
 
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Client profile created/updated."}, status=status.HTTP_200_OK)
+            instance = serializer.save()
+            if 'languages' in serializer.validated_data:
+                instance.languages.set(serializer.validated_data['languages'])
+            return Response({"message": "Client profile created/updated"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(
-        responses={
-            204: OpenApiResponse(description="Client profile deleted."),
-            404: OpenApiResponse(description="Client profile not found."),
-            403: OpenApiResponse(description="Permission denied."),
-        },
+        responses={204: OpenApiResponse(description="Client profile deleted")},
         description="Delete client profile."
     )
     def delete(self, request):
         client_profile = self.get_object(request.user)
         if not client_profile:
-            return Response({"error": "Client profile not found."}, status=404)
-
-        # Only owner or admin can delete
-        access_denied = self.check_access(
-            request, request.user, require_owner_or_admin=True)
-        if access_denied:
-            return access_denied
+            return Response({"error": "Client profile not found"}, status=404)
 
         client_profile.delete()
-        return Response({"message": "Client profile deleted."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Client profile deleted"}, status=status.HTTP_204_NO_CONTENT)

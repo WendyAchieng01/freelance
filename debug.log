@@ -3296,3 +3296,2253 @@ Watching for file changes with StatReloader
 HTTP/2 support enabled
 Configuring endpoint tcp:port=8000:interface=127.0.0.1
 Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 58246]
+HTTP 200 response started for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[mHTTP GET /api/v1/redoc/ 200 [0.10, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.16, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+HTTP 200 response started for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[mHTTP GET /api/v1/docs/ 200 [0.02, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.12, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.18, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+HTTP 200 response started for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.26, 127.0.0.1:58246][0m
+HTTP b'GET' request for ['127.0.0.1', 58246]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP response chunk for ['127.0.0.1', 58246]
+HTTP close for ['127.0.0.1', 58246]
+HTTP response complete for ['127.0.0.1', 58246]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.27, 127.0.0.1:58246][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 57292]
+HTTP 200 response started for ['127.0.0.1', 57292]
+HTTP close for ['127.0.0.1', 57292]
+HTTP response complete for ['127.0.0.1', 57292]
+[mHTTP GET /api/v1/docs/ 200 [0.15, 127.0.0.1:57292][0m
+HTTP b'GET' request for ['127.0.0.1', 57292]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 57292]
+HTTP response chunk for ['127.0.0.1', 57292]
+HTTP response chunk for ['127.0.0.1', 57292]
+HTTP close for ['127.0.0.1', 57292]
+HTTP response complete for ['127.0.0.1', 57292]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.45, 127.0.0.1:57292][0m
+HTTP b'GET' request for ['127.0.0.1', 57292]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `bio` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 57292]
+HTTP response chunk for ['127.0.0.1', 57292]
+HTTP response chunk for ['127.0.0.1', 57292]
+HTTP close for ['127.0.0.1', 57292]
+HTTP response complete for ['127.0.0.1', 57292]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.26, 127.0.0.1:57292][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 43622]
+HTTP 200 response started for ['127.0.0.1', 43622]
+HTTP close for ['127.0.0.1', 43622]
+HTTP response complete for ['127.0.0.1', 43622]
+[mHTTP GET /api/v1/docs/ 200 [0.17, 127.0.0.1:43622][0m
+HTTP b'GET' request for ['127.0.0.1', 43622]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `experience_level` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 43622]
+HTTP response chunk for ['127.0.0.1', 43622]
+HTTP response chunk for ['127.0.0.1', 43622]
+HTTP close for ['127.0.0.1', 43622]
+HTTP response complete for ['127.0.0.1', 43622]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.30, 127.0.0.1:43622][0m
+HTTP b'GET' request for ['127.0.0.1', 43622]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/utils.py", line 451, in get_operation
+    return super().get_operation(path, path_regex, path_prefix, method, registry)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1406, in _get_response_bodies
+    content_response = self._get_response_for_code(serializer, code, media_types, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `experience_level` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerFormSerializer`.
+HTTP 500 response started for ['127.0.0.1', 43622]
+HTTP response chunk for ['127.0.0.1', 43622]
+HTTP response chunk for ['127.0.0.1', 43622]
+HTTP close for ['127.0.0.1', 43622]
+HTTP response complete for ['127.0.0.1', 43622]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.28, 127.0.0.1:43622][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 43692]
+HTTP 200 response started for ['127.0.0.1', 43692]
+HTTP close for ['127.0.0.1', 43692]
+HTTP response complete for ['127.0.0.1', 43692]
+[mHTTP GET /api/v1/docs/ 200 [0.15, 127.0.0.1:43692][0m
+HTTP b'GET' request for ['127.0.0.1', 43692]
+HTTP 200 response started for ['127.0.0.1', 43692]
+HTTP response chunk for ['127.0.0.1', 43692]
+HTTP response chunk for ['127.0.0.1', 43692]
+HTTP response chunk for ['127.0.0.1', 43692]
+HTTP close for ['127.0.0.1', 43692]
+HTTP response complete for ['127.0.0.1', 43692]
+[mHTTP GET /api/v1/schema/ 200 [0.44, 127.0.0.1:43692][0m
+HTTP b'GET' request for ['127.0.0.1', 43692]
+Unauthorized: /api/v1/accounts/users/
+HTTP 401 response started for ['127.0.0.1', 43692]
+HTTP close for ['127.0.0.1', 43692]
+HTTP response complete for ['127.0.0.1', 43692]
+[31;1mHTTP GET /api/v1/accounts/users/?page=1 401 [0.00, 127.0.0.1:43692][0m
+HTTP b'POST' request for ['127.0.0.1', 43692]
+HTTP 200 response started for ['127.0.0.1', 43692]
+HTTP close for ['127.0.0.1', 43692]
+HTTP response complete for ['127.0.0.1', 43692]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.10, 127.0.0.1:43692][0m
+HTTP b'GET' request for ['127.0.0.1', 37438]
+Not Found: /api/v1/accounts/client-form/
+HTTP 404 response started for ['127.0.0.1', 37438]
+HTTP close for ['127.0.0.1', 37438]
+HTTP response complete for ['127.0.0.1', 37438]
+[33mHTTP GET /api/v1/accounts/client-form/ 404 [0.01, 127.0.0.1:37438][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/auth/user/ 200 [0.27, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/auth/user/8/change/ 200 [0.20, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/accounts/freelancerprofile/ 200 [0.08, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/accounts/freelancerprofile/add/ 200 [0.12, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP b'GET' request for ['127.0.0.1', 49158]
+HTTP 304 response started for ['127.0.0.1', 49158]
+HTTP close for ['127.0.0.1', 49158]
+HTTP response complete for ['127.0.0.1', 49158]
+[36mHTTP GET /static/admin/img/icon-changelink.svg 304 [0.02, 127.0.0.1:49158][0m
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.04, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/accounts/clientprofile/ 200 [0.07, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/accounts/clientprofile/add/ 200 [0.12, 127.0.0.1:55532][0m
+HTTP b'GET' request for ['127.0.0.1', 55532]
+HTTP 200 response started for ['127.0.0.1', 55532]
+HTTP close for ['127.0.0.1', 55532]
+HTTP response complete for ['127.0.0.1', 55532]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55532][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 54388]
+HTTP 200 response started for ['127.0.0.1', 54388]
+HTTP close for ['127.0.0.1', 54388]
+HTTP response complete for ['127.0.0.1', 54388]
+[mHTTP GET /api/v1/docs/ 200 [0.16, 127.0.0.1:54388][0m
+HTTP b'GET' request for ['127.0.0.1', 54388]
+HTTP 200 response started for ['127.0.0.1', 54388]
+HTTP response chunk for ['127.0.0.1', 54388]
+HTTP response chunk for ['127.0.0.1', 54388]
+HTTP response chunk for ['127.0.0.1', 54388]
+HTTP close for ['127.0.0.1', 54388]
+HTTP response complete for ['127.0.0.1', 54388]
+[mHTTP GET /api/v1/schema/ 200 [0.37, 127.0.0.1:54388][0m
+HTTP b'GET' request for ['127.0.0.1', 56480]
+HTTP 200 response started for ['127.0.0.1', 56480]
+HTTP close for ['127.0.0.1', 56480]
+HTTP response complete for ['127.0.0.1', 56480]
+[mHTTP GET /api/v1/docs/ 200 [0.02, 127.0.0.1:56480][0m
+HTTP b'GET' request for ['127.0.0.1', 56480]
+HTTP 200 response started for ['127.0.0.1', 56480]
+HTTP response chunk for ['127.0.0.1', 56480]
+HTTP response chunk for ['127.0.0.1', 56480]
+HTTP response chunk for ['127.0.0.1', 56480]
+HTTP close for ['127.0.0.1', 56480]
+HTTP response complete for ['127.0.0.1', 56480]
+[mHTTP GET /api/v1/schema/ 200 [0.27, 127.0.0.1:56480][0m
+HTTP b'POST' request for ['127.0.0.1', 56480]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 56480]
+HTTP close for ['127.0.0.1', 56480]
+HTTP response complete for ['127.0.0.1', 56480]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:56480][0m
+HTTP b'POST' request for ['127.0.0.1', 56480]
+HTTP 200 response started for ['127.0.0.1', 56480]
+HTTP close for ['127.0.0.1', 56480]
+HTTP response complete for ['127.0.0.1', 56480]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.32, 127.0.0.1:56480][0m
+HTTP b'GET' request for ['127.0.0.1', 56480]
+Unauthorized: /api/v1/accounts/client-form/
+HTTP 401 response started for ['127.0.0.1', 56480]
+HTTP close for ['127.0.0.1', 56480]
+HTTP response complete for ['127.0.0.1', 56480]
+[31;1mHTTP GET /api/v1/accounts/client-form/ 401 [0.00, 127.0.0.1:56480][0m
+HTTP b'GET' request for ['127.0.0.1', 53756]
+Unauthorized: /api/v1/accounts/freelancer-form/
+HTTP 401 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[31;1mHTTP GET /api/v1/accounts/freelancer-form/ 401 [0.00, 127.0.0.1:53756][0m
+HTTP b'GET' request for ['127.0.0.1', 53756]
+HTTP 200 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:53756][0m
+HTTP b'GET' request for ['127.0.0.1', 53756]
+HTTP 200 response started for ['127.0.0.1', 53756]
+HTTP response chunk for ['127.0.0.1', 53756]
+HTTP response chunk for ['127.0.0.1', 53756]
+HTTP response chunk for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[mHTTP GET /api/v1/schema/ 200 [0.28, 127.0.0.1:53756][0m
+HTTP b'POST' request for ['127.0.0.1', 53756]
+HTTP 200 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.31, 127.0.0.1:53756][0m
+HTTP b'GET' request for ['127.0.0.1', 53756]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:53756][0m
+HTTP b'POST' request for ['127.0.0.1', 53756]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.10, 127.0.0.1:53756][0m
+HTTP b'POST' request for ['127.0.0.1', 53756]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 53756]
+HTTP close for ['127.0.0.1', 53756]
+HTTP response complete for ['127.0.0.1', 53756]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.01, 127.0.0.1:53756][0m
+HTTP b'POST' request for ['127.0.0.1', 54964]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 54964]
+HTTP close for ['127.0.0.1', 54964]
+HTTP response complete for ['127.0.0.1', 54964]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.01, 127.0.0.1:54964][0m
+HTTP b'GET' request for ['127.0.0.1', 37090]
+HTTP 200 response started for ['127.0.0.1', 37090]
+HTTP close for ['127.0.0.1', 37090]
+HTTP response complete for ['127.0.0.1', 37090]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:37090][0m
+HTTP b'GET' request for ['127.0.0.1', 37090]
+HTTP 200 response started for ['127.0.0.1', 37090]
+HTTP response chunk for ['127.0.0.1', 37090]
+HTTP response chunk for ['127.0.0.1', 37090]
+HTTP response chunk for ['127.0.0.1', 37090]
+HTTP close for ['127.0.0.1', 37090]
+HTTP response complete for ['127.0.0.1', 37090]
+[mHTTP GET /api/v1/schema/ 200 [0.45, 127.0.0.1:37090][0m
+HTTP b'POST' request for ['127.0.0.1', 37090]
+HTTP 200 response started for ['127.0.0.1', 37090]
+HTTP close for ['127.0.0.1', 37090]
+HTTP response complete for ['127.0.0.1', 37090]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.01, 127.0.0.1:37090][0m
+HTTP b'POST' request for ['127.0.0.1', 60860]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 60860]
+HTTP close for ['127.0.0.1', 60860]
+HTTP response complete for ['127.0.0.1', 60860]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.01, 127.0.0.1:60860][0m
+HTTP b'POST' request for ['127.0.0.1', 60860]
+HTTP 200 response started for ['127.0.0.1', 60860]
+HTTP close for ['127.0.0.1', 60860]
+HTTP response complete for ['127.0.0.1', 60860]
+[mHTTP POST /api/v1/accounts/freelancer-form/ 200 [0.06, 127.0.0.1:60860][0m
+HTTP b'GET' request for ['127.0.0.1', 42730]
+Not Found: /api/v1/accounts/client-form/
+HTTP 404 response started for ['127.0.0.1', 42730]
+HTTP close for ['127.0.0.1', 42730]
+HTTP response complete for ['127.0.0.1', 42730]
+[33mHTTP GET /api/v1/accounts/client-form/ 404 [0.01, 127.0.0.1:42730][0m
+HTTP b'POST' request for ['127.0.0.1', 42730]
+HTTP 200 response started for ['127.0.0.1', 42730]
+HTTP close for ['127.0.0.1', 42730]
+HTTP response complete for ['127.0.0.1', 42730]
+[mHTTP POST /api/v1/accounts/client-form/ 200 [0.05, 127.0.0.1:42730][0m
+HTTP b'GET' request for ['127.0.0.1', 42730]
+HTTP 200 response started for ['127.0.0.1', 42730]
+HTTP close for ['127.0.0.1', 42730]
+HTTP response complete for ['127.0.0.1', 42730]
+[mHTTP GET /api/v1/accounts/client-form/ 200 [0.01, 127.0.0.1:42730][0m
+HTTP b'GET' request for ['127.0.0.1', 60420]
+Internal Server Error: /api/v1/accounts/freelancer-form/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 437, in get_attribute
+    return get_attribute(instance, self.source_attrs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 104, in get_attribute
+    instance = getattr(instance, attr)
+AttributeError: 'FreelancerProfile' object has no attribute 'full_name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 516, in get
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 573, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 527, in to_representation
+    attribute = field.get_attribute(instance)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 470, in get_attribute
+    raise type(exc)(msg)
+AttributeError: Got AttributeError when attempting to get a value for field `full_name` on serializer `FreelancerFormSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `FreelancerProfile` instance.
+Original exception text was: 'FreelancerProfile' object has no attribute 'full_name'.
+HTTP 500 response started for ['127.0.0.1', 60420]
+HTTP close for ['127.0.0.1', 60420]
+HTTP response complete for ['127.0.0.1', 60420]
+[35;1mHTTP GET /api/v1/accounts/freelancer-form/ 500 [0.05, 127.0.0.1:60420][0m
+HTTP b'GET' request for ['127.0.0.1', 60420]
+HTTP 200 response started for ['127.0.0.1', 60420]
+HTTP close for ['127.0.0.1', 60420]
+HTTP response complete for ['127.0.0.1', 60420]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:60420][0m
+HTTP b'GET' request for ['127.0.0.1', 60420]
+HTTP 200 response started for ['127.0.0.1', 60420]
+HTTP response chunk for ['127.0.0.1', 60420]
+HTTP response chunk for ['127.0.0.1', 60420]
+HTTP response chunk for ['127.0.0.1', 60420]
+HTTP close for ['127.0.0.1', 60420]
+HTTP response complete for ['127.0.0.1', 60420]
+[mHTTP GET /api/v1/schema/ 200 [0.16, 127.0.0.1:60420][0m
+HTTP b'POST' request for ['127.0.0.1', 60420]
+HTTP 200 response started for ['127.0.0.1', 60420]
+HTTP close for ['127.0.0.1', 60420]
+HTTP response complete for ['127.0.0.1', 60420]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.23, 127.0.0.1:60420][0m
+HTTP b'GET' request for ['127.0.0.1', 60420]
+HTTP 200 response started for ['127.0.0.1', 60420]
+HTTP close for ['127.0.0.1', 60420]
+HTTP response complete for ['127.0.0.1', 60420]
+[mHTTP GET /api/v1/accounts/client-form/ 200 [0.01, 127.0.0.1:60420][0m
+HTTP b'GET' request for ['127.0.0.1', 54876]
+Internal Server Error: /api/v1/accounts/freelancer-form/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 437, in get_attribute
+    return get_attribute(instance, self.source_attrs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 104, in get_attribute
+    instance = getattr(instance, attr)
+AttributeError: 'FreelancerProfile' object has no attribute 'full_name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 516, in get
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 573, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 527, in to_representation
+    attribute = field.get_attribute(instance)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 470, in get_attribute
+    raise type(exc)(msg)
+AttributeError: Got AttributeError when attempting to get a value for field `full_name` on serializer `FreelancerFormSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `FreelancerProfile` instance.
+Original exception text was: 'FreelancerProfile' object has no attribute 'full_name'.
+HTTP 500 response started for ['127.0.0.1', 54876]
+HTTP close for ['127.0.0.1', 54876]
+HTTP response complete for ['127.0.0.1', 54876]
+[35;1mHTTP GET /api/v1/accounts/freelancer-form/ 500 [0.04, 127.0.0.1:54876][0m
+HTTP b'POST' request for ['127.0.0.1', 59860]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 59860]
+HTTP close for ['127.0.0.1', 59860]
+HTTP response complete for ['127.0.0.1', 59860]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.01, 127.0.0.1:59860][0m
+HTTP b'POST' request for ['127.0.0.1', 41274]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 41274]
+HTTP close for ['127.0.0.1', 41274]
+HTTP response complete for ['127.0.0.1', 41274]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.01, 127.0.0.1:41274][0m
+HTTP b'POST' request for ['127.0.0.1', 54290]
+HTTP 200 response started for ['127.0.0.1', 54290]
+HTTP close for ['127.0.0.1', 54290]
+HTTP response complete for ['127.0.0.1', 54290]
+[mHTTP POST /api/v1/accounts/freelancer-form/ 200 [0.07, 127.0.0.1:54290][0m
+HTTP b'GET' request for ['127.0.0.1', 54290]
+Internal Server Error: /api/v1/accounts/freelancer-form/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 437, in get_attribute
+    return get_attribute(instance, self.source_attrs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 104, in get_attribute
+    instance = getattr(instance, attr)
+AttributeError: 'FreelancerProfile' object has no attribute 'full_name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 516, in get
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 573, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 527, in to_representation
+    attribute = field.get_attribute(instance)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 470, in get_attribute
+    raise type(exc)(msg)
+AttributeError: Got AttributeError when attempting to get a value for field `full_name` on serializer `FreelancerFormSerializer`.
+The serializer field might be named incorrectly and not match any attribute or key on the `FreelancerProfile` instance.
+Original exception text was: 'FreelancerProfile' object has no attribute 'full_name'.
+HTTP 500 response started for ['127.0.0.1', 54290]
+HTTP close for ['127.0.0.1', 54290]
+HTTP response complete for ['127.0.0.1', 54290]
+[35;1mHTTP GET /api/v1/accounts/freelancer-form/ 500 [0.04, 127.0.0.1:54290][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 52778]
+HTTP 200 response started for ['127.0.0.1', 52778]
+HTTP close for ['127.0.0.1', 52778]
+HTTP response complete for ['127.0.0.1', 52778]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.03, 127.0.0.1:52778][0m
+HTTP b'POST' request for ['127.0.0.1', 52778]
+Bad Request: /api/v1/accounts/client-form/
+HTTP 400 response started for ['127.0.0.1', 52778]
+HTTP close for ['127.0.0.1', 52778]
+HTTP response complete for ['127.0.0.1', 52778]
+[31;1mHTTP POST /api/v1/accounts/client-form/ 400 [0.02, 127.0.0.1:52778][0m
+HTTP b'GET' request for ['127.0.0.1', 49908]
+Not Found: /api/v1/accounts/client-form/
+HTTP 404 response started for ['127.0.0.1', 49908]
+HTTP close for ['127.0.0.1', 49908]
+HTTP response complete for ['127.0.0.1', 49908]
+[33mHTTP GET /api/v1/accounts/client-form/ 404 [0.01, 127.0.0.1:49908][0m
+HTTP b'POST' request for ['127.0.0.1', 45912]
+Bad Request: /api/v1/accounts/client-form/
+HTTP 400 response started for ['127.0.0.1', 45912]
+HTTP close for ['127.0.0.1', 45912]
+HTTP response complete for ['127.0.0.1', 45912]
+[31;1mHTTP POST /api/v1/accounts/client-form/ 400 [0.10, 127.0.0.1:45912][0m
+HTTP b'POST' request for ['127.0.0.1', 45912]
+HTTP 200 response started for ['127.0.0.1', 45912]
+HTTP close for ['127.0.0.1', 45912]
+HTTP response complete for ['127.0.0.1', 45912]
+[mHTTP POST /api/v1/accounts/client-form/ 200 [0.05, 127.0.0.1:45912][0m
+HTTP b'GET' request for ['127.0.0.1', 45912]
+HTTP 200 response started for ['127.0.0.1', 45912]
+HTTP close for ['127.0.0.1', 45912]
+HTTP response complete for ['127.0.0.1', 45912]
+[mHTTP GET /api/v1/accounts/client-form/ 200 [0.01, 127.0.0.1:45912][0m
+HTTP b'GET' request for ['127.0.0.1', 45912]
+HTTP 200 response started for ['127.0.0.1', 45912]
+HTTP close for ['127.0.0.1', 45912]
+HTTP response complete for ['127.0.0.1', 45912]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.01, 127.0.0.1:45912][0m
+HTTP b'POST' request for ['127.0.0.1', 48354]
+HTTP 205 response started for ['127.0.0.1', 48354]
+HTTP close for ['127.0.0.1', 48354]
+HTTP response complete for ['127.0.0.1', 48354]
+[mHTTP POST /api/v1/accounts/auth/logout/ 205 [0.04, 127.0.0.1:48354][0m
+HTTP b'GET' request for ['127.0.0.1', 48366]
+HTTP 200 response started for ['127.0.0.1', 48366]
+HTTP close for ['127.0.0.1', 48366]
+HTTP response complete for ['127.0.0.1', 48366]
+[mHTTP GET /api/v1/docs/ 200 [0.16, 127.0.0.1:48366][0m
+HTTP b'GET' request for ['127.0.0.1', 48366]
+HTTP 200 response started for ['127.0.0.1', 48366]
+HTTP response chunk for ['127.0.0.1', 48366]
+HTTP response chunk for ['127.0.0.1', 48366]
+HTTP response chunk for ['127.0.0.1', 48366]
+HTTP close for ['127.0.0.1', 48366]
+HTTP response complete for ['127.0.0.1', 48366]
+[mHTTP GET /api/v1/schema/ 200 [0.25, 127.0.0.1:48366][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /api/v1/docs/ 200 [0.14, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP response chunk for ['127.0.0.1', 47548]
+HTTP response chunk for ['127.0.0.1', 47548]
+HTTP response chunk for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /api/v1/schema/ 200 [0.22, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/accounts/freelancerprofile/ 200 [0.16, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:47548][0m
+HTTP b'POST' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP POST /admin/accounts/freelancerprofile/ 200 [0.10, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP response chunk for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /static/admin/js/cancel.js 200 [0.18, 127.0.0.1:47548][0m
+HTTP b'POST' request for ['127.0.0.1', 47548]
+HTTP 302 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[32mHTTP POST /admin/accounts/freelancerprofile/ 302 [0.08, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/accounts/freelancerprofile/ 200 [0.08, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 304 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[36mHTTP GET /static/admin/img/icon-yes.svg 304 [0.01, 127.0.0.1:47548][0m
+HTTP b'POST' request for ['127.0.0.1', 47548]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/auth/user/ 200 [0.10, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP b'GET' request for ['127.0.0.1', 46902]
+HTTP b'GET' request for ['127.0.0.1', 46908]
+HTTP 304 response started for ['127.0.0.1', 46902]
+HTTP close for ['127.0.0.1', 46902]
+HTTP response complete for ['127.0.0.1', 46902]
+[36mHTTP GET /static/admin/img/search.svg 304 [0.02, 127.0.0.1:46902][0m
+HTTP 304 response started for ['127.0.0.1', 46908]
+HTTP close for ['127.0.0.1', 46908]
+HTTP response complete for ['127.0.0.1', 46908]
+[36mHTTP GET /static/admin/img/icon-no.svg 304 [0.02, 127.0.0.1:46908][0m
+HTTP 200 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[mHTTP GET /admin/jsi18n/ 200 [0.05, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP 304 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[36mHTTP GET /static/admin/img/sorting-icons.svg 304 [0.01, 127.0.0.1:47548][0m
+HTTP b'GET' request for ['127.0.0.1', 46908]
+HTTP 304 response started for ['127.0.0.1', 46908]
+HTTP close for ['127.0.0.1', 46908]
+HTTP response complete for ['127.0.0.1', 46908]
+[36mHTTP GET /static/admin/img/icon-viewlink.svg 304 [0.01, 127.0.0.1:46908][0m
+HTTP b'GET' request for ['127.0.0.1', 46908]
+HTTP 200 response started for ['127.0.0.1', 46908]
+HTTP close for ['127.0.0.1', 46908]
+HTTP response complete for ['127.0.0.1', 46908]
+[mHTTP GET /admin/auth/user/8/change/ 200 [0.20, 127.0.0.1:46908][0m
+HTTP b'GET' request for ['127.0.0.1', 46908]
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP b'GET' request for ['127.0.0.1', 46902]
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP b'GET' request for ['127.0.0.1', 46926]
+HTTP b'GET' request for ['127.0.0.1', 46932]
+HTTP 304 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[36mHTTP GET /static/admin/css/forms.css 304 [0.01, 127.0.0.1:47548][0m
+HTTP 304 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[36mHTTP GET /static/admin/js/admin/DateTimeShortcuts.js 304 [0.01, 127.0.0.1:46918][0m
+HTTP 304 response started for ['127.0.0.1', 46902]
+HTTP close for ['127.0.0.1', 46902]
+HTTP response complete for ['127.0.0.1', 46902]
+[36mHTTP GET /static/admin/js/calendar.js 304 [0.02, 127.0.0.1:46902][0m
+HTTP 304 response started for ['127.0.0.1', 46926]
+HTTP close for ['127.0.0.1', 46926]
+HTTP response complete for ['127.0.0.1', 46926]
+[36mHTTP GET /static/admin/js/inlines.js 304 [0.02, 127.0.0.1:46926][0m
+HTTP 304 response started for ['127.0.0.1', 46932]
+HTTP close for ['127.0.0.1', 46932]
+HTTP response complete for ['127.0.0.1', 46932]
+[36mHTTP GET /static/admin/js/SelectBox.js 304 [0.02, 127.0.0.1:46932][0m
+HTTP b'GET' request for ['127.0.0.1', 47548]
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 304 response started for ['127.0.0.1', 47548]
+HTTP close for ['127.0.0.1', 47548]
+HTTP response complete for ['127.0.0.1', 47548]
+[36mHTTP GET /static/admin/js/SelectFilter2.js 304 [0.01, 127.0.0.1:47548][0m
+HTTP 304 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[36mHTTP GET /static/admin/css/widgets.css 304 [0.01, 127.0.0.1:46918][0m
+HTTP 200 response started for ['127.0.0.1', 46908]
+HTTP close for ['127.0.0.1', 46908]
+HTTP response complete for ['127.0.0.1', 46908]
+[mHTTP GET /admin/jsi18n/ 200 [0.03, 127.0.0.1:46908][0m
+HTTP b'GET' request for ['127.0.0.1', 46908]
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 304 response started for ['127.0.0.1', 46908]
+HTTP close for ['127.0.0.1', 46908]
+HTTP response complete for ['127.0.0.1', 46908]
+[36mHTTP GET /static/admin/js/prepopulate_init.js 304 [0.00, 127.0.0.1:46908][0m
+HTTP 304 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[36mHTTP GET /static/admin/js/change_form.js 304 [0.01, 127.0.0.1:46918][0m
+HTTP b'POST' request for ['127.0.0.1', 46918]
+HTTP 302 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[32mHTTP POST /admin/auth/user/8/change/ 302 [0.11, 127.0.0.1:46918][0m
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 200 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[mHTTP GET /admin/auth/user/ 200 [0.10, 127.0.0.1:46918][0m
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 200 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:46918][0m
+HTTP b'POST' request for ['127.0.0.1', 46918]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:46918][0m
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 200 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:46918][0m
+HTTP b'GET' request for ['127.0.0.1', 46918]
+HTTP 200 response started for ['127.0.0.1', 46918]
+HTTP response chunk for ['127.0.0.1', 46918]
+HTTP response chunk for ['127.0.0.1', 46918]
+HTTP response chunk for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[mHTTP GET /api/v1/schema/ 200 [0.16, 127.0.0.1:46918][0m
+HTTP b'POST' request for ['127.0.0.1', 46918]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 46918]
+HTTP close for ['127.0.0.1', 46918]
+HTTP response complete for ['127.0.0.1', 46918]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:46918][0m
+HTTP b'GET' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP GET /admin/auth/user/8/change/ 200 [0.18, 127.0.0.1:50864][0m
+HTTP b'GET' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:50864][0m
+HTTP b'GET' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:50864][0m
+HTTP b'GET' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP response chunk for ['127.0.0.1', 50864]
+HTTP response chunk for ['127.0.0.1', 50864]
+HTTP response chunk for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP GET /api/v1/schema/ 200 [0.34, 127.0.0.1:50864][0m
+HTTP b'POST' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.32, 127.0.0.1:50864][0m
+HTTP b'GET' request for ['127.0.0.1', 50864]
+HTTP 200 response started for ['127.0.0.1', 50864]
+HTTP close for ['127.0.0.1', 50864]
+HTTP response complete for ['127.0.0.1', 50864]
+[mHTTP GET /api/v1/accounts/client-form/ 200 [0.01, 127.0.0.1:50864][0m
+HTTP b'GET' request for ['127.0.0.1', 45856]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 45856]
+HTTP close for ['127.0.0.1', 45856]
+HTTP response complete for ['127.0.0.1', 45856]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:45856][0m
+HTTP b'GET' request for ['127.0.0.1', 45856]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 45856]
+HTTP close for ['127.0.0.1', 45856]
+HTTP response complete for ['127.0.0.1', 45856]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:45856][0m
+HTTP b'GET' request for ['127.0.0.1', 35102]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 35102]
+HTTP close for ['127.0.0.1', 35102]
+HTTP response complete for ['127.0.0.1', 35102]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:35102][0m
+HTTP b'GET' request for ['127.0.0.1', 35102]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 35102]
+HTTP close for ['127.0.0.1', 35102]
+HTTP response complete for ['127.0.0.1', 35102]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:35102][0m
+HTTP b'GET' request for ['127.0.0.1', 35102]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 35102]
+HTTP close for ['127.0.0.1', 35102]
+HTTP response complete for ['127.0.0.1', 35102]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:35102][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/accounts/profile/ 200 [0.11, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/accounts/profile/8/change/ 200 [0.11, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/accounts/profile/8/delete/ 200 [0.09, 127.0.0.1:40434][0m
+HTTP b'POST' request for ['127.0.0.1', 40434]
+HTTP 302 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[32mHTTP POST /admin/accounts/profile/8/delete/ 302 [0.08, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/accounts/profile/ 200 [0.10, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+HTTP 200 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 40434]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 40434]
+HTTP close for ['127.0.0.1', 40434]
+HTTP response complete for ['127.0.0.1', 40434]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:40434][0m
+HTTP b'GET' request for ['127.0.0.1', 58386]
+HTTP 200 response started for ['127.0.0.1', 58386]
+HTTP close for ['127.0.0.1', 58386]
+HTTP response complete for ['127.0.0.1', 58386]
+[mHTTP GET /admin/accounts/profile/ 200 [0.10, 127.0.0.1:58386][0m
+HTTP b'GET' request for ['127.0.0.1', 58386]
+HTTP 200 response started for ['127.0.0.1', 58386]
+HTTP close for ['127.0.0.1', 58386]
+HTTP response complete for ['127.0.0.1', 58386]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:58386][0m
+HTTP b'GET' request for ['127.0.0.1', 46186]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 46186]
+HTTP close for ['127.0.0.1', 46186]
+HTTP response complete for ['127.0.0.1', 46186]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:46186][0m
+HTTP b'POST' request for ['127.0.0.1', 45714]
+Forbidden: /api/v1/accounts/freelancer-form/
+HTTP 403 response started for ['127.0.0.1', 45714]
+HTTP close for ['127.0.0.1', 45714]
+HTTP response complete for ['127.0.0.1', 45714]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 403 [0.01, 127.0.0.1:45714][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 40962]
+Forbidden: /api/v1/accounts/freelancer-form/
+HTTP 403 response started for ['127.0.0.1', 40962]
+HTTP close for ['127.0.0.1', 40962]
+HTTP response complete for ['127.0.0.1', 40962]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 403 [0.02, 127.0.0.1:40962][0m
+HTTP b'POST' request for ['127.0.0.1', 40962]
+Forbidden: /api/v1/accounts/freelancer-form/
+HTTP 403 response started for ['127.0.0.1', 40962]
+HTTP close for ['127.0.0.1', 40962]
+HTTP response complete for ['127.0.0.1', 40962]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 403 [0.01, 127.0.0.1:40962][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 42426]
+Bad Request: /api/v1/accounts/freelancer-form/
+HTTP 400 response started for ['127.0.0.1', 42426]
+HTTP close for ['127.0.0.1', 42426]
+HTTP response complete for ['127.0.0.1', 42426]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 400 [0.25, 127.0.0.1:42426][0m
+HTTP b'POST' request for ['127.0.0.1', 42426]
+HTTP 200 response started for ['127.0.0.1', 42426]
+HTTP close for ['127.0.0.1', 42426]
+HTTP response complete for ['127.0.0.1', 42426]
+[mHTTP POST /api/v1/accounts/freelancer-form/ 200 [0.08, 127.0.0.1:42426][0m
+HTTP b'GET' request for ['127.0.0.1', 42426]
+HTTP 200 response started for ['127.0.0.1', 42426]
+HTTP close for ['127.0.0.1', 42426]
+HTTP response complete for ['127.0.0.1', 42426]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.01, 127.0.0.1:42426][0m
+HTTP b'POST' request for ['127.0.0.1', 56126]
+Unauthorized: /api/v1/accounts/freelancer-form/
+HTTP 401 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 401 [0.00, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+HTTP 200 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[mHTTP GET /api/v1/docs/ 200 [0.18, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+HTTP 200 response started for ['127.0.0.1', 56126]
+HTTP response chunk for ['127.0.0.1', 56126]
+HTTP response chunk for ['127.0.0.1', 56126]
+HTTP response chunk for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[mHTTP GET /api/v1/schema/ 200 [0.16, 127.0.0.1:56126][0m
+HTTP b'POST' request for ['127.0.0.1', 56126]
+HTTP 200 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.00, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+Unauthorized: /api/v1/accounts/freelancer-form/
+HTTP 401 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[31;1mHTTP GET /api/v1/accounts/freelancer-form/ 401 [0.00, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+Not Found: /api/v1/accounts/client-form/
+HTTP 404 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[33mHTTP GET /api/v1/accounts/client-form/ 404 [0.01, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 56126]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 52912]
+HTTP 200 response started for ['127.0.0.1', 52912]
+HTTP close for ['127.0.0.1', 52912]
+HTTP response complete for ['127.0.0.1', 52912]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.01, 127.0.0.1:52912][0m
+HTTP b'POST' request for ['127.0.0.1', 56126]
+Forbidden: /api/v1/accounts/freelancer-form/
+HTTP 403 response started for ['127.0.0.1', 56126]
+HTTP close for ['127.0.0.1', 56126]
+HTTP response complete for ['127.0.0.1', 56126]
+[31;1mHTTP POST /api/v1/accounts/freelancer-form/ 403 [0.01, 127.0.0.1:56126][0m
+HTTP b'GET' request for ['127.0.0.1', 59408]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 59408]
+HTTP close for ['127.0.0.1', 59408]
+HTTP response complete for ['127.0.0.1', 59408]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.01, 127.0.0.1:59408][0m
+HTTP b'GET' request for ['127.0.0.1', 33926]
+HTTP 200 response started for ['127.0.0.1', 33926]
+HTTP close for ['127.0.0.1', 33926]
+HTTP response complete for ['127.0.0.1', 33926]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.01, 127.0.0.1:33926][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 36320]
+Not Found: /api/v1/accounts/freelancer-form/
+HTTP 404 response started for ['127.0.0.1', 36320]
+HTTP close for ['127.0.0.1', 36320]
+HTTP response complete for ['127.0.0.1', 36320]
+[33mHTTP GET /api/v1/accounts/freelancer-form/ 404 [0.02, 127.0.0.1:36320][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 56024]
+HTTP 200 response started for ['127.0.0.1', 56024]
+HTTP close for ['127.0.0.1', 56024]
+HTTP response complete for ['127.0.0.1', 56024]
+[mHTTP GET /api/v1/docs/ 200 [0.15, 127.0.0.1:56024][0m
+HTTP b'GET' request for ['127.0.0.1', 56024]
+HTTP 200 response started for ['127.0.0.1', 56024]
+HTTP response chunk for ['127.0.0.1', 56024]
+HTTP response chunk for ['127.0.0.1', 56024]
+HTTP response chunk for ['127.0.0.1', 56024]
+HTTP close for ['127.0.0.1', 56024]
+HTTP response complete for ['127.0.0.1', 56024]
+[mHTTP GET /api/v1/schema/ 200 [0.27, 127.0.0.1:56024][0m
+HTTP b'GET' request for ['127.0.0.1', 56024]
+Unauthorized: /api/v1/accounts/frelancers/
+HTTP 401 response started for ['127.0.0.1', 56024]
+HTTP close for ['127.0.0.1', 56024]
+HTTP response complete for ['127.0.0.1', 56024]
+[31;1mHTTP GET /api/v1/accounts/frelancers/?page=1 401 [0.00, 127.0.0.1:56024][0m
+HTTP b'POST' request for ['127.0.0.1', 56024]
+HTTP 200 response started for ['127.0.0.1', 56024]
+HTTP close for ['127.0.0.1', 56024]
+HTTP response complete for ['127.0.0.1', 56024]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.32, 127.0.0.1:56024][0m
+HTTP b'GET' request for ['127.0.0.1', 56024]
+HTTP 200 response started for ['127.0.0.1', 56024]
+HTTP close for ['127.0.0.1', 56024]
+HTTP response complete for ['127.0.0.1', 56024]
+[mHTTP GET /api/v1/accounts/frelancers/?page=1 200 [0.02, 127.0.0.1:56024][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /api/v1/docs/ 200 [0.16, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP response chunk for ['127.0.0.1', 43776]
+HTTP response chunk for ['127.0.0.1', 43776]
+HTTP response chunk for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /api/v1/schema/ 200 [0.29, 127.0.0.1:43776][0m
+HTTP b'POST' request for ['127.0.0.1', 43776]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /admin/auth/user/ 200 [0.16, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 304 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[36mHTTP GET /static/admin/img/tooltag-add.svg 304 [0.00, 127.0.0.1:43776][0m
+HTTP b'POST' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.31, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /api/v1/accounts/freelancer-form/ 200 [0.01, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+HTTP 200 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[mHTTP GET /api/v1/accounts/frelancers/?page=1 200 [0.02, 127.0.0.1:43776][0m
+HTTP b'GET' request for ['127.0.0.1', 43776]
+Forbidden: /api/v1/accounts/languages/
+HTTP 403 response started for ['127.0.0.1', 43776]
+HTTP close for ['127.0.0.1', 43776]
+HTTP response complete for ['127.0.0.1', 43776]
+[31;1mHTTP GET /api/v1/accounts/languages/?page=1 403 [0.01, 127.0.0.1:43776][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+Using selector: EpollSelector
+Not Found: /api/v1/accounts/auth/password-reset-confirm/MQ/cqkgio-14123999b3df76d4ed9e6c63f8ab494e/
+Internal Server Error: /api/v1/accounts/auth/resend-verification/1/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+TypeError: ResendVerificationView.post() got an unexpected keyword argument 'user_id'
+Not Found: /api/v1/accounts/auth/verify-email/MQ/cqkgiz-a4d7d00b906582fa921ea40991c5ba15/
+Using selector: EpollSelector
+Not Found: /api/v1/accounts/auth/password-reset-confirm/MQ/cqkgmn-d1fde4ce948c2a229fcafee1ce6d317a/
+Internal Server Error: /api/v1/accounts/auth/resend-verification/1/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+TypeError: ResendVerificationView.post() got an unexpected keyword argument 'user_id'

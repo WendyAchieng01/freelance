@@ -15,6 +15,7 @@ router.register(r'languages', views.LanguageViewSet, basename='language')
 
 
 
+
 urlpatterns = [
      path('auth/register/', views.RegisterView.as_view(), name='register'),
      path('verify-email/<str:uidb64>/<str:token>/',views.VerifyEmailView.as_view(), name='verify-email'),
@@ -27,6 +28,7 @@ urlpatterns = [
      # Forms
      path('freelancer-form/', views.FreelancerFormView.as_view(), name='freelancer-form'),
      path('client-form/', views.ClientFormView.as_view(), name='client-form'),
+     path('frelancers/', views.ListFreelancersView.as_view(), name='list-freelancers'),
      # Resources
      path('', include(router.urls)),
 ]
