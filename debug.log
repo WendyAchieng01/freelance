@@ -50,3 +50,17 @@ HTTP 201 response started for ['127.0.0.1', 41314]
 HTTP close for ['127.0.0.1', 41314]
 HTTP response complete for ['127.0.0.1', 41314]
 [mHTTP POST /api/v1/accounts/auth/register/ 201 [6.98, 127.0.0.1:41314][0m
+Using selector: KqueueSelector
+Using selector: KqueueSelector
+Watching for file changes with StatReloader
+Using selector: KqueueSelector
+Using selector: KqueueSelector
+Watching for file changes with StatReloader
+HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+Using selector: KqueueSelector
+Using selector: KqueueSelector
+Using selector: KqueueSelector
+Using selector: KqueueSelector
+Using selector: KqueueSelector
