@@ -5546,3 +5546,126 @@ Traceback (most recent call last):
   File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
     response = handler(request, *args, **kwargs)
 TypeError: ResendVerificationView.post() got an unexpected keyword argument 'user_id'
+HTTP b'GET' request for ['127.0.0.1', 40894]
+Not Found: /api/v1/doc
+HTTP 404 response started for ['127.0.0.1', 40894]
+HTTP close for ['127.0.0.1', 40894]
+HTTP response complete for ['127.0.0.1', 40894]
+[33mHTTP GET /api/v1/doc 404 [0.05, 127.0.0.1:40894][0m
+HTTP b'GET' request for ['127.0.0.1', 40894]
+Not Found: /api/v1/doc/
+HTTP 404 response started for ['127.0.0.1', 40894]
+HTTP close for ['127.0.0.1', 40894]
+HTTP response complete for ['127.0.0.1', 40894]
+[33mHTTP GET /api/v1/doc/ 404 [0.03, 127.0.0.1:40894][0m
+HTTP b'GET' request for ['127.0.0.1', 40894]
+HTTP 200 response started for ['127.0.0.1', 40894]
+HTTP close for ['127.0.0.1', 40894]
+HTTP response complete for ['127.0.0.1', 40894]
+[mHTTP GET /api/v1/docs/ 200 [0.13, 127.0.0.1:40894][0m
+HTTP b'GET' request for ['127.0.0.1', 40894]
+HTTP 200 response started for ['127.0.0.1', 40894]
+HTTP response chunk for ['127.0.0.1', 40894]
+HTTP response chunk for ['127.0.0.1', 40894]
+HTTP response chunk for ['127.0.0.1', 40894]
+HTTP close for ['127.0.0.1', 40894]
+HTTP response complete for ['127.0.0.1', 40894]
+[mHTTP GET /api/v1/schema/ 200 [0.26, 127.0.0.1:40894][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 44870]
+HTTP 200 response started for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[mHTTP GET /api/v1/docs/ 200 [0.15, 127.0.0.1:44870][0m
+HTTP b'GET' request for ['127.0.0.1', 44870]
+HTTP 200 response started for ['127.0.0.1', 44870]
+HTTP response chunk for ['127.0.0.1', 44870]
+HTTP response chunk for ['127.0.0.1', 44870]
+HTTP response chunk for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[mHTTP GET /api/v1/schema/ 200 [0.27, 127.0.0.1:44870][0m
+HTTP b'GET' request for ['127.0.0.1', 44870]
+Unauthorized: /api/v1/accounts/clients/
+HTTP 401 response started for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[31;1mHTTP GET /api/v1/accounts/clients/?page=1 401 [0.00, 127.0.0.1:44870][0m
+HTTP b'POST' request for ['127.0.0.1', 44870]
+Bad Request: /api/v1/accounts/auth/login/
+HTTP 400 response started for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[31;1mHTTP POST /api/v1/accounts/auth/login/ 400 [0.01, 127.0.0.1:44870][0m
+HTTP b'POST' request for ['127.0.0.1', 44870]
+HTTP 200 response started for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [1.02, 127.0.0.1:44870][0m
+HTTP b'GET' request for ['127.0.0.1', 44870]
+HTTP 200 response started for ['127.0.0.1', 44870]
+HTTP close for ['127.0.0.1', 44870]
+HTTP response complete for ['127.0.0.1', 44870]
+[mHTTP GET /api/v1/accounts/clients/?page=1 200 [0.01, 127.0.0.1:44870][0m

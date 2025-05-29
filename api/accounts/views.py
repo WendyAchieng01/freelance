@@ -25,7 +25,7 @@ from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,
-    LanguageSerializer,
+    LanguageSerializer,ClientListSerializer,
     FreelancerFormSerializer, ClientFormSerializer
 )
 
@@ -478,6 +478,12 @@ class ListFreelancersView(generics.ListAPIView):
     def get_queryset(self):
         return FreelancerProfile.objects.filter(profile__user__profile__user_type='freelancer')
 
+
+class ClientListView(generics.ListAPIView):
+    queryset = ClientProfile.objects.select_related(
+        'profile__user').prefetch_related('languages')
+    serializer_class = ClientListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class FreelancerFormView(APIView):
