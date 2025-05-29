@@ -5669,3 +5669,2677 @@ HTTP 200 response started for ['127.0.0.1', 44870]
 HTTP close for ['127.0.0.1', 44870]
 HTTP response complete for ['127.0.0.1', 44870]
 [mHTTP GET /api/v1/accounts/clients/?page=1 200 [0.01, 127.0.0.1:44870][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 59248]
+HTTP 200 response started for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[mHTTP GET /api/v1/docs/ 200 [0.06, 127.0.0.1:59248][0m
+HTTP b'GET' request for ['127.0.0.1', 59248]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 92, in get_operation
+    parameters = self._get_parameters()
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 264, in _get_parameters
+    **dict_helper(self._get_filter_parameters()),
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 553, in _get_filter_parameters
+    filter_extension = OpenApiFilterExtension.get_match(filter_backend())
+                                                        ~~~~~~~~~~~~~~^^
+TypeError: 'str' object is not callable
+HTTP 500 response started for ['127.0.0.1', 59248]
+HTTP response chunk for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.05, 127.0.0.1:59248][0m
+HTTP b'GET' request for ['127.0.0.1', 59248]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 92, in get_operation
+    parameters = self._get_parameters()
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 264, in _get_parameters
+    **dict_helper(self._get_filter_parameters()),
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 553, in _get_filter_parameters
+    filter_extension = OpenApiFilterExtension.get_match(filter_backend())
+                                                        ~~~~~~~~~~~~~~^^
+TypeError: 'str' object is not callable
+HTTP 500 response started for ['127.0.0.1', 59248]
+HTTP response chunk for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:59248][0m
+HTTP b'GET' request for ['127.0.0.1', 59248]
+HTTP 200 response started for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:59248][0m
+HTTP b'GET' request for ['127.0.0.1', 59248]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 92, in get_operation
+    parameters = self._get_parameters()
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 264, in _get_parameters
+    **dict_helper(self._get_filter_parameters()),
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 553, in _get_filter_parameters
+    filter_extension = OpenApiFilterExtension.get_match(filter_backend())
+                                                        ~~~~~~~~~~~~~~^^
+TypeError: 'str' object is not callable
+HTTP 500 response started for ['127.0.0.1', 59248]
+HTTP response chunk for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:59248][0m
+HTTP b'GET' request for ['127.0.0.1', 59248]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 92, in get_operation
+    parameters = self._get_parameters()
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 264, in _get_parameters
+    **dict_helper(self._get_filter_parameters()),
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 553, in _get_filter_parameters
+    filter_extension = OpenApiFilterExtension.get_match(filter_backend())
+                                                        ~~~~~~~~~~~~~~^^
+TypeError: 'str' object is not callable
+HTTP 500 response started for ['127.0.0.1', 59248]
+HTTP response chunk for ['127.0.0.1', 59248]
+HTTP close for ['127.0.0.1', 59248]
+HTTP response complete for ['127.0.0.1', 59248]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.05, 127.0.0.1:59248][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 52590]
+HTTP 200 response started for ['127.0.0.1', 52590]
+HTTP close for ['127.0.0.1', 52590]
+HTTP response complete for ['127.0.0.1', 52590]
+[mHTTP GET /api/v1/docs/ 200 [0.07, 127.0.0.1:52590][0m
+HTTP b'GET' request for ['127.0.0.1', 52590]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 52590]
+HTTP response chunk for ['127.0.0.1', 52590]
+HTTP close for ['127.0.0.1', 52590]
+HTTP response complete for ['127.0.0.1', 52590]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.06, 127.0.0.1:52590][0m
+HTTP b'GET' request for ['127.0.0.1', 52590]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 52590]
+HTTP response chunk for ['127.0.0.1', 52590]
+HTTP close for ['127.0.0.1', 52590]
+HTTP response complete for ['127.0.0.1', 52590]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:52590][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 56132]
+HTTP 200 response started for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:56132][0m
+HTTP b'GET' request for ['127.0.0.1', 56132]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 56132]
+HTTP response chunk for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:56132][0m
+HTTP b'GET' request for ['127.0.0.1', 56132]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 56132]
+HTTP response chunk for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.03, 127.0.0.1:56132][0m
+HTTP b'GET' request for ['127.0.0.1', 56132]
+HTTP 200 response started for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:56132][0m
+HTTP b'GET' request for ['127.0.0.1', 56132]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 56132]
+HTTP response chunk for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:56132][0m
+HTTP b'GET' request for ['127.0.0.1', 56132]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 56132]
+HTTP response chunk for ['127.0.0.1', 56132]
+HTTP close for ['127.0.0.1', 56132]
+HTTP response complete for ['127.0.0.1', 56132]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.05, 127.0.0.1:56132][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 57714]
+HTTP 200 response started for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[mHTTP GET /api/v1/docs/ 200 [0.06, 127.0.0.1:57714][0m
+HTTP b'GET' request for ['127.0.0.1', 57714]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 57714]
+HTTP response chunk for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.05, 127.0.0.1:57714][0m
+HTTP b'GET' request for ['127.0.0.1', 57714]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 57714]
+HTTP response chunk for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:57714][0m
+HTTP b'GET' request for ['127.0.0.1', 57714]
+HTTP 200 response started for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:57714][0m
+HTTP b'GET' request for ['127.0.0.1', 57714]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 57714]
+HTTP response chunk for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.03, 127.0.0.1:57714][0m
+HTTP b'GET' request for ['127.0.0.1', 57714]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 250, in parse
+    assert isinstance(view.schema, AutoSchema), (
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Incompatible AutoSchema used on View <class 'api.academy.views.TrainingViewSet'>. Is DRF's DEFAULT_SCHEMA_CLASS pointing to "drf_spectacular.openapi.AutoSchema" or any other drf-spectacular compatible AutoSchema?
+HTTP 500 response started for ['127.0.0.1', 57714]
+HTTP response chunk for ['127.0.0.1', 57714]
+HTTP close for ['127.0.0.1', 57714]
+HTTP response complete for ['127.0.0.1', 57714]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.04, 127.0.0.1:57714][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 35640]
+HTTP 200 response started for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.10, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+HTTP 200 response started for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+HTTP 200 response started for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.17, 127.0.0.1:35640][0m
+HTTP b'GET' request for ['127.0.0.1', 35640]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `full_name` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP response chunk for ['127.0.0.1', 35640]
+HTTP close for ['127.0.0.1', 35640]
+HTTP response complete for ['127.0.0.1', 35640]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.09, 127.0.0.1:35640][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 38824]
+HTTP 200 response started for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[mHTTP GET /api/v1/docs/ 200 [0.06, 127.0.0.1:38824][0m
+HTTP b'GET' request for ['127.0.0.1', 38824]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `title` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.09, 127.0.0.1:38824][0m
+HTTP b'GET' request for ['127.0.0.1', 38824]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `title` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.07, 127.0.0.1:38824][0m
+HTTP b'GET' request for ['127.0.0.1', 38824]
+HTTP 200 response started for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:38824][0m
+HTTP b'GET' request for ['127.0.0.1', 38824]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `title` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:38824][0m
+HTTP b'GET' request for ['127.0.0.1', 38824]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `title` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP response chunk for ['127.0.0.1', 38824]
+HTTP close for ['127.0.0.1', 38824]
+HTTP response complete for ['127.0.0.1', 38824]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:38824][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 37668]
+HTTP 200 response started for ['127.0.0.1', 37668]
+HTTP close for ['127.0.0.1', 37668]
+HTTP response complete for ['127.0.0.1', 37668]
+[mHTTP GET /api/v1/docs/ 200 [0.06, 127.0.0.1:37668][0m
+HTTP b'GET' request for ['127.0.0.1', 37668]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `rate_per_hour` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 37668]
+HTTP response chunk for ['127.0.0.1', 37668]
+HTTP response chunk for ['127.0.0.1', 37668]
+HTTP close for ['127.0.0.1', 37668]
+HTTP response complete for ['127.0.0.1', 37668]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.10, 127.0.0.1:37668][0m
+HTTP b'GET' request for ['127.0.0.1', 37668]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `rate_per_hour` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 37668]
+HTTP response chunk for ['127.0.0.1', 37668]
+HTTP response chunk for ['127.0.0.1', 37668]
+HTTP close for ['127.0.0.1', 37668]
+HTTP response complete for ['127.0.0.1', 37668]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:37668][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 42184]
+HTTP 200 response started for ['127.0.0.1', 42184]
+HTTP close for ['127.0.0.1', 42184]
+HTTP response complete for ['127.0.0.1', 42184]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:42184][0m
+HTTP b'GET' request for ['127.0.0.1', 42184]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `experience` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 42184]
+HTTP response chunk for ['127.0.0.1', 42184]
+HTTP response chunk for ['127.0.0.1', 42184]
+HTTP close for ['127.0.0.1', 42184]
+HTTP response complete for ['127.0.0.1', 42184]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.11, 127.0.0.1:42184][0m
+HTTP b'GET' request for ['127.0.0.1', 42184]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `experience` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 42184]
+HTTP response chunk for ['127.0.0.1', 42184]
+HTTP response chunk for ['127.0.0.1', 42184]
+HTTP close for ['127.0.0.1', 42184]
+HTTP response complete for ['127.0.0.1', 42184]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:42184][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 38836]
+HTTP 200 response started for ['127.0.0.1', 38836]
+HTTP close for ['127.0.0.1', 38836]
+HTTP response complete for ['127.0.0.1', 38836]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:38836][0m
+HTTP b'GET' request for ['127.0.0.1', 38836]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `education` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38836]
+HTTP response chunk for ['127.0.0.1', 38836]
+HTTP response chunk for ['127.0.0.1', 38836]
+HTTP close for ['127.0.0.1', 38836]
+HTTP response complete for ['127.0.0.1', 38836]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.12, 127.0.0.1:38836][0m
+HTTP b'GET' request for ['127.0.0.1', 38836]
+Internal Server Error: /api/v1/schema/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 84, in get
+    return self._get_schema_response(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/views.py", line 92, in _get_schema_response
+    data=generator.get_schema(request=request, public=self.serve_public),
+         ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 285, in get_schema
+    paths=self.parse(request, public),
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/generators.py", line 256, in parse
+    operation = view.schema.get_operation(
+        path, path_regex, path_prefix, method, self.registry
+    )
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 112, in get_operation
+    operation['responses'] = self._get_response_bodies()
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1397, in _get_response_bodies
+    return {'200': self._get_response_for_code(response_serializers, '200', direction=direction)}
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1453, in _get_response_for_code
+    component = self.resolve_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1648, in resolve_serializer
+    component.schema = self._map_serializer(serializer, direction, bypass_extensions)
+                       ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 949, in _map_serializer
+    schema = self._map_basic_serializer(serializer, direction)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/drf_spectacular/openapi.py", line 1042, in _map_basic_serializer
+    for field in serializer.fields.values():
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `education` is not valid for model `FreelancerProfile` in `api.accounts.serializers.FreelancerListSerializer`.
+HTTP 500 response started for ['127.0.0.1', 38836]
+HTTP response chunk for ['127.0.0.1', 38836]
+HTTP response chunk for ['127.0.0.1', 38836]
+HTTP close for ['127.0.0.1', 38836]
+HTTP response complete for ['127.0.0.1', 38836]
+[35;1mHTTP GET /api/v1/schema/ 500 [0.08, 127.0.0.1:38836][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 59282]
+HTTP 200 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:59282][0m
+HTTP b'GET' request for ['127.0.0.1', 59282]
+HTTP 200 response started for ['127.0.0.1', 59282]
+HTTP response chunk for ['127.0.0.1', 59282]
+HTTP response chunk for ['127.0.0.1', 59282]
+HTTP response chunk for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[mHTTP GET /api/v1/schema/ 200 [0.14, 127.0.0.1:59282][0m
+HTTP b'GET' request for ['127.0.0.1', 59282]
+Unauthorized: /api/v1/accounts/clients/
+HTTP 401 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[31;1mHTTP GET /api/v1/accounts/clients/?page=2 401 [0.00, 127.0.0.1:59282][0m
+HTTP b'POST' request for ['127.0.0.1', 59282]
+HTTP 200 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[mHTTP POST /api/v1/accounts/auth/login/ 200 [0.51, 127.0.0.1:59282][0m
+HTTP b'GET' request for ['127.0.0.1', 59282]
+Not Found: /api/v1/accounts/clients/
+HTTP 404 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[33mHTTP GET /api/v1/accounts/clients/?page=2 404 [0.00, 127.0.0.1:59282][0m
+HTTP b'GET' request for ['127.0.0.1', 59282]
+HTTP 200 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[mHTTP GET /api/v1/accounts/clients/?page=1 200 [0.01, 127.0.0.1:59282][0m
+HTTP b'GET' request for ['127.0.0.1', 59282]
+HTTP 200 response started for ['127.0.0.1', 59282]
+HTTP close for ['127.0.0.1', 59282]
+HTTP response complete for ['127.0.0.1', 59282]
+[mHTTP GET /api/v1/accounts/frelancers/?page=1 200 [0.01, 127.0.0.1:59282][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 49988]
+HTTP 200 response started for ['127.0.0.1', 49988]
+HTTP close for ['127.0.0.1', 49988]
+HTTP response complete for ['127.0.0.1', 49988]
+[mHTTP GET /api/v1/accounts/frelancers/?page=1 200 [0.02, 127.0.0.1:49988][0m
+HTTP b'GET' request for ['127.0.0.1', 49988]
+HTTP 200 response started for ['127.0.0.1', 49988]
+HTTP close for ['127.0.0.1', 49988]
+HTTP response complete for ['127.0.0.1', 49988]
+[mHTTP GET /api/v1/docs/ 200 [0.05, 127.0.0.1:49988][0m
+HTTP b'GET' request for ['127.0.0.1', 49988]
+HTTP 200 response started for ['127.0.0.1', 49988]
+HTTP response chunk for ['127.0.0.1', 49988]
+HTTP response chunk for ['127.0.0.1', 49988]
+HTTP response chunk for ['127.0.0.1', 49988]
+HTTP response chunk for ['127.0.0.1', 49988]
+HTTP close for ['127.0.0.1', 49988]
+HTTP response complete for ['127.0.0.1', 49988]
+[mHTTP GET /api/v1/schema/ 200 [0.30, 127.0.0.1:49988][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
