@@ -91,22 +91,32 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         identifier = data.get('identifier')
         password = data.get('password')
-        # Use Q to query username OR email
-        user = User.objects.filter(
-            Q(username=identifier) | Q(email=identifier)).first()
-        if not user:
+
+        if not identifier or not password:
+            raise serializers.ValidationError("Both fields are required.")
+
+        try:
+            user = User.objects.get(
+                Q(username=identifier) | Q(email=identifier))
+        except User.DoesNotExist:
             raise serializers.ValidationError(
                 {"identifier": "Invalid username or email."})
+
         user = authenticate(username=user.username, password=password)
+
         if not user:
             raise serializers.ValidationError(
                 {"password": "Invalid credentials."})
         if not user.is_active:
             raise serializers.ValidationError(
-                {"non_field_errors": "Account not verified."})
+                {"non_field_errors": ["Account is disabled."]})
+
         data['user'] = user
         return data
 
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField(help_text="JWT refresh token")
 
 class PasswordChangeSerializer(serializers.Serializer):
     new_password1 = serializers.CharField(
