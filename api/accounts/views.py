@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.parsers import JSONParser
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
+from rest_framework.permissions import AllowAny,IsAuthenticated
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
@@ -18,13 +19,13 @@ from django.utils.encoding import force_bytes
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
-from ..permissions import IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, CanReview
+from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, CanReview
 
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,
-    PasswordChangeSerializer, PasswordResetRequestSerializer,
+    PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,
-    LanguageSerializer, FreelancerProfileSerializer, ClientProfileSerializer,
+    LanguageSerializer,
     FreelancerFormSerializer, ClientFormSerializer
 )
 
@@ -144,42 +145,58 @@ class VerifyEmailView(APIView):
 
 
 class ResendVerificationView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     @extend_schema(
+        request=ResendVerificationSerializer,
         responses={
             200: OpenApiResponse(description="Verification email resent."),
             400: OpenApiResponse(description="User not found or already verified.")
         },
-        description="Resend verification email."
+        description="Resend verification email to a registered user."
     )
-    def post(self, request, user_id):
-        try:
-            user = User.objects.get(pk=user_id, is_active=False)
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            current_site = get_current_site(request)
-            verification_url = f'http://{current_site.domain}/api/v1/accounts/verify-email/{uid}/{token}/'
+    def post(self, request):
+        # If user is authenticated, prioritize their ID
+        if request.user and request.user.is_authenticated:
+            user = request.user
+        else:
+            serializer = ResendVerificationSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            email = serializer.validated_data['email']
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"error": "No user with this email found."}, status=status.HTTP_400_BAD_REQUEST)
 
-            subject = 'Verify Your Email Address'
-            message_text = f'Hi {user.username},\n\nPlease click the link to verify your email: {verification_url}'
-            message_html = format_html(
-                '<div style="font-family: Arial, sans-serif; text-align: center;">'
-                f'<h2>Hi {user.username},</h2>'
-                '<p>Please click the button below to verify your email address:</p>'
-                f'<a href="{verification_url}" style="display: inline-block; background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">'
-                'Verify Email</a><p>This link will expire in 24 hours.</p>'
-                '</div>'
-            )
-            email = EmailMultiAlternatives(
-                subject, message_text, 'info@nilltechsolutions.com', [user.email])
-            email.attach_alternative(message_html, "text/html")
-            email.send()
+        if user.is_active:
+            return Response({"error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
-            return Response({"error": "User not found or already verified."}, status=status.HTTP_400_BAD_REQUEST)
+        # Generate verification token and link
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        current_site = get_current_site(request)
+        verification_url = f'http://{current_site.domain}/api/v1/accounts/verify-email/{uid}/{token}/'
 
+        # Email content
+        subject = 'Verify Your Email Address'
+        message_text = f'Hi {user.username},\n\nPlease click the link to verify your email: {verification_url}'
+        message_html = format_html(
+            '<div style="font-family: Arial, sans-serif; text-align: center;">'
+            f'<h2>Hi {user.username},</h2>'
+            '<p>Please click the button below to verify your email address:</p>'
+            f'<a href="{verification_url}" style="display: inline-block; background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">'
+            'Verify Email</a><p>This link will expire in 24 hours.</p>'
+            '</div>'
+        )
+
+        # Send email
+        email_message = EmailMultiAlternatives(
+            subject, message_text, 'info@nilltechsolutions.com', [user.email])
+        email_message.attach_alternative(message_html, "text/html")
+        email_message.send()
+
+        return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -453,212 +470,179 @@ class LanguageViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FreelancerProfileViewSet(viewsets.ModelViewSet):
-    queryset = FreelancerProfile.objects.all()
-    serializer_class = FreelancerProfileSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-
-    def get_queryset(self):
-        if self.request.user.is_staff:
-            return self.queryset
-        return self.queryset.filter(profile__user=self.request.user)
-
-    @extend_schema(
-        description="List freelancer profiles (admin or owner only).",
-        responses={200: FreelancerProfileSerializer(many=True)}
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    @extend_schema(
-        description="Retrieve freelancer profile.",
-        responses={200: FreelancerProfileSerializer}
-    )
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-        data['username'] = instance.profile.user.username
-        data['has_rated'] = CoreResponse.objects.filter(
-            reviewer=request.user, recipient=instance.profile.user
-        ).exists() if request.user != instance.profile.user else False
-        return Response(data)
-
-    @extend_schema(
-        request=FreelancerProfileSerializer,
-        description="Create or update freelancer profile (owner or admin only).",
-        responses={200: FreelancerProfileSerializer,
-                   201: FreelancerProfileSerializer}
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @extend_schema(
-        request=FreelancerProfileSerializer,
-        description="Update freelancer profile (owner or admin only).",
-        responses={200: FreelancerProfileSerializer}
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @extend_schema(
-        description="Delete freelancer profile (owner or admin only).",
-        responses={204: OpenApiResponse(
-            description="Freelancer profile deleted.")}
-    )
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ClientProfileViewSet(viewsets.ModelViewSet):
-    queryset = ClientProfile.objects.all()
-    serializer_class = ClientProfileSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-
-    def get_queryset(self):
-        if self.request.user.is_staff:
-            return self.queryset
-        return self.queryset.filter(profile__user=self.request.user)
-
-    @extend_schema(
-        description="List client profiles (admin or owner only).",
-        responses={200: ClientProfileSerializer(many=True)}
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    @extend_schema(
-        description="Retrieve client profile.",
-        responses={200: ClientProfileSerializer}
-    )
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-        data['username'] = instance.profile.user.username
-        data['has_rated'] = CoreResponse.objects.filter(
-            reviewer=request.user, recipient=instance.profile.user
-        ).exists() if request.user != instance.profile.user else False
-        return Response(data)
-
-    @extend_schema(
-        request=ClientProfileSerializer,
-        description="Create or update client profile (owner or admin only).",
-        responses={200: ClientProfileSerializer, 201: ClientProfileSerializer}
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @extend_schema(
-        request=ClientProfileSerializer,
-        description="Update client profile (owner or admin only).",
-        responses={200: ClientProfileSerializer}
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @extend_schema(
-        description="Delete client profile (owner or admin only).",
-        responses={204: OpenApiResponse(description="Client profile deleted.")}
-    )
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class FreelancerFormView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_object(self, user):
+        try:
+            return user.profile.freelancer_profile
+        except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
+            return None
+
+    def check_access(self, request, target_user, require_owner_or_admin=False):
+        if not target_user:
+            return Response({"error": "User not found."}, status=404)
+
+        if require_owner_or_admin and not (
+            request.user == target_user or request.user.is_staff
+        ):
+            return Response({"error": "Permission denied."}, status=403)
+
+        return None
+
     @extend_schema(
         responses={200: FreelancerFormSerializer},
-        description="Retrieve freelancer profile form data."
+        description="Retrieve freelancer profile by user ID or email."
     )
     def get(self, request):
-        profile = request.user.profile
-        try:
-            freelancer_profile = profile.freelancer_profile
-            data = {
-                'name': request.user.get_full_name() or request.user.username,
-                'email': request.user.email,
-                'phone_number': profile.phone,
-                'experience_years': freelancer_profile.experience_years,
-                'hourly_rate': freelancer_profile.hourly_rate,
-                'languages': freelancer_profile.languages.all(),
-                'photo': profile.profile_pic,
-                'id_number': profile.id_card,
-                'location': profile.location,
-                'pay_id': profile.pay_id,
-                'pay_id_no': profile.pay_id_no,
-                'skills': freelancer_profile.skills.all(),
-                'portfolio_link': freelancer_profile.portfolio_link,
-                'availability': freelancer_profile.availability
-            }
-            serializer = FreelancerFormSerializer(data)
-            return Response(serializer.data)
-        except FreelancerProfile.DoesNotExist:
-            return Response(FreelancerFormSerializer().data)
+        user_id = request.query_params.get('id')
+        email = request.query_params.get('email')
+
+        if user_id:
+            user = User.objects.filter(id=user_id).first()
+        elif email:
+            user = User.objects.filter(email=email).first()
+        else:
+            user = request.user
+
+        freelancer_profile = self.get_object(user)
+        if not freelancer_profile:
+            return Response({"error": "Freelancer profile not found."}, status=404)
+
+        serializer = FreelancerFormSerializer(freelancer_profile)
+        return Response(serializer.data)
 
     @extend_schema(
         request=FreelancerFormSerializer,
-        responses={
-            200: OpenApiResponse(description="Freelancer profile updated."),
-            400: OpenApiResponse(description="Invalid input.")
-        },
-        description="Create or update freelancer profile."
+        responses={200: OpenApiResponse(
+            description="Freelancer profile created/updated")},
+        description="Create or update freelancer profile"
     )
     def post(self, request):
-        serializer = FreelancerFormSerializer(
-            data=request.data, context={'request': request})
+        freelancer_profile = self.get_object(request.user)
+
+        if freelancer_profile:
+            serializer = FreelancerFormSerializer(
+                freelancer_profile, data=request.data, context={'request': request})
+        else:
+            serializer = FreelancerFormSerializer(
+                data=request.data, context={'request': request})
+
         if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response({"message": "Freelancer profile updated."}, status=status.HTTP_200_OK)
+            serializer.save()
+            return Response({"message": "Freelancer profile created/updated"}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        responses={204: OpenApiResponse(
+            description="Freelancer profile deleted")},
+        description="Delete freelancer profile"
+    )
+    def delete(self, request):
+        freelancer_profile = self.get_object(request.user)
+        if not freelancer_profile:
+            return Response({"error": "Freelancer profile not found"}, status=404)
+
+        freelancer_profile.delete()
+        return Response({"message": "Freelancer profile deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ClientFormView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, user):
+        try:
+            return user.profile.client_profile
+        except (Profile.DoesNotExist, ClientProfile.DoesNotExist):
+            return None
+
+    def check_access(self, request, target_user, require_owner_or_admin=False):
+        if not target_user:
+            return Response({"error": "User not found."}, status=404)
+
+        if require_owner_or_admin and not (
+            request.user == target_user or request.user.is_staff
+        ):
+            return Response({"error": "Permission denied."}, status=403)
+
+        return None  # access allowed
 
     @extend_schema(
         responses={200: ClientFormSerializer},
         description="Retrieve client profile form data."
     )
     def get(self, request):
-        profile = request.user.profile
-        try:
-            client_profile = profile.client_profile
-            data = {
-                'company_name': client_profile.company_name or request.user.username,
-                'email': request.user.email,
-                'phone_number': profile.phone,
-                'industry': client_profile.industry,
-                'languages': client_profile.languages.all(),
-                'location': profile.location,
-                'pay_id': profile.pay_id,
-                'pay_id_no': profile.pay_id_no,
-                'company_website': client_profile.company_website,
-                'project_budget': client_profile.project_budget,
-                'preferred_freelancer_level': client_profile.preferred_freelancer_level
-            }
-            serializer = ClientFormSerializer(data)
-            return Response(serializer.data)
-        except ClientProfile.DoesNotExist:
-            return Response(ClientFormSerializer().data)
+        # Allow query by id or email (only owner or admin can access by id)
+        user_id = request.query_params.get('id')
+        email = request.query_params.get('email')
+
+        if user_id:
+            user = User.objects.filter(id=user_id).first()
+            access_denied = self.check_access(
+                request, user, require_owner_or_admin=True)
+            if access_denied:
+                return access_denied
+        elif email:
+            user = User.objects.filter(email=email).first()
+            # All authenticated users can get by email, so no owner/admin check
+        else:
+            user = request.user  # default to current user
+
+        client_profile = self.get_object(user)
+        if not client_profile:
+            return Response({"error": "Client profile not found."}, status=404)
+
+        serializer = ClientFormSerializer(client_profile)
+        return Response(serializer.data)
 
     @extend_schema(
         request=ClientFormSerializer,
         responses={
-            200: OpenApiResponse(description="Client profile updated."),
+            200: OpenApiResponse(description="Client profile created/updated."),
             400: OpenApiResponse(description="Invalid input.")
         },
         description="Create or update client profile."
     )
     def post(self, request):
-        serializer = ClientFormSerializer(
-            data=request.data, context={'request': request})
+        # Only owner or admin can create/update profile for a user
+        access_denied = self.check_access(
+            request, request.user, require_owner_or_admin=True)
+        if access_denied:
+            return access_denied
+
+        client_profile = self.get_object(request.user)
+        if client_profile:
+            serializer = ClientFormSerializer(
+                client_profile, data=request.data, context={'request': request})
+        else:
+            serializer = ClientFormSerializer(
+                data=request.data, context={'request': request})
+
         if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response({"message": "Client profile updated."}, status=status.HTTP_200_OK)
+            serializer.save()
+            return Response({"message": "Client profile created/updated."}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        responses={
+            204: OpenApiResponse(description="Client profile deleted."),
+            404: OpenApiResponse(description="Client profile not found."),
+            403: OpenApiResponse(description="Permission denied."),
+        },
+        description="Delete client profile."
+    )
+    def delete(self, request):
+        client_profile = self.get_object(request.user)
+        if not client_profile:
+            return Response({"error": "Client profile not found."}, status=404)
+
+        # Only owner or admin can delete
+        access_denied = self.check_access(
+            request, request.user, require_owner_or_admin=True)
+        if access_denied:
+            return access_denied
+
+        client_profile.delete()
+        return Response({"message": "Client profile deleted."}, status=status.HTTP_204_NO_CONTENT)

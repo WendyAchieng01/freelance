@@ -6,6 +6,8 @@ from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, La
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from django.contrib.auth import get_user_model
 from core.models import Job, Response, Chat, Message, MessageAttachment, Review
+from django.contrib.auth.password_validation import validate_password
+from accounts.models import Language,ClientProfile
 import os
 
 User = get_user_model()
@@ -118,6 +120,7 @@ class LoginSerializer(serializers.Serializer):
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField(help_text="JWT refresh token")
 
+
 class PasswordChangeSerializer(serializers.Serializer):
     new_password1 = serializers.CharField(
         write_only=True, help_text="New password.")
@@ -128,6 +131,8 @@ class PasswordChangeSerializer(serializers.Serializer):
         if data['new_password1'] != data['new_password2']:
             raise serializers.ValidationError(
                 {"new_password2": "Passwords do not match."})
+            validate_password(data['new_password1']
+                )
         return data
 
 
@@ -136,11 +141,18 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
-    uidb64 = serializers.CharField(help_text="Encoded user ID.")
-    token = serializers.CharField(help_text="Password reset token.")
     new_password = serializers.CharField(
         write_only=True, help_text="New password.")
 
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
+
+
+class ResendVerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        help_text="Registered email address for verification."
+    )
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -179,87 +191,120 @@ class LanguageSerializer(serializers.ModelSerializer):
             'name': {'help_text': 'Language name (e.g., English, Swahili).'}}
 
 
-class FreelancerProfileSerializer(serializers.ModelSerializer):
-    skills = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='name'
-    )
-    languages = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='name'
-    )
-    skill_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Skill.objects.all(),
-        many=True,
-        write_only=True,
-        source='skills',
-        help_text="List of skill IDs."
-    )
-    language_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Language.objects.all(),
-        many=True,
-        write_only=True,
-        source='languages',
-        help_text="List of language IDs."
-    )
+class FreelancerFormSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='profile.user.email')
+    phone_number = serializers.CharField(source='profile.phone')
+    location = serializers.CharField(
+        source='profile.location', allow_blank=True, required=False)
+    pay_id = serializers.ChoiceField(choices=[(
+        'M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], source='profile.pay_id', required=False, allow_blank=True)
+    pay_id_no = serializers.CharField(
+        source='profile.pay_id_no', allow_blank=True, required=False)
+    languages = serializers.PrimaryKeyRelatedField(
+        queryset=Language.objects.all(), many=True)
 
     class Meta:
         model = FreelancerProfile
-        fields = ['id', 'portfolio_link', 'experience_years', 'hourly_rate','availability', 'skills', 'languages', 'skill_ids', 'language_ids']
-        read_only_fields = ['id']
-        extra_kwargs = {
-            'portfolio_link': {'help_text': 'Portfolio URL (optional).'},
-            'experience_years': {'help_text': 'Years of experience.'},
-            'hourly_rate': {'help_text': 'Hourly rate in USD.'},
-            'availability': {'help_text': 'Availability (e.g., full_time, part_time).'},
-        }
+        fields = [
+            'bio',
+            'email',
+            'phone_number',
+            'skills',
+            'languages',
+            'location',
+            'pay_id',
+            'pay_id_no',
+            'hourly_rate',
+            'experience_level',
+        ]
 
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if User.objects.filter(email=value).exclude(id=user.id).exists():
+            raise serializers.ValidationError("Email is already taken.")
+        return value
 
-class ClientProfileSerializer(serializers.ModelSerializer):
-    languages = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='name'
-    )
-    language_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Language.objects.all(),
-        many=True,
-        write_only=True,
-        source='languages',
-        help_text="List of language IDs."
-    )
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        user_data = profile_data.pop(
+            'user', {}) if 'user' in profile_data else {}
+
+        # Update email
+        email = user_data.get('email')
+        if email:
+            instance.profile.user.email = email
+            instance.profile.user.save()
+
+        for attr, value in profile_data.items():
+            setattr(instance.profile, attr, value)
+        instance.profile.save()
+
+        # Update FreelancerProfile fields
+        for attr, value in validated_data.items():
+            if attr != 'languages':
+                setattr(instance, attr, value)
+        instance.save()
+
+        if 'languages' in validated_data:
+            instance.languages.set(validated_data['languages'])
+
+        return instance
+
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        user_data = profile_data.pop(
+            'user', {}) if 'user' in profile_data else {}
+
+        user = self.context['request'].user
+        if 'email' in user_data:
+            user.email = user_data['email']
+            user.save()
+
+        profile, _ = Profile.objects.get_or_create(user=user)
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.user_type = 'freelancer'
+        profile.save()
+
+        freelancer_profile, _ = FreelancerProfile.objects.get_or_create(
+            profile=profile)
+        for attr, value in validated_data.items():
+            if attr != 'languages':
+                setattr(freelancer_profile, attr, value)
+        freelancer_profile.save()
+
+        if 'languages' in validated_data:
+            freelancer_profile.languages.set(validated_data['languages'])
+
+        return freelancer_profile
+
+class ClientFormSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='profile.user.email')
+    phone_number = serializers.CharField(source='profile.phone')
+    location = serializers.CharField(
+        source='profile.location', allow_blank=True, required=False)
+    pay_id = serializers.ChoiceField(choices=[(
+        'M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], source='profile.pay_id', required=False, allow_blank=True)
+    pay_id_no = serializers.CharField(
+        source='profile.pay_id_no', allow_blank=True, required=False)
+    languages = serializers.PrimaryKeyRelatedField(
+        queryset=Language.objects.all(), many=True)
 
     class Meta:
         model = ClientProfile
-        fields = ['id', 'company_name', 'company_website', 'industry','project_budget', 'preferred_freelancer_level', 'languages', 'language_ids']
-        read_only_fields = ['id']
-        extra_kwargs = {
-            'company_name': {'help_text': 'Company or client name.'},
-            'company_website': {'help_text': 'Company website (optional).'},
-            'industry': {'help_text': 'Client industry.'},
-            'project_budget': {'help_text': 'Project budget in USD.'},
-            'preferred_freelancer_level': {'help_text': 'Preferred freelancer level.'},
-        }
-
-
-class FreelancerFormSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100, help_text="Full name.")
-    email = serializers.EmailField(help_text="Email address.")
-    phone_number = serializers.CharField(max_length=20, help_text="Phone number.")
-    experience_years = serializers.IntegerField(min_value=0, help_text="Years of experience.")
-    hourly_rate = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, help_text="Hourly rate in USD.")
-    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True, help_text="Language IDs.")
-    photo = serializers.ImageField(required=False, help_text="Profile photo (optional).")
-    id_number = serializers.CharField(max_length=20, required=False, help_text="ID number (optional).")
-    location = serializers.CharField(max_length=100, required=False, help_text="Location (optional).")
-    pay_id = serializers.ChoiceField(choices=[('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], required=False, help_text="Payment method.")
-    pay_id_no = serializers.CharField(max_length=20, help_text="Payment ID number.")
-    skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True, help_text="Skill IDs.")
-    portfolio_link = serializers.URLField(required=False, help_text="Portfolio URL (optional).")
-    availability = serializers.ChoiceField(choices=[('full_time', 'Full Time'), ('part_time', 'Part Time'),('weekends', 'Weekends Only'), ('custom', 'Custom Schedule')
-    ], required=False, help_text="Availability.")
+        fields = [
+            'company_name',
+            'email',
+            'phone_number',
+            'industry',
+            'languages',
+            'location',
+            'pay_id',
+            'pay_id_no',
+            'company_website',
+            'project_budget',
+            'preferred_freelancer_level',
+        ]
 
     def validate_email(self, value):
         user = self.context['request'].user
@@ -267,76 +312,61 @@ class FreelancerFormSerializer(serializers.Serializer):
             raise serializers.ValidationError("Email is already taken.")
         return value
 
-    def save(self, user):
-        profile, _ = Profile.objects.get_or_create(user=user)
-        profile.user_type = 'freelancer'
-        profile.phone = self.validated_data.get('phone_number', '')
-        profile.location = self.validated_data.get('location', '')
-        profile.profile_pic = self.validated_data.get('photo')
-        profile.pay_id = self.validated_data.get('pay_id', 'M-Pesa')
-        profile.pay_id_no = self.validated_data.get('pay_id_no', '')
-        profile.id_card = self.validated_data.get('id_number', '')
-        profile.save()
+    def update(self, instance, validated_data):
+        # Update nested profile fields
+        profile_data = validated_data.pop('profile', {})
+        user_data = profile_data.pop(
+            'user', {}) if 'user' in profile_data else {}
 
-        user.email = self.validated_data.get('email', user.email)
-        user.save()
+        # Update user email if present
+        email = user_data.get('email')
+        if email:
+            instance.profile.user.email = email
+            instance.profile.user.save()
 
-        freelancer_profile, _ = FreelancerProfile.objects.get_or_create(profile=profile)
-        freelancer_profile.portfolio_link = self.validated_data.get('portfolio_link', '')
-        freelancer_profile.experience_years = self.validated_data.get('experience_years', 0)
-        freelancer_profile.hourly_rate = self.validated_data.get('hourly_rate', 0)
-        freelancer_profile.availability = self.validated_data.get('availability', '')
-        freelancer_profile.save()
+        # Update profile fields
+        for attr, value in profile_data.items():
+            setattr(instance.profile, attr, value)
+        instance.profile.save()
 
-        freelancer_profile.skills.set(self.validated_data.get('skills', []))
-        freelancer_profile.languages.set(self.validated_data.get('languages', []))
-        return user
+        # Update ClientProfile fields
+        for attr, value in validated_data.items():
+            if attr != 'languages':  # Handle languages separately
+                setattr(instance, attr, value)
+        instance.save()
 
+        # Correct way to update many-to-many field
+        if 'languages' in validated_data:
+            instance.languages.set(validated_data['languages'])
 
-class ClientFormSerializer(serializers.Serializer):
-    company_name = serializers.CharField(max_length=100, help_text="Company or client name.")
-    email = serializers.EmailField(help_text="Email address.")
-    phone_number = serializers.CharField(max_length=20, help_text="Phone number.")
-    industry = serializers.ChoiceField(choices=ClientProfile.INDUSTRY_CHOICES, help_text="Industry.")
-    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True, help_text="Language IDs.")
-    location = serializers.CharField(max_length=100, required=False, help_text="Location (optional).")
-    pay_id = serializers.ChoiceField(choices=[('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], required=False, help_text="Payment method.")
-    pay_id_no = serializers.CharField(max_length=20, required=False, help_text="Payment ID number.")
-    company_website = serializers.URLField(required=False, help_text="Company website (optional).")
-    project_budget = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, help_text="Project budget in USD.")
-    preferred_freelancer_level = serializers.ChoiceField(choices=[('entry', 'Entry Level'), ('intermediate','Intermediate'), ('expert', 'Expert')
-    ], required=False, help_text="Preferred freelancer level.")
+        return instance
 
-    def validate_email(self, value):
+    def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        user_data = profile_data.pop(
+            'user', {}) if 'user' in profile_data else {}
+
         user = self.context['request'].user
-        if User.objects.filter(email=value).exclude(id=user.id).exists():
-            raise serializers.ValidationError("Email is already taken.")
-        return value
+        # Update user email if present
+        email = user_data.get('email')
+        if email:
+            user.email = email
+            user.save()
 
-    def save(self, user):
         profile, _ = Profile.objects.get_or_create(user=user)
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
         profile.user_type = 'client'
-        profile.phone = self.validated_data.get('phone_number', '')
-        profile.location = self.validated_data.get('location', '')
-        profile.pay_id = self.validated_data.get('pay_id', 'M-Pesa')
-        profile.pay_id_no = self.validated_data.get('pay_id_no', '')
         profile.save()
 
-        user.email = self.validated_data.get('email', user.email)
-        user.save()
-
-        client_profile, _ = ClientProfile.objects.get_or_create(
+        client_profile, created = ClientProfile.objects.get_or_create(
             profile=profile)
-        client_profile.company_name = self.validated_data.get(
-            'company_name', user.username)
-        client_profile.industry = self.validated_data.get('industry', '')
-        client_profile.project_budget = self.validated_data.get(
-            'project_budget', 0)
-        client_profile.preferred_freelancer_level = self.validated_data.get(
-            'preferred_freelancer_level', '')
-        client_profile.company_website = self.validated_data.get(
-            'company_website', '')
+        for attr, value in validated_data.items():
+            if attr != 'languages':
+                setattr(client_profile, attr, value)
         client_profile.save()
 
-        client_profile.languages.set(self.validated_data.get('languages', []))
-        return user
+        if 'languages' in validated_data:
+            client_profile.languages.set(validated_data['languages'])
+
+        return client_profile
