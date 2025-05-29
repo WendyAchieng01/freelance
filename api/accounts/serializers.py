@@ -367,6 +367,23 @@ class ClientFormSerializer(serializers.ModelSerializer):
         return client_profile
 
 
+class FreelancerListSerializer(serializers.ModelSerializer):
+    languages = LanguageSerializer(many=True, read_only=True)
+    skills = SkillSerializer(many=True, read_only=True)
+    email = serializers.EmailField(source='profile.user.email')
+    phone_number = serializers.CharField(source='profile.phone')
+    location = serializers.CharField(source='profile.location')
+
+    class Meta:
+        model = FreelancerProfile
+        fields = [
+            'email',
+            'phone_number',
+            'location',
+            'languages',
+            'skills',
+        ]
+
 
 class ClientListSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(many=True)

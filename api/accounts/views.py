@@ -1,11 +1,12 @@
 from rest_framework.views import APIView
-from rest_framework import viewsets, status, permissions,generics
+from rest_framework import viewsets, status, permissions,generics,filters
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.parsers import JSONParser
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework.permissions import AllowAny,IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
@@ -25,7 +26,7 @@ from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,
-    LanguageSerializer,ClientListSerializer,
+    LanguageSerializer,ClientListSerializer,FreelancerListSerializer,
     FreelancerFormSerializer, ClientFormSerializer
 )
 
@@ -471,12 +472,31 @@ class LanguageViewSet(viewsets.ModelViewSet):
 
 
 class ListFreelancersView(generics.ListAPIView):
-    queryset = FreelancerProfile.objects.select_related('profile__user').all()
-    serializer_class = FreelancerFormSerializer
-    permission_classes = [permissions.IsAuthenticated]  # or customize
+    queryset = FreelancerProfile.objects.select_related(
+        'profile__user').prefetch_related('languages', 'skills')
+    serializer_class = FreelancerListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return FreelancerProfile.objects.filter(profile__user__profile__user_type='freelancer')
+    # 🔍 Enable search, filtering, and ordering
+    filter_backends = [filters.SearchFilter,
+                       filters.OrderingFilter, DjangoFilterBackend]
+
+    search_fields = [
+        'profile__user__email',
+        'profile__location',
+        'languages__name',
+        'skills__name',
+    ]
+
+    ordering_fields = [
+        'profile__user__email',  # indirect, optional if you want to allow sorting by email
+    ]
+
+    filterset_fields = [
+        'languages__name',
+        'skills__name',
+        'profile__location',
+    ]
 
 
 class ClientListView(generics.ListAPIView):
@@ -484,6 +504,29 @@ class ClientListView(generics.ListAPIView):
         'profile__user').prefetch_related('languages')
     serializer_class = ClientListSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = [filters.SearchFilter,
+                       filters.OrderingFilter, DjangoFilterBackend]
+
+    search_fields = [
+        'company_name',
+        'industry',
+        'profile__location',
+        'languages__name',
+        'profile__user__email',
+    ]
+
+    ordering_fields = [
+        'project_budget',
+        'company_name',
+    ]
+
+    filterset_fields = [
+        'industry',
+        'languages__name',
+        'preferred_freelancer_level',
+        'project_budget',
+    ]
 
 
 class FreelancerFormView(APIView):
