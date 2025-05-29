@@ -15,6 +15,16 @@
             <h2>My Jobs</h2>
         </div>
         {% if freelancer_jobs %}
+            {% if profile_incomplete %}
+            <div class="alert alert-warning" role="alert">
+                <strong>Complete Your Profile:</strong> 
+                <a href="{% url 'accounts:freelancer_portfolio' %}" class="alert-link">
+                    Complete your freelancer profile
+                </a> to get personalized job recommendations.
+            </div>
+            {% endif %}
+
+            <!-- Existing job listings -->
             {% for job_data in freelancer_jobs %}
             <div class="job-item1">
                 <ul class="list-group1 list-group-flush">
@@ -66,6 +76,20 @@
                 </ul>
             </div>
             {% endfor %}
+
+            <!-- Recommended jobs section -->
+            {% if recommended_jobs %}
+            <div class="recommended-jobs-section">
+                <h3>Recommended Jobs</h3>
+                {% for job in recommended_jobs %}
+                <div class="job-item1">
+                    <!-- Display recommended job details here -->
+                    <p><strong>{{ job.title }}</strong></p>
+                    <p>{{ job.description|truncatewords:20 }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         {% else %}
             <h2>There are No Jobs Currently Available. Come Back Later...</h2>
         {% endif %}
