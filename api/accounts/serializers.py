@@ -194,29 +194,32 @@ class LanguageSerializer(serializers.ModelSerializer):
 class FreelancerFormSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='profile.user.email')
     phone_number = serializers.CharField(source='profile.phone')
-    location = serializers.CharField(
-        source='profile.location', allow_blank=True, required=False)
-    pay_id = serializers.ChoiceField(choices=[(
-        'M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], source='profile.pay_id', required=False, allow_blank=True)
+    location = serializers.CharField(source='profile.location', required=False)
+    pay_id = serializers.ChoiceField(
+        choices=[('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')],
+        source='profile.pay_id', required=False
+    )
     pay_id_no = serializers.CharField(
-        source='profile.pay_id_no', allow_blank=True, required=False)
+        source='profile.pay_id_no', required=False)
+    profile_pic = serializers.URLField(
+        source='profile.profile_pic', required=False)
+    id_number = serializers.CharField(source='profile.id_card', required=False)
+    full_name = serializers.SerializerMethodField()
     languages = serializers.PrimaryKeyRelatedField(
         queryset=Language.objects.all(), many=True)
+    skills = serializers.PrimaryKeyRelatedField(
+        queryset=Skill.objects.all(), many=True, required=False)
 
     class Meta:
         model = FreelancerProfile
         fields = [
-            'bio',
-            'email',
-            'phone_number',
-            'skills',
-            'languages',
-            'location',
-            'pay_id',
-            'pay_id_no',
-            'hourly_rate',
-            'experience_level',
+            'full_name', 'email', 'phone_number', 'location', 'pay_id', 'pay_id_no',
+            'profile_pic', 'id_number', 'experience_years', 'hourly_rate',
+            'portfolio_link', 'availability', 'languages', 'skills'
         ]
+
+    def get_full_name(self, obj):
+        return obj.profile.user.get_full_name()
 
     def validate_email(self, value):
         user = self.context['request'].user
@@ -224,57 +227,49 @@ class FreelancerFormSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Email is already taken.")
         return value
 
-    def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile', {})
-        user_data = profile_data.pop(
-            'user', {}) if 'user' in profile_data else {}
-
-        # Update email
-        email = user_data.get('email')
-        if email:
-            instance.profile.user.email = email
-            instance.profile.user.save()
-
-        for attr, value in profile_data.items():
-            setattr(instance.profile, attr, value)
-        instance.profile.save()
-
-        # Update FreelancerProfile fields
-        for attr, value in validated_data.items():
-            if attr != 'languages':
-                setattr(instance, attr, value)
-        instance.save()
-
-        if 'languages' in validated_data:
-            instance.languages.set(validated_data['languages'])
-
-        return instance
-
     def create(self, validated_data):
-        profile_data = validated_data.pop('profile', {})
-        user_data = profile_data.pop(
-            'user', {}) if 'user' in profile_data else {}
+        return self._create_or_update(validated_data)
 
+    def update(self, instance, validated_data):
+        return self._create_or_update(validated_data, instance)
+
+    def _create_or_update(self, validated_data, instance=None):
         user = self.context['request'].user
-        if 'email' in user_data:
-            user.email = user_data['email']
-            user.save()
+        profile_data = validated_data.pop('profile', {})
+
+        email = profile_data.get('user', {}).get('email', user.email)
+        phone = profile_data.get('phone', '')
+        location = profile_data.get('location', '')
+        pay_id = profile_data.get('pay_id', '')
+        pay_id_no = profile_data.get('pay_id_no', '')
+        profile_pic = profile_data.get('profile_pic', '')
+        id_number = profile_data.get('id_card', '')
+
+        user.email = email
+        user.save()
 
         profile, _ = Profile.objects.get_or_create(user=user)
-        for attr, value in profile_data.items():
-            setattr(profile, attr, value)
+        profile.phone = phone
+        profile.location = location
+        profile.pay_id = pay_id
+        profile.pay_id_no = pay_id_no
+        profile.profile_pic = profile_pic
+        profile.id_card = id_number
         profile.user_type = 'freelancer'
         profile.save()
 
-        freelancer_profile, _ = FreelancerProfile.objects.get_or_create(
-            profile=profile)
+        languages = validated_data.pop('languages', [])
+        skills = validated_data.pop('skills', [])
+
+        freelancer_profile = instance or FreelancerProfile(profile=profile)
         for attr, value in validated_data.items():
-            if attr != 'languages':
-                setattr(freelancer_profile, attr, value)
+            setattr(freelancer_profile, attr, value)
         freelancer_profile.save()
 
-        if 'languages' in validated_data:
-            freelancer_profile.languages.set(validated_data['languages'])
+        if languages:
+            freelancer_profile.languages.set(languages)
+        if skills:
+            freelancer_profile.skills.set(skills)
 
         return freelancer_profile
 

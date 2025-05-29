@@ -58,7 +58,7 @@ class AccountsAPITest(APITestCase):
             token = default_token_generator.make_token(user)
             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
             response = self.client.get(
-                f'{self.base_url}auth/verify-email/{uidb64}/{token}/'
+                f'{self.base_url}verify-email/{uidb64}/{token}/'
             )
             self.assertEqual(response.status_code, 200,
                              f"Email verification failed for {user.username}: {response.data}")
