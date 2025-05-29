@@ -53,14 +53,20 @@ def jobs(request):
         
         # Add recommended jobs for freelancers
         recommended_jobs = []
-        if hasattr(request.user, 'profile') and request.user.profile.user_type == 'freelancer':
-            try:
-                freelancer_profile = request.user.profile.freelancer_profile  # Access through profile
-                recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile)
-            except FreelancerProfile.DoesNotExist:
-                # Handle case where freelancer profile doesn't exist yet
-                recommended_jobs = []
-
+        try:
+            # Check if user has a profile and is a freelancer
+            if (hasattr(request.user, 'profile') and 
+                request.user.profile.user_type == 'freelancer'):
+                
+                # Try to get the freelancer profile
+                freelancer_profile = getattr(request.user.profile, 'freelancer_profile', None)
+                if freelancer_profile:
+                    recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile)
+                    
+        except (AttributeError, Exception) as e:
+            # Handle any profile-related errors gracefully
+            recommended_jobs = []
+        
         categories = dict(Job.CATEGORY_CHOICES)
         return render(request, 'jobs.html', {
             'jobs': jobs,
@@ -68,6 +74,7 @@ def jobs(request):
             'selected_category': category,
             'recommended_jobs': recommended_jobs
         })
+    
     return redirect('accounts:login')
 
 @login_required
@@ -102,11 +109,24 @@ def singlejob(request, job_id):
 
 @login_required
 def freelancer_jobs(request):
-    freelancer_profile = Profile.objects.get(user=request.user, user_type='freelancer')
+    try:
+        freelancer_profile = Profile.objects.get(user=request.user, user_type='freelancer')
+    except Profile.DoesNotExist:
+        # If no freelancer profile exists, redirect to profile creation
+        return redirect('accounts:profile_creation')  # Adjust URL name as needed
+    
     freelancer_jobs = Job.objects.filter(responses__user=request.user)
     
-    # Add recommended jobs
-    recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile.freelancer_profile)
+    # Add recommended jobs only if freelancer profile exists
+    recommended_jobs = []
+    if hasattr(freelancer_profile, 'freelancer_profile'):
+        try:
+            # Check if the freelancer_profile actually exists
+            freelancer_detail = freelancer_profile.freelancer_profile
+            recommended_jobs = recommend_jobs_to_freelancer(freelancer_detail)
+        except Profile.freelancer_profile.RelatedObjectDoesNotExist:
+            # FreelancerProfile doesn't exist yet
+            recommended_jobs = []
     
     # Add review status for each job
     jobs_with_review_status = []
@@ -117,11 +137,14 @@ def freelancer_jobs(request):
             'has_rated': has_rated
         })
     
-    return render(request, 'freelancer_jobs.html', {
+    context = {
         'freelancer_jobs': jobs_with_review_status,
         'recommended_jobs': recommended_jobs,
-        'user': request.user
-    })
+        'user': request.user,
+        'profile_incomplete': not hasattr(freelancer_profile, 'freelancer_profile') if 'freelancer_profile' in locals() else True
+    }
+    
+    return render(request, 'freelancer_jobs.html', context)
     
 @login_required
 def about(request):
