@@ -11,6 +11,7 @@ response_detail = ResponseViewSet.as_view({'get': 'retrieve', 'put': 'update', '
 response_accept = ResponseViewSet.as_view({'patch': 'accept'})
 response_reject = ResponseViewSet.as_view({'post': 'reject'})
 
+
 urlpatterns = [
     path('list/', job_list, name='job-list'),
     path('<slug:slug>/', job_detail, name='job-detail'),

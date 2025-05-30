@@ -199,16 +199,3 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Review.objects.filter(recipient_id=recipient_id)
         return Review.objects.all()
 
-
-class FreelancerRecommendationsView(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated, IsFreelancer]
-
-    def list(self, request):
-        try:
-            freelancer_profile = request.user.profile.freelancer_profile
-            recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile)
-            serializer = JobSerializer(
-                recommended_jobs, many=True, context={'request': request})
-            return Response(serializer.data)
-        except FreelancerProfile.DoesNotExist:
-            return Response({'error': 'Freelancer profile not found'}, status=status.HTTP_404_NOT_FOUND)
