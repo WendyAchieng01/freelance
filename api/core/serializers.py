@@ -8,84 +8,69 @@ import os
 User = get_user_model()
 
 
-class JobSerializer(serializers.ModelSerializer):
-    client = serializers.StringRelatedField(read_only=True)
-    selected_freelancer = serializers.StringRelatedField(allow_null=True)
-
-    class Meta:
-        model = Job  # Fixed: Consolidated Meta class with model attribute
-        fields = ['id', 'title', 'category', 'description', 'price', 'posted_date',
-                  'deadline_date', 'status', 'client', 'max_freelancers',
-                  'preferred_freelancer_level', 'selected_freelancer', 'payment_verified']
-        read_only_fields = ['posted_date', 'client', 'payment_verified']
-        extra_kwargs = {
-            'category': {'choices': Job.CATEGORY_CHOICES},
-            'status': {'choices': Job.STATUS_CHOICES},
-            'preferred_freelancer_level': {'choices': [('entry', 'Entry Level'), ('intermediate', 'Intermediate'), ('expert', 'Expert')]}
-        }
-        examples = [
-            OpenApiExample(
-                'Job Example',
-                value={
-                    'title': 'Website Development',
-                    'category': 'web_dev',
-                    'description': 'Build a responsive website',
-                    'price': 500.00,
-                    'deadline_date': '2025-06-01',
-                    'max_freelancers': 1,
-                    'preferred_freelancer_level': 'intermediate'
-                },
-                request_only=True
-            )
-        ]
-
-
-class ResponseSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())
-    sample_work_file = serializers.FileField(
-        write_only=True, required=False, allow_null=True)
+class NestedResponseSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Response
-        fields = ['id', 'user', 'job', 'submitted_at',
-                  'extra_data', 'sample_work_file']
+        fields = ['id', 'user', 'submitted_at', 'extra_data']
+
+    def get_user(self, obj):
+        return obj.user.username
+
+
+class JobSerializer(serializers.ModelSerializer):
+    client = serializers.SerializerMethodField()
+    selected_freelancer = serializers.SerializerMethodField()
+    responses = NestedResponseSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Job
+        fields = [
+            'id', 'title', 'category', 'description', 'price',
+            'posted_date', 'deadline_date', 'status', 'client',
+            'max_freelancers', 'preferred_freelancer_level','slug',
+            'selected_freelancer', 'payment_verified', 'responses'
+        ]
+        read_only_fields = ['posted_date', 'client', 'payment_verified']
+
+    def get_client(self, obj):
+        return obj.client.user.username if obj.client else None
+
+    def get_selected_freelancer(self, obj):
+        return obj.selected_freelancer.username if obj.selected_freelancer else None
+
+
+class ResponseSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    # Show job as nested details, read-only
+    job = JobSerializer(read_only=True)
+    # Accept job id on create/update
+    job_id = serializers.PrimaryKeyRelatedField(
+        queryset=Job.objects.all(), source='job', write_only=True
+    )
+
+    class Meta:
+        model = Response
+        fields = ['id', 'user', 'job', 'job_id', 'submitted_at', 'slug','extra_data']
         read_only_fields = ['user', 'submitted_at']
-        extra_kwargs = {
-            'extra_data': {'required': False}
-        }
+
+    def get_user(self, obj):
+        return obj.user.username
 
     def validate(self, data):
         job = data.get('job')
-        if job.responses.filter(user=self.context['request'].user).exists():
+        user = self.context['request'].user
+        if job.responses.filter(user=user).exists():
             raise serializers.ValidationError(
-                {"job": "You have already responded to this job."})
-        if job.is_max_freelancers_reached:
-            raise serializers.ValidationError(
-                {"job": "This job has reached its maximum freelancers."})
+                "You have already responded to this job.")
+        if job.is_max_freelancers_reached or job.status != 'open':
+            raise serializers.ValidationError("Cannot apply to this job.")
         return data
 
     def create(self, validated_data):
-        sample_work_file = validated_data.pop('sample_work_file', None)
-        validated_data.pop('user', None)  # Remove 'user' if present
-        instance = Response.objects.create(
-            user=self.context['request'].user, **validated_data)
-        if sample_work_file:
-            file_dir = os.path.join('Uploads', 'responses', str(instance.id))
-            os.makedirs(file_dir, exist_ok=True)
-            file_path = os.path.join(file_dir, sample_work_file.name)
-            with open(file_path, 'wb+') as destination:
-                for chunk in sample_work_file.chunks():
-                    destination.write(chunk)
-            instance.extra_data = instance.extra_data or {}
-            instance.extra_data['sample_work'] = {
-                'filename': sample_work_file.name,
-                'path': file_path,
-                'content_type': sample_work_file.content_type,
-                'size': sample_work_file.size
-            }
-            instance.save()
-        return instance
+        return Response.objects.create(**validated_data)
+    
 
 class ChatSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField(read_only=True)

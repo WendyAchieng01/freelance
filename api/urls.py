@@ -4,8 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 
 urlpatterns = [
     path('accounts/', include('api.accounts.urls')),
-    path('core/', include('api.core.urls')),
-    path('invoicemanagement/', include('api.invoicemanagement.urls')),
+    path('', include('api.core.urls')),
     path('academy/', include('api.academy.urls')),
     path('payment/', include('api.payment.urls')),
     path('payments/', include('api.payments.urls')),
