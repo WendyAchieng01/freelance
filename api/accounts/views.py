@@ -20,7 +20,7 @@ from django.utils.encoding import force_bytes
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
-from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly
+from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly
 
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,

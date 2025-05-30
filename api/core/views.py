@@ -8,9 +8,11 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from accounts.models import Profile, FreelancerProfile
 from core.models import Job, Response, Chat, Message, MessageAttachment, Review
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
+
 from api.core.serializers import ( 
     JobSerializer, ResponseSerializer, ChatSerializer,
     MessageSerializer, MessageAttachmentSerializer, ReviewSerializer
@@ -152,6 +154,12 @@ class MessageViewSet(viewsets.ModelViewSet):
         )
 
     def perform_create(self, serializer):
+        chat = serializer.validated_data['chat']
+        job = chat.job
+
+        # Allow only if payment is verified and freelancer selected
+        if not job.payment_verified or not chat.freelancer:
+            raise PermissionDenied("Chat is not active.")
         serializer.save(sender=self.request.user)
 
 
@@ -159,7 +167,6 @@ class MessageAttachmentViewSet(viewsets.ModelViewSet):
     queryset = MessageAttachment.objects.all()
     serializer_class = MessageAttachmentSerializer
     permission_classes = [IsAuthenticated, IsChatParticipant]
-    parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
         return MessageAttachment.objects.filter(
@@ -169,12 +176,6 @@ class MessageAttachmentViewSet(viewsets.ModelViewSet):
             )
         )
 
-    @extend_schema(
-        responses={
-            200: OpenApiResponse(description="File downloaded"),
-            403: OpenApiResponse(description="Unauthorized")
-        }
-    )
     @action(detail=True, methods=['get'], url_path='download')
     def download(self, request, pk=None):
         attachment = self.get_object()
@@ -183,7 +184,6 @@ class MessageAttachmentViewSet(viewsets.ModelViewSet):
         response = FileResponse(attachment.file)
         response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
         return response
-
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()

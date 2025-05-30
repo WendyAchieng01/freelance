@@ -75,19 +75,33 @@ class ResponseSerializer(serializers.ModelSerializer):
 class ChatSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField(read_only=True)
     freelancer = serializers.StringRelatedField(read_only=True)
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())
+    job = serializers.PrimaryKeyRelatedField(
+        queryset=Job.objects.filter(payment_verified=True))
+    slug = serializers.SlugField(read_only=True)
 
     class Meta:
         model = Chat
-        fields = ['id', 'job', 'client', 'freelancer', 'created_at']
-        read_only_fields = ['client', 'freelancer', 'created_at']
-        examples = [
-            OpenApiExample(
-                'Chat Example',
-                value={'job': 1},
-                request_only=True
-            )
-        ]
+        fields = ['id', 'job', 'client', 'freelancer', 'created_at', 'slug']
+        read_only_fields = ['client', 'freelancer', 'created_at', 'slug']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        profile = user.profile
+        job = validated_data['job']
+
+        if not job.payment_verified:
+            raise serializers.ValidationError(
+                "Payment must be verified to start chat.")
+
+        if profile.user_type == 'client':
+            chat = Chat.objects.create(
+                client=profile, freelancer=job.selected_freelancer.profile, **validated_data)
+        elif profile.user_type == 'freelancer':
+            chat = Chat.objects.create(
+                freelancer=profile, client=job.client, **validated_data)
+        else:
+            raise serializers.ValidationError("Invalid user role.")
+        return chat
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -100,17 +114,9 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ['id', 'chat', 'sender',
                   'content', 'timestamp', 'attachments']
         read_only_fields = ['sender', 'timestamp', 'attachments']
-        examples = [
-            OpenApiExample(
-                'Message Example',
-                value={'chat': 1, 'content': 'Hello, can we discuss the project?'},
-                request_only=True
-            )
-        ]
 
     def get_attachments(self, obj):
-        return [{'id': a.id, 'filename': a.filename, 'url': f'/api/v1/core/attachments/{a.id}/download/'}
-                for a in obj.attachments.all()]
+        return [{'id': a.id, 'filename': a.filename, 'url': f'/api/v1/core/attachments/{a.id}/download/'} for a in obj.attachments.all()]
 
 
 class MessageAttachmentSerializer(serializers.ModelSerializer):
@@ -124,19 +130,10 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
                   'uploaded_at', 'file_size', 'content_type']
         read_only_fields = ['filename', 'uploaded_at',
                             'file_size', 'content_type']
-        examples = [
-            OpenApiExample(
-                'Attachment Example',
-                value={'message': 1, 'file': 'example.pdf'},
-                request_only=True
-            )
-        ]
 
     def validate_file(self, value):
-        allowed_extensions = ['jpg', 'jpeg', 'png',
-                              'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
         ext = os.path.splitext(value.name)[1].lower().lstrip('.')
-        if ext not in allowed_extensions:
+        if ext not in ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']:
             raise serializers.ValidationError(
                 f"File extension '{ext}' is not allowed.")
         return value
@@ -147,8 +144,8 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
         validated_data['file_size'] = file.size
         validated_data['content_type'] = file.content_type
         return MessageAttachment.objects.create(**validated_data)
-
-
+    
+    
 class ReviewSerializer(serializers.ModelSerializer):
     reviewer = serializers.StringRelatedField(read_only=True)
     recipient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())

@@ -126,6 +126,13 @@ class Chat(models.Model):
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='client_chats')
     freelancer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='freelancer_chats')
     created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = f"{self.job.title}-{self.client.user.username}-{self.freelancer.user.username}"
+            self.slug = slugify(base)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Chat between {self.client.user.username} and {self.freelancer.user.username} for {self.job.title}"
@@ -179,3 +186,6 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"
+    
+    
+

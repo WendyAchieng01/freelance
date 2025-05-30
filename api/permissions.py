@@ -21,9 +21,7 @@ class IsJobOwner(permissions.BasePermission):
         return hasattr(obj, 'client') and obj.client.user == request.user
 
 
-class IsChatParticipant(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user.profile in [obj.client, obj.freelancer]
+
 
 
 class CanReview(permissions.BasePermission):
