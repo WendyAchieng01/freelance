@@ -5,6 +5,7 @@ from django.core.validators import FileExtensionValidator
 from accounts.models import Profile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
+from django.utils.text import slugify
 
 
 # Create your models here
@@ -58,10 +59,23 @@ class Job(models.Model):
     
     # New field to track payment status (optional, depending on your payment flow)
     payment_verified = models.BooleanField(default=False)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+    
     
     @property
     def is_max_freelancers_reached(self):
         return self.responses.count() >= self.max_freelancers
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            unique_slug = base_slug
+            num = 1
+            while Job.objects.filter(slug=unique_slug).exists():
+                unique_slug = f'{base_slug}-{num}'
+                num += 1
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.title} ({self.get_category_display()})"
@@ -85,10 +99,23 @@ class Response(models.Model):
     job = models.ForeignKey(Job, related_name='responses', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(auto_now_add=True)
     extra_data = models.JSONField(null=True, blank=True) 
+    slug = models.SlugField(unique=True, blank=True, null=True)
 
 
     class Meta:
         unique_together = ('job', 'user',)
+        
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(f'{self.job.title}-{self.user.username}')
+            unique_slug = base_slug
+            num = 1
+            while Response.objects.filter(slug=unique_slug).exists():
+                unique_slug = f'{base_slug}-{num}'
+                num += 1
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
+    
 
     def __str__(self):
         return f"Response by {self.user.username} for {self.job.title}"
