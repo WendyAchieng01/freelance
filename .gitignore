@@ -19,7 +19,7 @@ staticfiles/
 */migrations/*.pyc
 */migrations/*.pyo
 */migrations/__pycache__/
-*/migrations/*.py
+
 
 # Python virtual environments
 venv/
