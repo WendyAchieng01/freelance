@@ -25,7 +25,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('api/v1/', include('api.urls')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('', include('core.urls', namespace='core')),
+    path('core/', include('core.urls', namespace='core')),
     path('academy/', include('academy.urls', namespace='academy')),
     path('invoice/', include('invoicemgmt.urls', namespace='invoicemgmt')),
     path('payments/', include('payment.urls', namespace='payment')),

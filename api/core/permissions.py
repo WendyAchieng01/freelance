@@ -39,6 +39,11 @@ class IsChatParticipant(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.profile in [obj.client, obj.freelancer]
 
+    def has_permission(self, request, view):
+        return request.user.is_authenticated
+
+
+
 
 class CanReview(permissions.BasePermission):
     def has_permission(self, request, view):
