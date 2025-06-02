@@ -14,7 +14,8 @@ response_reject = ResponseViewSet.as_view({'post': 'reject'})
 
 urlpatterns = [
     path('list/', job_list, name='job-list'),
-    path('<slug:slug>/', job_detail, name='job-detail'),
+    path('<slug:slug>/', job_detail, name='job-detail-slug'),
+    path('<int:id>/', job_detail, name='job-detail-id'),
     path('<slug:slug>/matches/', job_matches, name='job-matches'),
     path('<slug:slug>/complete/', job_complete, name='job-complete'),
 

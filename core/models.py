@@ -6,6 +6,7 @@ from accounts.models import Profile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.utils.text import slugify
+from django.urls import reverse
 
 
 # Create your models here
@@ -60,6 +61,20 @@ class Job(models.Model):
     # New field to track payment status (optional, depending on your payment flow)
     payment_verified = models.BooleanField(default=False)
     slug = models.SlugField(unique=True, blank=True, null=True)
+    
+    def get_absolute_url(self):
+        if self.slug:
+            return reverse('job-detail-slug', kwargs={'slug': self.slug})
+        return reverse('job-detail-id', kwargs={'id': self.id})
+    
+    def get_payment_url(self):
+        """
+        Returns the absolute URL to initiate payment for this job.
+        Priority: use slug if available; otherwise, fallback to id.
+        """
+        if self.slug:
+            return reverse('payment-initiate-slug', kwargs={'slug': self.slug})
+        return reverse('payment-initiate-id', kwargs={'id': self.id})
     
     
     @property
