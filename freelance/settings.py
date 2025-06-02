@@ -39,10 +39,12 @@ DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'web-production-b953.up.railway.app',  # Remove https:// and trailing slash
+    'web-production-b953.up.railway.app',  
     'www.nilltechsolutions.com',
     'nilltechsolutions.com'
 ]
+
+FRONTEND_URL = "nilltechsolutions.com"
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "accounts:signup"

@@ -35,14 +35,11 @@ class Payment(models.Model):
     def verify_payment(self):
         paystack = Paystack()
         status, result = paystack.verify_payment(self.ref, self.amount)
-        if status:
-            if result['amount'] / 100 == self.amount:
+        if status and result['amount'] / 100 == self.amount:
                 self.verified = True
-                # Add job reference if payment is verified
+                self.save()
                 if self.job:
                     self.job.status = 'open'
+                    self.job.payment_verified = True
                     self.job.save()
-            self.save()
-        if self.verified:
-            return True
-        return False
+        return self.verified

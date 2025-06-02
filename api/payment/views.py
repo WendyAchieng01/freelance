@@ -1,47 +1,55 @@
+from django.utils.http import urlencode
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from django.shortcuts import get_object_or_404, redirect
+from django.conf import settings
 from payment.models import Payment
-from api.payment.paystack import Paystack
 from core.models import Job
-from .serializers import PaymentInitiateSerializer
+from api.payment.serializers import PaymentSerializer
+from api.payment.paystack import Paystack  
+from urllib.parse import urlencode
 
 
 class PaymentInitiateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        serializer = PaymentInitiateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, **kwargs):
+        """
+        Automatically initiate payment using job ID or slug passed in URL.
+        Price, email, and job are inferred from context – no manual input needed.
+        """
+        job_id = kwargs.get('id')
+        job_slug = kwargs.get('slug')
 
-        # Extract validated data
-        amount = serializer.validated_data['amount']
-        email = serializer.validated_data['email']
-        job_id = serializer.validated_data['job_id']
-        extra_data = serializer.validated_data.get('extra_data', {})
+        # Find the job using either ID or slug
+        job = None
+        if job_id:
+            job = get_object_or_404(Job, id=job_id, client__user=request.user)
+        elif job_slug:
+            job = get_object_or_404(
+                Job, slug=job_slug, client__user=request.user)
+        else:
+            return Response({'error': 'No job ID or slug provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validate job ownership
-        job = get_object_or_404(Job, id=job_id, client__user=request.user)
-
-        # Create payment instance
+        # Create a new payment instance also ref is  set automatically
         payment = Payment(
             user=request.user,
-            amount=amount,
-            email=email,
+            amount=int(job.price),
+            email=request.user.email,
             job=job,
-            extra_data=extra_data
         )
-        payment.save()  # Generates a unique ref automatically
+        payment.save()  #  ref is generated
 
-        # Initialize Paystack transaction
+        # Prepare callback URL
+        callback_url = request.build_absolute_uri('/api/v1/payment/callback/')
+
+        # Call Paystack to initialize the transaction
         paystack = Paystack()
-        callback_url = request.build_absolute_uri('/api/payment/callback/')
         paystack_status, paystack_data = paystack.initialize_transaction(
-            email=email,
-            amount=amount,
+            email=payment.email,
+            amount=payment.amount_value(),  # in kobo
             reference=payment.ref,
             callback_url=callback_url
         )
@@ -49,27 +57,42 @@ class PaymentInitiateView(APIView):
         if paystack_status:
             return Response({
                 'authorization_url': paystack_data['authorization_url'],
-                'reference': payment.ref
+                'reference': payment.ref,
             }, status=status.HTTP_200_OK)
         else:
             return Response({'error': paystack_data}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaymentCallbackView(APIView):
-    permission_classes = []  # Public endpoint for Paystack
+    permission_classes = [AllowAny] 
 
     def get(self, request):
         ref = request.GET.get('reference')
+        base_url = getattr(settings, "FRONTEND_BASE_URL", "https://nilltechsolutions.com")
+
         if not ref:
-            return Response({'error': 'No reference provided'}, status=status.HTTP_400_BAD_REQUEST)
+            error_params = urlencode(
+                {'error': 'Missing reference in callback.'})
+            return redirect(f"{base_url}/payment/failure/?{error_params}")
 
-        payment = get_object_or_404(Payment, ref=ref)
-        verified = payment.verify_payment()
+        try:
+            payment = get_object_or_404(Payment, ref=ref)
+        except Exception as e:
+            error_params = urlencode({'error': 'Payment record not found.'})
+            return redirect(f"{base_url}/payment/failure/?{error_params}")
 
-        if verified:
-            # Additional logic can be added here (e.g., handle response_id)
-            frontend_success_url = 'https://frontend.com/payment/success'
-            return redirect(frontend_success_url)
-        else:
-            frontend_failure_url = 'https://frontend.com/payment/failure'
-            return redirect(frontend_failure_url)
+        try:
+            verified = payment.verify_payment()
+            if verified:
+                # On success, redirect to Job detail page
+                if payment.job.slug:
+                    return redirect(f"{base_url}/api/v1/job/{payment.job.slug}/")
+                else:
+                    return redirect(f"{base_url}/api/v1/job/{payment.job.id}/")
+            else:
+                error_params = urlencode(
+                    {'error': 'Payment could not be verified. Please try again.'})
+                return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+        except Exception as e:
+            error_params = urlencode({'error': f"Internal error: {str(e)}"})
+            return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
