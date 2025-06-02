@@ -26,9 +26,6 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
@@ -198,10 +195,24 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# PayPal Settings
+# PayPal configuration
+
+PAYPAL_RECEIVER_EMAIL = "nil@example.com"
 PAYPAL_TEST = True  # Use sandbox mode during testing
 PAYPAL_SANDBOX = True
-#PAYPAL_IPN_STRICT = False #temporarily
+PAYPAL_IPN_STRICT = False #temporarily
+
+PAYPAL_TEST = True  # Set to False in production
+
+# Set PayPal URL based on environment
+PAYPAL_URL = (
+    "https://www.sandbox.paypal.com/cgi-bin/webscr"
+    if PAYPAL_TEST
+    else "https://www.paypal.com/cgi-bin/webscr"
+)
+
+
+
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
