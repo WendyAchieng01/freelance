@@ -32,6 +32,10 @@ class PaymentInitiateView(APIView):
                 Job, slug=job_slug, client__user=request.user)
         else:
             return Response({'error': 'No job ID or slug provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Prevent duplicate verified payments
+        if job.payment_verified:
+            return redirect(job.get_absolute_url())
 
         # Create a new payment instance also ref is  set automatically
         payment = Payment(
@@ -55,12 +59,24 @@ class PaymentInitiateView(APIView):
         )
 
         if paystack_status:
+            # Attempt automatic redirect
+            if request.accepted_renderer.format == 'html' or 'text/html' in request.headers.get('Accept', ''):
+                return redirect(paystack_data['authorization_url'])
+
+            # Fallback for Swagger, Postman, JS frontend, etc.
             return Response({
                 'authorization_url': paystack_data['authorization_url'],
                 'reference': payment.ref,
+                'message': 'Redirect failed? Click the Pay Now button.',
             }, status=status.HTTP_200_OK)
+
         else:
+            # Handle error gracefully
+            request.session['payment_error'] = paystack_data
             return Response({'error': paystack_data}, status=status.HTTP_400_BAD_REQUEST)
+        
+            #request.session['payment_error'] = paystack_data
+            #return redirect(job.get_payment_url())
 
 
 class PaymentCallbackView(APIView):
