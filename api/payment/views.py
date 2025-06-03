@@ -1,3 +1,5 @@
+import requests
+from rest_framework.permissions import AllowAny
 from django.utils.http import urlencode
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -75,15 +77,37 @@ class PaymentInitiateView(APIView):
             request.session['payment_error'] = paystack_data
             return Response({'error': paystack_data}, status=status.HTTP_400_BAD_REQUEST)
         
-            #request.session['payment_error'] = paystack_data
-            #return redirect(job.get_payment_url())
+            # request.session['payment_error'] = paystack_data
+            # return redirect(job.get_payment_url())
+
+
+def get_nested_values(data, *keys):
+    """
+    Retrieve values for one or more keys from a nested dictionary.
+    Supports dot notation for nested keys (e.g., "authorization.bank").
+    """
+    results = {}
+
+    for key in keys:
+        parts = key.split(".")
+        value = data
+        for part in parts:
+            if isinstance(value, dict) and part in value:
+                value = value[part]
+            else:
+                value = None
+                break
+        results[key] = value
+
+    return results if len(keys) > 1 else results[keys[0]]
+
 
 
 class PaymentCallbackView(APIView):
-    permission_classes = [AllowAny] 
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        ref = request.GET.get('reference')
+        ref = request.GET.get("reference")
         base_url = getattr(settings, "FRONTEND_BASE_URL", "https://nilltechsolutions.com")
 
         if not ref:
@@ -91,24 +115,54 @@ class PaymentCallbackView(APIView):
                 {'error': 'Missing reference in callback.'})
             return redirect(f"{base_url}/payment/failure/?{error_params}")
 
-        try:
-            payment = get_object_or_404(Payment, ref=ref)
-        except Exception as e:
-            error_params = urlencode({'error': 'Payment record not found.'})
-            return redirect(f"{base_url}/payment/failure/?{error_params}")
+        payment = get_object_or_404(Payment, ref=ref)
 
         try:
-            verified = payment.verify_payment()
+            # Make a direct request to Paystack to retrieve full data
+            headers = {
+                "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+                "Content-Type": "application/json",
+            }
+            verify_url = f"https://api.paystack.co/transaction/verify/{ref}"
+            response = requests.get(verify_url, headers=headers)
+            response.raise_for_status()
+            paystack_data = response.json().get("data", {})
+            
+
+            # Save Paystack response to extra_data for auditing
+            payment.extra_data = paystack_data
+            payment.save(update_fields=["extra_data"])
+            
+            success_status = get_nested_values(paystack_data,'status')
+            success_ref = get_nested_values(paystack_data, 'reference')
+            
+            if success_status == 'success' and payment.ref == success_ref:
+                payment.verified = True
+                payment.save()
+                
+                if payment.job:
+                    job = payment.job
+                    job.status = "open"
+                    job.payment_verified = True 
+                    job.save()
+            
+
+            # Now verify the payment using model method
+            verified = payment.job.payment_verified
+
             if verified:
-                # On success, redirect to Job detail page
-                if payment.job.slug:
-                    return redirect(f"{base_url}/api/v1/job/{payment.job.slug}/")
-                else:
-                    return redirect(f"{base_url}/api/v1/job/{payment.job.id}/")
+                return redirect(f"{base_url}/api/v1/job/{job.slug or job.id}/")
             else:
                 error_params = urlencode(
                     {'error': 'Payment could not be verified. Please try again.'})
                 return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+
+        except requests.RequestException as e:
+            error_params = urlencode(
+                {'error': f"Paystack request failed: {str(e)}"})
+            return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+
         except Exception as e:
             error_params = urlencode({'error': f"Internal error: {str(e)}"})
             return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+

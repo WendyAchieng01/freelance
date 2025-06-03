@@ -197,7 +197,7 @@ MESSAGE_TAGS = {
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "nil@example.com"
+PAYPAL_RECEIVER_EMAIL = "sampleapp@gmail.com "
 PAYPAL_TEST = True  # Use sandbox mode during testing
 PAYPAL_SANDBOX = True
 PAYPAL_IPN_STRICT = False #temporarily

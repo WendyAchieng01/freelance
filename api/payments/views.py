@@ -36,7 +36,7 @@ class InitiatePaypalPayment(APIView):
             defaults={
                 "user": request.user,
                 "invoice": f"job-{job.id}",
-                "price": job.price,
+                "amount": job.price,
                 "status": "pending"
             }
         )
