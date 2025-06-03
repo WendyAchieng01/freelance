@@ -1,5 +1,5 @@
 import requests
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticatedOrReadOnly
 from django.utils.http import urlencode
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from payment.models import Payment
 from core.models import Job
 from api.payment.serializers import PaymentSerializer
 from api.payment.paystack import Paystack  
-from urllib.parse import urlencode
+from urllib.parse import urlencode,unquote
 
 
 class PaymentInitiateView(APIView):
@@ -20,7 +20,7 @@ class PaymentInitiateView(APIView):
     def get(self, request, **kwargs):
         """
         Automatically initiate payment using job ID or slug passed in URL.
-        Price, email, and job are inferred from context – no manual input needed.
+        Price, email, and job are inferred from context no manual input needed.
         """
         job_id = kwargs.get('id')
         job_slug = kwargs.get('slug')
@@ -166,3 +166,45 @@ class PaymentCallbackView(APIView):
             error_params = urlencode({'error': f"Internal error: {str(e)}"})
             return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
+
+class ProceedToPayAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, slug_or_id):
+        error_message = request.GET.get('error')
+        error_message = unquote(error_message) if error_message else None
+
+        # Fetch job by slug or ID
+        job = None
+        try:
+            if slug_or_id.isdigit():
+                job = get_object_or_404(Job, id=int(slug_or_id))
+            else:
+                job = get_object_or_404(Job, slug=slug_or_id)
+        except Exception as e:
+            return Response({"error": f"Job not found: {str(e)}"}, status=404)
+
+        # Get latest payment attempt for this job (optional)
+        payment = Payment.objects.filter(
+            job=job).order_by('-date_created').first()
+
+        # Respond with relevant job + payment info + payment URL
+        return Response({
+            "message": "Proceed to payment",
+            "job": {
+                "id": job.id,
+                "slug": job.slug,
+                "title": job.title,
+                "price": job.price,
+                "status": job.status,
+                "payment_verified": job.payment_verified,
+            },
+            "payment": {
+                "ref": payment.ref if payment else None,
+                "amount": payment.amount if payment else None,
+                "verified": payment.verified if payment else None,
+                "email": payment.email if payment else None,
+            } if payment else None,
+            "payment_url": request.build_absolute_uri(job.get_payment_url()),
+            "error": error_message
+        })
