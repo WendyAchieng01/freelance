@@ -1,43 +1,47 @@
-from rest_framework import generics
+from rest_framework import generics,permissions
 from rest_framework.permissions import IsAuthenticated
 from wallet.models import WalletTransaction
 from api.wallet.serializers import WalletTransactionSerializer
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 import logging
 import json
+
+from core.models import Job
 
 logger = logging.getLogger(__name__)
 
 
-class WalletListView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+class WalletTransactionListView(generics.ListAPIView):
     serializer_class = WalletTransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = WalletTransaction.objects.filter(user=self.request.user)
-        logger.debug(
-            f"WalletListView queryset for user={self.request.user.username}: {queryset.count()} transactions")
-        for tx in queryset:
-            logger.debug(
-                f"Queryset transaction: id={tx.id}, user={tx.user.username}, type={tx.transaction_type}, job={tx.job.id if tx.job else 'None'}")
-        return queryset
+        return WalletTransaction.objects.filter(user=self.request.user).order_by('-timestamp')
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        logger.debug(
-            f"Serialized data for user={request.user.username}: {len(serializer.data)} transactions")
-        for tx in serializer.data:
-            logger.debug(
-                f"Serialized transaction: id={tx['id']}, user={tx.get('user', 'N/A')}, type={tx['transaction_type']}, job={tx.get('job', 'N/A')}")
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            logger.debug(
-                f"Paginated response for user={request.user.username}: {len(serializer.data)} transactions")
-            response_data = serializer.data
-        else:
-            response_data = serializer.data
-        logger.debug(
-            f"Final response data: {json.dumps(response_data, indent=2)}")
-        return Response(response_data)
+
+class WalletSummaryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        total_earnings = WalletTransaction.total_earnings(request.user)
+        completed_jobs = WalletTransaction.completed_jobs_total(request.user)
+        return Response({
+            "total_earnings": total_earnings,
+            "completed_jobs": completed_jobs
+        })
+
+
+def assign_job_to_freelancer(job: Job):
+    if job.selected_freelancer and job.status == 'open':
+        job.status = 'in_progress'
+        job.save()
+
+        WalletTransaction.objects.create(
+            user=job.selected_freelancer,
+            transaction_type='job_picked',
+            status='in_progress',
+            job=job,
+            amount=job.price
+        )
