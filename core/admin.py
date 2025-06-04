@@ -70,13 +70,6 @@ class JobAdmin(admin.ModelAdmin):
 admin.site.register(Job, JobAdmin)
 
 
-@admin.register(JobAssignment)
-class JobAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('job', 'freelancer', 'assigned_at', 'status')
-    list_filter = ('status', 'assigned_at')
-    search_fields = ('job__title', 'freelancer__user__username')
-    ordering = ('-assigned_at',)
-
 
 @admin.register(Response)
 class ResponseAdmin(admin.ModelAdmin):

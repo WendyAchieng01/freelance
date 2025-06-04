@@ -5,7 +5,6 @@ from django.db.models.signals import pre_save
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import WalletTransaction
-from core.models import JobAssignment
 from payments.models import PaypalPayments
 from payment.models import Payment
 import logging
