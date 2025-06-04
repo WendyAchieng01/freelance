@@ -3,7 +3,22 @@ from academy.models import Training
 from core.models import Job
 
 
-class TrainingSerializer(serializers.ModelSerializer):
+class TrainingSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='training-detail',
+        lookup_field='slug'   
+    )
+
+    job = serializers.HyperlinkedRelatedField(
+        view_name='job-detail-slug',
+        lookup_field='slug',
+        read_only=True
+    )
+    client = serializers.HyperlinkedRelatedField(
+        view_name='user-detail',
+        lookup_field='pk',
+        read_only=True
+    )
     pdf_document = serializers.FileField(
         required=False,
         allow_null=True,
@@ -13,15 +28,6 @@ class TrainingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Training
-        fields = [
-            'id', 'title', 'texts', 'pdf_document', 'video_url',
-            'job', 'client', 'slug'
-        ]
-        read_only_fields = ['id', 'client', 'slug', 'job']
-
-    def validate_job(self, value):
-        user = self.context['request'].user
-        if not Job.objects.filter(id=value.id, client=user.profile).exists():
-            raise serializers.ValidationError(
-                "You can only select jobs that belong to you.")
-        return value
+        fields = ['url', 'title', 'texts', 'pdf_document',
+                    'video_url', 'job', 'client', 'slug']
+        read_only_fields = ['client', 'slug', 'job']
