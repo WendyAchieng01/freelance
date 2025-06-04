@@ -7,6 +7,6 @@ review_detail = ReviewViewSet.as_view(
 
 
 urlpatterns = [
-    path('reviews/', review_list),
-    path('reviews/<int:pk>/', review_detail),
+    path('', review_list),
+    path('<int:pk>/', review_detail),
 ]
