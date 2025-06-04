@@ -41,36 +41,12 @@ class JobSerializer(serializers.ModelSerializer):
         return obj.selected_freelancer.username if obj.selected_freelancer else None
 
 
-class ResponseSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    # Show job as nested details, read-only
-    job = JobSerializer(read_only=True)
-    # Accept job id on create/update
-    job_id = serializers.PrimaryKeyRelatedField(
-        queryset=Job.objects.all(), source='job', write_only=True
-    )
-
+class ApplyResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
-        fields = ['id', 'user', 'job', 'job_id', 'submitted_at', 'slug','extra_data']
-        read_only_fields = ['user', 'submitted_at']
+        fields = ['extra_data']
 
-    def get_user(self, obj):
-        return obj.user.username
-
-    def validate(self, data):
-        job = data.get('job')
-        user = self.context['request'].user
-        if job.responses.filter(user=user).exists():
-            raise serializers.ValidationError(
-                "You have already responded to this job.")
-        if job.is_max_freelancers_reached or job.status != 'open':
-            raise serializers.ValidationError("Cannot apply to this job.")
-        return data
-
-    def create(self, validated_data):
-        return Response.objects.create(**validated_data)
-    
+ 
 
 class ChatSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField(read_only=True)

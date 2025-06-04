@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status,filters
+from rest_framework import viewsets, status,filters,permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -13,8 +13,12 @@ from accounts.models import Profile, FreelancerProfile
 from core.models import Job, Response, Chat, Message, MessageAttachment, Review
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
 
+from core.models import Response as JobResponse
+from rest_framework.response import Response as DRFResponse
+from rest_framework.views import APIView 
+
 from api.core.serializers import ( 
-    JobSerializer, ResponseSerializer, ChatSerializer,
+    JobSerializer, ApplyResponseSerializer, ChatSerializer,
     MessageSerializer, MessageAttachmentSerializer, ReviewSerializer
 )
 from .permissions import (
@@ -77,55 +81,51 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response({'message': 'Job marked as completed'})
 
 
-class ResponseViewSet(viewsets.ModelViewSet):
-    queryset = Response.objects.all().select_related('job', 'user')
-    serializer_class = ResponseSerializer
-    lookup_field = 'slug'
+class ApplyToJobView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [IsAuthenticated()]
-        if self.action == 'create':
-            return [IsAuthenticated(), IsFreelancer()]
-        if self.action in ['update', 'partial_update', 'destroy']:
-            return [IsAuthenticated(), IsResponseOwner()]
-        if self.action in ['accept', 'reject']:
-            return [IsAuthenticated(), IsClientOfJob()]
-        return [IsAuthenticated()]
+    def post(self, request, slug):
+        job = get_object_or_404(Job, slug=slug)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if request.user.profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can apply.'}, status=status.HTTP_403_FORBIDDEN)
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsClientOfJob])
-    def accept(self, request, pk=None):
-        response = self.get_object()
-        job = response.job
+        if job.is_max_freelancers_reached:
+            return DRFResponse({'detail': 'Maximum number of freelancers already applied.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if job.selected_freelancer:
-            return Response({'error': 'Job already assigned'}, status=400)
+        if JobResponse.objects.filter(job=job, user=request.user).exists():
+            return DRFResponse({'detail': 'You have already applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        job.selected_freelancer = response.user
-        job.status = 'in_progress'
-        job.save()
+        serializer = ApplyResponseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        chat = Chat.objects.create(
+        job_response = JobResponse.objects.create(
             job=job,
-            client=job.client,
-            freelancer=response.user.profile
+            user=request.user,
+            extra_data=serializer.validated_data.get('extra_data', None)
         )
-        return Response({'message': 'Freelancer accepted', 'chat_id': chat.id})
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsClientOfJob])
-    def reject(self, request, pk=None):
-        response = self.get_object()
+        response_serializer = ApplyResponseSerializer(job_response)
+        return DRFResponse({'detail': 'Successfully applied.', 'data': response_serializer.data}, status=status.HTTP_201_CREATED)
+
+
+class UnapplyFromJobView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, slug):
+        job = get_object_or_404(Job, slug=slug)
+
+        if request.user.profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can unapply.'}, status=status.HTTP_403_FORBIDDEN)
+
+        response = JobResponse.objects.filter(
+            job=job, user=request.user).first()
+        if not response:
+            return DRFResponse({'detail': 'You have not applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
         response.delete()
-        return Response({'message': 'Response rejected'})
+        return DRFResponse({'detail': 'Successfully removed your application.'}, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsFreelancer])
-    def my_responses(self, request):
-        responses = self.queryset.filter(user=request.user)
-        serializer = self.get_serializer(responses, many=True)
-        return Response(serializer.data)
 
 
 class ChatViewSet(viewsets.ModelViewSet):
