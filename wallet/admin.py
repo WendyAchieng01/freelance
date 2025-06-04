@@ -1,5 +1,5 @@
 from django.contrib import admin
-from wallet.models import WalletTransaction
+from wallet.models import WalletTransaction,Rate
 
 
 @admin.register(WalletTransaction)
@@ -49,3 +49,9 @@ class WalletTransactionAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         # Allow deletion with caution, as transactions are financial records
         return True
+
+
+@admin.register(Rate)
+class RateAdmin(admin.ModelAdmin):
+    list_display = ('rate_amount', 'effective_from')
+    ordering = ['-effective_from']
