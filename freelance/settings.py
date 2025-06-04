@@ -41,7 +41,10 @@ ALLOWED_HOSTS = [
     'nilltechsolutions.com'
 ]
 
-FRONTEND_URL = "nilltechsolutions.com"
+
+#ALLOWED_HOSTS = ['*']
+
+FRONTEND_URL = "nilltechsolutions.com"  # '0724-154-159-254-165.ngrok-free.app'
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "accounts:signup"
@@ -197,12 +200,11 @@ MESSAGE_TAGS = {
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "sampleapp@gmail.com "
+PAYPAL_RECEIVER_EMAIL = "niltest@business.com"
 PAYPAL_TEST = True  # Use sandbox mode during testing
 PAYPAL_SANDBOX = True
 PAYPAL_IPN_STRICT = False #temporarily
 
-PAYPAL_TEST = True  # Set to False in production
 
 # Set PayPal URL based on environment
 PAYPAL_URL = (
