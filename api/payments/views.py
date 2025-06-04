@@ -17,6 +17,7 @@ from django.dispatch import receiver
 from django.views import View
 from django.utils.http import urlencode
 from django.conf import settings
+from django.http import HttpResponseNotFound
 
 from .serializers import InitiatePaymentSerializer, PaymentStatusSerializer
 
@@ -25,19 +26,17 @@ from .serializers import InitiatePaymentSerializer, PaymentStatusSerializer
 paypal_url = settings.PAYPAL_URL
 
 
-
 class InitiatePaypalPayment(APIView):
     def post(self, request, slug):
         job = get_object_or_404(Job, slug=slug)
 
-        # Ensure only one payment per job
         payment, created = PaypalPayments.objects.get_or_create(
             job=job,
             defaults={
                 "user": request.user,
                 "invoice": f"job-{job.id}",
                 "amount": job.price,
-                "status": "pending"
+                "status": "pending",
             }
         )
 
@@ -48,17 +47,61 @@ class InitiatePaypalPayment(APIView):
             "invoice": payment.invoice,
             "currency_code": "USD",
             "notify_url": request.build_absolute_uri(reverse("paypal-ipn")),
-            "return_url": f"{settings.FRONTEND_URL}/api/v1/payments/payment/success/",
-            "cancel_return": f"{settings.FRONTEND_URL}/api/v1/payments/payment/cancel/",
+            "return_url": f"https://{settings.FRONTEND_URL}/api/v1/jobs/{slug}/",
+            "cancel_return": f"https://{settings.FRONTEND_URL}/api/v1/jobs/{slug}/",
         }
+        
 
         form = PayPalPaymentsForm(initial=paypal_dict)
-
         return Response({
             "paypal_url": str(paypal_url),
-            "form_data": form.initial  
-            # send to frontend to post
+            "form_data": form.initial
         })
+
+
+class PaypalSuccessView(View):
+    def get(self, request, invoice):
+        payer_id = request.GET.get('PayerID')
+        print(f"Here is the PAYER ID {payer_id}")
+
+        # Find the payment by invoice
+        payment = get_object_or_404(PaypalPayments, invoice=invoice)
+        
+        domain = settings.FRONTEND_URL
+        params = urlencode({"success": "Payment successful!"})
+
+        # Mark payment as verified or update with PayerID if you want to save it
+        if payment.verified != True:
+            payment.verified = True
+            payment.status = 'completed'
+            extra_data = payment.extra_data or {}
+            extra_data['paypal_payer_id'] = payer_id
+            payment.extra_data = extra_data
+            payment.save()
+
+            # Update related job as payment verified
+            job = payment.job
+            job.payment_verified = True
+            job.save()
+            
+            return redirect(f"{domain}/api/v1/job/{job.slug}/?{params}")
+
+        else:
+            # Redirect to frontend with success message
+            return redirect(f"{domain}/api/v1/job/{job.slug}/?{params}")
+
+
+class PaypalFailedView(View):
+    def get(self, request, invoice):
+        try:
+            payment = PaypalPayments.objects.get(invoice=invoice)
+            job = payment.job
+        except PaypalPayments.DoesNotExist:
+            return redirect(f"{settings.FRONTEND_URL}/dashboard/?error=Payment cancelled.")
+
+        domain = f"{settings.FRONTEND_URL}"
+        error = "Payment failed or was cancelled. Please try again."
+        return redirect(f"{domain}/api/v1/job/{job.slug}/proceed-to-pay/?error={error}")
 
 
 class PaymentStatus(APIView):
@@ -69,35 +112,7 @@ class PaymentStatus(APIView):
         return Response(serializer.data)
 
 
-class PaypalSuccessView(View):
-    def get(self, request, job_id):
-        job = get_object_or_404(Job, id=job_id)
 
-        # Optional: check if payment has already been verified
-        if hasattr(job, "payment_verified") and job.payment_verified:
-            message = "Payment successful!"
-        else:
-            message = "Payment processing. Please wait or click verify."
-
-        domain = getattr(settings, "FRONTEND_URL", "https://nilltechsolutions.com")
-        params = urlencode({"success": message})
-        return redirect(f"{domain}/api/v1/job/{job.slug}/?{params}")
-
-
-class PaypalFailedView(View):
-    def get(self, request, job_id=None, slug=None):
-        job = None
-        if job_id:
-            job = get_object_or_404(Job, id=job_id)
-        elif slug:
-            job = get_object_or_404(Job, slug=slug)
-
-        domain = getattr(settings, "FRONTEND_URL", "https://nilltechsolutions.com")
-        error = "Payment failed or was cancelled. Please try again."
-
-        if job:
-            return redirect(f"{domain}/api/v1/job/{job.slug}/proceed-to-pay/?error={error}")
-        return redirect(f"{domain}/dashboard/?error={error}")
 
 
 @receiver(valid_ipn_received)
