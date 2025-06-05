@@ -112,3 +112,24 @@ class CanReview(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.reviewer == request.user
+
+
+# permissions.py
+
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Only profile owner can update/delete.
+    Authenticated users can read, 
+    and can see opposite user type profiles only.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # SAFE methods can be used by anyone authenticated
+        if request.method in permissions.SAFE_METHODS:
+            return (
+                request.user.is_authenticated and
+                obj.user_type != request.user.profile.user_type
+            )
+        # Only owner can update/delete
+        return obj.user == request.user

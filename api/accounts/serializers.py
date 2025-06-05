@@ -35,6 +35,8 @@ class UserSerializer(serializers.ModelSerializer):
         )
     ]
 )
+
+
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=150, help_text="Unique username.")
@@ -154,23 +156,13 @@ class ResendVerificationSerializer(serializers.Serializer):
         help_text="Registered email address for verification."
     )
 
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
 
+class ProfileSerializer(serializers.ModelSerializer):
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = Profile
-        fields = ['id', 'user', 'phone', 'location', 'bio','profile_pic', 'pay_id', 'pay_id_no', 'id_card', 'user_type']
-        read_only_fields = ['id', 'user', 'user_type']
-        extra_kwargs = {
-            'phone': {'help_text': 'Phone number.'},
-            'location': {'help_text': 'Location (optional).'},
-            'bio': {'help_text': 'Biography (optional).'},
-            'profile_pic': {'help_text': 'Profile picture (optional).'},
-            'pay_id': {'help_text': 'Payment method (M-Pesa or Binance).'},
-            'pay_id_no': {'help_text': 'Payment ID number.'},
-            'id_card': {'help_text': 'ID card number (optional).'},
-            'user_type': {'help_text': 'User type (freelancer or client).'},
-        }
+        fields = '__all__'
+        read_only_fields = ['user', 'user_type','date_modified']
 
 
 class SkillSerializer(serializers.ModelSerializer):

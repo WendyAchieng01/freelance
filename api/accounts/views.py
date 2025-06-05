@@ -1,5 +1,8 @@
+from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.decorators import action
+from rest_framework import viewsets, permissions
 from rest_framework.views import APIView
-from rest_framework import viewsets, status, permissions,generics,filters
+from rest_framework import viewsets, status, permissions,generics,filters,mixins
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -7,6 +10,7 @@ from rest_framework.parsers import JSONParser
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
@@ -17,10 +21,11 @@ from django.http import FileResponse, Http404
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.shortcuts import get_object_or_404
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
-from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly
+from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
 
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,
@@ -341,45 +346,41 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+class ProfileViewSet(mixins.CreateModelMixin,
+                     mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     viewsets.GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+    permission_classes = [permissions.IsAuthenticated]
 
-    @extend_schema(
-        description="List profiles (admin only) or retrieve specific profile.",
-        responses={200: ProfileSerializer(many=True)}
-    )
-    def list(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-            return Response({"error": "Admin access required."}, status=status.HTTP_403_FORBIDDEN)
-        return super().list(request, *args, **kwargs)
+    def get_queryset(self):
+        user = self.request.user
+        # Show only opposite user_type profiles (exclude own)
+        opposite_type = 'client' if user.profile.user_type == 'freelancer' else 'freelancer'
+        return Profile.objects.filter(user_type=opposite_type).exclude(user=user)
 
-    @extend_schema(
-        description="Retrieve user profile.",
-        responses={200: ProfileSerializer}
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        user = self.request.user
+        if Profile.objects.filter(user=user).exists():
+            raise ValidationError("This user already has a profile.")
+        serializer.save(user=user)
 
-    @extend_schema(
-        request=ProfileSerializer,
-        description="Update user profile (owner or admin only).",
-        responses={200: ProfileSerializer,
-                   400: OpenApiResponse(description="Invalid input.")}
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @extend_schema(
-        description="Delete user profile (owner or admin only).",
-        responses={204: OpenApiResponse(description="Profile deleted.")}
-    )
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+    @action(detail=False, methods=['get', 'put', 'patch', 'delete'], url_path='me')
+    def me(self, request):
+        profile = get_object_or_404(Profile, user=request.user)
+        if request.method == 'GET':
+            serializer = self.get_serializer(profile)
+            return Response(serializer.data)
+        elif request.method in ['PUT', 'PATCH']:
+            serializer = self.get_serializer(
+                profile, data=request.data, partial=(request.method == 'PATCH'))
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        elif request.method == 'DELETE':
+            profile.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
 
 class SkillViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.all()
