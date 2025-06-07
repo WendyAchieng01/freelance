@@ -1,3 +1,4 @@
+from rest_framework.permissions import BasePermission
 from rest_framework import permissions
 from accounts.models import Profile
 from core.models import Job, Chat, Response, Review
@@ -63,3 +64,76 @@ class CanReview(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.reviewer == request.user
+
+
+class CanClientChat(BasePermission):
+    """
+    Allow only the job's client to chat if:
+    - The user is the job owner
+    - The job has a selected_freelancer
+    - The job is payment_verified
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        job_id = view.kwargs.get("job_id") or request.data.get("job")
+        if not job_id:
+            return False
+
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return False
+
+        # Check if the request user is the job owner (client)
+        if job.client.user != user:
+            return False
+
+        # Must have selected freelancer and payment verified
+        if not job.selected_freelancer or not job.payment_verified:
+            return False
+
+        # Ensure a chat exists with correct participants
+        try:
+            chat = Chat.objects.get(
+                job=job,
+                client=job.client,
+                freelancer=Profile.objects.get(user=job.selected_freelancer)
+            )
+            return True
+        except Chat.DoesNotExist:
+            return False
+
+
+class CanFreelancerChat(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        job_id = view.kwargs.get("job_id") or request.data.get("job")
+        if not job_id:
+            return False
+
+        try:
+            chat = Chat.objects.get(job__id=job_id, freelancer__user=user)
+            job = chat.job
+            return (
+                chat.freelancer.user == user and
+                job.payment_verified and
+                job.selected_freelancer is not None
+            )
+        except Chat.DoesNotExist:
+            return False
+
+
+class CanAccessChat(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        profile = request.user.profile
+        return (obj.client == profile or obj.freelancer == profile) and obj.active
+
+    def has_permission(self, request, view):
+        # For list/create, we check permission by chat_slug later
+        return request.user.is_authenticated
+
+
+class CanDeleteOwnMessage(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.sender == request.user

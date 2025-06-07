@@ -1,30 +1,32 @@
-from rest_framework import viewsets, status,filters,permissions
+from rest_framework.exceptions import PermissionDenied
+from rest_framework import generics, permissions
+from rest_framework import viewsets, status,filters,permissions,generics
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
+from django.db.models import Count,Prefetch
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from accounts.models import Profile, FreelancerProfile
-from core.models import Job, Response, Chat, Message, MessageAttachment, Review
+from core.models import Job, Chat, Message, MessageAttachment, Review
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
 
 from core.models import Response as JobResponse
 from rest_framework.response import Response as DRFResponse
-from rest_framework.views import APIView 
+from rest_framework.views import APIView
 
 from api.core.serializers import ( 
-    JobSerializer, ApplyResponseSerializer, ChatSerializer,
-    MessageSerializer, MessageAttachmentSerializer, ReviewSerializer
+    JobSerializer, ApplyResponseSerializer,ResponseListSerializer,JobWithResponsesSerializer,
+    ChatSerializer, MessageSerializer, MessageAttachmentSerializer, ReviewSerializer
 )
 from .permissions import (
         IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, 
         CanReview, IsResponseOwner,IsClientOfJob, 
-        IsJobOwnerCanEditEvenIfAssigned
+        IsJobOwnerCanEditEvenIfAssigned,CanAccessChat,CanDeleteOwnMessage
 )
 from django.db.models import Q
 
@@ -61,13 +63,13 @@ class JobViewSet(viewsets.ModelViewSet):
     def my_jobs(self, request):
         jobs = self.queryset.filter(client__user=request.user)
         serializer = self.get_serializer(jobs, many=True)
-        return Response(serializer.data)
+        return DRFResponse(serializer.data)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsJobOwner])
     def matches(self, request, pk=None):
         job = self.get_object()
         matches = match_freelancers_to_job(job)
-        return Response([{
+        return DRFResponse([{
             'freelancer': m[0].profile.user.username,
             'score': m[1],
             'skills': [s.name for s in m[0].skills.all()]
@@ -78,7 +80,7 @@ class JobViewSet(viewsets.ModelViewSet):
         job = self.get_object()
         job.status = 'completed'
         job.save()
-        return Response({'message': 'Job marked as completed'})
+        return DRFResponse({'message': 'Job marked as completed'})
 
 
 class ApplyToJobView(APIView):
@@ -92,6 +94,9 @@ class ApplyToJobView(APIView):
 
         if job.is_max_freelancers_reached:
             return DRFResponse({'detail': 'Maximum number of freelancers already applied.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if job.selected_freelancer:
+            return DRFResponse({'error': 'A freelancer has already been accepted and only one freelancer is needed'}, status=status.HTTP_423_LOCKED)
 
         if JobResponse.objects.filter(job=job, user=request.user).exists():
             return DRFResponse({'detail': 'You have already applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -127,63 +132,154 @@ class UnapplyFromJobView(APIView):
         return DRFResponse({'detail': 'Successfully removed your application.'}, status=status.HTTP_204_NO_CONTENT)
 
 
-
-class ChatViewSet(viewsets.ModelViewSet):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = [IsAuthenticated, IsChatParticipant]
+class ResponseListForJobView(generics.ListAPIView):
+    serializer_class = ResponseListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Chat.objects.filter(
-            Q(client=self.request.user.profile) | Q(
-                freelancer=self.request.user.profile)
+        user = self.request.user
+        slug = self.kwargs.get('slug', None)
+
+        if slug:
+            job = get_object_or_404(Job, slug=slug)
+            if job.client.user != user:
+                raise PermissionDenied("You do not own this job.")
+            return JobResponse.objects.filter(job=job)
+        else:
+            # List all responses for all jobs owned by this user
+            return JobResponse.objects.filter(job__client__user=user).distinct()
+
+
+class JobsWithResponsesView(generics.ListAPIView):
+    serializer_class = JobWithResponsesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Job.objects.filter(
+            client__user=self.request.user,
+            responses__isnull=False
+        ).distinct().prefetch_related(
+            Prefetch('responses', queryset=JobResponse.objects.select_related('user'))
         )
+            
+
+class AcceptFreelancerView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, slug, identifier):
+        job = get_object_or_404(Job, slug=slug)
+
+        # Check if the requester is the job owner
+        if job.client.user != request.user:
+            return DRFResponse({'detail': 'You are not the owner of this job.'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Try to resolve identifier to a User (username first, then ID)
+        freelancer = User.objects.filter(username=identifier).first(
+        ) or User.objects.filter(id__iexact=identifier).first()
+        if not freelancer:
+            return DRFResponse({'error': 'Freelancer not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Ensure this freelancer actually applied to the job
+        if not JobResponse.objects.filter(job=job, user=freelancer).exists():
+            return DRFResponse({'error': 'This freelancer did not apply to this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure no freelancer is already selected
+        if job.selected_freelancer:
+            return DRFResponse({'error': 'A freelancer has already been accepted for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Accept the freelancer
+        job.selected_freelancer = freelancer
+        job.status = 'in_progress'
+        job.save()
+
+        return DRFResponse({'message': f'{freelancer.username} has been accepted for this job.'}, status=status.HTTP_200_OK)
+
+
+class RejectFreelancerView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, slug, identifier):
+        job = get_object_or_404(Job, slug=slug)
+
+        if job.client.user != request.user:
+            return DRFResponse({'detail': 'You are not the owner of this job.'}, status=status.HTTP_403_FORBIDDEN)
+
+        freelancer = User.objects.filter(username=identifier).first(
+        ) or User.objects.filter(id__iexact=identifier).first()
+        if not freelancer:
+            return DRFResponse({'error': 'Freelancer not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if job.selected_freelancer != freelancer:
+            return DRFResponse({'error': 'This freelancer is not currently selected for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        job.selected_freelancer = None
+        job.status = 'open'
+        job.save()
+
+        return DRFResponse({'message': f'{freelancer.username} has been unassigned from this job.'}, status=status.HTTP_200_OK)
+
+
+class ChatViewSet(viewsets.ModelViewSet):
+    serializer_class = ChatSerializer
+    permission_classes = [permissions.IsAuthenticated, CanAccessChat]
+
+    def get_queryset(self):
+        profile = self.request.user.profile
+        return Chat.objects.filter(Q(client=profile) | Q(freelancer=profile))
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    @action(detail=True, methods=['get'])
+    def messages(self, request, pk=None):
+        chat = self.get_object()
+        messages = chat.messages.all()
+        serializer = MessageSerializer(messages, many=True)
+        return DRFResponse(serializer.data)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated, IsChatParticipant]
+    permission_classes = [permissions.IsAuthenticated, CanAccessChat]
+
+    def get_chat(self):
+        chat_slug = self.kwargs.get('chat_slug')
+        chat = get_object_or_404(Chat, slug=chat_slug)
+        # check if user is participant and chat is active
+        profile = self.request.user.profile
+        if not (chat.client == profile or chat.freelancer == profile) or not chat.active:
+            raise PermissionDenied("You do not have access to this chat.")
+        return chat
 
     def get_queryset(self):
-        return Message.objects.filter(
-            chat__in=Chat.objects.filter(
-                Q(client=self.request.user.profile) | Q(
-                    freelancer=self.request.user.profile)
-            )
-        )
+        chat = self.get_chat()
+        return Message.objects.filter(chat=chat).order_by('timestamp')
 
     def perform_create(self, serializer):
-        chat = serializer.validated_data['chat']
-        job = chat.job
+        chat = self.get_chat()
+        # auto-set sender to logged in user and link message to chat
+        serializer.save(sender=self.request.user, chat=chat)
 
-        # Allow only if payment is verified and freelancer selected
-        if not job.payment_verified or not chat.freelancer:
-            raise PermissionDenied("Chat is not active.")
-        serializer.save(sender=self.request.user)
+    def perform_update(self, serializer):
+        message = self.get_object()
+        if message.sender != self.request.user:
+            raise PermissionDenied("You can only edit your own messages.")
+        serializer.save()
 
+    def perform_destroy(self, instance):
+        if instance.sender != self.request.user:
+            raise PermissionDenied("You can only delete your own messages.")
+        instance.delete()
 
 class MessageAttachmentViewSet(viewsets.ModelViewSet):
-    queryset = MessageAttachment.objects.all()
     serializer_class = MessageAttachmentSerializer
-    permission_classes = [IsAuthenticated, IsChatParticipant]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return MessageAttachment.objects.filter(
-            message__chat__in=Chat.objects.filter(
-                Q(client=self.request.user.profile) | Q(
-                    freelancer=self.request.user.profile)
-            )
-        )
+        user = self.request.user
+        return MessageAttachment.objects.filter(message__sender=user)
 
-    @action(detail=True, methods=['get'], url_path='download')
-    def download(self, request, pk=None):
-        attachment = self.get_object()
-        if request.user.profile not in [attachment.message.chat.client, attachment.message.chat.freelancer]:
-            return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)
-        response = FileResponse(attachment.file)
-        response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
-        return response
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()

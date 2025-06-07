@@ -6,4 +6,4 @@ class CoreConfig(AppConfig):
     name = 'core'
     
     def ready(self):
-        import payments.signals
+        import core.signals

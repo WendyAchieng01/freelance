@@ -36,17 +36,12 @@ def handle_ipn(sender, **kwargs):
         if response_id:
             try:
                 response = CoreResponse.objects.get(id=response_id, job=job)
-                job.status = 'in_progress'
-                job.selected_freelancer = response.user
+                job.status = 'open'
+                job.payment_verified = True
+                #job.selected_freelancer = response.user
                 job.save()
 
-                # Create chat
-                Chat.objects.get_or_create(
-                    job=job,
-                    client=job.client,
-                    freelancer=response.user.profile
-                )
-                print(f"Updated job {job.id} to in_progress, created chat")
+                print(f"Updated job {job.id} to payment verified, created chat")
             except CoreResponse.DoesNotExist:
                 print(f"No valid CoreResponse for response_id={response_id}")
     elif ipn_obj.payment_status == 'Failed':

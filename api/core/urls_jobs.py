@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import JobViewSet, ApplyToJobView,UnapplyFromJobView
+from .views import JobViewSet, ApplyToJobView,UnapplyFromJobView,ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,JobsWithResponsesView
+
 
 job_list = JobViewSet.as_view({'get': 'list', 'post': 'create'})
 job_detail = JobViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})
@@ -17,5 +18,12 @@ urlpatterns = [
     
     path('<slug:slug>/apply/', ApplyToJobView.as_view(), name='job-apply'),
     path('<slug:slug>/unapply/', UnapplyFromJobView.as_view(), name='job-unapply'),
+    
+    path('aplications/', JobsWithResponsesView.as_view(), name='job-applications-list'),
+    path('<slug:slug>/aplications/', ResponseListForJobView.as_view(), name='job-applications'),
+    path('<slug:slug>/accept/<str:identifier>/', AcceptFreelancerView.as_view(), name='accept-freelancer'),
+    path('<slug:slug>/reject/<str:identifier>/', RejectFreelancerView.as_view(), name='reject-freelancer'),
+
+
 
 ]
