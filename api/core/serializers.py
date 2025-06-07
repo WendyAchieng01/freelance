@@ -46,7 +46,46 @@ class ApplyResponseSerializer(serializers.ModelSerializer):
         model = Response
         fields = ['extra_data']
 
- 
+
+class ResponseListSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Response
+        fields = ['id', 'user', 'extra_data', 'submitted_at']
+
+    def get_user(self, obj):
+        profile = getattr(obj.user, 'profile', None)
+        return {
+            'username': obj.user.username,
+            'email': obj.user.email,
+            'bio': profile.bio if profile else '',
+            'location': profile.location if profile else '',
+            'profile_pic': profile.profile_pic.url if profile and profile.profile_pic else None,
+        }
+        
+
+class FreelancerBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
+class JobResponseBriefSerializer(serializers.ModelSerializer):
+    user = FreelancerBriefSerializer()
+
+    class Meta:
+        model = Response
+        fields = ['id', 'user', 'submitted_at']
+
+
+class JobWithResponsesSerializer(serializers.ModelSerializer):
+    responses = JobResponseBriefSerializer(many=True)
+
+    class Meta:
+        model = Job
+        fields = ['id', 'title', 'description', 'responses']
+
 
 class ChatSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField(read_only=True)
@@ -82,17 +121,19 @@ class ChatSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.StringRelatedField(read_only=True)
-    chat = serializers.PrimaryKeyRelatedField(queryset=Chat.objects.all())
+    chat = serializers.PrimaryKeyRelatedField(read_only=True)
     attachments = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
         fields = ['id', 'chat', 'sender',
-                  'content', 'timestamp', 'attachments']
-        read_only_fields = ['sender', 'timestamp', 'attachments']
+                    'content', 'timestamp', 'attachments']
+        read_only_fields = ['id', 'chat',
+                            'sender', 'timestamp', 'attachments']
 
     def get_attachments(self, obj):
         return [{'id': a.id, 'filename': a.filename, 'url': f'/api/v1/core/attachments/{a.id}/download/'} for a in obj.attachments.all()]
+
 
 
 class MessageAttachmentSerializer(serializers.ModelSerializer):

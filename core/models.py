@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -126,20 +127,28 @@ class Response(models.Model):
 
 
 class Chat(models.Model):
+    chat_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='chats')
-    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='client_chats')
-    freelancer = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='freelancer_chats')
+    client = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='client_chats')
+    freelancer = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='freelancer_chats')
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        # Enforce one chat per job-client-freelancer
+        unique_together = ('job', 'client', 'freelancer')
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base = f"{self.job.title}-{self.client.user.username}-{self.freelancer.user.username}"
-            self.slug = slugify(base)
+            self.slug = slugify(
+                f"{self.job.id}-{self.client.id}-{self.freelancer.id if self.freelancer else 'none'}-{uuid.uuid4().hex[:8]}")
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Chat between {self.client.user.username} and {self.freelancer.user.username} for {self.job.title}"
+        freelancer_username = self.freelancer.user.username if self.freelancer else "No Freelancer"
+        return f"Chat between {self.client.user.username} and {freelancer_username} for {self.job.title}"
+
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
