@@ -202,5 +202,5 @@ class Review(models.Model):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"
     
     
-
         return self.name
+
