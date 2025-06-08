@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0005_chat_slug'),
         ('wallet', '0001_initial'),
     ]
 

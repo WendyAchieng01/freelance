@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('core', '0003_jobassignment'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
