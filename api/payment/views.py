@@ -26,7 +26,7 @@ class PaymentInitiateView(APIView):
         job_slug = kwargs.get('slug')
 
         # Find the job using either ID or slug
-        job = None
+        
         if job_id:
             job = get_object_or_404(Job, id=job_id, client__user=request.user)
         elif job_slug:
@@ -151,20 +151,20 @@ class PaymentCallbackView(APIView):
             verified = payment.job.payment_verified
 
             if verified:
-                return redirect(f"{base_url}/api/v1/job/{job.slug or job.id}/")
+                return redirect(f"{base_url}/api/v1/jobs/{job.slug or job.id}/")
             else:
                 error_params = urlencode(
                     {'error': 'Payment could not be verified. Please try again.'})
-                return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+                return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
         except requests.RequestException as e:
             error_params = urlencode(
                 {'error': f"Paystack request failed: {str(e)}"})
-            return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
         except Exception as e:
             error_params = urlencode({'error': f"Internal error: {str(e)}"})
-            return redirect(f"{base_url}/api/v1/job/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
 
 class ProceedToPayAPIView(APIView):
