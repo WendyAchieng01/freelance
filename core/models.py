@@ -127,7 +127,7 @@ class Response(models.Model):
 
 
 class Chat(models.Model):
-    chat_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=True)
+    chat_uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='chats')
     client = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='client_chats')
     freelancer = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, null=True, blank=True, related_name='freelancer_chats')
