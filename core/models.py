@@ -150,16 +150,6 @@ class Chat(models.Model):
         return f"Chat between {self.client.user.username} and {freelancer_username} for {self.job.title}"
 
 
-class JobAssignment(models.Model):
-    # Your model fields here
-    name = models.CharField(max_length=255)
-    assigned_to = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
