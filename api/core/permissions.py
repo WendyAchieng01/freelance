@@ -128,13 +128,15 @@ class CanFreelancerChat(BasePermission):
 
 
 class CanAccessChat(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # For list/create, we check permission by chat_slug later in get_chat
+        return request.user.is_authenticated
+
     def has_object_permission(self, request, view, obj):
         profile = request.user.profile
-        return (obj.client == profile or obj.freelancer == profile) and obj.active
-
-    def has_permission(self, request, view):
-        # For list/create, we check permission by chat_slug later
-        return request.user.is_authenticated
+        # If obj is a Message, get its associated Chat; if obj is a Chat, use it directly
+        chat = obj.chat if hasattr(obj, 'chat') else obj
+        return (chat.client == profile or chat.freelancer == profile) and chat.active
 
 
 class CanDeleteOwnMessage(permissions.BasePermission):
