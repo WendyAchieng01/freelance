@@ -1,8 +1,11 @@
+from accounts.models import Profile
 from rest_framework.permissions import BasePermission
 from rest_framework import permissions
 from accounts.models import Profile
 from core.models import Job, Chat, Response, Review
 from django.contrib.auth import get_user_model
+from django.db.models import Q
+
 
 User = get_user_model()
 
@@ -137,3 +140,28 @@ class CanAccessChat(permissions.BasePermission):
 class CanDeleteOwnMessage(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.sender == request.user
+
+
+class CanReview(BasePermission):
+    def has_permission(self, request, view):
+        if request.method != 'POST':
+            return True
+
+        recipient_username = request.data.get('recipient')
+        if not recipient_username:
+            return False
+
+        try:
+            recipient = User.objects.get(username=recipient_username)
+        except User.DoesNotExist:
+            return False
+
+        reviewer = request.user
+
+        # Check if there's a Chat where reviewer is either client or freelancer with this recipient
+        chats = Chat.objects.filter(
+            (Q(client__user=reviewer) & Q(freelancer__user=recipient)) |
+            (Q(freelancer__user=reviewer) & Q(client__user=recipient))
+        )
+
+        return chats.exists()

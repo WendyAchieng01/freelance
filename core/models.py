@@ -196,7 +196,8 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        unique_together = ('reviewer', 'recipient')  # Prevents multiple reviews from same user
+        verbose_name_plural = 'Review'
+        #unique_together = ('reviewer', 'recipient')  # Prevents multiple reviews from same user
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"

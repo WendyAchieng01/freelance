@@ -1,10 +1,13 @@
+import logging
+from django.db import DatabaseError, IntegrityError
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import generics, permissions
 from rest_framework import viewsets, status,filters,permissions,generics
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from django.db import IntegrityError, DatabaseError
+from rest_framework import serializers
 
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
@@ -29,6 +32,9 @@ from .permissions import (
         IsJobOwnerCanEditEvenIfAssigned,CanAccessChat,CanDeleteOwnMessage
 )
 from django.db.models import Q
+
+logger = logging.getLogger(__name__)
+
 
 User = get_user_model()
 
@@ -281,13 +287,10 @@ class MessageAttachmentViewSet(viewsets.ModelViewSet):
 
 
 
+
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated, CanReview]
-
-    def perform_create(self, serializer):
-        serializer.save(reviewer=self.request.user)
 
     def get_queryset(self):
         recipient_id = self.request.query_params.get('recipient')
@@ -295,3 +298,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Review.objects.filter(recipient_id=recipient_id)
         return Review.objects.all()
 
+    def perform_create(self, serializer):
+        try:
+            serializer.save(reviewer=self.request.user)
+        except (DatabaseError, IntegrityError) as e:
+            logger.error(f"Database error during review creation: {e}")
+            raise serializers.ValidationError(
+                {"detail": f"Database error while saving review: {str(e)}"})
