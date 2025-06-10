@@ -164,23 +164,17 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
     
     
 class ReviewSerializer(serializers.ModelSerializer):
-    reviewer = serializers.StringRelatedField(read_only=True)
-    recipient = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    reviewer = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+    recipient = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='username'
+    )
 
     class Meta:
         model = Review
         fields = ['id', 'reviewer', 'recipient', 'rating',
-                  'comment', 'created_at', 'updated_at']
+                    'comment', 'created_at', 'updated_at']
         read_only_fields = ['reviewer', 'created_at', 'updated_at']
-        extra_kwargs = {
-            'rating': {'choices': [(1, '1 - Poor'), (2, '2 - Below Average'), (3, '3 - Average'),
-                                   (4, '4 - Good'), (5, '5 - Excellent')]}
-        }
-        examples = [
-            OpenApiExample(
-                'Review Example',
-                value={'recipient': 2, 'rating': 5,
-                       'comment': 'Excellent work!'},
-                request_only=True
-            )
-        ]
