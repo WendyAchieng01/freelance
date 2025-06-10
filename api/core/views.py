@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.db import IntegrityError, DatabaseError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
