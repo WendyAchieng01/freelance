@@ -1,10 +1,12 @@
-# api/invoicemanagement/urls.py
 from django.urls import path
-from .views import InvoiceListCreateView, InvoiceDetailView, InvoicePDFView
+from rest_framework.routers import DefaultRouter
+from .views import InvoiceViewSet,InvoiceDownloadView
+
+router = DefaultRouter()
+router.register(r'', InvoiceViewSet, basename='invoice')
 
 urlpatterns = [
-    path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),
-    path('invoices/<int:pk>/', InvoiceDetailView.as_view(), name='invoice-detail'),
-    path('invoices/<int:invoice_id>/pdf/',
-            InvoicePDFView.as_view(), name='invoice-pdf'),
+    #path('<int:invoice_id>/download/',InvoiceDownloadView.as_view(), name='invoice-download'),
 ]
+
+urlpatterns += router.urls

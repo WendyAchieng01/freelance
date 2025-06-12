@@ -87,7 +87,7 @@ class JobViewSet(viewsets.ModelViewSet):
         job = self.get_object()
         job.status = 'completed'
         job.save()
-        return DRFResponse({'message': 'Job marked as completed'})
+        return DRFResponse({'message': 'Job marked as completed'}, status=status.HTTP_200_OK)
 
 
 class ApplyToJobView(APIView):
@@ -242,7 +242,7 @@ class ChatViewSet(viewsets.ModelViewSet):
         chat = self.get_object()
         messages = chat.messages.all()
         serializer = MessageSerializer(messages, many=True)
-        return DRFResponse(serializer.data)
+        return DRFResponse(serializer.data, status=status.HTTP_200_OK)
 
 
 class MessageViewSet(viewsets.ModelViewSet):

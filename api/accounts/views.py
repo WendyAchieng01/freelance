@@ -557,12 +557,12 @@ class FreelancerFormView(APIView):
             target_user = request.user  # fallback to self
 
         if not target_user:
-            return Response({"error": "User not found."}, status=404)
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             freelancer_profile = target_user.profile.freelancer_profile
         except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
-            return Response({"error": "Freelancer profile not found."}, status=404)
+            return Response({"error": "Freelancer profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = FreelancerFormSerializer(freelancer_profile)
         return Response(serializer.data)
@@ -603,7 +603,7 @@ class FreelancerFormView(APIView):
     def delete(self, request):
         freelancer_profile = self.get_object(request.user)
         if not freelancer_profile:
-            return Response({"error": "Freelancer profile not found"}, status=404)
+            return Response({"error": "Freelancer profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
         freelancer_profile.delete()
         return Response({"message": "Freelancer profile deleted"}, status=status.HTTP_204_NO_CONTENT)
@@ -634,14 +634,14 @@ class ClientFormView(APIView):
             user = request.user
 
         if not user:
-            return Response({"error": "User not found."}, status=404)
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
         client_profile = self.get_object(user)
         if not client_profile:
-            return Response({"error": "Client profile not found."}, status=404)
+            return Response({"error": "Client profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ClientFormSerializer(client_profile)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         request=ClientFormSerializer,
@@ -674,7 +674,7 @@ class ClientFormView(APIView):
     def delete(self, request):
         client_profile = self.get_object(request.user)
         if not client_profile:
-            return Response({"error": "Client profile not found"}, status=404)
+            return Response({"error": "Client profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
         client_profile.delete()
         return Response({"message": "Client profile deleted"}, status=status.HTTP_204_NO_CONTENT)

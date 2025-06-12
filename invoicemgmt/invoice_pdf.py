@@ -10,6 +10,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from freelance.settings import BASE_DIR
 
+
 def load_custom_font():
     font_paths = {
         'Roxborough': 'static/webfonts/roxborough-cf-medium.ttf',
@@ -17,7 +18,9 @@ def load_custom_font():
         'Neuzeit-Office': 'static/webfonts/Neuzeit-Office-Regular.ttf'
     }
     for font_name, font_path in font_paths.items():
-        pdfmetrics.registerFont(TTFont(font_name, os.path.join(BASE_DIR, font_path)))
+        pdfmetrics.registerFont(
+            TTFont(font_name, os.path.join(BASE_DIR, font_path)))
+
 
 def generate_invoice_pdf(invoice):
     load_custom_font()
@@ -47,7 +50,8 @@ def generate_invoice_pdf(invoice):
     logo_path = finders.find('images/logo/logo.jpg')
     logo = Image(logo_path, width=1.0 * inch, height=0.6 * inch)
     invoice_text = Paragraph("INVOICE", custom_styles['Heading'])
-    table = Table([[Spacer(1, 0.4 * inch), logo, Spacer(1, 0.4 * inch), Spacer(1, 0.4 * inch), invoice_text]], colWidths=[0.5 * inch, 1 * inch, 1 * inch, 2 * inch, 3 * inch])
+    table = Table([[Spacer(1, 0.4 * inch), logo, Spacer(1, 0.4 * inch), Spacer(1, 0.4 * inch),
+                  invoice_text]], colWidths=[0.5 * inch, 1 * inch, 1 * inch, 2 * inch, 3 * inch])
     elements.append(table)
     elements.append(Spacer(1, 0.1 * inch))
 
@@ -59,15 +63,19 @@ def generate_invoice_pdf(invoice):
         [Paragraph(f"{client.phone}", custom_styles['BodyText'])],
         [Paragraph(f"{client.location}", custom_styles['BodyText'])]
     ]
-    billed_to_table = Table(billed_to_data, colWidths=[2 * inch], style=table_styles['billed_to'])
-    
+    billed_to_table = Table(billed_to_data, colWidths=[
+                            2 * inch], style=table_styles['billed_to'])
+
     invoice_info_data = [
-        [Paragraph(f"Invoice # {invoice.invoice_number}", custom_styles['BodyText'])],
-        [Paragraph(f"Invoice Date: {invoice.invoice_date.strftime('%Y-%m-%d')}", custom_styles['BodyText'])]
+        [Paragraph(f"Invoice # {invoice.invoice_number}",
+                   custom_styles['BodyText'])],
+        [Paragraph(
+            f"Invoice Date: {invoice.invoice_date.strftime('%Y-%m-%d')}", custom_styles['BodyText'])]
     ]
     invoice_info_table = Table(invoice_info_data, colWidths=[5.5 * inch])
 
-    table = Table([[billed_to_table, Spacer(1, 0.4 * inch), Spacer(1, 0.4 * inch), invoice_info_table]], colWidths=[2 * inch, 0.5 * inch, 2 * inch, 2 * inch], style=table_styles['billed_to'])
+    table = Table([[billed_to_table, Spacer(1, 0.4 * inch), Spacer(1, 0.4 * inch), invoice_info_table]],
+                  colWidths=[2 * inch, 0.5 * inch, 2 * inch, 2 * inch], style=table_styles['billed_to'])
     elements.append(table)
     elements.append(Spacer(1, 0.5 * inch))
 
@@ -80,21 +88,25 @@ def generate_invoice_pdf(invoice):
             f"${line_item.rate}",
             f"${line_item.amount}",
         ])
-    
+
     total_width = doc.width
     col_widths = [
         total_width * 0.5,  # Description (50% of total width)
-        total_width * 0.15, # Quantity (15% of total width)
-        total_width * 0.15, # Rate (15% of total width)
+        total_width * 0.15,  # Quantity (15% of total width)
+        total_width * 0.15,  # Rate (15% of total width)
         total_width * 0.2,  # Amount (20% of total width)
     ]
-    
-    line_items_table = Table(line_items_data, colWidths=col_widths, style=table_styles['line_items'])
+
+    line_items_table = Table(
+        line_items_data, colWidths=col_widths, style=table_styles['line_items'])
     elements.append(line_items_table)
 
-    total_amount = sum(line_item.amount for line_item in invoice.line_items.all())
-    total_amount_data = [["Total", Spacer(1, 0.1 * inch), f"${total_amount:.2f}"]]
-    total_amount_table = Table(total_amount_data, colWidths=[1.5 * inch, 3.6 * inch, 1 * inch], style=table_styles['total_amount'])
+    total_amount = sum(
+        line_item.amount for line_item in invoice.line_items.all())
+    total_amount_data = [
+        ["Total", Spacer(1, 0.1 * inch), f"${total_amount:.2f}"]]
+    total_amount_table = Table(total_amount_data, colWidths=[
+                               1.5 * inch, 3.6 * inch, 1 * inch], style=table_styles['total_amount'])
     elements.append(Spacer(1, 0.2 * inch))
     elements.append(total_amount_table)
     elements.append(Spacer(1, 0.3 * inch))
@@ -102,7 +114,8 @@ def generate_invoice_pdf(invoice):
     # Add company logo at the bottom
     logo_bottom_path = finders.find('images/logo/sign.png')
     logo_bottom = Image(logo_bottom_path, width=2.5 * inch, height=1 * inch)
-    logo_table = Table([[Spacer(5 * inch, 1 * inch), logo_bottom]], colWidths=[3 * inch, 1.5 * inch])
+    logo_table = Table(
+        [[Spacer(5 * inch, 1 * inch), logo_bottom]], colWidths=[3 * inch, 1.5 * inch])
     elements.append(Spacer(1, 0.2 * inch))
     elements.append(logo_table)
 
@@ -112,14 +125,21 @@ def generate_invoice_pdf(invoice):
     # Add terms and conditions
     terms_data = [
         [Paragraph("TERMS & CONDITIONS", custom_styles['InvoiceNumber']), None],
-        [Paragraph("Payment is due within 30 days", custom_styles['TermsText']), None],
-        [Paragraph("Send Payment To:", custom_styles['InvoiceNumber']), Paragraph("Nill Tech Solutions", custom_styles['InvoiceNumber'])],
-        [Paragraph("M-Pesa No.:", custom_styles['TermsText']), Paragraph("Nairobi, Kenya", custom_styles['TermsText'])],
-        [Paragraph("Binance ID:", custom_styles['TermsText']), Paragraph("+254 712 345 678", custom_styles['TermsText'])],
-        [Paragraph(f"Due Date: {invoice.due_date.strftime('%Y-%m-%d')}", custom_styles['TermsText']), Paragraph("info@wendymudenyo.com", custom_styles['TermsText'])],
+        [Paragraph("Payment is due within 30 days",
+                   custom_styles['TermsText']), None],
+        [Paragraph("Send Payment To:", custom_styles['InvoiceNumber']), Paragraph(
+            "Nill Tech Solutions", custom_styles['InvoiceNumber'])],
+        [Paragraph("M-Pesa No.:", custom_styles['TermsText']),
+         Paragraph("Nairobi, Kenya", custom_styles['TermsText'])],
+        [Paragraph("Binance ID:", custom_styles['TermsText']), Paragraph(
+            "+254 712 345 678", custom_styles['TermsText'])],
+        [Paragraph(f"Due Date: {invoice.due_date.strftime('%Y-%m-%d')}", custom_styles['TermsText']),
+         Paragraph("info@wendymudenyo.com", custom_styles['TermsText'])],
     ]
-    terms_table = Table(terms_data, colWidths=[4 * inch, 3 * inch], style=table_styles['billed_to'])
-    table_with_spacer = Table([[terms_table, Spacer(0.5 * inch, 0.1 * inch)]], colWidths=[6 * inch, 0.65 * inch])
+    terms_table = Table(terms_data, colWidths=[
+                        4 * inch, 3 * inch], style=table_styles['billed_to'])
+    table_with_spacer = Table(
+        [[terms_table, Spacer(0.5 * inch, 0.1 * inch)]], colWidths=[6 * inch, 0.65 * inch])
     elements.append(table_with_spacer)
 
     doc.build(elements)
