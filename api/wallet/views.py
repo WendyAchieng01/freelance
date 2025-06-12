@@ -1,4 +1,4 @@
-from rest_framework import generics,permissions
+from rest_framework import generics,permissions,status
 from rest_framework.permissions import IsAuthenticated
 from wallet.models import WalletTransaction
 from api.wallet.serializers import WalletTransactionSerializer
@@ -29,8 +29,9 @@ class WalletSummaryView(APIView):
         completed_jobs = WalletTransaction.completed_jobs_total(request.user)
         return Response({
             "total_earnings": total_earnings,
-            "completed_jobs": completed_jobs
-        })
+            "completed_jobs": completed_jobs},
+            status=status.HTTP_201_CREATED
+        )
 
 
 def assign_job_to_freelancer(job: Job):

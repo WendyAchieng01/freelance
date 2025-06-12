@@ -41,17 +41,17 @@ class Invoice(models.Model):
         return total
 
     def save(self, *args, **kwargs):
-        # Generate invoice_number if not already set
-        if not self.invoice_number:
+        is_new = self.pk is None
+
+        if is_new and not self.invoice_number:
             last_invoice = Invoice.objects.order_by('invoice_number').last()
-            self.invoice_number = (last_invoice.invoice_number + 1) if last_invoice else 1
+            self.invoice_number = (
+                last_invoice.invoice_number + 1) if last_invoice else 1
 
-        # Save the instance first to ensure it has a primary key
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # Only save once initially
 
-        # Calculate total_amount using related objects
-        self.total_amount = self.get_total_amount()
-
-        # Save again to update the total_amount
-        super().save(*args, **kwargs)
+        # Update total_amount only after ID is set, avoid second insert
+        if is_new:
+            self.total_amount = self.get_total_amount()
+            super().save(update_fields=['total_amount'])
 

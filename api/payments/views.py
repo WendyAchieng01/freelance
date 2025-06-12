@@ -56,7 +56,7 @@ class InitiatePaypalPayment(APIView):
         return Response({
             "paypal_url": str(paypal_url),
             "form_data": form.initial
-        })
+        }, status=status.HTTP_200_OK)
 
 
 class PaypalSuccessView(View):
@@ -109,9 +109,7 @@ class PaymentStatus(APIView):
         payment = get_object_or_404(
             PaypalPayments, id=payment_id, user=request.user)
         serializer = PaymentStatusSerializer(payment)
-        return Response(serializer.data)
-
-
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 

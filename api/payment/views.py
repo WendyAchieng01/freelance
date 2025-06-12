@@ -207,4 +207,4 @@ class ProceedToPayAPIView(APIView):
             } if payment else None,
             "payment_url": request.build_absolute_uri(job.get_payment_url()),
             "error": error_message
-        })
+        }, status=status.HTTP_200_OK)
