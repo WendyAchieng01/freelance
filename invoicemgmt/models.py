@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.db import models, IntegrityError, transaction
+from django.utils.text import slugify
 
 
 def generate_dummy_invoice_number():
@@ -14,7 +15,7 @@ class InvoiceLineItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
 
 class Invoice(models.Model):
     STATUS_CHOICES = [
@@ -33,7 +34,7 @@ class Invoice(models.Model):
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(blank=True, unique=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
 
     def __str__(self):
         return f"Invoice #{self.invoice_number}"
