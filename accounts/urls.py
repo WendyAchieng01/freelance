@@ -19,6 +19,6 @@ urlpatterns = [
     path('portfolio/client/<int:user_id>/', views.client_portfolio, name='client_portfolio'),
     path('update-email/<int:user_id>/', views.update_email, name='update_email'),
     path('profile_creation/', views.profile_creation, name='profile_creation'),
-
-    path("", views.signup, name="signup"),
+    path("signup1/", views.signup_gen, name="signup1"),
+    path("login1/", views.login_gen, name="login1"),
 ]

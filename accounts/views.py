@@ -21,7 +21,9 @@ from django.urls import reverse
 import logging
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import format_html
-
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 def login(request):
@@ -596,3 +598,108 @@ def client_portfolio(request, user_id):
         'user_profile': user,
         'has_rated_client': has_rated_client
     })
+    
+    
+def signup_gen(request):
+    if request.method == 'POST':
+        form_data = request.POST
+        username = form_data['username']
+        password1 = form_data['password']
+        password2 = form_data['confirm_password']
+        email = form_data['email']
+        user_type = form_data.get('user_type', 'freelancer')
+
+        if User.objects.filter(username=username).exists():
+            messages.info(request, 'Username is already taken. Please choose a different username.')
+            return redirect('accounts:signup1')
+        if User.objects.filter(email=email).exists():
+            messages.info(request, 'Email is already taken. Please use a different email.')
+            return redirect('accounts:signup1')
+        if password1 != password2:
+            messages.info(request, 'Passwords do not match. Please ensure that the passwords are identical.')
+            return redirect('accounts:signup1')
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username,
+                password=password1,
+                email=email,
+                is_active=False  # User won't be able to log in until activated
+            )
+            user.profile, _ = Profile.objects.get_or_create(user=user)
+            user.profile.user_type = user_type
+            user.profile.save(update_fields=['user_type'])
+
+            # Store user data in the session
+            request.session['signup_data'] = {
+                'username': username,
+                'email': email,
+                'user_type': user_type
+            }
+
+            # Generate verification token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            # Build verification URL
+            current_site = get_current_site(request)
+            verification_url = reverse('accounts:verify_email', kwargs={'uidb64': uid, 'token': token})
+            verification_link = f'http://{current_site.domain}{verification_url}'
+
+            # HTML email content with a button
+            subject = 'Verify Your Email Address'
+            message_text = f'''
+                Hi {username},
+                Thank you for signing up! Please click the button below to verify your email address.
+                {verification_link}
+                If you didn't sign up for this account, you can ignore this email.
+            '''
+            message_html = format_html(f"""
+                <div style="font-family: Arial, sans-serif; text-align: center;">
+                    <h2>Welcome, {username}!</h2>
+                    <p>Thank you for signing up! Please click the button below to verify your email address:</p>
+                    <a href="{verification_link}" style="display: inline-block; background-color: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">
+                        Verify Email
+                    </a>
+                    <p>If you didn't sign up for this account, you can ignore this email.</p>
+                    <p>This link will expire in 24 hours.</p>
+                </div>
+            """)
+
+            email = EmailMultiAlternatives(subject, message_text, 'info@nilltechsolutions.com', [email])
+            email.attach_alternative(message_html, "text/html")
+            email.send()
+
+            return redirect('accounts:verification_pending')
+    
+    return render(request, "signup_gen.html")
+
+def login_gen(request):
+    if request.method == 'POST':
+        identifier = request.POST['username']
+        password = request.POST['password']
+
+        # Check if the identifier is an email or username
+        try:
+            user = User.objects.get(Q(username=identifier) | Q(email=identifier))
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None:
+            # Authenticate using username
+            user = authenticate(username=user.username, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            user_profile = Profile.objects.get(user=user)
+            if user_profile.user_type == 'freelancer':
+                return redirect('core:index')
+            else:
+                return redirect('core:client_index')
+        else:
+            messages.info(request, 'Invalid credentials. Please check your username/email and password.')
+            # Render the same template with an error message
+            return render(request, 'signup_gen.html')
+    else:
+        return render(request, 'login_gen.html')
+
