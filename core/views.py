@@ -685,3 +685,13 @@ def delete_review(request, review_id):
         return redirect('core:index', review.recipient.id)
     
     return render(request, 'delete_review.html', {'review': review})  # Fixed template path
+
+def index_gen(request):
+    return render(request, 'index_gen.html')
+
+def about_gen(request):
+    return render(request, 'about_gen.html')
+
+def contact_gen(request):
+    return render(request, 'contact_gen.html')
+

@@ -47,7 +47,7 @@ ALLOWED_HOSTS = [
 FRONTEND_URL = "nilltechsolutions.com"  # '0724-154-159-254-165.ngrok-free.app'
 
 LOGIN_REDIRECT_URL = "core:index"
-LOGOUT_REDIRECT_URL = "accounts:signup"
+LOGOUT_REDIRECT_URL = "core:index1"
 LOGIN_URL = '/' 
 
 # Application definition
