@@ -6,7 +6,7 @@ from . import views
 app_name = 'core' 
 
 urlpatterns = [
-    path('', views.freelancer_index, name='index'),
+    path('index/', views.freelancer_index, name='index'),
     path("jobs/", views.jobs, name="jobs"),
     path("job/<int:job_id>/", views.singlejob, name="singlejob"),
     path("job/", views.freelancer_jobs, name = "freelancer_jobs"),
@@ -31,4 +31,9 @@ urlpatterns = [
     path('user/<str:username>/reviews/', views.user_reviews, name='user_reviews'),
     path('user/<str:username>/review/', views.create_review, name='create_review'),
     path('review/<int:review_id>/delete/', views.delete_review, name='delete_review'),
+    path("index1/", views.index_gen, name="index1"),
+    path("about1/", views.about_gen, name="about1"),
+    path("contact1/", views.contact_gen, name="contact1"),
+    
+    path("", views.index_gen, name="index1"),
 ]
