@@ -96,7 +96,18 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.title} ({self.get_category_display()})"
     
+
+class JobBookmark(models.Model):
+    user = models.ForeignKey( User, on_delete=models.CASCADE, related_name='bookmarks')
+    job = models.ForeignKey('Job', on_delete=models.CASCADE, related_name='bookmarked_by')
     
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'job')
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.job.title}"
 
 
 class Response(models.Model):
@@ -156,6 +167,7 @@ class Message(models.Model):
     sender = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['timestamp']

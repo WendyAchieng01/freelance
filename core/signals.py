@@ -1,3 +1,7 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from core.models import Message
+from django.db.models.signals import post_save
 from .models import Job, Chat
 from accounts.models import Profile
 from .models import Job
@@ -67,3 +71,4 @@ def manage_chat_on_job_update(sender, instance, created, **kwargs):
                 job=job, freelancer=old_profile).update(active=False)
         except Profile.DoesNotExist:
             pass
+
