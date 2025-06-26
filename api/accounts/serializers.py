@@ -10,14 +10,10 @@ from django.contrib.auth.password_validation import validate_password
 from accounts.models import Language,ClientProfile
 import os
 
+
+import logging
+logger = logging.getLogger(__name__)
 User = get_user_model()
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
-        read_only_fields = ['id']
 
 
 @extend_schema_serializer(
@@ -27,6 +23,8 @@ class UserSerializer(serializers.ModelSerializer):
             value={
                 'username': 'john_doe',
                 'email': 'john@example.com',
+                'first_name': 'John',
+                'last_name': 'Doe',
                 'password1': 'securepassword123',
                 'password2': 'securepassword123',
                 'user_type': 'freelancer'
@@ -37,45 +35,72 @@ class UserSerializer(serializers.ModelSerializer):
 )
 
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name','date_joined']
+        read_only_fields = ['id']
+
+        
+        
+class ProfileMiniSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Profile
+        fields = [
+            'user', 'phone', 'location', 'profile_pic', 'bio',
+            'pay_id', 'pay_id_no', 'id_card', 'device', 'user_type'
+        ]
+
+
 class RegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(
-        max_length=150, help_text="Unique username.")
-    email = serializers.EmailField(help_text="Unique email address.")
-    password1 = serializers.CharField(
-        write_only=True, help_text="Password (minimum 8 characters).")
+    user = UserSerializer()
+    password1 = serializers.CharField(write_only=True, help_text="Password.")
     password2 = serializers.CharField(
         write_only=True, help_text="Confirm password.")
-    user_type = serializers.ChoiceField(choices=[(
-        'freelancer', 'Freelancer'), ('client', 'Client')], help_text="User type.")
+    user_type = serializers.ChoiceField(
+        choices=[('freelancer', 'Freelancer'), ('client', 'Client')],
+        help_text="User type."
+    )
 
     def validate(self, data):
         if data['password1'] != data['password2']:
             raise serializers.ValidationError(
                 {"password2": "Passwords do not match."})
-        if User.objects.filter(username=data['username']).exists():
+
+        user_data = data.get('user', {})
+        if User.objects.filter(username=user_data.get('username')).exists():
             raise serializers.ValidationError(
-                {"username": "Username is already taken."})
-        if User.objects.filter(email=data['email']).exists():
+                {"user.username": "Username is already taken."})
+        if User.objects.filter(email=user_data.get('email')).exists():
             raise serializers.ValidationError(
-                {"email": "Email is already taken."})
+                {"user.email": "Email is already taken."})
+
         return data
 
     def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        password = validated_data.pop('password1')
+
         user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password1'],
+            username=user_data['username'],
+            email=user_data['email'],
+            first_name=user_data.get('first_name', ''),
+            last_name=user_data.get('last_name', ''),
+            password=password,
             is_active=False
         )
-        # Use get_or_create to avoid duplicate Profile
+
         profile, created = Profile.objects.get_or_create(
             user=user,
             defaults={'user_type': validated_data['user_type']}
         )
         if not created:
-            # Profile already exists; update user_type if needed
             profile.user_type = validated_data['user_type']
             profile.save()
+
         return user
 
 
@@ -83,25 +108,25 @@ class RegisterSerializer(serializers.Serializer):
     examples=[
         OpenApiExample(
             'Login Example',
-            value={'identifier': 'john@example.com','password': 'securepassword123'},
+            value={'username': 'john','password': 'string12345'},
             request_only=True
         )
     ]
 )
 class LoginSerializer(serializers.Serializer):
-    identifier = serializers.CharField(help_text="Username or email.")
+    username = serializers.CharField(help_text="Username or email.")
     password = serializers.CharField(write_only=True, help_text="Password.")
 
     def validate(self, data):
-        identifier = data.get('identifier')
+        username = data.get('username')
         password = data.get('password')
 
-        if not identifier or not password:
+        if not username or not password:
             raise serializers.ValidationError("Both fields are required.")
 
         try:
             user = User.objects.get(
-                Q(username=identifier) | Q(email=identifier))
+                Q(username=username) | Q(email=username))
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 {"identifier": "Invalid username or email."})
@@ -109,6 +134,7 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(username=user.username, password=password)
 
         if not user:
+            logger.warning(f"Authentication failed for user: {username}")
             raise serializers.ValidationError(
                 {"password": "Invalid credentials."})
         if not user.is_active:
@@ -121,6 +147,7 @@ class LoginSerializer(serializers.Serializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField(help_text="JWT refresh token")
+
 
 
 class PasswordChangeSerializer(serializers.Serializer):
@@ -158,11 +185,13 @@ class ResendVerificationSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    profile = ProfileMiniSerializer()
     profile_pic = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = Profile
         fields = '__all__'
         read_only_fields = ['user', 'user_type','date_modified']
+
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -183,41 +212,66 @@ class LanguageSerializer(serializers.ModelSerializer):
             'name': {'help_text': 'Language name (e.g., English, Swahili).'}}
 
 
-class FreelancerFormSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='profile.user.email')
-    phone_number = serializers.CharField(source='profile.phone')
-    location = serializers.CharField(source='profile.location', required=False)
-    pay_id = serializers.ChoiceField(
-        choices=[('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')],
-        source='profile.pay_id', required=False
-    )
-    pay_id_no = serializers.CharField(
-        source='profile.pay_id_no', required=False)
-    profile_pic = serializers.URLField(
-        source='profile.profile_pic', required=False)
-    id_number = serializers.CharField(source='profile.id_card', required=False)
+#freelance profile form
+
+
+class FreelancerProfileReadSerializer(serializers.ModelSerializer):
+    profile = ProfileMiniSerializer()
+    languages = serializers.StringRelatedField(many=True)
+    skills = serializers.StringRelatedField(many=True)
     full_name = serializers.SerializerMethodField()
-    languages = serializers.PrimaryKeyRelatedField(
-        queryset=Language.objects.all(), many=True)
-    skills = serializers.PrimaryKeyRelatedField(
-        queryset=Skill.objects.all(), many=True, required=False)
 
     class Meta:
         model = FreelancerProfile
         fields = [
-            'full_name', 'email', 'phone_number', 'location', 'pay_id', 'pay_id_no',
-            'profile_pic', 'id_number', 'experience_years', 'hourly_rate',
-            'portfolio_link', 'availability', 'languages', 'skills'
+            'id',
+            'full_name',
+            'profile',
+            'experience_years',
+            'hourly_rate',
+            'portfolio_link',
+            'availability',
+            'languages',
+            'skills',
+            'is_visible',
+            'slug'
         ]
 
     def get_full_name(self, obj):
         return obj.profile.user.get_full_name()
 
-    def validate_email(self, value):
-        user = self.context['request'].user
-        if User.objects.filter(email=value).exclude(id=user.id).exists():
-            raise serializers.ValidationError("Email is already taken.")
-        return value
+
+class ProfileWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            'phone', 'location', 'profile_pic', 'bio',
+            'pay_id', 'pay_id_no', 'id_card', 'device'
+        ]
+
+
+class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
+    profile = ProfileWriteSerializer()
+    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True)
+    skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True, required=False)
+
+    class Meta:
+        model = FreelancerProfile
+        fields = [
+            'profile',
+            'experience_years',
+            'hourly_rate',
+            'availability',
+            'languages',
+            'skills',
+            'is_visible'
+        ]
+
+    def update_nested_profile(self, profile, profile_data):
+        for field in profile_data:
+            setattr(profile, field, profile_data[field])
+        profile.user_type = 'freelancer'
+        profile.save()
 
     def create(self, validated_data):
         return self._create_or_update(validated_data)
@@ -226,140 +280,38 @@ class FreelancerFormSerializer(serializers.ModelSerializer):
         return self._create_or_update(validated_data, instance)
 
     def _create_or_update(self, validated_data, instance=None):
-        user = self.context['request'].user
+        # Pop nested and many-to-many fields from validated_data
         profile_data = validated_data.pop('profile', {})
-
-        email = profile_data.get('user', {}).get('email', user.email)
-        phone = profile_data.get('phone', '')
-        location = profile_data.get('location', '')
-        pay_id = profile_data.get('pay_id', '')
-        pay_id_no = profile_data.get('pay_id_no', '')
-        profile_pic = profile_data.get('profile_pic', '')
-        id_number = profile_data.get('id_card', '')
-
-        user.email = email
-        user.save()
-
-        profile, _ = Profile.objects.get_or_create(user=user)
-        profile.phone = phone
-        profile.location = location
-        profile.pay_id = pay_id
-        profile.pay_id_no = pay_id_no
-        profile.profile_pic = profile_pic
-        profile.id_card = id_number
-        profile.user_type = 'freelancer'
-        profile.save()
-
         languages = validated_data.pop('languages', [])
         skills = validated_data.pop('skills', [])
 
-        freelancer_profile = instance or FreelancerProfile(profile=profile)
-        for attr, value in validated_data.items():
-            setattr(freelancer_profile, attr, value)
-        freelancer_profile.save()
-
-        if languages:
-            freelancer_profile.languages.set(languages)
-        if skills:
-            freelancer_profile.skills.set(skills)
-
-        return freelancer_profile
-
-class ClientFormSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='profile.user.email')
-    phone_number = serializers.CharField(source='profile.phone')
-    location = serializers.CharField(
-        source='profile.location', allow_blank=True, required=False)
-    pay_id = serializers.ChoiceField(choices=[(
-        'M-Pesa', 'M-Pesa'), ('Binance', 'Binance')], source='profile.pay_id', required=False, allow_blank=True)
-    pay_id_no = serializers.CharField(
-        source='profile.pay_id_no', allow_blank=True, required=False)
-    languages = serializers.PrimaryKeyRelatedField(
-        queryset=Language.objects.all(), many=True)
-
-    class Meta:
-        model = ClientProfile
-        fields = [
-            'company_name',
-            'email',
-            'phone_number',
-            'industry',
-            'languages',
-            'location',
-            'pay_id',
-            'pay_id_no',
-            'company_website',
-            'project_budget',
-            'preferred_freelancer_level',
-        ]
-
-    def validate_email(self, value):
+        # Get or create the user’s profile
         user = self.context['request'].user
-        if User.objects.filter(email=value).exclude(id=user.id).exists():
-            raise serializers.ValidationError("Email is already taken.")
-        return value
-
-    def update(self, instance, validated_data):
-        # Update nested profile fields
-        profile_data = validated_data.pop('profile', {})
-        user_data = profile_data.pop(
-            'user', {}) if 'user' in profile_data else {}
-
-        # Update user email if present
-        email = user_data.get('email')
-        if email:
-            instance.profile.user.email = email
-            instance.profile.user.save()
-
-        # Update profile fields
-        for attr, value in profile_data.items():
-            setattr(instance.profile, attr, value)
-        instance.profile.save()
-
-        # Update ClientProfile fields
-        for attr, value in validated_data.items():
-            if attr != 'languages':  # Handle languages separately
-                setattr(instance, attr, value)
-        instance.save()
-
-        # Correct way to update many-to-many field
-        if 'languages' in validated_data:
-            instance.languages.set(validated_data['languages'])
-
-        return instance
-
-    def create(self, validated_data):
-        profile_data = validated_data.pop('profile', {})
-        user_data = profile_data.pop(
-            'user', {}) if 'user' in profile_data else {}
-
-        user = self.context['request'].user
-        # Update user email if present
-        email = user_data.get('email')
-        if email:
-            user.email = email
-            user.save()
-
         profile, _ = Profile.objects.get_or_create(user=user)
-        for attr, value in profile_data.items():
-            setattr(profile, attr, value)
-        profile.user_type = 'client'
-        profile.save()
+        self.update_nested_profile(profile, profile_data)
 
-        client_profile, created = ClientProfile.objects.get_or_create(
-            profile=profile)
+        # Create or use existing FreelancerProfile instance
+        freelancer = instance or FreelancerProfile(profile=profile)
+
+        # Set direct fields only
         for attr, value in validated_data.items():
-            if attr != 'languages':
-                setattr(client_profile, attr, value)
-        client_profile.save()
+            setattr(freelancer, attr, value)
 
-        if 'languages' in validated_data:
-            client_profile.languages.set(validated_data['languages'])
+        # Save the instance
+        freelancer.save()
 
-        return client_profile
+        # Set many-to-many fields if provided
+        if languages:
+            freelancer.languages.set(languages)
+        if skills:
+            freelancer.skills.set(skills)
+
+        return freelancer
+
 
 
 class FreelancerListSerializer(serializers.ModelSerializer):
+    profile = ProfileMiniSerializer()
     languages = LanguageSerializer(many=True, read_only=True)
     skills = SkillSerializer(many=True, read_only=True)
     email = serializers.EmailField(source='profile.user.email')
@@ -369,6 +321,7 @@ class FreelancerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = FreelancerProfile
         fields = [
+            'profile',
             'email',
             'phone_number',
             'location',
@@ -377,22 +330,134 @@ class FreelancerListSerializer(serializers.ModelSerializer):
         ]
 
 
-class ClientListSerializer(serializers.ModelSerializer):
-    languages = LanguageSerializer(many=True)
-    email = serializers.EmailField(source='profile.user.email')
-    phone_number = serializers.CharField(source='profile.phone')
-    location = serializers.CharField(source='profile.location')
+
+class ClientProfileReadSerializer(serializers.ModelSerializer):
+    profile = ProfileMiniSerializer()
+    languages = serializers.StringRelatedField(many=True)
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = ClientProfile
         fields = [
+            'id',
+            'full_name',
+            'profile',
             'company_name',
-            'email',
-            'phone_number',
-            'industry',
-            'languages',
-            'location',
             'company_website',
+            'industry',
             'project_budget',
             'preferred_freelancer_level',
+            'languages',
+            'slug',
+            'is_verified',
         ]
+
+    def get_full_name(self, obj):
+        return obj.profile.user.get_full_name()
+
+
+class ClientProfileWriteSerializer(serializers.ModelSerializer):
+    profile = ProfileWriteSerializer()
+    languages = serializers.PrimaryKeyRelatedField(
+        queryset=Language.objects.all(), many=True, required=False
+    )
+
+    class Meta:
+        model = ClientProfile
+        fields = [
+            'profile',
+            'company_name',
+            'company_website',
+            'industry',
+            'project_budget',
+            'preferred_freelancer_level',
+            'languages',
+            'is_verified',
+        ]
+
+    def update_nested_profile(self, profile, profile_data):
+        for field in profile_data:
+            setattr(profile, field, profile_data[field])
+        profile.user_type = 'client'
+        profile.save()
+
+    def create(self, validated_data):
+        return self._create_or_update(validated_data)
+
+    def update(self, instance, validated_data):
+        return self._create_or_update(validated_data, instance)
+
+    def _create_or_update(self, validated_data, instance=None):
+        # Pop nested and many-to-many fields from validated_data
+        profile_data = validated_data.pop('profile', {})
+        languages = validated_data.pop('languages', [])
+
+        # Get or create the user’s profile
+        user = self.context['request'].user
+        profile, _ = Profile.objects.get_or_create(user=user)
+        self.update_nested_profile(profile, profile_data)
+
+        # Create or use existing ClientProfile instance
+        client = instance or ClientProfile(profile=profile)
+
+        # Set direct fields only
+        for attr, value in validated_data.items():
+            setattr(client, attr, value)
+
+        # Save the instance
+        client.save()
+
+        # Set many-to-many fields if provided
+        if languages:
+            client.languages.set(languages)
+
+        return client
+
+
+class ClientListSerializer(serializers.ModelSerializer):
+    profile = ProfileMiniSerializer()
+    languages = LanguageSerializer(many=True, read_only=True)
+    email = serializers.EmailField(source='profile.user.email')
+    phone = serializers.CharField(source='profile.phone', allow_blank=True)
+    location = serializers.CharField(
+        source='profile.location', allow_blank=True)
+
+    class Meta:
+        model = ClientProfile
+        fields = [
+            'id',
+            'profile',
+            'company_name',
+            'industry',
+            'project_budget',
+            'preferred_freelancer_level',
+            'is_verified',
+            'slug',
+            'email',
+            'phone',
+            'location',
+            'languages',
+        ]
+
+
+class AuthUserSerializer(serializers.ModelSerializer):
+    freelancer_profile = serializers.SerializerMethodField()
+    client_profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'freelancer_profile', 'client_profile']
+
+    def get_freelancer_profile(self, obj):
+        try:
+            if hasattr(obj.profile, 'freelancer_profile'):
+                return FreelancerProfileReadSerializer(obj.profile.freelancer_profile, context=self.context).data
+        except:
+            return None
+
+    def get_client_profile(self, obj):
+        try:
+            if hasattr(obj.profile, 'client_profile'):
+                return ClientProfileReadSerializer(obj.profile.client_profile, context=self.context).data
+        except:
+            return None

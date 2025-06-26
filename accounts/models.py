@@ -1,9 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.utils.text import slugify
+from django.conf import settings
+from django.urls import reverse
+
+
+
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     date_modified = models.DateTimeField(auto_now=True)
     phone = models.CharField(max_length=20, blank=True)
     location = models.CharField(max_length=200, blank=True)
@@ -22,23 +28,51 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+
 class FreelancerProfile(models.Model):
-    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='freelancer_profile')
-    skills = models.ManyToManyField('Skill', blank=True)  
-    languages = models.ManyToManyField('Language', blank=True)  
+    profile = models.OneToOneField('Profile', on_delete=models.CASCADE, related_name='freelancer_profile')
+    skills = models.ManyToManyField('Skill', blank=True)
+    languages = models.ManyToManyField('Language', blank=True)
     portfolio_link = models.URLField(blank=True, null=True)
     experience_years = models.PositiveIntegerField(default=0)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=10.00)
-    availability = models.CharField(max_length=50, choices=(
-        ('full_time', 'Full Time'),
-        ('part_time', 'Part Time'),
-        ('weekends', 'Weekends Only'),
-        ('custom', 'Custom Schedule'),
-        ('not_available', 'Not Available')
-    ), default='full_time')
+    availability = models.CharField(
+        max_length=50,
+        choices=(
+            ('full_time', 'Full Time'),
+            ('part_time', 'Part Time'),
+            ('weekends', 'Weekends Only'),
+            ('custom', 'Custom Schedule'),
+            ('not_available', 'Not Available')
+        ),
+        default='full_time'
+    )
+    is_visible = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(
+                f"{self.profile.user.username}-{self.hourly_rate}-{self.availability}-{self.id}")
+
+
+        # Always generate portfolio_link from the slug
+        self.portfolio_link = self.get_absolute_url(full=True)
+
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self, full=False):
+        """
+        Returns either a relative or full URL to the portfolio page.
+        `full=True` will include the domain.
+        """
+        path = reverse("freelancer-portfolio",
+                    kwargs={"username": self.profile.user.username})
+        domain = settings.FRONTEND_URL.rstrip('/')
+        return f"{domain}{path}" if full else path
 
     def __str__(self):
-        return f"{self.profile.user.username}'s Freelancer Profile"
+        return f"{self.profile.user.first_name}- {self.profile.user.last_name} ({self.hourly_rate}/hr - {self.availability})"
 
 class ClientProfile(models.Model):
     INDUSTRY_CHOICES = (
@@ -76,8 +110,29 @@ class ClientProfile(models.Model):
     ), default='intermediate')
     languages = models.ManyToManyField('Language', blank=True)  
 
+    slug = models.SlugField(unique=True, blank=True, null=True)
+    is_verified = models.BooleanField(default=False,null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Save first to get ID
+        if not self.slug:
+            self.slug = slugify(
+                f"{self.profile.user.username}-{self.company_name}-{self.industry}-{self.id}")
+            ClientProfile.objects.filter(pk=self.pk).update(slug=self.slug)
+
+    def get_absolute_url(self, full=False):
+        """
+        Returns either a relative or full URL to the portfolio page.
+        `full=True` will include the domain.
+        """
+        path = reverse("client-portfolio",
+                       kwargs={"username": self.profile.user.username})
+        domain = settings.FRONTEND_URL.rstrip('/')
+        return f"{domain}{path}" if full else path
+
     def __str__(self):
-        return f"{self.profile.user.username}'s Client Profile"
+        return f"{self.profile.user.first_name}- {self.profile.user.last_name} ({self.company_name})"
+    
 
 class Skill(models.Model):
     SKILL_CHOICES = (

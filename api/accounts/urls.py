@@ -1,16 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
 from . import views
+from.views import FreelancerReadOnlyViewSet,FreelancerWriteViewSet
 
-
-router = DefaultRouter()
-
-router.register(r'users', views.UserViewSet, basename='user')
-router.register(r'profiles', views.ProfileViewSet, basename='profile')
-router.register(r'skills', views.SkillViewSet, basename='skill')
-router.register(r'languages', views.LanguageViewSet, basename='language')
 
 
 
@@ -25,11 +18,10 @@ urlpatterns = [
      path('auth/password-change/',views.PasswordChangeView.as_view(), name='password-change'),
      path('auth/password-reset/', views.PasswordResetRequestView.as_view(),name='password-reset-request'),
      path('password-reset-confirm/<str:uidb64>/<str:token>/',views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
-     # Forms
-     path('freelancer-form/', views.FreelancerFormView.as_view(), name='freelancer-form'),
-     path('client-form/', views.ClientFormView.as_view(), name='client-form'),
-     path('frelancers/', views.ListFreelancersView.as_view(), name='list-freelancers'),
-     path('clients/', views.ClientListView.as_view(), name='list-clients'),
-     # Resources
-     path('', include(router.urls)),
+
+     path('freelance/', include('api.accounts.urls_freelancer')),
+     path('clients/', include('api.accounts.urls_client')),
+     path('', include('api.accounts.urls_accounts')),
+
 ]
+

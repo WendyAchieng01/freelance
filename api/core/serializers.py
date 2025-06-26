@@ -2,7 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
 from accounts.models import Profile
-from core.models import Job, Response, Chat, Message, MessageAttachment, Review
+from core.models import Job, Response, Chat, Message, MessageAttachment, Review,JobBookmark
+from accounts.models import FreelancerProfile
+from api.accounts.serializers import ProfileMiniSerializer
 import os
 
 User = get_user_model()
@@ -16,7 +18,19 @@ class NestedResponseSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'submitted_at', 'extra_data']
 
     def get_user(self, obj):
-        return obj.user.username
+        try:
+            profile = obj.user.profile 
+            freelancer_profile = profile.freelancer_profile
+            return {
+                'id': obj.user.id,
+                'first_name': obj.user.first_name,
+                'last_name': obj.user.last_name,
+                'username': obj.user.username,
+                'portfolio': freelancer_profile.portfolio_link if freelancer_profile.portfolio_link else None,
+                'image': profile.profile_pic.url if profile.profile_pic else None
+            }
+        except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
+            return obj.user.username if obj.user else None
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -27,15 +41,24 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = [
-            'id', 'title', 'category', 'description', 'price',
-            'posted_date', 'deadline_date', 'status', 'client',
+            'id','client', 'title', 'category', 'description', 'price',
+            'posted_date', 'deadline_date', 'status',
             'max_freelancers', 'preferred_freelancer_level','slug',
             'selected_freelancer', 'payment_verified', 'responses'
         ]
-        read_only_fields = ['posted_date', 'client', 'payment_verified']
+        read_only_fields = ['posted_date', 'payment_verified']
 
     def get_client(self, obj):
-        return obj.client.user.username if obj.client else None
+        if obj.client:
+            return {
+                'id':obj.client.user.id,
+                'first_name': obj.client.user.first_name,
+                'last_name': obj.client.user.last_name,
+                'username': obj.client.user.username,
+                #'email': obj.client.user.email,
+                'image':obj.client.profile_pic.url
+            }
+        return None
 
     def get_selected_freelancer(self, obj):
         return obj.selected_freelancer.username if obj.selected_freelancer else None
@@ -178,3 +201,26 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'reviewer', 'recipient', 'rating',
                     'comment', 'created_at', 'updated_at']
         read_only_fields = ['reviewer', 'created_at', 'updated_at']
+
+
+class JobSearchSerializer(serializers.ModelSerializer):
+    client = serializers.StringRelatedField()
+    selected_freelancer = serializers.StringRelatedField()
+
+    class Meta:
+        model = Job
+        fields = [
+            'id', 'title', 'slug', 'category', 'description', 'price',
+            'posted_date', 'deadline_date', 'status', 'client',
+            'selected_freelancer', 'payment_verified'
+        ]
+
+
+
+class BookmarkedJobSerializer(serializers.ModelSerializer):
+    slug = serializers.CharField(source='job.slug', read_only=True)
+    job = JobSearchSerializer(read_only=True)
+
+    class Meta:
+        model = JobBookmark
+        fields = ['id', 'slug', 'job', 'created_at']

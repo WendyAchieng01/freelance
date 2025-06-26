@@ -1,4 +1,8 @@
-import logging
+from rest_framework.throttling import ScopedRateThrottle
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.utils import timezone
+from datetime import timedelta
 from django.db import DatabaseError, IntegrityError
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import generics, permissions
@@ -16,7 +20,7 @@ from django.db.models import Count,Prefetch
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from accounts.models import Profile, FreelancerProfile
-from core.models import Job, Chat, Message, MessageAttachment, Review
+from core.models import Job, Chat, Message, MessageAttachment, Review,JobBookmark
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
 
 from core.models import Response as JobResponse
@@ -25,15 +29,16 @@ from rest_framework.views import APIView
 
 from api.core.serializers import ( 
     JobSerializer, ApplyResponseSerializer,ResponseListSerializer,JobWithResponsesSerializer,
-    ChatSerializer, MessageSerializer, MessageAttachmentSerializer, ReviewSerializer
+    ChatSerializer, MessageSerializer, MessageAttachmentSerializer, ReviewSerializer,JobSearchSerializer,BookmarkedJobSerializer
 )
 from .permissions import (
         IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, 
         CanReview, IsResponseOwner,IsClientOfJob, 
         IsJobOwnerCanEditEvenIfAssigned,CanAccessChat,CanDeleteOwnMessage
 )
-from django.db.models import Q
+from django.db.models import Q,F,Value, IntegerField
 
+import logging
 logger = logging.getLogger(__name__)
 
 
@@ -228,7 +233,8 @@ class RejectFreelancerView(APIView):
 
 class ChatViewSet(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
-    permission_classes = [permissions.IsAuthenticated, CanAccessChat]
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'slug' 
 
     def get_queryset(self):
         profile = self.request.user.profile
@@ -236,47 +242,131 @@ class ChatViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+        logger.info(
+            f"{self.request.user.username} created chat {serializer.instance.slug}")
 
     @action(detail=True, methods=['get'])
-    def messages(self, request, pk=None):
+    def messages(self, request, slug=None):
         chat = self.get_object()
-        messages = chat.messages.all()
+        if not (chat.client == request.user.profile or chat.freelancer == request.user.profile):
+            raise PermissionDenied("You are not a participant in this chat.")
+
+        messages = chat.messages.all().order_by('timestamp')
+        # Mark unread messages as read
+        unread_qs = messages.filter(is_read=False).exclude(sender=request.user)
+        unread_qs.update(is_read=True)
+
         serializer = MessageSerializer(messages, many=True)
-        return DRFResponse(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            'detail': 'Chat messages retrieved successfully.',
+            'count': messages.count(),
+            'messages': serializer.data
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def unread_count(self, request):
+        profile = request.user.profile
+        chats = self.get_queryset()
+        counts = {}
+
+        for chat in chats:
+            unread = chat.messages.filter(is_read=False).exclude(
+                sender=request.user).count()
+            counts[chat.slug] = unread
+
+        return DRFResponse({
+            'detail': 'Unread message counts by chat.',
+            'unread_by_chat': counts
+        }, status=status.HTTP_200_OK)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated, CanAccessChat]
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
     def get_chat(self):
         chat_slug = self.kwargs.get('chat_slug')
         chat = get_object_or_404(Chat, slug=chat_slug)
-        # check if user is participant and chat is active
+
         profile = self.request.user.profile
         if not (chat.client == profile or chat.freelancer == profile) or not chat.active:
             raise PermissionDenied("You do not have access to this chat.")
+
         return chat
 
     def get_queryset(self):
         chat = self.get_chat()
-        return Message.objects.filter(chat=chat).order_by('timestamp')
+        messages = Message.objects.filter(chat=chat).order_by('timestamp')
 
-    def perform_create(self, serializer):
+        # Mark unread messages as read for this user (exclude sender's own)
+        unread_qs = messages.filter(is_read=False).exclude(
+            sender=self.request.user)
+        unread_count = unread_qs.count()
+        unread_qs.update(is_read=True)
+
+        logger.info(
+            f"{self.request.user.username} viewed messages in chat {chat.slug}. Marked {unread_count} as read.")
+        return messages
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        unread_count = Message.objects.filter(
+            chat=self.get_chat(),
+            is_read=False
+        ).exclude(sender=request.user).count()
+
+        return DRFResponse({
+            'detail': 'Messages retrieved successfully.',
+            'unread_count': unread_count,
+            'messages': serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
         chat = self.get_chat()
-        # auto-set sender to logged in user and link message to chat
-        serializer.save(sender=self.request.user, chat=chat)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(sender=request.user, chat=chat)
 
-    def perform_update(self, serializer):
-        message = self.get_object()
-        if message.sender != self.request.user:
+        logger.info(
+            f"{request.user.username} sent a message in chat {chat.slug}")
+        return DRFResponse({
+            'detail': 'Message sent successfully.',
+            'message': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.sender != request.user:
+            logger.warning(
+                f"Unauthorized edit attempt by {request.user.username}")
             raise PermissionDenied("You can only edit your own messages.")
+
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
-    def perform_destroy(self, instance):
-        if instance.sender != self.request.user:
+        logger.info(f"{request.user.username} updated message {instance.id}")
+        return DRFResponse({
+            'detail': 'Message updated successfully.',
+            'message': serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.sender != request.user:
+            logger.warning(
+                f"Unauthorized delete attempt by {request.user.username}")
             raise PermissionDenied("You can only delete your own messages.")
+
         instance.delete()
+        logger.info(f"{request.user.username} deleted message {instance.id}")
+        return DRFResponse({'detail': 'Message deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+
 
 class MessageAttachmentViewSet(viewsets.ModelViewSet):
     serializer_class = MessageAttachmentSerializer
@@ -287,6 +377,42 @@ class MessageAttachmentViewSet(viewsets.ModelViewSet):
         return MessageAttachment.objects.filter(message__sender=user)
 
 
+class NotificationSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile = user.profile
+
+        try:
+            # Count unread messages
+            chat_filter = Q(client=profile) if profile.user_type == 'client' else Q(
+                freelancer=profile)
+            unread_messages = Message.objects.filter(chat__in=Chat.objects.filter(chat_filter)) \
+                .exclude(sender=user).filter(is_read=False).count()
+
+            # Count job responses if client
+            new_responses = 0
+            if profile.user_type == 'client':
+                new_responses = JobResponse.objects.filter(
+                    job__client=profile).count()
+
+            # Count bookmarks if freelancer
+            total_bookmarks = 0
+            if profile.user_type == 'freelancer':
+                total_bookmarks = JobBookmark.objects.filter(user=user).count()
+
+            return DRFResponse({
+                'detail': 'Notification summary retrieved successfully.',
+                'unread_messages': unread_messages,
+                'new_applications': new_responses,
+                'total_bookmarks': total_bookmarks
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(
+                f"Notification summary failed for {user.username}: {e}")
+            return DRFResponse({'error': 'Failed to retrieve notifications.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -306,3 +432,277 @@ class ReviewViewSet(viewsets.ModelViewSet):
             logger.error(f"Database error during review creation: {e}")
             raise serializers.ValidationError(
                 {"detail": f"Database error while saving review: {str(e)}"})
+
+
+@method_decorator(cache_page(60 * 5), name='dispatch') 
+class AdvancedJobSearchAPIView(generics.ListAPIView):
+    serializer_class = JobSearchSerializer
+    permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'search'
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'description', 'category']
+    ordering_fields = ['posted_date', 'price']
+    ordering = ['-posted_date']
+
+    def get_queryset(self):
+        try:
+            queryset = Job.objects.filter(
+                status='open').select_related('client')
+            request = self.request
+            user = request.user if request.user.is_authenticated else None
+            params = request.query_params
+
+            # Basic filters
+            category = params.get('category')
+            if category:
+                queryset = queryset.filter(category__iexact=category)
+
+            status_param = params.get('status')
+            if status_param:
+                queryset = queryset.filter(status=status_param)
+
+            # Price range
+            min_price = params.get('min_price')
+            if min_price:
+                queryset = queryset.filter(price__gte=min_price)
+
+            max_price = params.get('max_price')
+            if max_price:
+                queryset = queryset.filter(price__lte=max_price)
+
+            # Deadline days
+            deadline_days = params.get('deadline_days')
+            if deadline_days:
+                try:
+                    cutoff = timezone.now().date() + timedelta(days=int(deadline_days))
+                    queryset = queryset.filter(deadline_date__lte=cutoff)
+                except ValueError:
+                    logger.warning("Invalid deadline_days value")
+
+            # Freelancer level
+            level = params.get('level')
+            if level:
+                queryset = queryset.filter(
+                    preferred_freelancer_level__iexact=level)
+
+            # Exclude jobs already applied to
+            if user and params.get('exclude_applied') == '1':
+                applied_job_ids = JobResponse.objects.filter(
+                    user=user).values_list('job_id', flat=True)
+                queryset = queryset.exclude(id__in=applied_job_ids)
+
+            # Best match logic
+            if user and params.get('best_match') == '1':
+                try:
+                    profile = user.profile
+                    freelancer_profile = profile.freelancer_profile
+                    skills = freelancer_profile.skills.values_list(
+                        'name', flat=True)
+                    skill_keywords = list(skills)
+
+                    # Annotate with match score (count of matched skills in title/description)
+                    score_map = {}
+                    for job in queryset:
+                        score = sum(
+                            1 for keyword in skill_keywords
+                            if keyword.lower() in job.title.lower() or keyword.lower() in job.description.lower()
+                        )
+                        score_map[job.id] = score
+
+                    # Attach match score as pseudo field
+                    queryset = sorted(queryset, key=lambda job: score_map.get(
+                        job.id, 0), reverse=True)
+                    logger.info(
+                        f"Best match ranking applied for user {user.username}")
+
+                except Exception as e:
+                    logger.warning(f"Failed best match processing: {e}")
+
+            logger.info(
+                f"Search query | user={user or 'anon'} | params={dict(params)}")
+            return queryset
+
+        except Exception as e:
+            logger.error(f"Advanced search error: {e}")
+            return Job.objects.none()
+
+    def list(self, request, *args, **kwargs):
+        try:
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            logger.error(f"Search response error: {e}")
+            return DRFResponse({'error': 'Unexpected search error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class JobBookmarkListView(generics.ListAPIView):
+    serializer_class = BookmarkedJobSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return JobBookmark.objects.filter(user=self.request.user).select_related('job', 'job__client')
+
+
+class AddBookmarkView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, slug):
+        try:
+            job = get_object_or_404(Job, slug=slug)
+            bookmark, created = JobBookmark.objects.get_or_create(
+                user=request.user, job=job)
+            if created:
+                logger.info(
+                    f"User {request.user.username} bookmarked job '{job.slug}'")
+                return DRFResponse({'detail': 'Bookmarked successfully.'}, status=status.HTTP_201_CREATED)
+            else:
+                logger.info(
+                    f"User {request.user.username} attempted to bookmark job '{job.slug}' again")
+                return DRFResponse({'detail': 'Already bookmarked.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error bookmarking job '{slug}': {e}")
+            return DRFResponse({'error': 'Failed to bookmark job.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class RemoveBookmarkView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, slug):
+        try:
+            job = get_object_or_404(Job, slug=slug)
+            deleted, _ = JobBookmark.objects.filter(
+                user=request.user, job=job).delete()
+            if deleted:
+                logger.info(
+                    f"User {request.user.username} removed bookmark for job '{job.slug}'")
+                return DRFResponse({'detail': 'Bookmark removed.'}, status=status.HTTP_200_OK)
+            else:
+                logger.warning(
+                    f"User {request.user.username} tried to remove nonexistent bookmark for job '{job.slug}'")
+                return DRFResponse({'detail': 'Bookmark did not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Error removing bookmark for job '{slug}': {e}")
+            return DRFResponse({'error': 'Failed to remove bookmark.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ClientJobListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self, status_value):
+        return Job.objects.filter(client__user=self.request.user, status=status_value)
+
+    def get(self, request, status_filter):
+        user = request.user
+
+        if user.profile.user_type != 'client':
+            logger.warning(
+                f"{user.username} attempted to access client job list as non-client")
+            return DRFResponse({'detail': 'Only clients can access this.'}, status=status.HTTP_403_FORBIDDEN)
+
+        valid_statuses = ['open', 'in_progress', 'completed']
+        if status_filter not in valid_statuses:
+            logger.warning(
+                f"{user.username} provided invalid job status: {status_filter}")
+            return DRFResponse({'detail': 'Invalid status filter. Must be one of: open, in_progress, completed.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        jobs = self.get_queryset(status_filter)
+        serializer = JobSearchSerializer(jobs, many=True)
+        logger.info(
+            f"{user.username} fetched their {status_filter} jobs. Count: {jobs.count()}")
+
+        return DRFResponse({
+            'detail': f"{status_filter.replace('_', ' ').title()} jobs retrieved successfully.",
+            'count': jobs.count(),
+            'jobs': serializer.data
+        }, status=status.HTTP_200_OK)
+
+
+class FreelancerAppliedJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+
+        jobs = Job.objects.filter(
+            responses__user=user).distinct().select_related('client')
+        logger.info(f"{user.username} fetched applied jobs.")
+        serializer = JobSearchSerializer(jobs, many=True)
+        return DRFResponse(serializer.data)
+
+
+class FreelancerActiveJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+
+        jobs = Job.objects.filter(
+            selected_freelancer=user, status='in_progress').select_related('client')
+        logger.info(f"{user.username} fetched active jobs.")
+        serializer = JobSearchSerializer(jobs, many=True)
+        return DRFResponse(serializer.data)
+
+
+class FreelancerCompletedJobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+
+        jobs = Job.objects.filter(
+            selected_freelancer=user, status='completed').select_related('client')
+        logger.info(f"{user.username} fetched completed jobs.")
+        serializer = JobSearchSerializer(jobs, many=True)
+        return DRFResponse(serializer.data)
+
+
+class JobDashboardSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        profile = user.profile
+
+        try:
+            data = {}
+
+            if profile.user_type == 'client':
+                jobs = Job.objects.filter(client=profile)
+                data = {
+                    'total_jobs': jobs.count(),
+                    'open_jobs': jobs.filter(status='open').count(),
+                    'in_progress_jobs': jobs.filter(status='in_progress').count(),
+                    'completed_jobs': jobs.filter(status='completed').count(),
+                    'total_responses': JobResponse.objects.filter(job__client=profile).count()
+                }
+
+            elif profile.user_type == 'freelancer':
+                data = {
+                    'applied_jobs': JobResponse.objects.filter(user=user).count(),
+                    'assigned_jobs': Job.objects.filter(selected_freelancer=user).count(),
+                    'completed_jobs': Job.objects.filter(selected_freelancer=user, status='completed').count(),
+                    'bookmarked_jobs': JobBookmark.objects.filter(user=user).count()
+                }
+
+            logger.info(f"{user.username} fetched dashboard summary.")
+
+            return DRFResponse({
+                'detail': 'Dashboard summary retrieved successfully.',
+                'summary': data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error(
+                f"Error in dashboard summary for {user.username}: {e}")
+            return DRFResponse({
+                'error': 'Failed to retrieve dashboard summary.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
