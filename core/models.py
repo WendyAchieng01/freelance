@@ -94,7 +94,10 @@ class Job(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.title} ({self.get_category_display()})"
+        try:
+            return f"{self.title} ({self.get_category_display()})"
+        except Exception:
+            return self.title or "Untitled Job"
     
 
 class JobBookmark(models.Model):

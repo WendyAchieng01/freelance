@@ -26,7 +26,7 @@ class JobAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description',
                      'client__user__username', 'selected_freelancer__username')
     ordering = ('-posted_date',)
-    date_hierarchy = 'posted_date'
+    #date_hierarchy = 'posted_date'
     readonly_fields = ('posted_date', 'slug',
                        'is_max_freelancers_reached_display')
     fieldsets = (

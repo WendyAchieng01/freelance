@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
+    'tz_detect',
 ]
 
 MIDDLEWARE = [
@@ -161,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -259,7 +260,7 @@ SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-#TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR', 'RU', 'DE', 'FR', 'GB','KE',)
+TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR', 'RU', 'DE', 'FR', 'GB','KE',)
 
 
 REST_FRAMEWORK = {
@@ -290,7 +291,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    #'BLACKLIST_ENABLED': True,
+    'BLACKLIST_ENABLED': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 

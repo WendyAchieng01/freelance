@@ -2,6 +2,7 @@ from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.decorators import action
 from rest_framework import viewsets, permissions
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework import viewsets, status, permissions,generics,filters,mixins
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
@@ -10,6 +11,7 @@ from rest_framework.parsers import JSONParser
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -25,6 +27,7 @@ from django.utils.encoding import force_bytes
 from django.shortcuts import get_object_or_404
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
+from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
 from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
 
@@ -481,9 +484,10 @@ class ListFreelancersView(generics.ListAPIView):
     serializer_class = FreelancerListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # 🔍 Enable search, filtering, and ordering
-    filter_backends = [filters.SearchFilter,
-                       filters.OrderingFilter, DjangoFilterBackend]
+    #  Enable search, filtering, and ordering
+    filter_backends = [filters.SearchFilter,filters.OrderingFilter, DjangoFilterBackend]
+    
+    filterset_class = FreelancerProfileFilter
 
     search_fields = [
         'profile__user__email',
@@ -493,42 +497,29 @@ class ListFreelancersView(generics.ListAPIView):
     ]
 
     ordering_fields = [
-        'profile__user__email',  # indirect sorting by email
+        'profile__user__email', 'experience_years', 'profile__location','hourly_rate'
     ]
 
     filterset_fields = [
         'languages__name',
         'skills__name',
         'profile__location',
+        'experience_years', 
+        'hourly_rate',                   
+        'availability',
+        'profile__user__first_name',    
+        'profile__user__last_name',
+        'is_visible',                   
     ]
 
 
-class ClientListView(generics.ListAPIView):
+class ClientProfileListView(generics.ListAPIView):
     queryset = ClientProfile.objects.select_related(
         'profile__user').prefetch_related('languages')
     serializer_class = ClientListSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter,
-                       filters.OrderingFilter, DjangoFilterBackend]
+    permission_classes = [permissions.AllowAny]
 
-    # Searchable fields (text lookup)
-    search_fields = [
-        'company_name',
-        'industry',
-        'profile__location',
-        'profile__user__email',
-        'languages__name',
-    ]
-
-    # Sortable fields
-    ordering_fields = [
-        'project_budget',
-        'company_name',
-        'profile__user__email',
-        'is_verified',
-    ]
-
-    # Exact/inclusive filter options
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = {
         'industry': ['exact', 'in'],
         'languages__name': ['exact', 'in'],
@@ -538,19 +529,11 @@ class ClientListView(generics.ListAPIView):
         'profile__location': ['exact', 'icontains'],
         'profile__user__email': ['exact', 'icontains'],
     }
+    filterset_class = ClientProfileFilter
+    search_fields = ['company_name',
+                        'profile__user__first_name', 'profile__user__last_name']
+    ordering_fields = ['company_name', 'project_budget']
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        profile_count = len(serializer.data)
-        logger.info(f"Retrieved {profile_count} client profiles")
-        return Response({
-            "message": "Client profiles retrieved successfully.",
-            "data": serializer.data,
-            "count": profile_count,
-            "http_code": status.HTTP_200_OK
-        }, status=status.HTTP_200_OK)
-        
 
 class ClientWriteViewSet(viewsets.ModelViewSet):
     serializer_class = ClientProfileWriteSerializer

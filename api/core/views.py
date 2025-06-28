@@ -10,9 +10,13 @@ from rest_framework import viewsets, status,filters,permissions,generics
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.pagination import PageNumberPagination
 from django.db import IntegrityError, DatabaseError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
@@ -27,6 +31,7 @@ from core.models import Response as JobResponse
 from rest_framework.response import Response as DRFResponse
 from rest_framework.views import APIView
 
+from api.core.filters import JobFilter,AdvancedJobFilter,JobDiscoveryFilter
 from api.core.serializers import ( 
     JobSerializer, ApplyResponseSerializer,ResponseListSerializer,JobWithResponsesSerializer,
     ChatSerializer, MessageSerializer, MessageAttachmentSerializer, ReviewSerializer,JobSearchSerializer,BookmarkedJobSerializer
@@ -49,6 +54,7 @@ class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all().select_related('client', 'selected_freelancer')
     serializer_class = JobSerializer
     filter_backends = [filters.SearchFilter]
+    filterset_class = JobFilter
     search_fields = ['title', 'description', 'category']
     lookup_field = 'slug'
 
@@ -461,107 +467,80 @@ class ReviewViewSet(viewsets.ModelViewSet):
                 {"detail": f"Database error while saving review: {str(e)}"})
 
 
-@method_decorator(cache_page(60 * 5), name='dispatch') 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class AdvancedJobSearchAPIView(generics.ListAPIView):
     serializer_class = JobSearchSerializer
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'search'
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = AdvancedJobFilter
     search_fields = ['title', 'description', 'category']
     ordering_fields = ['posted_date', 'price']
     ordering = ['-posted_date']
 
     def get_queryset(self):
         try:
-            queryset = Job.objects.filter(
-                status='open').select_related('client')
+            queryset = Job.objects.filter(status='open') \
+                .select_related('client__user') \
+                .prefetch_related('responses', 'bookmarked_by')
+
             request = self.request
             user = request.user if request.user.is_authenticated else None
             params = request.query_params
 
-            # Basic filters
-            category = params.get('category')
-            if category:
-                queryset = queryset.filter(category__iexact=category)
+            # Bookmark filter for logged-in freelancers
+            if user and params.get('bookmarked') == '1':
+                queryset = queryset.filter(bookmarked_by__user=user)
 
-            status_param = params.get('status')
-            if status_param:
-                queryset = queryset.filter(status=status_param)
-
-            # Price range
-            min_price = params.get('min_price')
-            if min_price:
-                queryset = queryset.filter(price__gte=min_price)
-
-            max_price = params.get('max_price')
-            if max_price:
-                queryset = queryset.filter(price__lte=max_price)
-
-            # Deadline days
-            deadline_days = params.get('deadline_days')
-            if deadline_days:
-                try:
-                    cutoff = timezone.now().date() + timedelta(days=int(deadline_days))
-                    queryset = queryset.filter(deadline_date__lte=cutoff)
-                except ValueError:
-                    logger.warning("Invalid deadline_days value")
-
-            # Freelancer level
-            level = params.get('level')
-            if level:
-                queryset = queryset.filter(
-                    preferred_freelancer_level__iexact=level)
-
-            # Exclude jobs already applied to
+            # Exclude applied jobs
             if user and params.get('exclude_applied') == '1':
                 applied_job_ids = JobResponse.objects.filter(
                     user=user).values_list('job_id', flat=True)
                 queryset = queryset.exclude(id__in=applied_job_ids)
 
-            # Best match logic
+            # Best match filter (skill matching)
             if user and params.get('best_match') == '1':
                 try:
-                    profile = user.profile
-                    freelancer_profile = profile.freelancer_profile
-                    skills = freelancer_profile.skills.values_list(
+                    skills = user.profile.freelancer_profile.skills.values_list(
                         'name', flat=True)
-                    skill_keywords = list(skills)
-
-                    # Annotate with match score (count of matched skills in title/description)
+                    keyword_set = set(s.lower() for s in skills)
                     score_map = {}
+
                     for job in queryset:
-                        score = sum(
-                            1 for keyword in skill_keywords
-                            if keyword.lower() in job.title.lower() or keyword.lower() in job.description.lower()
-                        )
+                        score = sum(1 for keyword in keyword_set
+                                    if keyword in job.title.lower() or keyword in job.description.lower())
                         score_map[job.id] = score
 
-                    # Attach match score as pseudo field
                     queryset = sorted(queryset, key=lambda job: score_map.get(
                         job.id, 0), reverse=True)
-                    logger.info(
-                        f"Best match ranking applied for user {user.username}")
-
                 except Exception as e:
-                    logger.warning(f"Failed best match processing: {e}")
+                    logger.warning(f"Best match logic failed: {e}")
 
             logger.info(
-                f"Search query | user={user or 'anon'} | params={dict(params)}")
+                f"Advanced search executed by: {user or 'anonymous'} | Params: {dict(params)}")
             return queryset
 
         except Exception as e:
-            logger.error(f"Advanced search error: {e}")
+            logger.error(f"Advanced job search error: {e}")
             return Job.objects.none()
 
     def list(self, request, *args, **kwargs):
         try:
-            return super().list(request, *args, **kwargs)
+            response = super().list(request, *args, **kwargs)
+            return DRFResponse({
+                'count': self.paginator.page.paginator.count,
+                'next': self.paginator.get_next_link(),
+                'previous': self.paginator.get_previous_link(),
+                'results': response.data
+            })
         except Exception as e:
-            logger.error(f"Search response error: {e}")
+            logger.error(f"Error during job search response: {e}")
             return DRFResponse({'error': 'Unexpected search error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+        
+        
 class JobBookmarkListView(generics.ListAPIView):
     serializer_class = BookmarkedJobSerializer
     permission_classes = [IsAuthenticated]
@@ -637,37 +616,110 @@ class RemoveBookmarkView(APIView):
             return DRFResponse({'error': 'Failed to remove bookmark.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class ClientJobListView(APIView):
-    permission_classes = [IsAuthenticated]
+class JobsByClientView(APIView):
+    permission_classes = [AllowAny]
 
-    def get_queryset(self, status_value):
-        return Job.objects.filter(client__user=self.request.user, status=status_value)
+    def get(self, request):
+        username = request.query_params.get('username')
+        user_id = request.query_params.get('user_id')
+        status_filter = request.query_params.get('status')
+        query_mode = request.query_params.get('query', 'all')
 
-    def get(self, request, status_filter):
-        user = request.user
+        # Mode: public listing (default if no user given)
+        if query_mode == 'all' or (not username and not user_id):
+            return self._handle_public_open_jobs(request)
 
-        if user.profile.user_type != 'client':
-            logger.warning(
-                f"{user.username} attempted to access client job list as non-client")
-            return DRFResponse({'detail': 'Only clients can access this.'}, status=status.HTTP_403_FORBIDDEN)
+        return self._handle_request(request, username=username, user_id=user_id, status_filter=status_filter)
 
-        valid_statuses = ['open', 'in_progress', 'completed']
-        if status_filter not in valid_statuses:
-            logger.warning(
-                f"{user.username} provided invalid job status: {status_filter}")
-            return DRFResponse({'detail': 'Invalid status filter. Must be one of: open, in_progress, completed.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+    def get_user(self, username=None, user_id=None, request=None):
+        if username:
+            return get_object_or_404(User, username=username)
+        elif user_id:
+            return get_object_or_404(User, id=user_id)
+        elif request and request.user.is_authenticated and hasattr(request.user, "profile"):
+            profile = request.user.profile
+            if profile.user_type == "client":
+                return request.user
+        return None
 
-        jobs = self.get_queryset(status_filter)
-        serializer = JobSearchSerializer(jobs, many=True)
-        logger.info(
-            f"{user.username} fetched their {status_filter} jobs. Count: {jobs.count()}")
+    def _handle_request(self, request, username=None, user_id=None, status_filter=None):
+        try:
+            user = self.get_user(
+                username=username, user_id=user_id, request=request)
 
-        return DRFResponse({
-            'detail': f"{status_filter.replace('_', ' ').title()} jobs retrieved successfully.",
-            'count': jobs.count(),
-            'jobs': serializer.data
-        }, status=status.HTTP_200_OK)
+            if not user:
+                return DRFResponse({
+                    'success': False,
+                    'message': 'Invalid client. Provide a valid username or user_id, or be logged in as a client.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            profile = user.profile
+            if profile.user_type != 'client':
+                return DRFResponse({
+                    'success': False,
+                    'message': 'This user is not registered as a client.',
+                    'jobs': []
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            jobs = Job.objects.filter(client=profile).select_related('client')
+            if status_filter in ['open', 'in_progress', 'completed']:
+                jobs = jobs.filter(status=status_filter)
+
+            if not request.user.is_authenticated:
+                jobs = jobs.filter(status='open')
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 10
+            paginated_jobs = paginator.paginate_queryset(jobs, request)
+            serialized_jobs = JobSearchSerializer(
+                paginated_jobs, many=True).data
+
+            return paginator.get_paginated_response({
+                'success': True,
+                'message': f'Jobs posted by client \"{user.username}\" retrieved successfully.',
+                'client': {
+                    'username': user.username,
+                    'email': user.email,
+                    'bio': getattr(profile, 'bio', ''),
+                    'location': getattr(profile, 'location', ''),
+                    'profile_pic': profile.profile_pic.url if profile.profile_pic else None
+                },
+                'job_count': jobs.count(),
+                'jobs': serialized_jobs
+            })
+
+        except Exception as e:
+            logger.error(f"Error fetching jobs for client: {e}")
+            return DRFResponse({
+                'success': False,
+                'message': 'An unexpected error occurred while fetching client jobs.',
+                'jobs': []
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def _handle_public_open_jobs(self, request):
+        try:
+            jobs = Job.objects.filter(status='open').select_related('client')
+            paginator = PageNumberPagination()
+            paginator.page_size = 10
+            paginated_jobs = paginator.paginate_queryset(jobs, request)
+            serialized_jobs = JobSearchSerializer(
+                paginated_jobs, many=True).data
+
+            return paginator.get_paginated_response({
+                'success': True,
+                'message': 'Public job listing: all open jobs from all clients.',
+                'job_count': jobs.count(),
+                'jobs': serialized_jobs
+            })
+
+        except Exception as e:
+            logger.error(f"Error fetching public open jobs: {e}")
+            return DRFResponse({
+                'success': False,
+                'message': 'Failed to retrieve public job listings.',
+                'jobs': []
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
 
 
 class FreelancerJobStatusView(APIView):
@@ -835,4 +887,117 @@ class JobDashboardSummaryView(APIView):
                 f"Error in dashboard summary for {user.username}: {e}")
             return DRFResponse({
                 'error': 'Failed to retrieve dashboard summary.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class JobDiscoveryPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    
+
+class JobDiscoveryView(APIView):
+    permission_classes = [AllowAny]
+    pagination_class = JobDiscoveryPagination
+
+    def get(self, request, status_filter=None):
+        user = request.user if request.user.is_authenticated else None
+
+        try:
+            jobs = Job.objects.filter(
+                status='open').select_related('client__user')
+
+            # Filters
+            category = request.query_params.get('category')
+            level = request.query_params.get('preferred_freelancer_level')
+
+            if category:
+                jobs = jobs.filter(category__iexact=category)
+
+            if level:
+                jobs = jobs.filter(preferred_freelancer_level__iexact=level)
+
+            # Bookmark and applied data
+            bookmarked_ids = set()
+            applied_ids = set()
+
+            if user:
+                bookmarked_ids = set(
+                    JobBookmark.objects.filter(
+                        user=user).values_list('job_id', flat=True)
+                )
+                applied_ids = set(
+                    JobResponse.objects.filter(
+                        user=user).values_list('job_id', flat=True)
+                )
+
+            # Status filter logic
+            now = timezone.now()
+
+            if status_filter == 'best_match':
+                if not user or not hasattr(user, 'profile') or not hasattr(user.profile, 'freelancer_profile'):
+                    return DRFResponse({
+                        'success': False,
+                        'message': 'Authentication required for best_match filter.',
+                        'status_code': status.HTTP_403_FORBIDDEN
+                    }, status=status.HTTP_403_FORBIDDEN)
+
+                skill_names = user.profile.freelancer_profile.skills.values_list(
+                    'name', flat=True)
+                jobs = list(jobs)
+
+                def match_score(job):
+                    return sum(
+                        1 for skill in skill_names if skill.lower() in (job.title + job.description).lower()
+                    )
+
+                jobs = sorted(jobs, key=match_score, reverse=True)
+
+            elif status_filter == 'most_recent':
+                jobs = jobs.order_by('-posted_date')
+
+            elif status_filter == 'trending':
+                jobs = jobs.annotate(application_count=Count(
+                    'responses')).order_by('-application_count')
+
+            elif status_filter == 'near_deadline':
+                jobs = jobs.order_by('deadline_date')
+
+            elif status_filter in [None, '', 'open']:
+                jobs = jobs.order_by('-posted_date')
+
+            else:
+                return DRFResponse({
+                    'success': False,
+                    'message': f"Invalid status_filter '{status_filter}'. Use one of: best_match, most_recent, trending, near_deadline, open.",
+                    'status_code': status.HTTP_400_BAD_REQUEST
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Serialize and enrich
+            results = []
+            for job in jobs:
+                data = JobSearchSerializer(job).data
+                job_id = job.id
+                data['bookmarked'] = job_id in bookmarked_ids
+                data['has_applied'] = job_id in applied_ids
+                data['has_applied_and_bookmarked'] = job_id in bookmarked_ids and job_id in applied_ids
+                results.append(data)
+
+            # Paginate
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(results, request)
+            return paginator.get_paginated_response({
+                'success': True,
+                'status_filter': status_filter or 'open',
+                'count': len(results),
+                'message': 'Jobs fetched successfully.',
+                'status_code': status.HTTP_200_OK,
+                'jobs': page
+            })
+
+        except Exception as e:
+            return DRFResponse({
+                'success': False,
+                'message': f"An unexpected error occurred: {str(e)}",
+                'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
