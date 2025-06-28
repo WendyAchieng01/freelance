@@ -90,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'tz_detect.middleware.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'freelance.urls'
@@ -105,6 +106,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
+
             ],
         },
     },
@@ -255,6 +258,8 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG and not DEVELOPMENT
 SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+#TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR', 'RU', 'DE', 'FR', 'GB','KE',)
 
 
 REST_FRAMEWORK = {

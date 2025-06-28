@@ -190,7 +190,21 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-        read_only_fields = ['user', 'user_type','date_modified']
+        read_only_fields = ['user', 'user_type','date_modified','email_verified','device']
+        
+    def create(self, validated_data):
+        request = self.context.get('request')
+        if request:
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            validated_data['device'] = user_agent
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        if request:
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            instance.device = user_agent
+        return super().update(instance, validated_data)
 
 
 

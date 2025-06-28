@@ -62,3 +62,4 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [ path('tz_detect/', include('tz_detect.urls')),]

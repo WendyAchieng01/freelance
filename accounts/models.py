@@ -19,7 +19,7 @@ class Profile(models.Model):
     pay_id_no = models.CharField(max_length=20, default='')
     id_card = models.CharField(max_length=10, blank=True)
     user_type = models.CharField(max_length=20, choices=(('freelancer', 'Freelancer'), ('client', 'Client')), default='freelancer')
-    # Added to match form
+    email_verified = models.BooleanField(default=False)
     device = models.CharField(max_length=100, blank=True)
 
     class Meta:

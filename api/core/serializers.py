@@ -6,6 +6,7 @@ from core.models import Job, Response, Chat, Message, MessageAttachment, Review,
 from accounts.models import FreelancerProfile
 from api.accounts.serializers import ProfileMiniSerializer
 import os
+from datetime import datetime, time
 
 User = get_user_model()
 
@@ -61,7 +62,9 @@ class JobSerializer(serializers.ModelSerializer):
         return None
 
     def get_selected_freelancer(self, obj):
-        return obj.selected_freelancer.username if obj.selected_freelancer else None
+        return obj.selected_freelancer.username if obj.selected_freelancer else None\
+            
+
 
 
 class ApplyResponseSerializer(serializers.ModelSerializer):
@@ -220,7 +223,14 @@ class JobSearchSerializer(serializers.ModelSerializer):
 class BookmarkedJobSerializer(serializers.ModelSerializer):
     slug = serializers.CharField(source='job.slug', read_only=True)
     job = JobSearchSerializer(read_only=True)
+    has_applied_and_bookmarked = serializers.SerializerMethodField()
 
     class Meta:
         model = JobBookmark
-        fields = ['id', 'slug', 'job', 'created_at']
+        fields = ['id', 'slug', 'job', 'created_at','has_applied_and_bookmarked']
+        
+    def get_has_applied_and_bookmarked(self, obj):
+        user = self.context.get('request').user
+        if not user.is_authenticated:
+            return False
+        return obj.job.responses.filter(user=user).exists()
