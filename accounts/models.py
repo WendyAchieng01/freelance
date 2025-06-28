@@ -74,6 +74,7 @@ class FreelancerProfile(models.Model):
     def __str__(self):
         return f"{self.profile.user.first_name}- {self.profile.user.last_name} ({self.hourly_rate}/hr - {self.availability})"
 
+
 class ClientProfile(models.Model):
     INDUSTRY_CHOICES = (
         ('technology', 'Technology'),
