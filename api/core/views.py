@@ -93,6 +93,33 @@ class JobViewSet(viewsets.ModelViewSet):
         job.status = 'completed'
         job.save()
         return DRFResponse({'message': 'Job marked as completed'}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def aplications(self, request):
+        """
+        Returns all applications (responses) either submitted by the current freelancer
+        or received by the current client's jobs.
+        """
+        user = request.user
+        profile = user.profile
+
+        if profile.user_type == 'freelancer':
+            responses = JobResponse.objects.filter(user=user).select_related('job')
+        elif profile.user_type == 'client':
+            responses = JobResponse.objects.filter(
+                job__client=profile).select_related('job')
+        else:
+            return DRFResponse(
+                {'detail': 'Invalid user type.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = ResponseListSerializer(responses, many=True)
+        return DRFResponse({
+            'detail': 'Job applications retrieved successfully.',
+            'count': len(serializer.data),
+            'applications': serializer.data
+        }, status=status.HTTP_200_OK)
 
 
 class ApplyToJobView(APIView):
@@ -535,13 +562,18 @@ class AdvancedJobSearchAPIView(generics.ListAPIView):
             return DRFResponse({'error': 'Unexpected search error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 class JobBookmarkListView(generics.ListAPIView):
     serializer_class = BookmarkedJobSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return JobBookmark.objects.filter(user=self.request.user).select_related('job', 'job__client')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(
+            queryset, many=True, context={'request': request})
+        return DRFResponse(serializer.data)
 
 
 class AddBookmarkView(APIView):
@@ -550,19 +582,37 @@ class AddBookmarkView(APIView):
     def post(self, request, slug):
         try:
             job = get_object_or_404(Job, slug=slug)
+
+            #  Block non-open jobs from being bookmarked
+            if job.status != 'open':
+                return DRFResponse({
+                    'detail': f"Cannot bookmark this job. Current status is '{job.status}', only open jobs can be bookmarked."
+                }, status=status.HTTP_400_BAD_REQUEST)
+
             bookmark, created = JobBookmark.objects.get_or_create(
                 user=request.user, job=job)
-            if created:
-                logger.info(
-                    f"User {request.user.username} bookmarked job '{job.slug}'")
-                return DRFResponse({'detail': 'Bookmarked successfully.'}, status=status.HTTP_201_CREATED)
-            else:
-                logger.info(
-                    f"User {request.user.username} attempted to bookmark job '{job.slug}' again")
-                return DRFResponse({'detail': 'Already bookmarked.'}, status=status.HTTP_200_OK)
+
+            #  Check if user also applied to this job
+            has_applied = job.responses.filter(user=request.user).exists()
+
+            response_data = {
+                'detail': 'Bookmarked successfully.' if created else 'Already bookmarked.',
+                'bookmarked': True,
+                'has_applied_and_bookmarked': has_applied,
+                'job_id': job.id,
+                'job_slug': job.slug
+            }
+
+            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            logger.info(
+                f"User {request.user.username} bookmarked job '{job.slug}'")
+
+            return DRFResponse(response_data, status=status_code)
+
         except Exception as e:
             logger.error(f"Error bookmarking job '{slug}': {e}")
             return DRFResponse({'error': 'Failed to bookmark job.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 
@@ -620,49 +670,129 @@ class ClientJobListView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class FreelancerAppliedJobsView(APIView):
+class FreelancerJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, status_filter):
         user = request.user
-        if user.profile.user_type != 'freelancer':
-            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+        profile = user.profile
 
-        jobs = Job.objects.filter(
-            responses__user=user).distinct().select_related('client')
-        logger.info(f"{user.username} fetched applied jobs.")
-        serializer = JobSearchSerializer(jobs, many=True)
-        return DRFResponse(serializer.data)
+        if profile.user_type != 'freelancer':
+            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=status.HTTP_403_FORBIDDEN)
 
+        # Normalize 'active' to 'in_progress'
+        if status_filter == 'active':
+            status_filter = 'in_progress'
 
-class FreelancerActiveJobsView(APIView):
+        # Case: applied jobs
+        if status_filter == 'applied':
+            jobs = Job.objects.filter(responses__user=user).distinct()
+            serializer = JobSearchSerializer(jobs, many=True)
+            return DRFResponse({'status': 'applied', 'count': len(serializer.data), 'jobs': serializer.data}, status=200)
+        
+        elif status_filter == 'rejected':
+            # Jobs the freelancer applied to, but was NOT selected
+            jobs = Job.objects.filter(
+                responses__user=user
+            ).exclude(
+                selected_freelancer=user
+            ).distinct()
+
+            serializer = JobSearchSerializer(jobs, many=True)
+            logger.info(f"{user.username} fetched rejected jobs.")
+            return DRFResponse({
+                'status': 'rejected',
+                'count': len(serializer.data),
+                'jobs': serializer.data
+            }, status=status.HTTP_200_OK)
+
+        # Case: active (in_progress) or completed
+        elif status_filter in ['in_progress', 'completed']:
+            jobs = Job.objects.filter(
+                selected_freelancer=user, status=status_filter)
+            serializer = JobSearchSerializer(jobs, many=True)
+            return DRFResponse({'status': status_filter, 'count': len(serializer.data), 'jobs': serializer.data}, status=200)
+
+        # Case: open jobs → return open jobs + bookmark flag
+        elif status_filter == 'open':
+            jobs = Job.objects.filter(status='open')
+            # Fetch all bookmarked job IDs for the current user
+            bookmarked_ids = set(user.bookmarks.values_list('job_id', flat=True))
+            
+            applied_ids = set(JobResponse.objects.filter(user=user).values_list('job_id', flat=True))
+
+            results = []
+            for job in jobs:
+                job_data = JobSearchSerializer(job).data
+                job_data['bookmarked'] = job.id in bookmarked_ids
+                job_data['has_applied'] = job.id in applied_ids
+                job_data['has_applied_and_bookmarked'] = job.id in bookmarked_ids and job.id in applied_ids
+                job_data['open'] = True
+                results.append(job_data)
+
+            return DRFResponse({'status': 'open', 'count': len(results), 'jobs': results}, status=200)
+
+        else:
+            return DRFResponse({'detail': 'Invalid status filter. Use applied, active, completed, or open.'},
+                               status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ClientJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, status_filter):
         user = request.user
-        if user.profile.user_type != 'freelancer':
-            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+        profile = user.profile
 
-        jobs = Job.objects.filter(
-            selected_freelancer=user, status='in_progress').select_related('client')
-        logger.info(f"{user.username} fetched active jobs.")
-        serializer = JobSearchSerializer(jobs, many=True)
-        return DRFResponse(serializer.data)
+        if profile.user_type != 'client':
+            return DRFResponse({'detail': 'Only clients can access this endpoint.'}, status=status.HTTP_403_FORBIDDEN)
 
+        # frontend's `active` → `in_progress`
+        if status_filter == 'active':
+            status_filter = 'in_progress'
 
-class FreelancerCompletedJobsView(APIView):
-    permission_classes = [IsAuthenticated]
+        if status_filter in ['open', 'in_progress', 'completed']:
+            jobs = Job.objects.filter(client=profile, status=status_filter)
+            serializer = JobSearchSerializer(jobs, many=True)
+            logger.info(
+                f"{user.username} fetched client {status_filter} jobs.")
+            return DRFResponse({
+                'status': status_filter,
+                'count': len(serializer.data),
+                'jobs': serializer.data
+            }, status=status.HTTP_200_OK)
 
-    def get(self, request):
-        user = request.user
-        if user.profile.user_type != 'freelancer':
-            return DRFResponse({'detail': 'Only freelancers can access this endpoint.'}, status=403)
+        elif status_filter == 'applied':
+            responses = JobResponse.objects.filter(
+                job__client=profile).select_related('job', 'user')
+            serializer = ResponseListSerializer(responses, many=True)
+            logger.info(f"{user.username} fetched client applications.")
+            return DRFResponse({
+                'status': 'applied',
+                'count': len(serializer.data),
+                'applications': serializer.data
+            }, status=status.HTTP_200_OK)
+        
+        elif status_filter == 'rejected':
+            # Responses where the applicant is NOT the selected freelancer
+            responses = JobResponse.objects.filter(
+                job__client=profile
+            ).exclude(
+                user=F('job__selected_freelancer')
+            ).select_related('user', 'job')
 
-        jobs = Job.objects.filter(
-            selected_freelancer=user, status='completed').select_related('client')
-        logger.info(f"{user.username} fetched completed jobs.")
-        serializer = JobSearchSerializer(jobs, many=True)
-        return DRFResponse(serializer.data)
+            serializer = ResponseListSerializer(responses, many=True)
+            logger.info(f"{user.username} fetched rejected freelancers.")
+            return DRFResponse({
+                'status': 'rejected',
+                'count': len(serializer.data),
+                'rejected_applicants': serializer.data
+            }, status=status.HTTP_200_OK)
+
+        else:
+            return DRFResponse({
+                'detail': 'Invalid status filter. Use open, in_progress, completed, applied.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class JobDashboardSummaryView(APIView):
