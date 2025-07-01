@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import timedelta, datetime
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.decorators import action
 from rest_framework import viewsets, permissions
@@ -13,6 +15,7 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
 
 from django.core.mail import EmailMultiAlternatives
@@ -40,7 +43,10 @@ from .serializers import (
 )
 
 import logging
+from datetime import timedelta
+
 logger = logging.getLogger(__name__)
+
 User = get_user_model()
 
 
@@ -214,26 +220,61 @@ class LoginView(APIView):
 
     @extend_schema(
         request=LoginSerializer,
-        responses={
-            200: OpenApiResponse(description="JWT tokens and user type returned."),
-            400: OpenApiResponse(description="Invalid credentials.")
-        },
-        description="Authenticate user and return JWT tokens."
+        responses={200: OpenApiResponse(
+            description="JWT tokens and user info returned")},
+        description="Authenticate user and return tokens. Set remember_me=true for long-lived cookies."
     )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            remember_me = serializer.validated_data.get('remember_me', False)
+
             refresh = RefreshToken.for_user(user)
 
-            return Response({
-                "access": str(refresh.access_token),
+            # Token lifetimes
+            if remember_me:
+                refresh.set_exp(lifetime=timedelta(days=30))
+                access_lifetime = timedelta(days=7)
+            else:
+                access_lifetime = timedelta(minutes=5)  # default
+
+            refresh.access_token.set_exp(lifetime=access_lifetime)
+
+            access_token = refresh.access_token
+
+            # Create response
+            res = Response({
+                "message": "Login successful.",
+                "user": AuthUserSerializer(user).data,
+                "access": str(access_token),
                 "refresh": str(refresh),
-                "user": AuthUserSerializer(user).data
+                "access_expires": datetime.fromtimestamp(access_token['exp']).isoformat(),
+                "refresh_expires": datetime.fromtimestamp(refresh['exp']).isoformat()
             }, status=status.HTTP_200_OK)
 
+            # Set cookies 
+            res.set_cookie(
+                key="access_token",
+                value=str(access_token),
+                expires=access_token['exp'],
+                httponly=True,
+                secure=True,
+                samesite='Lax'
+            )
+            res.set_cookie(
+                key="refresh_token",
+                value=str(refresh),
+                expires=refresh['exp'],
+                httponly=True,
+                secure=True,
+                samesite='Lax'
+            )
+
+            return res
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
