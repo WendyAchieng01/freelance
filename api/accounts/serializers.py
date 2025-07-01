@@ -461,23 +461,40 @@ class ClientListSerializer(serializers.ModelSerializer):
 
 
 class AuthUserSerializer(serializers.ModelSerializer):
-    freelancer_profile = serializers.SerializerMethodField()
-    client_profile = serializers.SerializerMethodField()
+    profile_data = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'freelancer_profile', 'client_profile']
+        fields = [
+            'profile_data',
+        ]
 
-    def get_freelancer_profile(self, obj):
+    def get_profile_data(self, obj):
         try:
-            if hasattr(obj.profile, 'freelancer_profile'):
-                return FreelancerProfileReadSerializer(obj.profile.freelancer_profile, context=self.context).data
-        except:
-            return None
+            profile = obj.profile
+            if profile.user_type == 'freelancer' and hasattr(profile, 'freelancer_profile'):
+                return {
+                    'freelancer_profile': FreelancerProfileReadSerializer(
+                        profile.freelancer_profile, context=self.context
+                    ).data
+                }
+            elif profile.user_type == 'client' and hasattr(profile, 'client_profile'):
+                return {
+                    'client_profile': ClientProfileReadSerializer(
+                        profile.client_profile, context=self.context
+                    ).data
+                }
+        except Profile.DoesNotExist:
+            self._fallback_user_data(obj)
 
-    def get_client_profile(self, obj):
-        try:
-            if hasattr(obj.profile, 'client_profile'):
-                return ClientProfileReadSerializer(obj.profile.client_profile, context=self.context).data
-        except:
-            return None
+        # base user info only
+        return self._fallback_user_data(obj)
+
+    def _fallback_user_data(self, obj):
+        return {
+            "id": obj.id,
+            "username": obj.username,
+            "email": obj.email,
+            "first_name": obj.first_name,
+            "last_name": obj.last_name
+        }
