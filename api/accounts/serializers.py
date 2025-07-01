@@ -116,6 +116,8 @@ class RegisterSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(help_text="Username or email.")
     password = serializers.CharField(write_only=True, help_text="Password.")
+    remember_me = serializers.BooleanField(default=False, required=False)
+    
 
     def validate(self, data):
         username = data.get('username')
@@ -125,11 +127,11 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Both fields are required.")
 
         try:
-            user = User.objects.get(
-                Q(username=username) | Q(email=username))
+            user = User.objects.get(Q(username=username) | Q(email=username))
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                {"identifier": "Invalid username or email."})
+                {"identifier": "Invalid username or email."}
+            )
 
         user = authenticate(username=user.username, password=password)
 
@@ -139,10 +141,14 @@ class LoginSerializer(serializers.Serializer):
                 {"password": "Invalid credentials."})
         if not user.is_active:
             raise serializers.ValidationError(
-                {"non_field_errors": ["Account is disabled."]})
+                {"non_field_errors": ["Account is disabled."]}
+            )
 
         data['user'] = user
+        # ensure remember_me is returned with validated_data
+        data['remember_me'] = data.get('remember_me', False)
         return data
+
 
 
 class LogoutSerializer(serializers.Serializer):
