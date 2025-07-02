@@ -50,6 +50,7 @@ class JobSerializer(serializers.ModelSerializer):
         read_only_fields = ['posted_date', 'payment_verified']
 
     def get_client(self, obj):
+        profile = obj.client.user.profile
         if obj.client:
             return {
                 'id':obj.client.user.id,
@@ -57,7 +58,7 @@ class JobSerializer(serializers.ModelSerializer):
                 'last_name': obj.client.user.last_name,
                 'username': obj.client.user.username,
                 #'email': obj.client.user.email,
-                'image':obj.client.profile_pic.url
+                'image': profile.profile_pic.url if profile.profile_pic else None
             }
         return None
 
