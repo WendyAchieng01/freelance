@@ -48,8 +48,8 @@ urlpatterns = [
     
     #path('aplications/', JobsWithResponsesView.as_view(), name='job-applications-list'),
     path('<slug:slug>/aplications/', ResponseListForJobView.as_view(), name='job-applications'),
-    path('<slug:slug>/accept/<str:freelancer_username>/', AcceptFreelancerView.as_view(), name='accept-freelancer'),
-    path('<slug:slug>/reject/<str:freelancer_username>/', RejectFreelancerView.as_view(), name='reject-freelancer'),
+    path('<slug:slug>/accept/<str:identifier>/', AcceptFreelancerView.as_view(), name='accept-freelancer'),
+    path('<slug:slug>/reject/<str:identifier>/', RejectFreelancerView.as_view(), name='reject-freelancer'),
     
     path('discover/<str:status_filter>/', JobDiscoveryView.as_view(), name='job-discovery'),
     
