@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
+from datetime import timedelta
 
 
 # Create your models here
@@ -150,7 +151,6 @@ class Chat(models.Model):
     active = models.BooleanField(default=False)
 
     class Meta:
-        # Enforce one chat per job-client-freelancer
         unique_together = ('job', 'client', 'freelancer')
 
     def save(self, *args, **kwargs):
@@ -158,6 +158,31 @@ class Chat(models.Model):
             self.slug = slugify(
                 f"{self.job.id}-{self.client.id}-{self.freelancer.id if self.freelancer else 'none'}-{uuid.uuid4().hex[:8]}")
         super().save(*args, **kwargs)
+
+    def can_access(self, user):
+        return user == self.client.user or (self.freelancer and user == self.freelancer.user)
+
+    def get_other_participant(self, user):
+        if user == self.client.user:
+            return self.freelancer.user if self.freelancer else None
+        elif self.freelancer and user == self.freelancer.user:
+            return self.client.user
+        return None
+
+    def get_last_message(self):
+        return self.messages.order_by('-timestamp').first()
+
+    def get_unread_count(self, user):
+        if not self.can_access(user):
+            return 0
+        other = self.get_other_participant(user)
+        if other:
+            return self.messages.filter(sender=other, is_read=False).count()
+        return 0
+
+    def archive(self):
+        self.active = False
+        self.save()
 
     def __str__(self):
         freelancer_username = self.freelancer.user.username if self.freelancer else "No Freelancer"
@@ -171,29 +196,71 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['timestamp']
 
+    def can_edit(self, user):
+        time_limit = timezone.now() - timedelta(minutes=5)
+        return user == self.sender and self.timestamp > time_limit
+
+    def can_delete(self, user):
+        time_limit = timezone.now() - timedelta(minutes=5)
+        return user == self.sender and self.timestamp > time_limit and not self.is_deleted
+
+    @property
+    def has_attachments(self):
+        return self.attachments.exists()
+
+    def get_attachment_urls(self):
+        return [reverse('serve_attachment', args=[a.id]) for a in self.attachments.all()]
+
     def __str__(self):
         return f"Message from {self.sender.username} at {self.timestamp}"
+    
 
 class MessageAttachment(models.Model):
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='attachments')
+    message = models.ForeignKey(
+        'Message', on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(
         upload_to='chat_attachments/%Y/%m/%d/',
         validators=[FileExtensionValidator(
-            allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
+            allowed_extensions=['jpg', 'jpeg', 'png',
+                                'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
         )]
     )
     filename = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_size = models.IntegerField()  # Size in bytes
+    file_size = models.IntegerField()  # Store file size in bytes
+    # MIME type, e.g., 'image/jpeg'
     content_type = models.CharField(max_length=100)
+    thumbnail = models.ImageField(
+        upload_to='thumbnails/',
+        null=True,
+        blank=True,
+        help_text="Auto-generated thumbnail for image files"
+    )
 
     def __str__(self):
         return f"Attachment: {self.filename}"
-    
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    chat = models.ForeignKey(
+        Chat, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.username}"
+
+
 class Review(models.Model):
     RATING_CHOICES = (
         (1, '1 - Poor'),

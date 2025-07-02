@@ -1,34 +1,20 @@
-from .views import MessageViewSet
-from django.urls import path, include
-from django.urls import path
-from .views import ChatViewSet, MessageViewSet, MessageAttachmentViewSet
+from django.urls import path, include, re_path
+from rest_framework.routers import DefaultRouter
+from .views import ChatViewSet, MessageViewSet, NotificationViewSet
 
-chat_message_list_and_create = MessageViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-chat_list = ChatViewSet.as_view({
-    'get': 'list',
-})
-
-chat_detail = ChatViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'})
-chat_unread_count = ChatViewSet.as_view({'get': 'unread_count'})
-chat_messages = ChatViewSet.as_view({'get': 'messages'})
-
-message_crud = MessageViewSet.as_view({
-    'retrieve': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
-})
+router = DefaultRouter()
+router.register(r'chats', ChatViewSet, basename='chat')
+router.register(r'notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = [
-    path('chats/', chat_list, name='list-chats'),
-    path('chats/<slug:chat_slug>/', chat_detail, name='chat-detail'),
-    path('chats/unread_count/', chat_unread_count, name='chat-unread-count'),
-    path('chats/<slug:chat_slug>/messages/', chat_messages, name='chat-messages'),
-    path('chats/<slug:chat_slug>/message/', chat_message_list_and_create, name='chat-message-list-create'),
-    path('chats/<slug:chat_slug>/message/<int:pk>/', message_crud, name='chat-messages-detail'),
+    # Router-generated URLs for chats and notifications
+    path('', include(router.urls)),
 
+    # Message endpoints using chat_uuid
+    re_path( r'chats/(?P<chat_uuid>[0-9a-f-]+)/$',
+        MessageViewSet.as_view({'get': 'list_by_chat', 'post': 'create'}), name='message-list-by-chat'
+    ),
+    path( 'chats/<int:pk>/', MessageViewSet.as_view(
+            {'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='message-detail'
+    ),
 ]

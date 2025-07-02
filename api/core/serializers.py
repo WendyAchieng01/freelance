@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
 from accounts.models import Profile
-from core.models import Job, Response, Chat, Message, MessageAttachment, Review,JobBookmark
+from core.models import Job, Response, Chat, Message, MessageAttachment, Review,JobBookmark,Notification
 from accounts.models import FreelancerProfile
 from api.accounts.serializers import ProfileMiniSerializer
 import os
@@ -113,81 +113,6 @@ class JobWithResponsesSerializer(serializers.ModelSerializer):
         model = Job
         fields = ['id', 'title', 'description', 'responses']
 
-
-class ChatSerializer(serializers.ModelSerializer):
-    client = serializers.StringRelatedField(read_only=True)
-    freelancer = serializers.StringRelatedField(read_only=True)
-    job = serializers.PrimaryKeyRelatedField(
-        queryset=Job.objects.filter(payment_verified=True))
-    slug = serializers.SlugField(read_only=True)
-
-    class Meta:
-        model = Chat
-        fields = ['id', 'job', 'client', 'freelancer', 'created_at', 'slug']
-        read_only_fields = ['client', 'freelancer', 'created_at', 'slug']
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        profile = user.profile
-        job = validated_data['job']
-
-        if not job.payment_verified:
-            raise serializers.ValidationError(
-                "Payment must be verified to start chat.")
-
-        if profile.user_type == 'client':
-            chat = Chat.objects.create(
-                client=profile, freelancer=job.selected_freelancer.profile, **validated_data)
-        elif profile.user_type == 'freelancer':
-            chat = Chat.objects.create(
-                freelancer=profile, client=job.client, **validated_data)
-        else:
-            raise serializers.ValidationError("Invalid user role.")
-        return chat
-
-
-class MessageSerializer(serializers.ModelSerializer):
-    sender = serializers.StringRelatedField(read_only=True)
-    chat = serializers.PrimaryKeyRelatedField(read_only=True)
-    attachments = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Message
-        fields = ['id', 'chat', 'sender',
-                    'content', 'timestamp', 'attachments']
-        read_only_fields = ['id', 'chat',
-                            'sender', 'timestamp', 'attachments']
-
-    def get_attachments(self, obj):
-        return [{'id': a.id, 'filename': a.filename, 'url': f'/api/v1/core/attachments/{a.id}/download/'} for a in obj.attachments.all()]
-
-
-
-class MessageAttachmentSerializer(serializers.ModelSerializer):
-    message = serializers.PrimaryKeyRelatedField(
-        queryset=Message.objects.all())
-    file = serializers.FileField()
-
-    class Meta:
-        model = MessageAttachment
-        fields = ['id', 'message', 'file', 'filename',
-                  'uploaded_at', 'file_size', 'content_type']
-        read_only_fields = ['filename', 'uploaded_at',
-                            'file_size', 'content_type']
-
-    def validate_file(self, value):
-        ext = os.path.splitext(value.name)[1].lower().lstrip('.')
-        if ext not in ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']:
-            raise serializers.ValidationError(
-                f"File extension '{ext}' is not allowed.")
-        return value
-
-    def create(self, validated_data):
-        file = validated_data['file']
-        validated_data['filename'] = file.name
-        validated_data['file_size'] = file.size
-        validated_data['content_type'] = file.content_type
-        return MessageAttachment.objects.create(**validated_data)
     
     
 class ReviewSerializer(serializers.ModelSerializer):
@@ -235,3 +160,45 @@ class BookmarkedJobSerializer(serializers.ModelSerializer):
         if not user.is_authenticated:
             return False
         return obj.job.responses.filter(user=user).exists()
+
+
+
+
+class MessageAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MessageAttachment
+        fields = ['id', 'file', 'filename', 'uploaded_at',
+                  'file_size', 'content_type', 'thumbnail']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    attachments = MessageAttachmentSerializer(many=True, read_only=True)
+    sender = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Message
+        fields = ['id', 'chat', 'sender', 'content',
+                  'timestamp', 'is_read', 'is_deleted', 'attachments']
+        read_only_fields = ['chat', 'sender',
+                            'is_read', 'is_deleted', 'timestamp']
+
+    def create(self, validated_data):
+        # `chat` and `sender` are set in the view, `is_read` defaults to False
+        return Message.objects.create(**validated_data)
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
+    client = serializers.StringRelatedField()
+    freelancer = serializers.StringRelatedField()
+
+    class Meta:
+        model = Chat
+        fields = ['id', 'chat_uuid', 'job', 'client', 'freelancer',
+                  'created_at', 'slug', 'active', 'messages']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'user', 'message', 'created_at', 'is_read', 'chat']
