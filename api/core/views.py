@@ -932,52 +932,51 @@ class ChatViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Return chats where the user is either the client or freelancer."""
         user = self.request.user
-        try:
-            profile = user.profile
-        except AttributeError:
-            raise NotFound(detail="User profile not found.",
-                           code=status.HTTP_404_NOT_FOUND)
+        profile = getattr(user, 'profile', None)
+        if not profile:
+            logger.warning(f"User {user} has no profile.")
+            return Chat.objects.none()
         return Chat.objects.filter(Q(client=profile) | Q(freelancer=profile))
 
     def perform_create(self, serializer):
-        """Create a chat, restricted to the job's client."""
-        try:
-            job = serializer.validated_data['job']
-            if not self.request.user.profile == job.client:
-                raise PermissionDenied(
-                    detail="Only the job's client can create a chat.",
-                    code=status.HTTP_403_FORBIDDEN
-                )
-            serializer.save(client=self.request.user.profile)
-        except KeyError:
-            raise ValidationError(
-                detail="Job ID is required to create a chat.",
-                code=status.HTTP_400_BAD_REQUEST
+        job = serializer.validated_data.get('job')
+        if not job:
+            logger.warning("Attempt to create chat without job.")
+            return DRFResponse(
+                {"message": "Job ID is required to create a chat."},
+                status=status.HTTP_400_BAD_REQUEST
             )
+        if self.request.user.profile != job.client:
+            logger.warning(
+                f"Unauthorized chat creation by {self.request.user}.")
+            return DRFResponse(
+                {"message": "Only the job's client can create a chat."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        serializer.save(client=self.request.user.profile)
 
     def perform_update(self, serializer):
-        """Update a chat, restricted to participants."""
         chat = self.get_object()
         if not chat.can_access(self.request.user):
-            raise PermissionDenied(
-                detail="You do not have permission to update this chat.",
-                code=status.HTTP_403_FORBIDDEN
+            logger.warning(f"Unauthorized chat update by {self.request.user}.")
+            return DRFResponse(
+                {"message": "You do not have permission to update this chat."},
+                status=status.HTTP_403_FORBIDDEN
             )
         serializer.save()
 
     def perform_destroy(self):
-        """Soft delete a chat by archiving it, restricted to participants."""
         chat = self.get_object()
         if not chat.can_access(self.request.user):
-            raise PermissionDenied(
-                detail="You do not have permission to delete this chat.",
-                code=status.HTTP_403_FORBIDDEN
+            logger.warning(f"Unauthorized chat delete by {self.request.user}.")
+            return DRFResponse(
+                {"message": "You do not have permission to delete this chat."},
+                status=status.HTTP_403_FORBIDDEN
             )
         chat.archive()
         return DRFResponse(
-            {"detail": "Chat archived successfully."},
+            {"message": "Chat archived successfully."},
             status=status.HTTP_200_OK
         )
 
@@ -987,50 +986,51 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Return messages from chats the user can access, excluding deleted messages."""
         user = self.request.user
-        try:
-            profile = user.profile
-        except AttributeError:
-            raise NotFound(
-                detail="User profile not found.",
-                code=status.HTTP_404_NOT_FOUND
-            )
-        accessible_chats = Chat.objects.filter(
-            Q(client=profile) | Q(freelancer=profile))
-        return Message.objects.filter(chat__in=accessible_chats, is_deleted=False)
+        profile = getattr(user, 'profile', None)
+        if not profile:
+            logger.warning(f"User {user} has no profile.")
+            return Message.objects.none()
+
+        chats = Chat.objects.filter(Q(client=profile) | Q(freelancer=profile))
+        return Message.objects.filter(chat__in=chats, is_deleted=False)
 
     def perform_create(self, serializer):
-        """Create a message, automatically setting chat and is_read."""
         chat_uuid = self.kwargs.get('chat_uuid')
         if not chat_uuid:
-            raise ValidationError(
-                detail="Chat UUID is required.",
-                code=status.HTTP_400_BAD_REQUEST
+            return DRFResponse(
+                {"message": "Chat UUID is required."},
+                status=status.HTTP_400_BAD_REQUEST
             )
         try:
             chat = Chat.objects.get(chat_uuid=chat_uuid)
         except Chat.DoesNotExist:
-            raise NotFound(
-                detail=f"Chat with UUID {chat_uuid} does not exist.",
-                code=status.HTTP_404_NOT_FOUND
+            logger.warning(f"Chat {chat_uuid} not found.")
+            return DRFResponse(
+                {"message": f"Chat with UUID {chat_uuid} does not exist."},
+                status=status.HTTP_404_NOT_FOUND
             )
+
         if not chat.can_access(self.request.user):
-            raise PermissionDenied(
-                detail="You do not have permission to send messages in this chat.",
-                code=status.HTTP_403_FORBIDDEN
+            logger.warning(
+                f"Unauthorized message create attempt by {self.request.user}.")
+            return DRFResponse(
+                {"message": "You do not have permission to access this chat."},
+                status=status.HTTP_403_FORBIDDEN
             )
-        if not serializer.validated_data.get('content'):
-            raise ValidationError(
-                detail="Message content is required.",
-                code=status.HTTP_400_BAD_REQUEST
+
+        content = serializer.validated_data.get('content')
+        if not content:
+            return DRFResponse(
+                {"message": "Message content cannot be empty."},
+                status=status.HTTP_400_BAD_REQUEST
             )
+
         message = serializer.save(
             sender=self.request.user, chat=chat, is_read=False)
 
         # Handle attachments
-        files = self.request.FILES.getlist('attachments')
-        for file in files:
+        for file in self.request.FILES.getlist('attachments'):
             try:
                 MessageAttachment.objects.create(
                     message=message,
@@ -1040,12 +1040,13 @@ class MessageViewSet(viewsets.ModelViewSet):
                     content_type=file.content_type
                 )
             except Exception as e:
-                raise ValidationError(
-                    detail=f"Failed to process attachment: {str(e)}",
-                    code=status.HTTP_400_BAD_REQUEST
+                logger.error(f"Attachment upload failed: {e}")
+                return DRFResponse(
+                    {"message": "Failed to process attachment."},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
 
-        # Send notification
+        # Notify recipient
         recipient = chat.get_other_participant(self.request.user)
         if recipient:
             try:
@@ -1055,128 +1056,64 @@ class MessageViewSet(viewsets.ModelViewSet):
                     chat=chat
                 )
             except Exception as e:
-                raise ValidationError(
-                    detail=f"Failed to create notification: {str(e)}",
-                    code=status.HTTP_500_INTERNAL_SERVER_ERROR
+                logger.error(f"Notification creation failed: {e}")
+                return DRFResponse(
+                    {"message": "Server error while creating notification."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
-        return DRFResponse(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
+        return DRFResponse(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_update(self, serializer):
-        """Update a message, restricted to sender within 5 minutes."""
         message = self.get_object()
         if not message.can_edit(self.request.user):
-            raise PermissionDenied(
-                detail="You cannot edit this message. It may be too old or already deleted.",
-                code=status.HTTP_403_FORBIDDEN
+            logger.warning(
+                f"Unauthorized edit by {self.request.user} on message {message.pk}.")
+            return DRFResponse(
+                {"message": "You cannot edit this message. It may be too old or already deleted."},
+                status=status.HTTP_403_FORBIDDEN
             )
         serializer.save()
-        return Response(
-            {"detail": "Message updated successfully."},
+        return DRFResponse(
+            {"message": "Message updated successfully."},
             status=status.HTTP_200_OK
         )
 
     def perform_destroy(self):
-        """Soft delete a message, restricted to sender within 5 minutes."""
         message = self.get_object()
         if not message.can_delete(self.request.user):
-            raise PermissionDenied(
-                detail="You cannot delete this message. It may be too old or already deleted.",
-                code=status.HTTP_403_FORBIDDEN
+            logger.warning(
+                f"Unauthorized delete by {self.request.user} on message {message.pk}.")
+            return DRFResponse(
+                {"message": "You cannot delete this message. It may be too old or already deleted."},
+                status=status.HTTP_403_FORBIDDEN
             )
         message.is_deleted = True
         message.save()
         return DRFResponse(
-            {"detail": "Message deleted successfully."},
+            {"message": "Message deleted successfully."},
             status=status.HTTP_200_OK
         )
 
-    @action(detail=False, methods=['get'], url_path='chat/(?P<chat_uuid>[^/.]+)/messages')
+    @action(detail=False, methods=['get'], url_path='chat/(?P<chat_uuid>[^/.]+)/')
     def list_by_chat(self, request, chat_uuid=None):
-        """List messages for a specific chat."""
         if not chat_uuid:
-            raise ValidationError(
-                detail="Chat UUID is required.",
-                code=status.HTTP_400_BAD_REQUEST
+            return DRFResponse(
+                {"message": "Chat UUID is required."},
+                status=status.HTTP_400_BAD_REQUEST
             )
         try:
             chat = Chat.objects.get(chat_uuid=chat_uuid)
         except Chat.DoesNotExist:
-            raise NotFound(
-                detail=f"Chat with UUID {chat_uuid} does not exist.",
-                code=status.HTTP_404_NOT_FOUND
+            return DRFResponse(
+                {"message": f"Chat with UUID {chat_uuid} does not exist."},
+                status=status.HTTP_404_NOT_FOUND
             )
         if not chat.can_access(request.user):
-            raise PermissionDenied(
-                detail="You do not have permission to view messages in this chat.",
-                code=status.HTTP_403_FORBIDDEN
+            return DRFResponse(
+                {"message": "You do not have permission to view messages in this chat."},
+                status=status.HTTP_403_FORBIDDEN
             )
         messages = Message.objects.filter(chat=chat, is_deleted=False)
         serializer = self.get_serializer(messages, many=True)
-        return DRFResponse(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
-
-
-class NotificationViewSet(viewsets.ModelViewSet):
-    serializer_class = NotificationSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """Return notifications for the current user."""
-        return Notification.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        """Prevent manual creation of notifications."""
-        raise PermissionDenied(
-            detail="Notifications cannot be created manually.",
-            code=status.HTTP_403_FORBIDDEN
-        )
-
-    def perform_update(self, serializer):
-        """Update a notification, restricted to the owner."""
-        notification = self.get_object()
-        if notification.user != self.request.user:
-            raise PermissionDenied(
-                detail="You do not have permission to update this notification.",
-                code=status.HTTP_403_FORBIDDEN
-            )
-        serializer.save()
-        return DRFResponse(
-            {"detail": "Notification updated successfully."},
-            status=status.HTTP_200_OK
-        )
-
-    def perform_destroy(self):
-        """Delete a notification, restricted to the owner."""
-        notification = self.get_object()
-        if notification.user != self.request.user:
-            raise PermissionDenied(
-                detail="You do not have permission to delete this notification.",
-                code=status.HTTP_403_FORBIDDEN
-            )
-        notification.delete()
-        return DRFResponse(
-            {"detail": "Notification deleted successfully."},
-            status=status.HTTP_200_OK
-        )
-
-    @action(detail=True, methods=['post'], url_path='mark-as-read')
-    def mark_as_read(self, request, pk=None):
-        """Mark a notification as read."""
-        notification = self.get_object()
-        if notification.user != self.request.user:
-            raise PermissionDenied(
-                detail="You do not have permission to mark this notification as read.",
-                code=status.HTTP_403_FORBIDDEN
-            )
-        notification.is_read = True
-        notification.save()
-        return DRFResponse(
-            {"detail": "Notification marked as read."},
-            status=status.HTTP_200_OK
-        )
+        return DRFResponse(serializer.data, status=status.HTTP_200_OK)
