@@ -63,7 +63,7 @@ class JobSerializer(serializers.ModelSerializer):
         return None
 
     def get_selected_freelancer(self, obj):
-        return obj.selected_freelancer.username if obj.selected_freelancer else None\
+        return obj.selected_freelancer.username if obj.selected_freelancer else None
             
 
 
