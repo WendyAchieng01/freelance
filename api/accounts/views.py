@@ -242,16 +242,21 @@ class LoginView(APIView):
             refresh.access_token.set_exp(lifetime=access_lifetime)
 
             access_token = refresh.access_token
+            
+            # Get user_type from related profile
+            user_type = getattr(user.profile, 'user_type', None)
 
             # Create response
             res = Response({
                 "message": "Login successful.",
                 "user": AuthUserSerializer(user).data,
+                "user_type":user_type,
                 "access": str(access_token),
                 "refresh": str(refresh),
                 "access_expires": datetime.fromtimestamp(access_token['exp']).isoformat(),
                 "refresh_expires": datetime.fromtimestamp(refresh['exp']).isoformat()
             }, status=status.HTTP_200_OK)
+            
 
             # Set cookies 
             res.set_cookie(
