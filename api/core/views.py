@@ -619,54 +619,50 @@ class RemoveBookmarkView(APIView):
 class JobsByClientView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
-        username = request.query_params.get('username')
-        user_id = request.query_params.get('user_id')
+    def get(self, request, *args, **kwargs):
+        query_mode = request.query_params.get('query', 'mine')
         status_filter = request.query_params.get('status')
-        query_mode = request.query_params.get('query', 'all')
 
-        # Mode: public listing (default if no user given)
-        if query_mode == 'all' or (not username and not user_id):
-            return self._handle_public_open_jobs(request)
+        if query_mode == 'all':
+            return self._handle_public_open_jobs(request, status_filter)
 
-        return self._handle_request(request, username=username, user_id=user_id, status_filter=status_filter)
+        return self._handle_logged_in_client_jobs(request, status_filter)
 
-    def get_user(self, username=None, user_id=None, request=None):
-        if username:
-            return get_object_or_404(User, username=username)
-        elif user_id:
-            return get_object_or_404(User, id=user_id)
-        elif request and request.user.is_authenticated and hasattr(request.user, "profile"):
-            profile = request.user.profile
-            if profile.user_type == "client":
-                return request.user
-        return None
-
-    def _handle_request(self, request, username=None, user_id=None, status_filter=None):
+    def _handle_logged_in_client_jobs(self, request, status_filter=None):
         try:
-            user = self.get_user(
-                username=username, user_id=user_id, request=request)
-
-            if not user:
+            if not request.user.is_authenticated:
                 return DRFResponse({
                     'success': False,
-                    'message': 'Invalid client. Provide a valid username or user_id, or be logged in as a client.'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    'message': 'Authentication required to access your posted jobs.'
+                }, status=status.HTTP_401_UNAUTHORIZED)
 
-            profile = user.profile
-            if profile.user_type != 'client':
+            if not hasattr(request.user, 'profile') or request.user.profile.user_type != 'client':
                 return DRFResponse({
                     'success': False,
-                    'message': 'This user is not registered as a client.',
-                    'jobs': []
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    'message': 'You must be a client to access your posted jobs.'
+                }, status=status.HTTP_403_FORBIDDEN)
 
+            profile = request.user.profile
             jobs = Job.objects.filter(client=profile).select_related('client')
+
             if status_filter in ['open', 'in_progress', 'completed']:
                 jobs = jobs.filter(status=status_filter)
 
-            if not request.user.is_authenticated:
-                jobs = jobs.filter(status='open')
+            job_count = jobs.count()
+            if job_count == 0:
+                return DRFResponse({
+                    'success': True,
+                    'message': 'You have not posted any jobs yet.',
+                    'client': {
+                        'username': request.user.username,
+                        'email': request.user.email,
+                        'bio': getattr(profile, 'bio', ''),
+                        'location': getattr(profile, 'location', ''),
+                        'profile_pic': profile.profile_pic.url if profile.profile_pic else None
+                    },
+                    'job_count': 0,
+                    'jobs': []
+                })
 
             paginator = PageNumberPagination()
             paginator.page_size = 10
@@ -676,29 +672,37 @@ class JobsByClientView(APIView):
 
             return paginator.get_paginated_response({
                 'success': True,
-                'message': f'Jobs posted by client \"{user.username}\" retrieved successfully.',
+                'message': 'Your posted jobs were retrieved successfully.',
                 'client': {
-                    'username': user.username,
-                    'email': user.email,
+                    'username': request.user.username,
+                    'email': request.user.email,
                     'bio': getattr(profile, 'bio', ''),
                     'location': getattr(profile, 'location', ''),
                     'profile_pic': profile.profile_pic.url if profile.profile_pic else None
                 },
-                'job_count': jobs.count(),
+                'job_count': job_count,
                 'jobs': serialized_jobs
             })
 
         except Exception as e:
-            logger.error(f"Error fetching jobs for client: {e}")
+            logger.error(f"Error fetching logged-in client jobs: {e}")
             return DRFResponse({
                 'success': False,
-                'message': 'An unexpected error occurred while fetching client jobs.',
+                'message': 'An error occurred while fetching your jobs.',
                 'jobs': []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def _handle_public_open_jobs(self, request):
+    def _handle_public_open_jobs(self, request, status_filter=None):
         try:
-            jobs = Job.objects.filter(status='open').select_related('client')
+            jobs = Job.objects.select_related('client')
+
+            if status_filter in ['open', 'in_progress', 'completed']:
+                jobs = jobs.filter(status=status_filter)
+            else:
+                jobs = jobs.filter(status='open')
+
+            jobs = jobs.annotate(job_count=Count('client__jobs'))
+
             paginator = PageNumberPagination()
             paginator.page_size = 10
             paginated_jobs = paginator.paginate_queryset(jobs, request)
@@ -707,7 +711,7 @@ class JobsByClientView(APIView):
 
             return paginator.get_paginated_response({
                 'success': True,
-                'message': 'Public job listing: all open jobs from all clients.',
+                'message': 'Public job listing: all jobs from all clients.',
                 'job_count': jobs.count(),
                 'jobs': serialized_jobs
             })
@@ -719,7 +723,6 @@ class JobsByClientView(APIView):
                 'message': 'Failed to retrieve public job listings.',
                 'jobs': []
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
 
 
 class FreelancerJobStatusView(APIView):

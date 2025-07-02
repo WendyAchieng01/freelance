@@ -26,7 +26,6 @@ urlpatterns = [
     path('client/<str:status_filter>/',ClientJobStatusView.as_view(), name='client-job-status'),
     
     #client joblist view
-    path('by-client/<str:username>/', JobsByClientView.as_view(), name='jobs-by-client-username'),
     path('by-client/', JobsByClientView.as_view(), name='jobs-by-client-id-or-post'),
     
     #notification
