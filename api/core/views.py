@@ -50,6 +50,13 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+class CustomPaginator(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all().select_related('client', 'selected_freelancer')
     serializer_class = JobSerializer
@@ -403,15 +410,10 @@ class AdvancedJobSearchAPIView(generics.ListAPIView):
 class JobBookmarkListView(generics.ListAPIView):
     serializer_class = BookmarkedJobSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPaginator
 
     def get_queryset(self):
         return JobBookmark.objects.filter(user=self.request.user).select_related('job', 'job__client')
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.serializer_class(
-            queryset, many=True, context={'request': request})
-        return DRFResponse(serializer.data)
 
 
 class AddBookmarkView(APIView):
@@ -475,115 +477,7 @@ class RemoveBookmarkView(APIView):
             return DRFResponse({'error': 'Failed to remove bookmark.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class JobsByClientView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        query_mode = request.query_params.get('query', 'mine')
-        status_filter = request.query_params.get('status')
-
-        if query_mode == 'all':
-            return self._handle_public_open_jobs(request, status_filter)
-
-        return self._handle_logged_in_client_jobs(request, status_filter)
-
-    def _handle_logged_in_client_jobs(self, request, status_filter=None):
-        try:
-            if not request.user.is_authenticated:
-                return DRFResponse({
-                    'success': False,
-                    'message': 'Authentication required to access your posted jobs.'
-                }, status=status.HTTP_401_UNAUTHORIZED)
-
-            if not hasattr(request.user, 'profile') or request.user.profile.user_type != 'client':
-                return DRFResponse({
-                    'success': False,
-                    'message': 'You must be a client to access your posted jobs.'
-                }, status=status.HTTP_403_FORBIDDEN)
-
-            profile = request.user.profile
-            jobs = Job.objects.filter(client=profile).select_related('client')
-
-            if status_filter in ['open', 'in_progress', 'completed']:
-                jobs = jobs.filter(status=status_filter)
-
-            job_count = jobs.count()
-            if job_count == 0:
-                return DRFResponse({
-                    'success': True,
-                    'message': 'You have not posted any jobs yet.',
-                    'client': {
-                        'username': request.user.username,
-                        'email': request.user.email,
-                        'bio': getattr(profile, 'bio', ''),
-                        'location': getattr(profile, 'location', ''),
-                        'profile_pic': profile.profile_pic.url if profile.profile_pic else None
-                    },
-                    'job_count': 0,
-                    'jobs': []
-                })
-
-            paginator = PageNumberPagination()
-            paginator.page_size = 10
-            paginated_jobs = paginator.paginate_queryset(jobs, request)
-            serialized_jobs = JobSearchSerializer(
-                paginated_jobs, many=True).data
-
-            return paginator.get_paginated_response({
-                'success': True,
-                'message': 'Your posted jobs were retrieved successfully.',
-                'client': {
-                    'username': request.user.username,
-                    'email': request.user.email,
-                    'bio': getattr(profile, 'bio', ''),
-                    'location': getattr(profile, 'location', ''),
-                    'profile_pic': profile.profile_pic.url if profile.profile_pic else None
-                },
-                'job_count': job_count,
-                'jobs': serialized_jobs
-            })
-
-        except Exception as e:
-            logger.error(f"Error fetching logged-in client jobs: {e}")
-            return DRFResponse({
-                'success': False,
-                'message': 'An error occurred while fetching your jobs.',
-                'jobs': []
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def _handle_public_open_jobs(self, request, status_filter=None):
-        try:
-            jobs = Job.objects.select_related('client')
-
-            if status_filter in ['open', 'in_progress', 'completed']:
-                jobs = jobs.filter(status=status_filter)
-            else:
-                jobs = jobs.filter(status='open')
-
-            jobs = jobs.annotate(job_count=Count('client__jobs'))
-
-            paginator = PageNumberPagination()
-            paginator.page_size = 10
-            paginated_jobs = paginator.paginate_queryset(jobs, request)
-            serialized_jobs = JobSearchSerializer(
-                paginated_jobs, many=True).data
-
-            return paginator.get_paginated_response({
-                'success': True,
-                'message': 'Public job listing: all jobs from all clients.',
-                'job_count': jobs.count(),
-                'jobs': serialized_jobs
-            })
-
-        except Exception as e:
-            logger.error(f"Error fetching public open jobs: {e}")
-            return DRFResponse({
-                'success': False,
-                'message': 'Failed to retrieve public job listings.',
-                'jobs': []
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+            
 class FreelancerJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -598,42 +492,51 @@ class FreelancerJobStatusView(APIView):
         if status_filter == 'active':
             status_filter = 'in_progress'
 
-        # Case: applied jobs
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
         if status_filter == 'applied':
             jobs = Job.objects.filter(responses__user=user).distinct()
-            serializer = JobSearchSerializer(jobs, many=True)
-            return DRFResponse({'status': 'applied', 'count': len(serializer.data), 'jobs': serializer.data}, status=200)
-        
+            paginated_jobs = paginator.paginate_queryset(jobs, request)
+            serialized_jobs = JobSearchSerializer(paginated_jobs, many=True)
+            return paginator.get_paginated_response({
+                'status': 'applied',
+                'job_count': jobs.count(),
+                'jobs': serialized_jobs.data
+            })
+
         elif status_filter == 'rejected':
-            # Jobs the freelancer applied to, but was NOT selected
             jobs = Job.objects.filter(
                 responses__user=user
             ).exclude(
                 selected_freelancer=user
             ).distinct()
-
-            serializer = JobSearchSerializer(jobs, many=True)
+            paginated_jobs = paginator.paginate_queryset(jobs, request)
+            serialized_jobs = JobSearchSerializer(paginated_jobs, many=True)
             logger.info(f"{user.username} fetched rejected jobs.")
-            return DRFResponse({
+            return paginator.get_paginated_response({
                 'status': 'rejected',
-                'count': len(serializer.data),
-                'jobs': serializer.data
-            }, status=status.HTTP_200_OK)
+                'job_count': jobs.count(),
+                'jobs': serialized_jobs.data
+            })
 
-        # Case: active (in_progress) or completed
         elif status_filter in ['in_progress', 'completed']:
             jobs = Job.objects.filter(
                 selected_freelancer=user, status=status_filter)
-            serializer = JobSearchSerializer(jobs, many=True)
-            return DRFResponse({'status': status_filter, 'count': len(serializer.data), 'jobs': serializer.data}, status=200)
+            paginated_jobs = paginator.paginate_queryset(jobs, request)
+            serialized_jobs = JobSearchSerializer(paginated_jobs, many=True)
+            return paginator.get_paginated_response({
+                'status': status_filter,
+                'job_count': jobs.count(),
+                'jobs': serialized_jobs.data
+            })
 
-        # Case: open jobs → return open jobs + bookmark flag
         elif status_filter == 'open':
             jobs = Job.objects.filter(status='open')
-            # Fetch all bookmarked job IDs for the current user
-            bookmarked_ids = set(user.bookmarks.values_list('job_id', flat=True))
-            
-            applied_ids = set(JobResponse.objects.filter(user=user).values_list('job_id', flat=True))
+            bookmarked_ids = set(
+                user.bookmarks.values_list('job_id', flat=True))
+            applied_ids = set(JobResponse.objects.filter(
+                user=user).values_list('job_id', flat=True))
 
             results = []
             for job in jobs:
@@ -644,45 +547,87 @@ class FreelancerJobStatusView(APIView):
                 job_data['open'] = True
                 results.append(job_data)
 
-            return DRFResponse({'status': 'open', 'count': len(results), 'jobs': results}, status=200)
+            paginated_results = paginator.paginate_queryset(results, request)
+            return paginator.get_paginated_response({
+                'status': 'open',
+                'job_count': len(results),
+                'jobs': paginated_results
+            })
 
-        else:
-            return DRFResponse({'detail': 'Invalid status filter. Use applied, active, completed, or open.'},
-                               status=status.HTTP_400_BAD_REQUEST)
+        return DRFResponse({'detail': 'Invalid status filter. Use applied, active, completed, rejected, or open.'},
+                           status=status.HTTP_400_BAD_REQUEST)
     
     
 class ClientJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
+    
+    from drf_spectacular.utils import extend_schema, OpenApiParameter
+    
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='status',
+                description='Filter jobs by status',
+                required=False,
+                type=str,
+                enum=['open', 'in_progress', 'completed',
+                      'applied', 'selected', 'rejected']
+            ),
+        ],
+        responses={200: ...},  
+    )
 
-    def get(self, request, status_filter):
+    def get(self, request):
         user = request.user
         profile = user.profile
 
         if profile.user_type != 'client':
             return DRFResponse({'detail': 'Only clients can access this endpoint.'}, status=status.HTTP_403_FORBIDDEN)
 
-        # frontend's `active` → `in_progress`
+        status_filter = request.query_params.get('status')
         if status_filter == 'active':
             status_filter = 'in_progress'
 
-        if status_filter in ['open', 'in_progress', 'completed']:
-            jobs = Job.objects.filter(client=profile, status=status_filter)
-            serializer = JobSearchSerializer(jobs, many=True)
-            logger.info(
-                f"{user.username} fetched client {status_filter} jobs.")
-            return DRFResponse({
-                'status': status_filter,
-                'count': len(serializer.data),
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
+        # No status filter - return all jobs + counts
+        if not status_filter:
+            jobs = Job.objects.filter(client=profile).order_by('-posted_date')
+            open_count = jobs.filter(status='open').count()
+            completed_count = jobs.filter(status='completed').count()
+
+            paginated = paginator.paginate_queryset(jobs, request)
+            serializer = JobSearchSerializer(paginated, many=True)
+
+            return paginator.get_paginated_response({
+                'status': 'all',
+                'open': open_count,
+                'completed': completed_count,
+                'count': jobs.count(),
                 'jobs': serializer.data
-            }, status=status.HTTP_200_OK)
-            
-        elif status_filter == 'applied':
-            # Get all jobs posted by this client
+            })
+
+        # open / in_progress / completed
+        if status_filter in ['open', 'in_progress', 'completed']:
             jobs = Job.objects.filter(
-                client=profile).prefetch_related('responses__user')
+                client=profile, status=status_filter).order_by('-posted_date')
+            paginated = paginator.paginate_queryset(jobs, request)
+            serializer = JobSearchSerializer(paginated, many=True)
+
+            return paginator.get_paginated_response({
+                'status': status_filter,
+                'count': jobs.count(),
+                'jobs': serializer.data
+            })
+
+        # All applications
+        elif status_filter == 'applied':
+            jobs = Job.objects.filter(client=profile) \
+                .annotate(application_count=Count('responses')) \
+                .prefetch_related('responses__user__profile')
 
             job_applications = []
-
             for job in jobs:
                 responses = job.responses.all()
                 serialized_responses = ResponseListSerializer(
@@ -692,26 +637,26 @@ class ClientJobStatusView(APIView):
                     'job_id': job.id,
                     'job_title': job.title,
                     'job_slug': job.slug,
-                    'applications': serialized_responses
+                    'applications': serialized_responses,
+                    'applications_count': job.application_count
                 })
 
-            logger.info(f"{user.username} fetched applications for all their jobs.")
+            paginated = paginator.paginate_queryset(job_applications, request)
 
-            return DRFResponse({
+            return paginator.get_paginated_response({
                 'status': 'applied',
                 'count': len(job_applications),
-                'jobs': job_applications
-            }, status=status.HTTP_200_OK)
+                'jobs': paginated
+            })
 
+        # selected freelancer
         elif status_filter == 'selected':
             responses = JobResponse.objects.filter(
                 job__client=profile,
                 user=F('job__selected_freelancer'),
-                # <- ensures a freelancer has been selected
                 job__selected_freelancer__isnull=False
-            ).select_related('job', 'user')
+            ).select_related('job', 'user', 'user__profile')
 
-            # Group by job (same logic as before)
             job_selections = {}
             for response in responses:
                 job = response.job
@@ -726,50 +671,57 @@ class ClientJobStatusView(APIView):
                     }
 
                 serialized = ResponseListSerializer(response).data
-                job_selections[job_id]['selected_freelancer'].append(serialized)
+                job_selections[job_id]['selected_freelancer'].append(
+                    serialized)
 
-            logger.info(f"{user.username} fetched selected freelancers.")
-            return DRFResponse({
+            selection_list = list(job_selections.values())
+            paginated = paginator.paginate_queryset(selection_list, request)
+
+            return paginator.get_paginated_response({
                 'status': 'selected',
-                'count': responses.count(),
-                'jobs': list(job_selections.values())
-            }, status=status.HTTP_200_OK)
-        
-        elif status_filter == 'rejected':
-            responses = JobResponse.objects.filter(job__client=profile).exclude(
-                user=F('job__selected_freelancer')
-            ).select_related('user', 'job')
+                'selected_count': responses.count(),
+                'jobs': paginated
+            })
 
-            # Group responses by job
+        # rejected applications
+        elif status_filter == 'rejected':
+            responses = JobResponse.objects.filter(
+                job__client=profile
+            ).exclude(
+                user=F('job__selected_freelancer')
+            ).select_related('user', 'job', 'user__profile')
+
             job_rejections = {}
             for response in responses:
-                job_id = response.job.id
-                job_title = response.job.title
-                job_slug = response.job.slug
+                job = response.job
+                job_id = job.id
 
                 if job_id not in job_rejections:
                     job_rejections[job_id] = {
                         'job_id': job_id,
-                        'job_title': job_title,
-                        'job_slug': job_slug,
+                        'job_title': job.title,
+                        'job_slug': job.slug,
                         'rejected_applicants': []
                     }
 
                 serialized = ResponseListSerializer(response).data
-                job_rejections[job_id]['rejected_applicants'].append(serialized)
+                job_rejections[job_id]['rejected_applicants'].append(
+                    serialized)
 
-            logger.info(f"{user.username} fetched rejected freelancers.")
-            return DRFResponse({
+            rejection_list = list(job_rejections.values())
+            paginated = paginator.paginate_queryset(rejection_list, request)
+
+            return paginator.get_paginated_response({
                 'status': 'rejected',
-                'count': responses.count(),
-                'jobs': list(job_rejections.values())
-            }, status=status.HTTP_200_OK)
+                'rejected_count': responses.count(),
+                'jobs': paginated
+            })
 
-        else:
-            return DRFResponse({
-                'detail': 'Invalid status filter. Use open, active, applied, selected and completed.'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+        # Invalid status filter
+        return DRFResponse({
+            'detail': 'Invalid status filter. Use open, in_progress, completed, applied, selected, or rejected.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class JobDashboardSummaryView(APIView):
     permission_classes = [IsAuthenticated]

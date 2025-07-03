@@ -1,7 +1,7 @@
 from django.urls import include, path
 from . import views
 from django.contrib.auth import views as auth_views
-
+'''
 app_name = 'accounts'
 urlpatterns = [
     path("signup/", views.signup, name="signup"),
@@ -21,4 +21,4 @@ urlpatterns = [
     path('profile_creation/', views.profile_creation, name='profile_creation'),
     path("signup1/", views.signup_gen, name="signup1"),
     path("login1/", views.login_gen, name="login1"),
-]
+]'''
