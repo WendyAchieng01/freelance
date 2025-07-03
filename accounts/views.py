@@ -25,7 +25,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-
+"""
 def login(request):
     if request.method == 'POST':
         identifier = request.POST['username']
@@ -109,7 +109,7 @@ def signup(request):
                 {verification_link}
                 If you didn't sign up for this account, you can ignore this email.
             '''
-            message_html = format_html(f"""
+            message_html = format_html(f'''
                 <div style="font-family: Arial, sans-serif; text-align: center;">
                     <h2>Welcome, {username}!</h2>
                     <p>Thank you for signing up! Please click the button below to verify your email address:</p>
@@ -119,7 +119,7 @@ def signup(request):
                     <p>If you didn't sign up for this account, you can ignore this email.</p>
                     <p>This link will expire in 24 hours.</p>
                 </div>
-            """)
+            ''')
 
             email = EmailMultiAlternatives(subject, message_text, 'info@nilltechsolutions.com', [email])
             email.attach_alternative(message_html, "text/html")
@@ -163,9 +163,9 @@ def verify_email(request, uidb64, token):
 
 
 def verification_pending(request):
-    """
+    '''
     Display a page informing the user to check their email for verification
-    """
+    '''
     # Get the signup data from session
     signup_data = request.session.get('signup_data', {})
     
@@ -194,9 +194,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import format_html
 
 def resend_verification(request, user_id):
-    """
-    Resend the verification email to the user
-    """
+    
+    #Resend the verification email to the user
+    
     try:
         user = User.objects.get(pk=user_id, is_active=False)
         
@@ -223,7 +223,7 @@ def resend_verification(request, user_id):
         If you didn't request this email, you can ignore it.
         '''
         
-        message_html = format_html(f"""
+        message_html = format_html(f'''
         <div style="font-family: Arial, sans-serif; text-align: center;">
             <h2>Hi {user.username},</h2>
             <p>You requested a new verification email. Please click the button below to verify your email address:</p>
@@ -233,7 +233,7 @@ def resend_verification(request, user_id):
             <p>This link will expire in 24 hours.</p>
             <p>If you didn't request this email, you can ignore it.</p>
         </div>
-        """)
+        ''')
 
         email = EmailMultiAlternatives(subject, message_text, 'info@nilltechsolutions.com', [user.email])
         email.attach_alternative(message_html, "text/html")
@@ -248,9 +248,9 @@ def resend_verification(request, user_id):
 
 
 def update_email(request, user_id):
-    """
-    Update user's email and resend verification link
-    """
+    
+    #Update user's email and resend verification link
+    
     if request.method == 'POST':
         try:
             user = User.objects.get(pk=user_id, is_active=False)
@@ -293,7 +293,7 @@ def update_email(request, user_id):
             If you didn't request this change, please contact us immediately.
             '''
             
-            message_html = format_html(f"""
+            message_html = format_html(f'''
             <div style="font-family: Arial, sans-serif; text-align: center;">
                 <h2>Hi {user.username},</h2>
                 <p>Your email has been updated. Please click the button below to verify your new email address:</p>
@@ -303,7 +303,7 @@ def update_email(request, user_id):
                 <p>This link will expire in 24 hours.</p>
                 <p>If you didn't request this change, please contact us immediately.</p>
             </div>
-            """)
+            ''')
 
             email = EmailMultiAlternatives(subject, message_text, 'info@nilltechsolutions.com', [new_email])
             email.attach_alternative(message_html, "text/html")
@@ -317,9 +317,9 @@ def update_email(request, user_id):
     return redirect('accounts:verification_pending')
 
 def profile_creation(request):
-    """
-    Display the profile creation page with buttons to redirect to appropriate form.
-    """
+    
+    #Display the profile creation page with buttons to redirect to appropriate form.
+    
     if not request.user.is_authenticated:
         return redirect('accounts:signup')
 
@@ -654,7 +654,7 @@ def signup_gen(request):
                 {verification_link}
                 If you didn't sign up for this account, you can ignore this email.
             '''
-            message_html = format_html(f"""
+            message_html = format_html(f'''
                 <div style="font-family: Arial, sans-serif; text-align: center;">
                     <h2>Welcome, {username}!</h2>
                     <p>Thank you for signing up! Please click the button below to verify your email address:</p>
@@ -664,7 +664,7 @@ def signup_gen(request):
                     <p>If you didn't sign up for this account, you can ignore this email.</p>
                     <p>This link will expire in 24 hours.</p>
                 </div>
-            """)
+            ''')
 
             email = EmailMultiAlternatives(subject, message_text, 'info@nilltechsolutions.com', [email])
             email.attach_alternative(message_html, "text/html")
@@ -703,3 +703,4 @@ def login_gen(request):
     else:
         return render(request, 'login_gen.html')
 
+"""

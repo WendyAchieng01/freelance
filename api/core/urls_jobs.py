@@ -1,8 +1,9 @@
 from django.urls import path
 from .views import ( 
                     JobViewSet, ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,
-                    ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,JobsByClientView,
-                    JobsWithResponsesView,AdvancedJobSearchAPIView,FreelancerJobStatusView,ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
+                    ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,
+                    JobsWithResponsesView,AdvancedJobSearchAPIView,FreelancerJobStatusView,
+                    ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
                     
 )
 
@@ -22,11 +23,9 @@ urlpatterns = [
     path('discover/', JobDiscoveryView.as_view(), name='job-discovery-default'),
     
     #status
-    path('freelancer/<str:status_filter>/',FreelancerJobStatusView.as_view(), name='freelancer-job-status'),
-    path('client/<str:status_filter>/',ClientJobStatusView.as_view(), name='client-job-status'),
+    path('freelancer/',FreelancerJobStatusView.as_view(), name='freelancer-job-status'),
+    path('by-client/',ClientJobStatusView.as_view(), name='client-job-status'),
     
-    #client joblist view
-    path('by-client/', JobsByClientView.as_view(), name='jobs-by-client-id-or-post'),
     
     #notification
     path('notifications/summary/', NotificationSummaryView.as_view(), name='notification-summary'),

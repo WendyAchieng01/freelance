@@ -85,8 +85,8 @@ class RegisterSerializer(serializers.Serializer):
         password = validated_data.pop('password1')
 
         user = User.objects.create_user(
-            username=user_data['username'],
-            email=user_data['email'],
+            username=user_data['username'].lower(),
+            email=user_data['email'].lower(),
             first_name=user_data.get('first_name', ''),
             last_name=user_data.get('last_name', ''),
             password=password,
@@ -120,7 +120,7 @@ class LoginSerializer(serializers.Serializer):
     
 
     def validate(self, data):
-        username = data.get('username')
+        username = data.get('username').lower()
         password = data.get('password')
 
         if not username or not password:
