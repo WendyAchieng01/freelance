@@ -67,7 +67,7 @@ class JobSerializer(serializers.ModelSerializer):
             'preferred_freelancer_level', 'slug',
             'selected_freelancer', 'payment_verified', 'responses'
         ]
-        read_only_fields = ['posted_date', 'payment_verified']
+        read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
         
         
     def validate_skills_required(self, value):
