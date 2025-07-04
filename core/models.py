@@ -9,23 +9,26 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
 from datetime import timedelta
+from accounts.models import Skill
+from django.utils.timezone import now
+from .choices import CATEGORY_CHOICES
+
+
+class JobCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 # Create your models here
 class Job(models.Model):
-    CATEGORY_CHOICES = (
-        ('data_entry', 'Data Entry'),
-        ('translation', 'Translation'),
-        ('transcription', 'Transcription and Captioning'),
-        ('graphics', 'Graphics'),
-        ('writing', 'Writing and Editing'),
-        ('web_dev', 'App and Web Development'),
-        ('project_mgmt', 'IT Project Management'),
-        ('testing', 'Software Testing'),
-        ('virtual_assist', 'Virtual Assistance'),
-        ('social_media', 'Social Media Management'),
-        ('ai_training', 'AI Model Training'),
-    )
     
     STATUS_CHOICES = (
         ('open', 'Open'),
@@ -34,17 +37,16 @@ class Job(models.Model):
     )
     
     title = models.CharField(max_length=100)
-    category = models.CharField(
-        max_length=20,
-        choices=CATEGORY_CHOICES
-    )
+    category = models.ForeignKey(JobCategory, on_delete=models.SET_NULL,null=True,related_name='jobs')
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     posted_date = models.DateTimeField(auto_now_add=True)
     deadline_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
-    max_freelancers = models.IntegerField(default=1)
+    max_freelancers = models.IntegerField(default=1, help_text="Total number of applications to receive")
+    required_freelancers = models.PositiveSmallIntegerField(default=1, help_text="If the job requires more than one freelancer")
+    skills_required = models.ManyToManyField(Skill, related_name="required_skills")
     preferred_freelancer_level = models.CharField(max_length=50, choices=(
         ('entry', 'Entry Level'),
         ('intermediate', 'Intermediate'),
@@ -52,11 +54,7 @@ class Job(models.Model):
     ), default='intermediate')
     
     # New field to track selected freelancer
-    selected_freelancer = models.ForeignKey(
-        User, 
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL, 
+    selected_freelancer = models.ForeignKey(User,  null=True, blank=True, on_delete=models.SET_NULL, 
         related_name='selected_jobs'
     )
     
@@ -77,6 +75,45 @@ class Job(models.Model):
         if self.slug:
             return reverse('payment-initiate-slug', kwargs={'slug': self.slug})
         return reverse('payment-initiate-id', kwargs={'id': self.id})
+    
+    def mark_as_completed(self, force=False):
+        """
+        Marks the job as completed if all conditions are met.
+        """
+        if self.status == 'completed':
+            return False  # Already completed
+
+        if not force:
+            # Only allow marking as completed if in progress
+            if self.status != 'in_progress':
+                return False
+
+            # Only allow if payment has been verified
+            if not self.payment_verified:
+                return False
+
+            # Must have a selected freelancer to complete the job
+            if not self.selected_freelancer < self.required_freelancers:
+                return False
+
+
+        self.status = 'completed'
+        self.save(update_fields=['status'])
+        return True
+    
+    def add_selected_freelancer(self, user):
+        """
+        Adds a freelancer to selected_freelancers if limit not exceeded.
+        Returns True if added, False otherwise.
+        """
+        if self.selected_freelancers.filter(id=user.id).exists():
+            return False  # Already selected
+
+        if self.selected_freelancers.count() >= self.required_freelancers:
+            return False  # Limit reached
+
+        self.selected_freelancers.add(user)
+        return True
     
     
     @property
@@ -99,7 +136,7 @@ class Job(models.Model):
             return f"{self.title} ({self.get_category_display()})"
         except Exception:
             return self.title or "Untitled Job"
-    
+
 
 class JobBookmark(models.Model):
     user = models.ForeignKey( User, on_delete=models.CASCADE, related_name='bookmarks')
@@ -279,7 +316,7 @@ class Review(models.Model):
     
     class Meta:
         verbose_name_plural = 'Review'
-        #unique_together = ('reviewer', 'recipient')  # Prevents multiple reviews from same user
+        #unique_together = ('reviewer', 'recipient') 
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"

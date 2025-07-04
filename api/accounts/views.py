@@ -435,7 +435,7 @@ class ProfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 class SkillViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @extend_schema(
         description="List or create skills (admin only).",

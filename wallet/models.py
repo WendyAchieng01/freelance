@@ -85,8 +85,7 @@ class WalletTransaction(models.Model):
 
 
 class Rate(models.Model):
-    rate_amount = models.DecimalField(
-        max_digits=5, decimal_places=2, help_text="Platform fee in percentage")
+    rate_amount = models.DecimalField(max_digits=5, decimal_places=2, help_text="Platform fee in percentage")
     effective_from = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

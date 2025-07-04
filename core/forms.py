@@ -1,6 +1,6 @@
 import os
 from django import forms
-from .models import Job, Response, Review
+from .models import Job, Response, Review,JobCategory
 
 class ResponseForm(forms.ModelForm):
     class Meta:
@@ -258,7 +258,7 @@ class CreateJobForm(forms.ModelForm):
         fields = ['title', 'category', 'description', 'price', 'deadline_date', 'max_freelancers']
         widgets = {
             'deadline_date': forms.DateInput(attrs={'type': 'date'}),
-            'category': forms.Select(choices=Job.CATEGORY_CHOICES)
+            'category': forms.Select(choices=JobCategory.name)
         }
 
 class ReviewForm(forms.ModelForm):
