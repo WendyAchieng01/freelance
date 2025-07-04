@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import ( 
-                    JobViewSet, ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,
+                    JobViewSet, JobCategoryListCreateView,JobCategoryRetrieveUpdateDeleteView,
+                    ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,
                     ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,
                     JobsWithResponsesView,AdvancedJobSearchAPIView,FreelancerJobStatusView,
                     ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
@@ -32,6 +33,10 @@ urlpatterns = [
     
     #dashboard
     path('dashboard/summary/', JobDashboardSummaryView.as_view(), name='dashboard-summary'),
+    
+    #job categories
+    path('categories/', JobCategoryListCreateView.as_view(), name='jobcategory-list-create'),
+    path('categories/<slug:slug>/', JobCategoryRetrieveUpdateDeleteView.as_view(), name='jobcategory-detail'),
     
     
     #Job list,detail,create

@@ -15,6 +15,7 @@ class JobAdmin(admin.ModelAdmin):
         'deadline_date',
         'payment_verified',
         'is_max_freelancers_reached_display'
+        
     )
     list_filter = (
         'category',
@@ -41,6 +42,7 @@ class JobAdmin(admin.ModelAdmin):
                 'client',
                 'selected_freelancer',
                 'max_freelancers',
+                'required_freelancers'
                 'preferred_freelancer_level',
                 'payment_verified',
                 'slug',
@@ -69,6 +71,13 @@ class JobAdmin(admin.ModelAdmin):
 
 admin.site.register(Job, JobAdmin)
 
+
+@admin.register(JobCategory)
+class JobCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name',)
+    ordering = ('name',)
 
 
 @admin.register(Response)

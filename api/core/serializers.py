@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
-from accounts.models import Profile
-from core.models import Job, Response, Chat, Message, MessageAttachment, Review,JobBookmark,Notification
+from accounts.models import Profile,Skill
+from core.models import Job,JobCategory, Response, Chat, Message, MessageAttachment, Review,JobBookmark,Notification
 from accounts.models import FreelancerProfile
-from api.accounts.serializers import ProfileMiniSerializer
+from api.accounts.serializers import ProfileMiniSerializer,SkillSerializer
 import os
 from datetime import datetime, time
+from django.utils import timezone
+
 
 User = get_user_model()
 
@@ -34,20 +36,74 @@ class NestedResponseSerializer(serializers.ModelSerializer):
             return obj.user.username if obj.user else None
 
 
+class JobCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobCategory
+        fields = ['id', 'name']
+        extra_kwargs = {
+            'name': {'help_text': 'Unique category name (e.g., web_dev, ai_training)'}
+        }
+
+
+
 class JobSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField()
     selected_freelancer = serializers.SerializerMethodField()
     responses = NestedResponseSerializer(many=True, read_only=True)
+    
+    category = serializers.CharField(write_only=True)
+    category_display = serializers.SerializerMethodField(read_only=True)
+    
+    skills_required = serializers.ListField(child=serializers.CharField(),write_only=True)
+    skills_required_display = SkillSerializer(many=True, read_only=True, source='skills_required')
+
 
     class Meta:
         model = Job
         fields = [
-            'id','client', 'title', 'category', 'description', 'price',
+            'id', 'client', 'title', 'category', 'category_display', 'description', 'price',
             'posted_date', 'deadline_date', 'status',
-            'max_freelancers', 'preferred_freelancer_level','slug',
+            'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
+            'preferred_freelancer_level', 'slug',
             'selected_freelancer', 'payment_verified', 'responses'
         ]
         read_only_fields = ['posted_date', 'payment_verified']
+        
+        
+    def validate_skills_required(self, value):
+        skill_objs = []
+        for name in value:
+            name = name.strip().lower()
+            skill, created = Skill.objects.get_or_create(name=name)
+            skill_objs.append(skill)
+        return skill_objs
+
+    def validate_category(self, value):
+        value = value.strip().lower()
+        category, created = JobCategory.objects.get_or_create(name=value)
+        return category
+
+    def create(self, validated_data):
+        category = validated_data.pop('category')
+        skills = validated_data.pop('skills_required', [])
+        job = Job.objects.create(**validated_data, category=category)
+        job.skills_required.set(skills)
+        return job
+
+    def update(self, instance, validated_data):
+        category = validated_data.pop('category', None)
+        skills = validated_data.pop('skills_required', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if category:
+            instance.category = category
+        instance.save()
+        if skills is not None:
+            instance.skills_required.set(skills)
+        return instance
+
+    def get_category_display(self, obj):
+        return obj.category.name if obj.category else None
 
     def get_client(self, obj):
         profile = obj.client.user.profile
@@ -133,16 +189,38 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class JobSearchSerializer(serializers.ModelSerializer):
-    client = serializers.StringRelatedField()
-    selected_freelancer = serializers.StringRelatedField()
+    category = JobCategorySerializer(read_only=True)
+    urgency = serializers.SerializerMethodField()
+    bookmarked = serializers.SerializerMethodField()
+    has_applied = serializers.SerializerMethodField()
+    has_applied_and_bookmarked = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
         fields = [
-            'id', 'title', 'slug', 'category', 'description', 'price',
-            'posted_date', 'deadline_date', 'status', 'client',
-            'selected_freelancer', 'payment_verified'
+            'id', 'title', 'slug', 'category', 'description',
+            'price', 'posted_date', 'deadline_date', 'status',
+            'client', 'selected_freelancer', 'payment_verified',
+            'urgency', 'bookmarked', 'has_applied', 'has_applied_and_bookmarked'
         ]
+
+    def get_urgency(self, obj):
+        if obj.deadline_date:
+            return (obj.deadline_date - timezone.now()).days <= 2
+        return False
+
+    def get_bookmarked(self, obj):
+        bookmarked_ids = self.context.get('bookmarked_ids', set())
+        return obj.id in bookmarked_ids
+
+    def get_has_applied(self, obj):
+        applied_ids = self.context.get('applied_ids', set())
+        return obj.id in applied_ids
+
+    def get_has_applied_and_bookmarked(self, obj):
+        bookmarked_ids = self.context.get('bookmarked_ids', set())
+        applied_ids = self.context.get('applied_ids', set())
+        return obj.id in bookmarked_ids and obj.id in applied_ids
 
 
 
