@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema_field, OpenApiTypes,OpenApiResponse,extend_schema,OpenApiParameter
+from drf_spectacular.utils import extend_schema_field, OpenApiTypes, OpenApiResponse, extend_schema, OpenApiParameter, OpenApiRequest, extend_schema_view
 from rest_framework.throttling import ScopedRateThrottle
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -59,12 +59,34 @@ class CustomPaginator(PageNumberPagination):
     max_page_size = 100
 
 
+@extend_schema(
+    summary="List all job categories or create a new one",
+    description="GET returns a list of all job categories. POST allows clients to create a new category by name.",
+    request=JobCategorySerializer,
+    responses={
+        200: JobCategorySerializer(many=True),
+        201: OpenApiResponse(description="Category created successfully."),
+        400: OpenApiResponse(description="Invalid input data."),
+        403: OpenApiResponse(description="Authentication required to create.")
+    }
+)
 class JobCategoryListCreateView(generics.ListCreateAPIView):
     queryset = JobCategory.objects.all().order_by('name')
     serializer_class = JobCategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
+@extend_schema(
+    summary="Retrieve, update, or delete a job category",
+    description="Handles individual category retrieval, update, or deletion by slug.",
+    responses={
+        200: JobCategorySerializer,
+        204: OpenApiResponse(description="Deleted successfully."),
+        400: OpenApiResponse(description="Bad request."),
+        404: OpenApiResponse(description="Category not found."),
+        403: OpenApiResponse(description="Authentication required.")
+    }
+)
 class JobCategoryRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = JobCategory.objects.all()
     serializer_class = JobCategorySerializer
@@ -105,13 +127,95 @@ class JobViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 "You cannot modify a job after it has been assigned.")
         serializer.save()
+        
+    @extend_schema(
+        summary="Create a new job",
+        description="Clients can post a new job. Skills and category are created if they don’t exist.",
+        request=JobSerializer,
+        responses={
+            201: OpenApiResponse(response=JobSerializer, description="Job created successfully."),
+            400: OpenApiResponse(description="Invalid data."),
+            403: OpenApiResponse(description="Only clients can create jobs.")
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
+    @extend_schema(
+        summary="List all jobs",
+        description="Returns a paginated list of all jobs. Search and filter available.",
+        responses={
+            200: OpenApiResponse(response=JobSerializer(many=True), description="List of jobs")
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Retrieve job details",
+        description="Returns full job details including client, selected freelancer, skills, responses, and reviews.",
+        responses={
+            200: OpenApiResponse(response=JobSerializer),
+            404: OpenApiResponse(description="Job not found.")
+        }
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Update a job",
+        description="Clients can update jobs that have no selected freelancer.",
+        request=JobSerializer,
+        responses={
+            200: OpenApiResponse(response=JobSerializer),
+            400: OpenApiResponse(description="Cannot update a job once a freelancer is selected."),
+            403: OpenApiResponse(description="Only the job owner can update."),
+            404: OpenApiResponse(description="Job not found.")
+        }
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Delete a job",
+        description="Only job owners can delete jobs. Cannot delete if a freelancer is already selected.",
+        responses={
+            204: OpenApiResponse(description="Job deleted successfully."),
+            403: OpenApiResponse(description="Only the job owner can delete."),
+            404: OpenApiResponse(description="Job not found.")
+        }
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    
+    
+    @extend_schema(
+        summary="List jobs created by current client",
+        description="Returns a list of jobs posted by the authenticated client.",
+        responses={
+            200: OpenApiResponse(response=JobSerializer(many=True)),
+            403: OpenApiResponse(description="Only clients can view their jobs.")
+        }
+    )
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsClient])
     def my_jobs(self, request):
         jobs = self.queryset.filter(client__user=request.user)
         serializer = self.get_serializer(jobs, many=True)
         return DRFResponse(serializer.data)
 
+    @extend_schema(
+        summary="Match freelancers to a job",
+        description="Returns a ranked list of freelancers matched to this job based on skills.",
+        responses={
+            200: OpenApiResponse(description="Matching freelancers with score and skills."),
+            403: OpenApiResponse(description="Only the job owner can access matches."),
+            404: OpenApiResponse(description="Job not found.")
+        }
+    )
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsJobOwner])
     def matches(self, request, pk=None):
         job = self.get_object()
@@ -122,6 +226,15 @@ class JobViewSet(viewsets.ModelViewSet):
             'skills': [s.name for s in m[0].skills.all()]
         } for m in matches])
 
+    @extend_schema(
+        summary="Mark a job as completed",
+        description="Marks the job as completed if it's in progress and a freelancer has been selected.",
+        responses={
+            200: OpenApiResponse(description="Job marked as completed successfully."),
+            400: OpenApiResponse(description="Job could not be marked as completed."),
+            403: OpenApiResponse(description="Only the job owner can perform this action.")
+        }
+    )
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsJobOwner])
     def mark_completed(self, request, slug=None):
         job = self.get_object()
@@ -139,6 +252,18 @@ class JobViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
     
+    @extend_schema(
+        summary="List job applications",
+        description="Returns all job applications submitted by the freelancer or received by the client.",
+        responses={
+            200: OpenApiResponse(
+                description="List of job applications",
+                response=ResponseListSerializer(many=True)
+            ),
+            400: OpenApiResponse(description="Invalid user type."),
+            403: OpenApiResponse(description="Authentication required.")
+        }
+    )
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def aplications(self, request):
         """
@@ -167,8 +292,50 @@ class JobViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_200_OK)
 
 
+
 class ApplyToJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    @extend_schema(
+        summary="Apply to a job",
+        description="Submit an application to a job with optional CV, cover letter, and portfolio.",
+        request={
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "extra_data": {
+                        "type": "string",
+                        "format": "json",
+                        "description": "Optional JSON data (e.g., {\"note\": \"Available\"})"
+                    },
+                    "cv": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "CV file (PDF, DOC, DOCX)"
+                    },
+                    "cover_letter": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "Cover letter file"
+                    },
+                    "portfolio": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "Portfolio file (PDF or images)"
+                    },
+                },
+                "required": []
+            }
+        },
+        responses={
+            201: OpenApiResponse(description="Application submitted successfully."),
+            400: OpenApiResponse(description="Bad request (e.g. duplicate application)."),
+            403: OpenApiResponse(description="Only freelancers can apply.")
+        }
+    )
+    
+
 
     def post(self, request, slug):
         job = get_object_or_404(Job, slug=slug)
@@ -198,6 +365,20 @@ class ApplyToJobView(APIView):
         return DRFResponse({'detail': 'Successfully applied.', 'data': response_serializer.data}, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    summary="Unapply from a job",
+    description="Allows a freelancer to withdraw their application to a job by its slug.",
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                         description='Slug of the job', required=True, type=str)
+    ],
+    responses={
+        204: OpenApiResponse(description="Successfully removed your application."),
+        400: OpenApiResponse(description="No existing application found."),
+        403: OpenApiResponse(description="Only freelancers can unapply."),
+        404: OpenApiResponse(description="Job not found.")
+    }
+)
 class UnapplyFromJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -216,6 +397,43 @@ class UnapplyFromJobView(APIView):
         return DRFResponse({'detail': 'Successfully removed your application.'}, status=status.HTTP_204_NO_CONTENT)
     
 
+@extend_schema(
+    summary="Update application files",
+    description="Allows a freelancer to update their submitted CV, cover letter, or portfolio for a specific job application.",
+    request={
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "cv": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Updated CV file"
+                },
+                "cover_letter": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Updated cover letter file"
+                },
+                "portfolio": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Updated portfolio file"
+                },
+            },
+            "required": []
+        }
+    },
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                         description='Slug of the job', required=True, type=str)
+    ],
+    responses={
+        200: OpenApiResponse(description="Files updated successfully.", response=ApplyResponseSerializer),
+        400: OpenApiResponse(description="Invalid input or file format."),
+        403: OpenApiResponse(description="Authentication required."),
+        404: OpenApiResponse(description="You have not applied to this job.")
+    }
+)
 class UpdateResponseFilesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
@@ -238,6 +456,24 @@ class UpdateResponseFilesView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Get responses for a job",
+    description="""
+Returns job applications based on user type:
+- **Client:** Gets all responses submitted for their job.
+- **Freelancer:** Gets their own submitted response if they applied.
+""",
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                         description='Slug of the job', required=True, type=str)
+    ],
+    responses={
+        200: OpenApiResponse(description="Applications fetched successfully.", response=ResponseListSerializer),
+        400: OpenApiResponse(description="Invalid user profile."),
+        403: OpenApiResponse(description="Unauthorized access."),
+        404: OpenApiResponse(description="Job not found or freelancer did not apply.")
+    }
+)
 class ResponseListForJobView(generics.GenericAPIView):
     serializer_class = ResponseListSerializer
     permission_classes = [IsAuthenticated]
@@ -293,6 +529,14 @@ class ResponseListForJobView(generics.GenericAPIView):
         )
 
 
+@extend_schema(
+    summary="List jobs with responses",
+    description="Returns all jobs owned by the authenticated client that have at least one response (application).",
+    responses={
+        200: OpenApiResponse(description="Jobs with responses fetched successfully.", response=JobWithResponsesSerializer(many=True)),
+        403: OpenApiResponse(description="Authentication credentials were not provided.")
+    }
+)
 class JobsWithResponsesView(generics.ListAPIView):
     serializer_class = JobWithResponsesSerializer
     permission_classes = [IsAuthenticated]
@@ -306,6 +550,27 @@ class JobsWithResponsesView(generics.ListAPIView):
         )
             
 
+@extend_schema(
+    summary="Accept a freelancer for a job",
+    description="""
+Assigns a freelancer to a job, marks it as in-progress, and ensures:
+- The requesting user owns the job.
+- The freelancer applied to the job.
+- Payment has been verified.
+""",
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                         description='Slug of the job', required=True, type=str),
+        OpenApiParameter(name='identifier', location=OpenApiParameter.PATH,
+                         description='Username or ID of the freelancer', required=True, type=str)
+    ],
+    responses={
+        200: OpenApiResponse(description="Freelancer accepted successfully."),
+        400: OpenApiResponse(description="Freelancer did not apply or one is already selected."),
+        403: OpenApiResponse(description="User is not job owner."),
+        404: OpenApiResponse(description="Job or freelancer not found.")
+    }
+)
 class AcceptFreelancerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -343,6 +608,22 @@ class AcceptFreelancerView(APIView):
         return DRFResponse({'message': f'{freelancer.username} has been accepted for this job.'}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Unassign freelancer from job --> Application Rejected",
+    description="Allows the client to remove a previously accepted freelancer from their job.",
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                            description='Slug of the job', required=True, type=str),
+        OpenApiParameter(name='identifier', location=OpenApiParameter.PATH,
+                            description='Username or ID of the freelancer', required=True, type=str)
+    ],
+    responses={
+        200: OpenApiResponse(description="Freelancer unassigned successfully."),
+        400: OpenApiResponse(description="Freelancer was not selected."),
+        403: OpenApiResponse(description="User is not job owner."),
+        404: OpenApiResponse(description="Job or freelancer not found.")
+    }
+)
 class RejectFreelancerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -367,6 +648,20 @@ class RejectFreelancerView(APIView):
         return DRFResponse({'message': f'{freelancer.username} has been unassigned from this job.'}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Notification summary",
+    description="""
+        Returns a summary of:
+        - Unread messages (excluding current users own messages).
+        - Job applications (for clients).
+        - Bookmarked jobs (for freelancers).
+        """,
+    responses={
+        200: OpenApiResponse(description="Summary of notifications."),
+        403: OpenApiResponse(description="Authentication credentials were not provided."),
+        500: OpenApiResponse(description="Failed to retrieve notifications.")
+    }
+)
 class NotificationSummaryView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -413,8 +708,7 @@ class AdvancedJobSearchAPIView(generics.ListAPIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'search'
 
-    filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter]
     filterset_class = AdvancedJobFilter
     search_fields = ['title', 'description', 'category']
     ordering_fields = ['posted_date', 'price']
@@ -478,8 +772,17 @@ class AdvancedJobSearchAPIView(generics.ListAPIView):
         except Exception as e:
             logger.error(f"Error during job search response: {e}")
             return DRFResponse({'error': 'Unexpected search error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-        
+
+
+@extend_schema(
+    summary="List bookmarked jobs for the authenticated user",
+    description="Returns paginated bookmarked jobs by the current authenticated user (freelancer).",
+    responses={
+        200: OpenApiResponse(description="List of bookmarked jobs.", response=BookmarkedJobSerializer(many=True)),
+        401: OpenApiResponse(description="Authentication credentials were not provided."),
+    },
+    tags=["Jobs", "Bookmarks"]
+)
 class JobBookmarkListView(generics.ListAPIView):
     serializer_class = BookmarkedJobSerializer
     permission_classes = [IsAuthenticated]
@@ -489,6 +792,28 @@ class JobBookmarkListView(generics.ListAPIView):
         return JobBookmark.objects.filter(user=self.request.user).select_related('job', 'job__client')
 
 
+@extend_schema(
+    summary="Add a bookmark to a job",
+    description="""
+            Allows an authenticated freelancer to bookmark an open job.
+            - Only jobs with status 'open' can be bookmarked.
+            - Returns if bookmark was created or already exists.
+            - Also indicates if user has applied to the job.
+            """,
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                            description='Job slug to bookmark', required=True, type=str)
+    ],
+    request=None,
+    responses={
+        201: OpenApiResponse(description="Bookmark created successfully."),
+        200: OpenApiResponse(description="Job was already bookmarked."),
+        400: OpenApiResponse(description="Job is not open for bookmarking."),
+        401: OpenApiResponse(description="Authentication credentials were not provided."),
+        500: OpenApiResponse(description="Failed to bookmark job."),
+    },
+    tags=["Jobs", "Bookmarks"]
+)
 class AddBookmarkView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -527,8 +852,22 @@ class AddBookmarkView(APIView):
             return DRFResponse({'error': 'Failed to bookmark job.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
+@extend_schema(
+    summary="Remove a bookmark from a job",
+    description="Allows an authenticated freelancer to remove a bookmark from a job if it exists.",
+    parameters=[
+        OpenApiParameter(name='slug', location=OpenApiParameter.PATH,
+                         description='Job slug to remove bookmark from', required=True, type=str)
+    ],
+    request=None,
+    responses={
+        200: OpenApiResponse(description="Bookmark removed successfully."),
+        404: OpenApiResponse(description="Bookmark did not exist."),
+        401: OpenApiResponse(description="Authentication credentials were not provided."),
+        500: OpenApiResponse(description="Failed to remove bookmark."),
+    },
+    tags=["Jobs", "Bookmarks"]
+)
 class RemoveBookmarkView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -550,22 +889,33 @@ class RemoveBookmarkView(APIView):
             return DRFResponse({'error': 'Failed to remove bookmark.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema(
+    summary="Freelancer Job Status Overview",
+    description="""
+        Get jobs filtered by status for the authenticated freelancer.
+        Supports filters for:
+        - status: applied, rejected, selected, in_progress, completed, open
+        - ordering by posted date or other fields
+        Returns job listings along with stats (application counts, rejections, active, completed, bookmarks).
+        """,
+    parameters=[
+        OpenApiParameter(name='status', description="Job status filter", required=False,
+                            type=str, enum=['applied', 'rejected', 'selected', 'in_progress', 'completed', 'open']),
+        OpenApiParameter(
+            name='ordering', description="Order jobs by field (e.g. -posted_date)", required=False, type=str),
+        OpenApiParameter(
+            name='page', description="Page number for pagination", required=False, type=int),
+    ],
+    responses={
+        200: OpenApiResponse(description="Paginated job list with freelancer status summary"),
+        400: OpenApiResponse(description="Invalid status filter or request"),
+        403: OpenApiResponse(description="Access denied for non-freelancers"),
+    },
+    tags=["Jobs", "Freelancer"]
+)
 class FreelancerJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(name='status', type=str, required=False,
-                             enum=['open', 'in_progress', 'completed', 'applied', 'selected', 'rejected']),
-            OpenApiParameter(name='category', type=str, required=False),
-            OpenApiParameter(name='category_slug', type=str, required=False),
-            OpenApiParameter(name='deadline_before', type=str, required=False),
-            OpenApiParameter(name='deadline_after', type=str, required=False),
-            OpenApiParameter(name='posted_before', type=str, required=False),
-            OpenApiParameter(name='posted_after', type=str, required=False),
-            OpenApiParameter(name='ordering', type=str, required=False),
-        ]
-    )
     def get(self, request):
         user = request.user
         profile = user.profile
@@ -689,22 +1039,46 @@ class FreelancerJobStatusView(APIView):
         return DRFResponse({'detail': 'Invalid status filter.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    summary="Client Job Status Overview",
+    description="""
+            Get jobs posted by the authenticated client filtered by status.
+            Supports filters and date ranges:
+            - status: open, in_progress, completed, applied, selected, rejected
+            - category filters
+            - deadline and posted date filters
+            Returns paginated job lists plus stats on applications, selections, and rejections.
+            """,
+    parameters=[
+        OpenApiParameter(name='status', description="Job status filter", required=False,
+                            type=str, enum=['open', 'in_progress', 'completed', 'applied', 'selected', 'rejected']),
+        OpenApiParameter(
+            name='category', description="Filter by category name", required=False, type=str),
+        OpenApiParameter(
+            name='category_slug', description="Filter by category slug", required=False, type=str),
+        OpenApiParameter(name='deadline_before',
+                            description="Filter jobs with deadline before this date (YYYY-MM-DD)", required=False, type=str),
+        OpenApiParameter(name='deadline_after',
+                            description="Filter jobs with deadline after this date (YYYY-MM-DD)", required=False, type=str),
+        OpenApiParameter(
+            name='posted_before', description="Filter jobs posted before this date (YYYY-MM-DD)", required=False, type=str),
+        OpenApiParameter(
+            name='posted_after', description="Filter jobs posted after this date (YYYY-MM-DD)", required=False, type=str),
+        OpenApiParameter(
+            name='ordering', description="Order jobs by fields", required=False, type=str),
+        OpenApiParameter(
+            name='page', description="Page number for pagination", required=False, type=int),
+    ],
+    responses={
+        200: OpenApiResponse(description="Paginated client job list with status summary"),
+        400: OpenApiResponse(description="Invalid status or filter parameters"),
+        403: OpenApiResponse(description="Access denied for non-clients"),
+    },
+    tags=["Jobs", "Client"]
+)
 class ClientJobStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(name='status', type=str, required=False,
-                            enum=['open', 'in_progress', 'completed', 'applied', 'selected', 'rejected']),
-            OpenApiParameter(name='category', type=str, required=False),
-            OpenApiParameter(name='category_slug', type=str, required=False),
-            OpenApiParameter(name='deadline_before', type=str, required=False),
-            OpenApiParameter(name='deadline_after', type=str, required=False),
-            OpenApiParameter(name='posted_before', type=str, required=False),
-            OpenApiParameter(name='posted_after', type=str, required=False),
-            OpenApiParameter(name='ordering', type=str, required=False),
-        ]
-    )
     def get(self, request):
         user = request.user
         profile = user.profile
@@ -859,6 +1233,19 @@ class ClientJobStatusView(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    summary="Job Dashboard Summary",
+    description="""
+        Retrieve a summary dashboard for the authenticated user, showing job stats and wallet stats.
+        Returns different data depending on user type (client or freelancer).
+        """,
+    responses={
+        200: OpenApiResponse(description="Dashboard summary including job and wallet statistics"),
+        400: OpenApiResponse(description="Missing user profile or user type"),
+        500: OpenApiResponse(description="Failed to retrieve dashboard summary"),
+    },
+    tags=["Dashboard"]
+)
 class JobDashboardSummaryView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -932,6 +1319,38 @@ class JobDiscoveryPagination(PageNumberPagination):
 class JobDiscoveryView(APIView):
     permission_classes = [AllowAny]
     pagination_class = JobDiscoveryPagination
+    
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='category',
+                description='Filter jobs by category',
+                required=False,
+                type=str
+            ),
+            OpenApiParameter(
+                name='preferred_freelancer_level',
+                description='Filter jobs by preferred freelancer level',
+                required=False,
+                type=str
+            ),
+            OpenApiParameter(
+                name='status_filter',
+                description="Filter jobs by status filter: 'best_match', 'most_recent', 'trending', 'near_deadline', or 'open'",
+                required=False,
+                type=str,
+                location=OpenApiParameter.QUERY,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(description="List of jobs with pagination and bookmark/application info"),
+            400: OpenApiResponse(description="Invalid status_filter"),
+            403: OpenApiResponse(description="Authentication required for best_match filter"),
+            500: OpenApiResponse(description="Unexpected server error"),
+        },
+        tags=['Job Discovery'],
+        summary="Retrieve a paginated list of jobs with optional filters and status filters",
+    )
 
     def get(self, request, status_filter=None):
         user = request.user if request.user.is_authenticated else None
@@ -1036,6 +1455,45 @@ class JobDiscoveryView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all chats for the authenticated user",
+        responses={200: ChatSerializer(many=True)}
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a specific chat",
+        responses={200: ChatSerializer}
+    ),
+    create=extend_schema(
+        summary="Create a new chat (only allowed by the job's client)",
+        responses={
+            201: ChatSerializer,
+            400: OpenApiResponse(description="Job ID is required"),
+            403: OpenApiResponse(description="Only the job's client can create a chat")
+        }
+    ),
+    update=extend_schema(
+        summary="Update a chat (permission required)",
+        responses={
+            200: ChatSerializer,
+            403: OpenApiResponse(description="Permission denied"),
+        }
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a chat",
+        responses={
+            200: ChatSerializer,
+            403: OpenApiResponse(description="Permission denied"),
+        }
+    ),
+    destroy=extend_schema(
+        summary="Archive (delete) a chat (permission required)",
+        responses={
+            200: OpenApiResponse(description="Chat archived successfully"),
+            403: OpenApiResponse(description="Permission denied"),
+        }
+    )
+)
 class ChatViewSet(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
     permission_classes = [IsAuthenticated]
@@ -1093,6 +1551,8 @@ class ChatViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser]
+    
 
     def get_queryset(self):
         user = self.request.user
@@ -1112,6 +1572,44 @@ class MessageViewSet(viewsets.ModelViewSet):
         if not chat.can_access(self.request.user):
             return None
         return chat
+
+    @extend_schema(
+        summary="Send a message with optional attachments",
+        description=(
+            "Send a message in a chat with optional file attachments. "
+            "Attachments can be multiple files (images, documents, etc.)."
+        ),
+        request={
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "description": "The text content of the message",
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary",
+                            "description": "File attachment (image, doc, etc.)"
+                        },
+                        "description": "Optional list of file attachments",
+                    },
+                },
+                "required": ["content"],
+            }
+        },
+        responses={
+            201: OpenApiResponse(
+                description="Message sent successfully.",
+                response=MessageSerializer
+            ),
+            400: OpenApiResponse(description="Bad request, e.g. missing content or invalid files."),
+            403: OpenApiResponse(description="Access denied to chat or forbidden action."),
+        },
+        tags=["Messages"],
+    )
 
     def create(self, request, chat_uuid=None):
         chat = self.get_chat(chat_uuid)
@@ -1165,6 +1663,15 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         return DRFResponse(self.get_serializer(message).data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(
+        summary="List messages by chat UUID",
+        description="Retrieve all non-deleted messages for a given chat.",
+        responses={
+            200: OpenApiResponse(description="List of messages", response=MessageSerializer(many=True)),
+            403: OpenApiResponse(description="Chat not found or access denied."),
+        },
+        tags=["Messages"],
+    )
     def list_by_chat(self, request, chat_uuid=None):
         chat = self.get_chat(chat_uuid)
         if not chat:
@@ -1177,6 +1684,16 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(messages, many=True)
         return DRFResponse(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        summary="Retrieve a message by chat UUID and message ID",
+        description="Get details of a specific message within a chat.",
+        responses={
+            200: OpenApiResponse(description="Message details", response=MessageSerializer),
+            403: OpenApiResponse(description="Chat not found or access denied."),
+            404: OpenApiResponse(description="Message not found."),
+        },
+        tags=["Messages"],
+    )
     def retrieve_by_chat_uuid(self, request, chat_uuid=None, message_id=None):
         chat = self.get_chat(chat_uuid)
         if not chat:
@@ -1194,6 +1711,21 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(message)
         return DRFResponse(serializer.data)
 
+    @extend_schema(
+        summary="Update a message by chat UUID and message ID",
+        description=(
+            "Update message content if permitted. "
+            "Partial update supported."
+        ),
+        request=MessageSerializer,
+        responses={
+            200: OpenApiResponse(description="Message updated successfully."),
+            400: OpenApiResponse(description="Invalid data."),
+            403: OpenApiResponse(description="Permission denied or cannot edit this message."),
+            404: OpenApiResponse(description="Message not found."),
+        },
+        tags=["Messages"],
+    )
     def update_by_chat_uuid(self, request, chat_uuid=None, message_id=None):
         chat = self.get_chat(chat_uuid)
         if not chat:
@@ -1217,6 +1749,16 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.save()
         return DRFResponse({"message": "Message updated successfully."}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        summary="Delete (soft-delete) a message by chat UUID and message ID",
+        description="Soft-delete a message if user has permission.",
+        responses={
+            200: OpenApiResponse(description="Message deleted successfully."),
+            403: OpenApiResponse(description="Permission denied or cannot delete this message."),
+            404: OpenApiResponse(description="Message not found."),
+        },
+        tags=["Messages"],
+    )
     def destroy_by_chat_uuid(self, request, chat_uuid=None, message_id=None):
         chat = self.get_chat(chat_uuid)
         if not chat:
@@ -1242,10 +1784,22 @@ class MessageViewSet(viewsets.ModelViewSet):
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
-
+    
+    @extend_schema(
+        summary="List user notifications",
+        responses={200: NotificationSerializer(many=True)},
+        tags=["Notifications"],
+    )
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
 
+    @extend_schema(
+        summary="Create notification (not allowed)",
+        description="Manual creation of notifications is forbidden.",
+        responses={403: OpenApiResponse(
+            description="Notifications cannot be created manually.")},
+        tags=["Notifications"],
+    )
     def perform_create(self, serializer):
         logger.warning(
             f"User {self.request.user} tried to manually create a notification.")
@@ -1254,6 +1808,14 @@ class NotificationViewSet(viewsets.ModelViewSet):
             status=status.HTTP_403_FORBIDDEN
         )
 
+    @extend_schema(
+        summary="Update a notification",
+        responses={
+            200: OpenApiResponse(description="Notification updated successfully."),
+            403: OpenApiResponse(description="Permission denied to update this notification."),
+        },
+        tags=["Notifications"],
+    )
     def perform_update(self, serializer):
         notification = self.get_object()
         if notification.user != self.request.user:
@@ -1269,6 +1831,14 @@ class NotificationViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @extend_schema(
+        summary="Delete a notification",
+        responses={
+            200: OpenApiResponse(description="Notification deleted successfully."),
+            403: OpenApiResponse(description="Permission denied to delete this notification."),
+        },
+        tags=["Notifications"],
+    )
     def perform_destroy(self):
         notification = self.get_object()
         if notification.user != self.request.user:
@@ -1284,6 +1854,15 @@ class NotificationViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @extend_schema(
+        summary="Mark notification as read",
+        description="Mark a notification as read for the authenticated user.",
+        responses={
+            200: OpenApiResponse(description="Notification marked as read."),
+            403: OpenApiResponse(description="Permission denied to mark this notification."),
+        },
+        tags=["Notifications"],
+    )
     @action(detail=True, methods=['post'], url_path='mark-as-read')
     def mark_as_read(self, request, pk=None):
         notification = self.get_object()
@@ -1299,6 +1878,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated, CanReview]
+    
 
     def get_queryset(self):
         recipient_id = self.request.query_params.get('recipient')
@@ -1306,6 +1886,90 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Review.objects.filter(recipient_id=recipient_id)
         return Review.objects.all()
 
+    @extend_schema(
+        summary="List reviews",
+        description="Retrieve a list of reviews. Optionally filter by recipient user ID using ?recipient= query parameter.",
+        parameters=[
+            OpenApiParameter(
+                name='recipient',
+                description='Filter reviews by recipient user ID',
+                required=False,
+                type=int,
+                location=OpenApiParameter.QUERY,
+            )
+        ],
+        responses={
+            200: ReviewSerializer(many=True),
+        },
+        tags=["Reviews"],
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Retrieve a review",
+        responses={
+            200: ReviewSerializer,
+            404: OpenApiResponse(description="Review not found"),
+        },
+        tags=["Reviews"],
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Create a review",
+        request=ReviewSerializer,
+        responses={
+            201: ReviewSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Permission denied"),
+        },
+        tags=["Reviews"],
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Update a review",
+        request=ReviewSerializer,
+        responses={
+            200: ReviewSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Permission denied"),
+            404: OpenApiResponse(description="Review not found"),
+        },
+        tags=["Reviews"],
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Partial update a review",
+        request=ReviewSerializer,
+        responses={
+            200: ReviewSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            403: OpenApiResponse(description="Permission denied"),
+            404: OpenApiResponse(description="Review not found"),
+        },
+        tags=["Reviews"],
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Delete a review",
+        responses={
+            204: OpenApiResponse(description="Review deleted successfully"),
+            403: OpenApiResponse(description="Permission denied"),
+            404: OpenApiResponse(description="Review not found"),
+        },
+        tags=["Reviews"],
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    
     def perform_create(self, serializer):
         try:
             serializer.save(reviewer=self.request.user)
@@ -1318,7 +1982,48 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class UserReviewSummaryView(APIView):
     permission_classes = [AllowAny]
     pagination_class = PageNumberPagination
-
+    
+    @extend_schema(
+        summary="Get review summary for a user",
+        description="Returns average rating, review count, recent reviews, all reviews (paginated), "
+                    "and user stats including portfolio or client job stats depending on user type.",
+        parameters=[
+            OpenApiParameter(
+                name="username",
+                description="Username of the user to get review summary for",
+                required=True,
+                type=str,
+                location=OpenApiParameter.PATH,
+            )
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Review summary and paginated reviews",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "user": {
+                            "type": "object",
+                            "properties": {
+                                "id": {"type": "integer"},
+                                "username": {"type": "string"},
+                                "user_type": {"type": "string"},
+                                "profile_pic": {"type": ["string", "null"], "format": "uri"},
+                            },
+                        },
+                        "average_rating": {"type": "number", "format": "float"},
+                        "review_count": {"type": "integer"},
+                        "recent_reviews": {"type": "array", "items": ReviewSerializer().data},
+                        "all_reviews": {"type": "array", "items": ReviewSerializer().data},
+                        "client_stats": {"type": "object", "nullable": True},
+                        "portfolio": {"type": "object", "nullable": True},
+                    },
+                },
+            ),
+            404: OpenApiResponse(description="User or profile not found."),
+        },
+        tags=["Reviews"],
+    )
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
         profile = getattr(user, 'profile', None)

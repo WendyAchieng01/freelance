@@ -335,7 +335,6 @@ class BookmarkedJobSerializer(serializers.ModelSerializer):
 
 
 
-
 class MessageAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageAttachment
