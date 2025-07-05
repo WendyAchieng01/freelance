@@ -240,25 +240,34 @@ class FreelancerProfileReadSerializer(serializers.ModelSerializer):
     languages = serializers.StringRelatedField(many=True)
     skills = serializers.StringRelatedField(many=True)
     full_name = serializers.SerializerMethodField()
+    
+    rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
+    recent_reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = FreelancerProfile
         fields = [
-            'id',
-            'full_name',
-            'profile',
-            'experience_years',
-            'hourly_rate',
-            'portfolio_link',
-            'availability',
-            'languages',
-            'skills',
-            'is_visible',
-            'slug'
+            'id','full_name','profile','experience_years',
+            'hourly_rate','portfolio_link','availability','languages',
+            'skills','is_visible','slug',
+            'rating', 'review_count', 'recent_reviews'
         ]
 
     def get_full_name(self, obj):
         return obj.profile.user.get_full_name()
+
+    def get_rating(self, obj):
+        return round(Review.average_rating_for(obj.profile.user), 2)
+
+    def get_review_count(self, obj):
+        return Review.review_count_for(obj.profile.user)
+
+    def get_recent_reviews(self, obj):
+        from api.core.serializers import ReviewSerializer
+        
+        reviews = Review.recent_reviews_for(obj.profile.user, limit=3)
+        return ReviewSerializer(reviews, many=True).data
 
 
 class ProfileWriteSerializer(serializers.ModelSerializer):
@@ -355,25 +364,35 @@ class ClientProfileReadSerializer(serializers.ModelSerializer):
     profile = ProfileMiniSerializer()
     languages = serializers.StringRelatedField(many=True)
     full_name = serializers.SerializerMethodField()
+    
+    rating = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
+    recent_reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = ClientProfile
         fields = [
-            'id',
-            'full_name',
-            'profile',
-            'company_name',
-            'company_website',
-            'industry',
-            'project_budget',
-            'preferred_freelancer_level',
+            'id','full_name','profile','company_name',
+            'company_website','industry','project_budget','preferred_freelancer_level',
             'languages',
             'slug',
-            'is_verified',
+            'is_verified', 'rating', 'review_count', 'recent_reviews'
         ]
 
     def get_full_name(self, obj):
         return obj.profile.user.get_full_name()
+    
+    def get_rating(self, obj):
+        return round(Review.average_rating_for(obj.profile.user), 2)
+
+    def get_review_count(self, obj):
+        return Review.review_count_for(obj.profile.user)
+
+    def get_recent_reviews(self, obj):
+        from api.core.serializers import ReviewSerializer
+        
+        reviews = Review.recent_reviews_for(obj.profile.user, limit=3)
+        return ReviewSerializer(reviews, many=True).data
 
 
 class ClientProfileWriteSerializer(serializers.ModelSerializer):

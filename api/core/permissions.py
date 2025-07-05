@@ -21,6 +21,10 @@ class IsFreelancer(permissions.BasePermission):
 
 
 class IsJobOwner(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # Only enforce object-level check for update/delete actions
+        return view.action in ['update', 'partial_update', 'destroy']
+
     def has_object_permission(self, request, view, obj):
         return hasattr(obj, 'client') and obj.client.user == request.user
 

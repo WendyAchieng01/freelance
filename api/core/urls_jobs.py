@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ( 
                     JobViewSet, JobCategoryListCreateView,JobCategoryRetrieveUpdateDeleteView,
-                    ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,
+                    ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,UpdateResponseFilesView,
                     ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,
                     JobsWithResponsesView,AdvancedJobSearchAPIView,FreelancerJobStatusView,
                     ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
@@ -49,6 +49,8 @@ urlpatterns = [
     #apply and unapply
     path('<slug:slug>/apply/', ApplyToJobView.as_view(), name='job-apply'),
     path('<slug:slug>/unapply/', UnapplyFromJobView.as_view(), name='job-unapply'),
+    path('<slug:slug>/update-files/', UpdateResponseFilesView.as_view(), name='update-response-files'),
+
     
     #path('aplications/', JobsWithResponsesView.as_view(), name='job-applications-list'),
     path('<slug:slug>/aplications/', ResponseListForJobView.as_view(), name='job-applications'),
