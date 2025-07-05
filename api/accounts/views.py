@@ -10,12 +10,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.parsers import JSONParser
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
 
 
 from django.core.mail import EmailMultiAlternatives
@@ -55,10 +55,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
-
+    
     @extend_schema(
-        description="List or create users (admin only for listing).",
-        responses={200: UserSerializer(many=True), 201: UserSerializer}
+        summary="List all users (admin only)",
+        responses={
+            200: UserSerializer(many=True),
+            403: OpenApiResponse(description="Admin access required.")
+        }
     )
     def list(self, request, *args, **kwargs):
         if not request.user.is_staff:
@@ -66,24 +69,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @extend_schema(
-        description="Retrieve user details.",
+        summary="Retrieve a user",
         responses={200: UserSerializer}
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
     @extend_schema(
+        summary="Update a user",
         request=UserSerializer,
-        description="Update user details (owner or admin only).",
-        responses={200: UserSerializer, 400: OpenApiResponse(
-            description="Invalid input.")}
+        responses={200: UserSerializer}
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
     @extend_schema(
-        description="Delete user account (owner or admin only).",
-        responses={204: OpenApiResponse(description="User deleted.")}
+        summary="Delete a user",
+        responses={204: OpenApiResponse(
+            description="User deleted successfully.")}
     )
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -93,15 +96,16 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
-
+    
     @extend_schema(
+        summary="Register a new user",
         request=RegisterSerializer,
         responses={
             201: OpenApiResponse(description="User created, verification email sent."),
-            400: OpenApiResponse(description="Invalid input.")
-        },
-        description="Register a new user and send verification email."
+            400: OpenApiResponse(description="Validation error")
+        }
     )
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -134,11 +138,12 @@ class VerifyEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     @extend_schema(
+        summary="Verify Email",
+        description="Verify user email using the token from the email link. Returns JWT tokens on success.",
         responses={
             200: OpenApiResponse(description="Email verified, JWT tokens returned."),
             400: OpenApiResponse(description="Invalid or expired token.")
-        },
-        description="Verify user email with token."
+        }
     )
     def get(self, request, uidb64, token):
         try:
@@ -162,12 +167,13 @@ class ResendVerificationView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
+        summary="Resend verification email",
+        description="Resend the email verification link. Accepts email field or uses authenticated user.",
         request=ResendVerificationSerializer,
         responses={
             200: OpenApiResponse(description="Verification email resent."),
             400: OpenApiResponse(description="User not found or already verified.")
-        },
-        description="Resend verification email to a registered user."
+        }
     )
     def post(self, request):
         # If user is authenticated, prioritize their ID
@@ -217,10 +223,13 @@ class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
     @extend_schema(
+        summary="User Login",
+        description="Authenticate user and return JWT tokens. Use `remember_me=true` for 30-day session.",
         request=LoginSerializer,
-        responses={200: OpenApiResponse(
-            description="JWT tokens and user info returned")},
-        description="Authenticate user and return tokens. Set remember_me=true for long-lived cookies."
+        responses={
+            200: OpenApiResponse(description="Login successful. JWT tokens and user info returned."),
+            400: OpenApiResponse(description="Invalid credentials.")
+        }
     )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -283,12 +292,13 @@ class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(
+        summary="User Logout",
+        description="Blacklist the refresh token to log out the user.",
         request=LogoutSerializer,
         responses={
             205: OpenApiResponse(description="Logged out successfully."),
             400: OpenApiResponse(description="Invalid or expired refresh token.")
-        },
-        description="Invalidate JWT refresh token."
+        }
     )
     def post(self, request):
         serializer = LogoutSerializer(data=request.data)
@@ -307,12 +317,13 @@ class PasswordChangeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(
+        summary="Change Password",
+        description="Authenticated user can change their password.",
         request=PasswordChangeSerializer,
         responses={
             200: OpenApiResponse(description="Password updated."),
             400: OpenApiResponse(description="Invalid input.")
-        },
-        description="Change user password."
+        }
     )
     def post(self, request):
         serializer = PasswordChangeSerializer(data=request.data)
@@ -328,12 +339,13 @@ class PasswordResetRequestView(APIView):
     permission_classes = [permissions.AllowAny]
 
     @extend_schema(
+        summary="Request Password Reset",
+        description="Sends a password reset email if the email is registered.",
         request=PasswordResetRequestSerializer,
         responses={
             200: OpenApiResponse(description="Password reset email sent."),
             400: OpenApiResponse(description="Invalid email.")
-        },
-        description="Request password reset email."
+        }
     )
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -371,12 +383,13 @@ class PasswordResetConfirmView(APIView):
     permission_classes = [permissions.AllowAny]
 
     @extend_schema(
+        summary="Confirm Password Reset",
+        description="Reset password using token and UID from email link.",
         request=PasswordResetConfirmSerializer,
         responses={
             200: OpenApiResponse(description="Password reset successful."),
-            400: OpenApiResponse(description="Invalid token.")
-        },
-        description="Confirm password reset."
+            400: OpenApiResponse(description="Invalid or expired token.")
+        }
     )
     def post(self, request, uidb64, token):
         serializer = PasswordResetConfirmSerializer(
@@ -396,8 +409,41 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    summary="Get or update your own profile",
+    description="GET returns current user's profile. PUT/PATCH updates it. DELETE deletes the profile.",
+    request={
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "profile_pic": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "Optional profile picture file"
+                    },
+                    "phone": {"type": "string"},
+                    "location": {"type": "string"},
+                    "bio": {"type": "string"},
+                    "pay_id": {"type": "string"},
+                    "pay_id_no": {"type": "string"},
+                    "id_card": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "National ID or document"
+                    },
+                },
+                "required": []
+            }
+    },
+    responses={
+        200: ProfileSerializer,
+        204: OpenApiResponse(description="Profile deleted successfully."),
+        400: OpenApiResponse(description="Validation error.")
+    },
+    methods=["GET", "PUT", "PATCH", "DELETE"]
+)
 class ProfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                     mixins.RetrieveModelMixin,viewsets.GenericViewSet):
+                        mixins.RetrieveModelMixin,viewsets.GenericViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -437,40 +483,23 @@ class SkillViewSet(viewsets.ModelViewSet):
     serializer_class = SkillSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    @extend_schema(
-        description="List or create skills (admin only).",
-        responses={200: SkillSerializer(many=True), 201: SkillSerializer}
-    )
+    @extend_schema(summary="List skills", responses=SkillSerializer(many=True))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(
-        request=SkillSerializer,
-        description="Create a new skill (admin only).",
-        responses={201: SkillSerializer}
-    )
+    @extend_schema(summary="Create a skill", request=SkillSerializer, responses=SkillSerializer)
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-    @extend_schema(
-        description="Retrieve skill details.",
-        responses={200: SkillSerializer}
-    )
+    @extend_schema(summary="Retrieve a skill", responses=SkillSerializer)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
-    @extend_schema(
-        request=SkillSerializer,
-        description="Update skill (admin only).",
-        responses={200: SkillSerializer}
-    )
+    @extend_schema(summary="Update a skill", request=SkillSerializer, responses=SkillSerializer)
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
-    @extend_schema(
-        description="Delete skill (admin only).",
-        responses={204: OpenApiResponse(description="Skill deleted.")}
-    )
+    @extend_schema(summary="Delete a skill", responses={204: OpenApiResponse(description="Deleted")})
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
@@ -482,49 +511,36 @@ class LanguageViewSet(viewsets.ModelViewSet):
     serializer_class = LanguageSerializer
     permission_classes = [permissions.IsAdminUser]
 
-    @extend_schema(
-        description="List or create languages (admin only).",
-        responses={200: LanguageSerializer(many=True), 201: LanguageSerializer}
-    )
+    @extend_schema(summary="List languages", responses=LanguageSerializer(many=True))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(
-        request=LanguageSerializer,
-        description="Create a new language (admin only).",
-        responses={201: LanguageSerializer}
-    )
+    @extend_schema(summary="Create a language", request=LanguageSerializer, responses=LanguageSerializer)
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-    @extend_schema(
-        description="Retrieve language details.",
-        responses={200: LanguageSerializer}
-    )
+    @extend_schema(summary="Retrieve a language", responses=LanguageSerializer)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
-    @extend_schema(
-        request=LanguageSerializer,
-        description="Update language (admin only).",
-        responses={200: LanguageSerializer}
-    )
+    @extend_schema(summary="Update a language", request=LanguageSerializer, responses=LanguageSerializer)
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
-    @extend_schema(
-        description="Delete language (admin only).",
-        responses={204: OpenApiResponse(description="Language deleted.")}
-    )
+    @extend_schema(summary="Delete a language", responses={204: OpenApiResponse(description="Deleted")})
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    summary="List available freelancers",
+    description="Returns a filtered and searchable list of visible freelancer profiles.",
+    responses={200: FreelancerListSerializer(many=True)},
+)
 class ListFreelancersView(generics.ListAPIView):
-    queryset = FreelancerProfile.objects.select_related(
-        'profile__user').prefetch_related('languages', 'skills')
+    queryset = FreelancerProfile.objects.select_related('profile__user').prefetch_related('languages', 'skills')
     serializer_class = FreelancerListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -557,6 +573,11 @@ class ListFreelancersView(generics.ListAPIView):
     ]
 
 
+@extend_schema(
+    summary="List client profiles",
+    description="Search and filter client profiles based on company, industry, budget, and other criteria.",
+    responses={200: ClientListSerializer(many=True)},
+)
 class ClientProfileListView(generics.ListAPIView):
     queryset = ClientProfile.objects.select_related(
         'profile__user').prefetch_related('languages')
@@ -578,6 +599,55 @@ class ClientProfileListView(generics.ListAPIView):
                         'profile__user__first_name', 'profile__user__last_name']
     ordering_fields = ['company_name', 'project_budget']
 
+
+@extend_schema(
+    summary="Create, update, retrieve or delete client profile",
+    request={
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "profile": {
+                    "type": "object",
+                    "properties": {
+                        "phone": {"type": "string"},
+                        "location": {"type": "string"},
+                        "bio": {"type": "string"},
+                        "pay_id": {"type": "string"},
+                        "pay_id_no": {"type": "string"},
+                        "profile_pic": {
+                            "type": "string",
+                            "format": "binary",
+                            "description": "Profile picture"
+                        },
+                        "id_card": {
+                            "type": "string",
+                            "format": "binary",
+                            "description": "National ID or verification doc"
+                        }
+                    }
+                },
+                "company_name": {"type": "string"},
+                "company_website": {"type": "string"},
+                "industry": {"type": "string"},
+                "project_budget": {"type": "number"},
+                "preferred_freelancer_level": {"type": "string"},
+                "languages": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "description": "List of language IDs"
+                },
+                "is_verified": {"type": "boolean"}
+            }
+        }
+    },
+    responses={
+        201: OpenApiResponse(description="Client profile created successfully."),
+        200: OpenApiResponse(description="Client profile updated successfully."),
+        400: OpenApiResponse(description="Validation error."),
+        403: OpenApiResponse(description="Permission denied."),
+        204: OpenApiResponse(description="Client profile deleted.")
+    }
+)
 
 class ClientWriteViewSet(viewsets.ModelViewSet):
     serializer_class = ClientProfileWriteSerializer
@@ -663,6 +733,11 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_204_NO_CONTENT)
         
 
+@extend_schema(
+    summary="Retrieve public freelancer profile",
+    description="Get a visible freelancer profile by username or 'me' if authenticated.",
+    responses={200: FreelancerProfileReadSerializer}
+)
 class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FreelancerProfileReadSerializer
     permission_classes = [permissions.AllowAny]
@@ -692,7 +767,58 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
             "http_code": status.HTTP_200_OK
         }, status=status.HTTP_200_OK)
         
-        
+
+@extend_schema(
+    summary="Create, update, retrieve or delete freelancer profile",
+    request={
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "profile": {
+                    "type": "object",
+                    "properties": {
+                        "phone": {"type": "string"},
+                        "location": {"type": "string"},
+                        "bio": {"type": "string"},
+                        "pay_id": {"type": "string"},
+                        "pay_id_no": {"type": "string"},
+                        "profile_pic": {
+                            "type": "string",
+                            "format": "binary",
+                            "description": "Profile picture"
+                        },
+                        "id_card": {
+                            "type": "string",
+                            "format": "binary",
+                            "description": "National ID or verification doc"
+                        }
+                    }
+                },
+                "experience_years": {"type": "integer"},
+                "hourly_rate": {"type": "number"},
+                "availability": {"type": "string"},
+                "languages": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "description": "List of language IDs"
+                },
+                "skills": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "description": "List of skill IDs"
+                },
+                "is_visible": {"type": "boolean"}
+            }
+        }
+    },
+    responses={
+        201: OpenApiResponse(description="Freelancer profile created successfully."),
+        200: OpenApiResponse(description="Freelancer profile updated successfully."),
+        400: OpenApiResponse(description="Validation error."),
+        403: OpenApiResponse(description="Permission denied."),
+        204: OpenApiResponse(description="Freelancer profile deleted.")
+    }
+)
 class FreelancerWriteViewSet(viewsets.ModelViewSet):
     serializer_class = FreelancerProfileWriteSerializer
     permission_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]

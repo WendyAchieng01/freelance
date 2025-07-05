@@ -25,7 +25,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-"""
+
 def login(request):
     if request.method == 'POST':
         identifier = request.POST['username']
@@ -703,4 +703,3 @@ def login_gen(request):
     else:
         return render(request, 'login_gen.html')
 
-"""
