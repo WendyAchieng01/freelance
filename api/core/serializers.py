@@ -8,6 +8,7 @@ from api.accounts.serializers import ProfileMiniSerializer,SkillSerializer
 import os
 from datetime import datetime, time
 from django.utils import timezone
+from api.core.utils import validate_file
 
 
 User = get_user_model()
@@ -30,7 +31,7 @@ class NestedResponseSerializer(serializers.ModelSerializer):
                 'last_name': obj.user.last_name,
                 'username': obj.user.username,
                 'portfolio': freelancer_profile.portfolio_link if freelancer_profile.portfolio_link else None,
-                'image': profile.profile_pic.url if profile.profile_pic else None
+                'profile_pic': profile.profile_pic.url if profile.profile_pic else None
             }
         except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
             return obj.user.username if obj.user else None
@@ -56,16 +57,21 @@ class JobSerializer(serializers.ModelSerializer):
     
     skills_required = serializers.ListField(child=serializers.CharField(),write_only=True)
     skills_required_display = SkillSerializer(many=True, read_only=True, source='skills_required')
+    
+    client_rating = serializers.SerializerMethodField()
+    client_review_count = serializers.SerializerMethodField()
+    client_recent_reviews = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Job
         fields = [
-            'id', 'client', 'title', 'category', 'category_display', 'description', 'price',
-            'posted_date', 'deadline_date', 'status',
+            'id', 'client','status','title', 'category', 'category_display', 'description', 'price',
+            'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
             'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'responses'
+            'selected_freelancer', 'payment_verified', 'responses',
+            'client_rating', 'client_review_count', 'client_recent_reviews'
         ]
         read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
         
@@ -104,6 +110,16 @@ class JobSerializer(serializers.ModelSerializer):
 
     def get_category_display(self, obj):
         return obj.category.name if obj.category else None
+    
+    def get_client_rating(self, obj):
+        return round(Review.average_rating_for(obj.client.user), 2)
+
+    def get_client_review_count(self, obj):
+        return Review.review_count_for(obj.client.user)
+
+    def get_client_recent_reviews(self, obj):
+        recent = Review.recent_reviews_for(obj.client.user, limit=3)
+        return ReviewSerializer(recent, many=True).data
 
     def get_client(self, obj):
         profile = obj.client.user.profile
@@ -113,39 +129,117 @@ class JobSerializer(serializers.ModelSerializer):
                 'first_name': obj.client.user.first_name,
                 'last_name': obj.client.user.last_name,
                 'username': obj.client.user.username,
+                'location': obj.client.user.profile.location,
                 #'email': obj.client.user.email,
-                'image': profile.profile_pic.url if profile.profile_pic else None
+                'profile_pic': profile.profile_pic.url if profile.profile_pic else None
             }
         return None
 
     def get_selected_freelancer(self, obj):
-        return obj.selected_freelancer.username if obj.selected_freelancer else None
+        if not obj.selected_freelancer:
+            return None
+    
+        user = obj.selected_freelancer
+        rating = round(Review.average_rating_for(user), 2)
+        recent_reviews = Review.recent_reviews_for(user)
+        return {
+            'id': user.id,
+            'username': user.username,
+            'rating': rating,
+            'recent_reviews': ReviewSerializer(recent_reviews, many=True).data
+        }
             
 
-
-
 class ApplyResponseSerializer(serializers.ModelSerializer):
+    cv_url = serializers.SerializerMethodField(read_only=True)
+    cover_letter_url = serializers.SerializerMethodField(read_only=True)
+    portfolio_url = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Response
-        fields = ['extra_data']
+        fields = ['extra_data', 'cv', 'cover_letter', 'portfolio',
+                    'cv_url', 'cover_letter_url', 'portfolio_url']
+        extra_kwargs = {
+            'cv': {'required': False, 'allow_null': True},
+            'cover_letter': {'required': False, 'allow_null': True},
+            'portfolio': {'required': False, 'allow_null': True}
+        }
+
+    def validate_cv(self, value):
+        if value:
+            validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+    def validate_cover_letter(self, value):
+        if value:
+            validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+    def validate_portfolio(self, value):
+        if value:
+            validate_file(
+                value, ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'])
+        return value
+
+    def get_cv_url(self, obj):
+        return obj.cv.url if obj.cv else None
+
+    def get_cover_letter_url(self, obj):
+        return obj.cover_letter.url if obj.cover_letter else None
+
+    def get_portfolio_url(self, obj):
+        return obj.portfolio.url if obj.portfolio else None
 
 
 class ResponseListSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    cv_url = serializers.SerializerMethodField()
+    cover_letter_url = serializers.SerializerMethodField()
+    portfolio_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Response
-        fields = ['id', 'user', 'extra_data', 'submitted_at']
+        fields = ['id', 'user', 'extra_data', 'submitted_at',
+                    'cv_url', 'cover_letter_url', 'portfolio_url','slug']
 
     def get_user(self, obj):
         profile = getattr(obj.user, 'profile', None)
         return {
             'username': obj.user.username,
+            'first_name': obj.user.first_name,
+            'last_name': obj.user.last_name,
             'email': obj.user.email,
             'bio': profile.bio if profile else '',
             'location': profile.location if profile else '',
             'profile_pic': profile.profile_pic.url if profile and profile.profile_pic else None,
         }
+
+    def get_cv_url(self, obj):
+        return obj.cv.url if obj.cv else None
+
+    def get_cover_letter_url(self, obj):
+        return obj.cover_letter.url if obj.cover_letter else None
+
+    def get_portfolio_url(self, obj):
+        return obj.portfolio.url if obj.portfolio else None
+
+    def validate_cv(self, value):
+        if value:
+            validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+
+    def validate_cover_letter(self, value):
+        if value:
+            validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+
+    def validate_portfolio(self, value):
+        if value:
+            validate_file(value, ['.pdf', '.doc', '.docx',
+                        '.jpg', '.jpeg', '.png'])
+        return value
         
 
 class FreelancerBriefSerializer(serializers.ModelSerializer):
@@ -246,7 +340,7 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageAttachment
         fields = ['id', 'file', 'filename', 'uploaded_at',
-                  'file_size', 'content_type', 'thumbnail']
+                        'file_size', 'content_type', 'thumbnail']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -255,10 +349,10 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'chat', 'sender', 'content',
-                  'timestamp', 'is_read', 'is_deleted', 'attachments']
+        fields = ['id', 'chat', 'sender', 'content','is_read',
+                    'timestamp', 'is_read', 'is_deleted', 'attachments']
         read_only_fields = ['chat', 'sender',
-                            'is_read', 'is_deleted', 'timestamp']
+                            'is_deleted', 'timestamp']
 
     def create(self, validated_data):
         # `chat` and `sender` are set in the view, `is_read` defaults to False

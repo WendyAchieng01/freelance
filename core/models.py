@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.db.models import Avg
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
@@ -157,6 +158,9 @@ class Response(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     extra_data = models.JSONField(null=True, blank=True) 
     slug = models.SlugField(unique=True, blank=True, null=True)
+    cv = models.FileField(upload_to='responses/cvs/', null=True, blank=True)
+    cover_letter = models.FileField(upload_to='responses/cover_letters/', null=True, blank=True)
+    portfolio = models.FileField(upload_to='responses/portfolios/', null=True, blank=True)
 
 
     class Meta:
@@ -317,6 +321,22 @@ class Review(models.Model):
     class Meta:
         verbose_name_plural = 'Review'
         #unique_together = ('reviewer', 'recipient') 
+        
+    @classmethod
+    def average_rating_for(cls, user):
+        return cls.objects.filter(recipient=user).aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
+
+    @classmethod
+    def review_count_for(cls, user):
+        return cls.objects.filter(recipient=user).count()
+
+    @classmethod
+    def reviews_for(cls, user):
+        return cls.objects.filter(recipient=user).order_by('-created_at')
+
+    @classmethod
+    def recent_reviews_for(cls, user, limit=7):
+        return cls.reviews_for(user)[:limit]
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"

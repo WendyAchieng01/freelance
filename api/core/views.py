@@ -40,7 +40,7 @@ from .permissions import (
         IsJobOwnerCanEditEvenIfAssigned,CanAccessChat,CanDeleteOwnMessage
         
 )
-from django.db.models import Q,F,Value, IntegerField
+from django.db.models import Q,F,Value, IntegerField,Sum
 
 import logging
 from datetime import timedelta
@@ -214,24 +214,83 @@ class UnapplyFromJobView(APIView):
 
         response.delete()
         return DRFResponse({'detail': 'Successfully removed your application.'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class UpdateResponseFilesView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, slug):
+        job = get_object_or_404(Job, slug=slug)
+        try:
+            response = JobResponse.objects.get(job=job, user=request.user)
+        except JobResponse.DoesNotExist:
+            return DRFResponse({'detail': 'You have not applied to this job.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ApplyResponseSerializer(
+            response, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return DRFResponse({
+            'detail': 'Files updated successfully.',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
 
 
-class ResponseListForJobView(generics.ListAPIView):
+class ResponseListForJobView(generics.GenericAPIView):
     serializer_class = ResponseListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
 
-    def get_queryset(self):
-        user = self.request.user
-        slug = self.kwargs.get('slug', None)
+    def get(self, request, slug=None):
+        user = request.user
+        job = get_object_or_404(Job, slug=slug)
 
-        if slug:
-            job = get_object_or_404(Job, slug=slug)
+        if not hasattr(user, 'profile'):
+            return DRFResponse(
+                {"detail": "Invalid user profile."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        role = user.profile.user_type
+
+        if role == 'client':
             if job.client.user != user:
-                raise PermissionDenied("You do not own this job.")
-            return JobResponse.objects.filter(job=job)
-        else:
-            # List all responses for all jobs owned by this user
-            return JobResponse.objects.filter(job__client__user=user).distinct()
+                return DRFResponse(
+                    {"detail": "You do not own this job."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            responses = JobResponse.objects.filter(job=job)
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(responses, request)
+            serializer = self.get_serializer(page, many=True)
+
+            return paginator.get_paginated_response({
+                "job": JobSerializer(job, context={"request": request}).data,
+                "applications": serializer.data
+            })
+
+        elif role == 'freelancer':
+            try:
+                response = JobResponse.objects.get(job=job, user=user)
+            except JobResponse.DoesNotExist:
+                return DRFResponse(
+                    {"detail": "You have not applied to this job."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            serializer = self.get_serializer(response)
+            return DRFResponse({
+                "job": JobSerializer(job, context={"request": request}).data,
+                "application": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        return DRFResponse(
+            {"detail": "Unsupported user type."},
+            status=status.HTTP_403_FORBIDDEN
+        )
 
 
 class JobsWithResponsesView(generics.ListAPIView):
@@ -345,24 +404,6 @@ class NotificationSummaryView(APIView):
                 f"Notification summary failed for {user.username}: {e}")
             return DRFResponse({'error': 'Failed to retrieve notifications.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated, CanReview]
-
-    def get_queryset(self):
-        recipient_id = self.request.query_params.get('recipient')
-        if recipient_id:
-            return Review.objects.filter(recipient_id=recipient_id)
-        return Review.objects.all()
-
-    def perform_create(self, serializer):
-        try:
-            serializer.save(reviewer=self.request.user)
-        except (DatabaseError, IntegrityError) as e:
-            logger.error(f"Database error during review creation: {e}")
-            raise serializers.ValidationError(
-                {"detail": f"Database error while saving review: {str(e)}"})
 
 
 @method_decorator(cache_page(60 * 5), name='dispatch')
@@ -1253,3 +1294,97 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 {"message": "You do not have permission to mark this notification as read."},
                 status=status.HTTP_403_FORBIDDEN
                 )
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated, CanReview]
+
+    def get_queryset(self):
+        recipient_id = self.request.query_params.get('recipient')
+        if recipient_id:
+            return Review.objects.filter(recipient_id=recipient_id)
+        return Review.objects.all()
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save(reviewer=self.request.user)
+        except (DatabaseError, IntegrityError) as e:
+            logger.error(f"Database error during review creation: {e}")
+            raise serializers.ValidationError(
+                {"detail": f"Database error while saving review: {str(e)}"})
+
+
+class UserReviewSummaryView(APIView):
+    permission_classes = [AllowAny]
+    pagination_class = PageNumberPagination
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        profile = getattr(user, 'profile', None)
+
+        if not profile:
+            return DRFResponse({'detail': 'User has no profile'}, status=status.HTTP_404_NOT_FOUND)
+
+        user_type = profile.user_type
+        average_rating = round(Review.average_rating_for(user), 2)
+        review_count = Review.review_count_for(user)
+        recent_reviews = Review.recent_reviews_for(user, limit=3)
+
+        # Paginate all reviews
+        all_reviews_qs = Review.reviews_for(user)
+        paginator = self.pagination_class()
+        paginated_reviews = paginator.paginate_queryset(
+            all_reviews_qs, request)
+        serialized_all_reviews = ReviewSerializer(
+            paginated_reviews, many=True).data
+
+        response_data = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "user_type": user_type,
+                "profile_pic": profile.profile_pic.url if profile.profile_pic else None,
+            },
+            "average_rating": average_rating,
+            "review_count": review_count,
+            "recent_reviews": ReviewSerializer(recent_reviews, many=True).data,
+            "all_reviews": serialized_all_reviews
+        }
+        
+        if user_type == 'client':
+            try:
+                total_jobs = Job.objects.filter(client=profile)
+                open_jobs = total_jobs.filter(status='open')
+                paid_jobs = total_jobs.filter(payment_verified=True)
+                selected_jobs = total_jobs.filter(selected_freelancer__isnull=False)
+
+                response_data["client_stats"] = {
+                    "total_jobs_posted": total_jobs.count(),
+                    "currently_open_jobs": open_jobs.count(),
+                    "total_selected_freelancers": selected_jobs.count(),
+                    "total_amount_spent": float(paid_jobs.aggregate(
+                        total=Sum('price'))['total'] or 0.0)
+                }
+            except Exception as e:
+                response_data["client_stats"] = {
+                    "error": f"Failed to calculate stats: {str(e)}"
+                }
+
+        # Attach freelancer portfolio if applicable
+        if user_type == 'freelancer':
+            try:
+                freelancer_profile = user.profile.freelancer_profile
+                response_data["portfolio"] = {
+                    "hourly_rate": freelancer_profile.hourly_rate,
+                    "availability": freelancer_profile.availability,
+                    "experience_years": freelancer_profile.experience_years,
+                    "portfolio_link": freelancer_profile.portfolio_link,
+                    "skills": [s.name for s in freelancer_profile.skills.all()],
+                    "languages": [l.name for l in freelancer_profile.languages.all()],
+                }
+            except FreelancerProfile.DoesNotExist:
+                response_data["portfolio"] = {}
+                
+
+        return paginator.get_paginated_response(response_data)
