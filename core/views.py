@@ -219,18 +219,18 @@ def create_job(request):
     if request.method == 'POST':
         form = CreateJobForm(request.POST)
         if form.is_valid():
-            # Save the job without payment verification
             job = form.save(commit=False)
             job.client = request.user.profile
-            job.status = 'open'  # Ensure status is set to open
+            job.status = 'open'
             job.save()
-            
+            form.save_m2m()  # Save ManyToMany data (e.g., skills_required)
+
             messages.success(request, 'Job posted successfully!')
             return redirect('core:client_posted_jobs')
     else:
         form = CreateJobForm()
-    
-    categories = dict(Job.CATEGORY_CHOICES)
+
+    categories = JobCategory.objects.all()  # Replace static choices with dynamic categories
     return render(request, 'create_job.html', {
         'form': form,
         'categories': categories
@@ -242,23 +242,23 @@ def client_posted_jobs(request):
     client_profile = Profile.objects.get(user=request.user, user_type='client')
     category = request.GET.get('category')
     
-    # Remove payment verification filter
     client_jobs = client_profile.jobs.all()
     
     if category:
-        client_jobs = client_jobs.filter(category=category)
+        client_jobs = client_jobs.filter(category__id=category)
     
     # Add matched freelancers (only those who responded) for each job
     for job in client_jobs:
         job.matched_freelancers = match_freelancers_to_job(job)
     
-    categories = dict(Job.CATEGORY_CHOICES)
+    categories = JobCategory.objects.all()  # Replaces Job.CATEGORY_CHOICES
+
     return render(request, 'client_posted_jobs.html', {
         'client_jobs': client_jobs,
         'categories': categories,
-        'selected_category': category
+        'selected_category': int(category) if category else None
     })
-
+    
 @login_required
 @user_passes_test(is_client)
 def edit_job(request, job_id):
