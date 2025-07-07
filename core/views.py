@@ -39,6 +39,7 @@ def freelancer_index(request):
 def jobs(request):
     if request.user.is_authenticated:
         category = request.GET.get('category')
+        
         jobs = Job.objects.prefetch_related('trainings') \
             .annotate(num_responses=Count('responses')) \
             .exclude(responses__user=request.user) \
@@ -46,7 +47,7 @@ def jobs(request):
             .exclude(num_responses__gte=F('max_freelancers'))
         
         if category:
-            jobs = jobs.filter(category=category)
+            jobs = jobs.filter(category__id=category)
         
         for job in jobs:
             job.remaining_slots = job.max_freelancers - job.responses.count()
@@ -54,27 +55,22 @@ def jobs(request):
         # Add recommended jobs for freelancers
         recommended_jobs = []
         try:
-            # Check if user has a profile and is a freelancer
-            if (hasattr(request.user, 'profile') and 
-                request.user.profile.user_type == 'freelancer'):
-                
-                # Try to get the freelancer profile
+            if hasattr(request.user, 'profile') and request.user.profile.user_type == 'freelancer':
                 freelancer_profile = getattr(request.user.profile, 'freelancer_profile', None)
                 if freelancer_profile:
                     recommended_jobs = recommend_jobs_to_freelancer(freelancer_profile)
-                    
-        except (AttributeError, Exception) as e:
-            # Handle any profile-related errors gracefully
+        except Exception:
             recommended_jobs = []
-        
-        categories = dict(Job.CATEGORY_CHOICES)
+
+        categories = JobCategory.objects.all()  # Replace static choices
+
         return render(request, 'jobs.html', {
             'jobs': jobs,
             'categories': categories,
-            'selected_category': category,
+            'selected_category': int(category) if category else None,
             'recommended_jobs': recommended_jobs
         })
-    
+
     return redirect('accounts:login')
 
 @login_required
