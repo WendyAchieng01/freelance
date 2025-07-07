@@ -258,7 +258,7 @@ class CreateJobForm(forms.ModelForm):
         fields = ['title', 'category', 'description', 'price', 'deadline_date', 'max_freelancers']
         widgets = {
             'deadline_date': forms.DateInput(attrs={'type': 'date'}),
-            'category': forms.Select(choices=JobCategory.name)
+            'category': forms.Select()
         }
 
 class ReviewForm(forms.ModelForm):
