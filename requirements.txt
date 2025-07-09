@@ -16,6 +16,7 @@ disposable-email-domains==0.0.126
 dj-database-url==2.3.0
 Django==5.1.2
 django-cloudinary-storage==0.3.0
+django-cors-headers==4.7.0
 django-filter==25.1
 django-paypal==2.1
 django-tz-detect==0.5.0
