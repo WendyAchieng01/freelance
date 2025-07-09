@@ -42,7 +42,7 @@ class JobAdmin(admin.ModelAdmin):
                 'client',
                 'selected_freelancer',
                 'max_freelancers',
-                'required_freelancers'
+                'required_freelancers',
                 'preferred_freelancer_level',
                 'payment_verified',
                 'slug',
