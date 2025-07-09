@@ -133,7 +133,7 @@ class JobSerializer(serializers.ModelSerializer):
                 'location': obj.client.user.profile.location,
                 #'email': obj.client.user.email,
                 'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
-                'email_verified': True if obj.user.is_active else False
+                'email_verified': True if obj.client.user.is_active else False
             }
         return None
 
