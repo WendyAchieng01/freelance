@@ -366,7 +366,7 @@ class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ['id', 'chat_uuid', 'job', 'client', 'freelancer',
-                  'created_at', 'slug', 'active', 'messages']
+                    'created_at', 'slug', 'active', 'messages']
 
 
 class NotificationSerializer(serializers.ModelSerializer):

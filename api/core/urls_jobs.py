@@ -3,7 +3,7 @@ from .views import (
                     JobViewSet, JobCategoryListCreateView,JobCategoryRetrieveUpdateDeleteView,
                     ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,UpdateResponseFilesView,
                     ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,
-                    JobsWithResponsesView,AdvancedJobSearchAPIView,FreelancerJobStatusView,
+                    JobsWithResponsesView,AdvancedJobSearchAPIView,
                     ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
                     
 )
@@ -24,7 +24,7 @@ urlpatterns = [
     path('discover/', JobDiscoveryView.as_view(), name='job-discovery-default'),
     
     #status
-    path('freelancer/',FreelancerJobStatusView.as_view(), name='freelancer-job-status'),
+    #path('freelancer/',FreelancerJobStatusView.as_view(), name='freelancer-job-status'),
     path('by-client/',ClientJobStatusView.as_view(), name='client-job-status'),
     
     
