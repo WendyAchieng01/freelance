@@ -160,13 +160,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://nilltechsolutions.com", 
-    "http://nilltech.brainversetechnologies.co.ke",
-    "https://nilltech.brainversetechnologies.co.ke",
-]
 
-CORS_ALLOW_CREDENTIALS = True
 
 
 # Internationalization
@@ -260,6 +254,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web-production-b953.up.railway.app/'
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com'
+    "http://nilltech.brainversetechnologies.co.ke",
+    "https://nilltech.brainversetechnologies.co.ke",
 ]
 
 # Secure cookies and redirects
@@ -306,6 +302,39 @@ SIMPLE_JWT = {
     'BLACKLIST_ENABLED': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://nilltechsolutions.com",
+    "http://nilltech.brainversetechnologies.co.ke",
+    "https://nilltech.brainversetechnologies.co.ke",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "origin",
+    "dnt",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://nilltechsolutions.com",
+    "https://nilltech.brainversetechnologies.co.ke",
+]
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Freelancer Platform API',
