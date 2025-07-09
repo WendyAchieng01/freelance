@@ -31,7 +31,8 @@ class NestedResponseSerializer(serializers.ModelSerializer):
                 'last_name': obj.user.last_name,
                 'username': obj.user.username,
                 'portfolio': freelancer_profile.portfolio_link if freelancer_profile.portfolio_link else None,
-                'profile_pic': profile.profile_pic.url if profile.profile_pic else None
+                'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
+                'email_verified': True if obj.user.is_active else False
             }
         except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
             return obj.user.username if obj.user else None
@@ -131,7 +132,8 @@ class JobSerializer(serializers.ModelSerializer):
                 'username': obj.client.user.username,
                 'location': obj.client.user.profile.location,
                 #'email': obj.client.user.email,
-                'profile_pic': profile.profile_pic.url if profile.profile_pic else None
+                'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
+                'email_verified': True if obj.user.is_active else False
             }
         return None
 
