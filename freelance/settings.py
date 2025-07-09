@@ -163,6 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com", 
     "http://nilltech.brainversetechnologies.co.ke",
+    "https://nilltech.brainversetechnologies.co.ke",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
