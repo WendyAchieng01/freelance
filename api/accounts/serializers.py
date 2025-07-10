@@ -8,6 +8,9 @@ from django.contrib.auth import get_user_model
 from core.models import Job, Response, Chat, Message, MessageAttachment, Review
 from django.contrib.auth.password_validation import validate_password
 from accounts.models import Language,ClientProfile
+from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
+from django.urls import reverse
 import os
 
 
@@ -118,7 +121,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, help_text="Password.")
     remember_me = serializers.BooleanField(default=False, required=False)
     
-
     def validate(self, data):
         username = data.get('username', '').lower()
         password = data.get('password')
@@ -130,22 +132,35 @@ class LoginSerializer(serializers.Serializer):
             user = User.objects.get(Q(username=username) | Q(email=username))
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                {"identifier": "Invalid username or email."}
+                {"message": "Invalid username or email."}
             )
 
         if not user.is_active:
-            raise serializers.ValidationError(
-                {"message": ["Account is disabled."]}
-            )
+            # Build full URL using request
+            request = self.context.get('request')
+            resend_path = reverse('resend-verification')
 
-        # Now authenticate only if user is active
+            if request:
+                base_url = request.build_absolute_uri(resend_path)
+
+            else:
+                # Fallback to domain defined in settings
+                fallback_domain = getattr(settings, 'FRONTEND_URL', '')
+                base_url = f'http://{fallback_domain}{resend_path}'
+
+            raise serializers.ValidationError({
+                "message": [
+                    "Account is disabled. Please verify your email to activate.",
+                    f"Resend verification: {base_url}"
+                ]
+            })
+
         user = authenticate(username=user.username, password=password)
-
         if not user:
             logger.warning(f"Authentication failed for user: {username}")
-            raise serializers.ValidationError(
-                {"password": "Invalid credentials. Check username or password."}
-            )
+            raise serializers.ValidationError({
+                "message": "Invalid credentials. Check your username or password."
+            })
 
         data['user'] = user
         data['remember_me'] = data.get('remember_me', False)
