@@ -12,7 +12,7 @@ from.views import FreelancerReadOnlyViewSet,FreelancerWriteViewSet
 urlpatterns = [
      path('auth/register/', views.RegisterView.as_view(), name='register'),
      path('verify-email/<str:uidb64>/<str:token>/',views.VerifyEmailView.as_view(), name='verify-email'),
-     path('auth/resend-verification/<int:user_id>/',views.ResendVerificationView.as_view(), name='resend-verification'),
+     path('auth/resend-verification/',views.ResendVerificationView.as_view(), name='resend-verification'),
      path('auth/login/', views.LoginView.as_view(), name='login'),
      path('auth/logout/', views.LogoutView.as_view(), name='logout'),
      path('auth/password-change/',views.PasswordChangeView.as_view(), name='password-change'),

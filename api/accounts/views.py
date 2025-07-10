@@ -168,7 +168,7 @@ class ResendVerificationView(APIView):
 
     @extend_schema(
         summary="Resend verification email",
-        description="Resend the email verification link. Accepts email field or uses authenticated user.",
+        description="Resend the email verification link. Requires the email field.",
         request=ResendVerificationSerializer,
         responses={
             200: OpenApiResponse(description="Verification email resent."),
@@ -176,18 +176,15 @@ class ResendVerificationView(APIView):
         }
     )
     def post(self, request):
-        # If user is authenticated, prioritize their ID
-        if request.user and request.user.is_authenticated:
-            user = request.user
-        else:
-            serializer = ResendVerificationSerializer(data=request.data)
-            if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            email = serializer.validated_data['email']
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                return Response({"error": "No user with this email found."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ResendVerificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "No user with this email found."}, status=status.HTTP_400_BAD_REQUEST)
 
         if user.is_active:
             return Response({"error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
@@ -212,11 +209,13 @@ class ResendVerificationView(APIView):
 
         # Send email
         email_message = EmailMultiAlternatives(
-            subject, message_text, 'info@nilltechsolutions.com', [user.email])
+            subject, message_text, 'info@nilltechsolutions.com', [user.email]
+        )
         email_message.attach_alternative(message_html, "text/html")
         email_message.send()
 
         return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
+
 
 
 class LoginView(APIView):
