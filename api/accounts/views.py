@@ -130,7 +130,7 @@ class RegisterView(APIView):
             email.attach_alternative(message_html, "text/html")
             email.send()
 
-            return Response({"message": "User created, verification email sent."}, status=status.HTTP_201_CREATED)
+            return Response({"message": "User created, verification email sent. Please check you eamil inbox or spam"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
