@@ -120,7 +120,7 @@ class LoginSerializer(serializers.Serializer):
     
 
     def validate(self, data):
-        username = data.get('username').lower()
+        username = data.get('username', '').lower()
         password = data.get('password')
 
         if not username or not password:
@@ -133,19 +133,21 @@ class LoginSerializer(serializers.Serializer):
                 {"identifier": "Invalid username or email."}
             )
 
+        if not user.is_active:
+            raise serializers.ValidationError(
+                {"message": ["Account is disabled."]}
+            )
+
+        # Now authenticate only if user is active
         user = authenticate(username=user.username, password=password)
 
         if not user:
             logger.warning(f"Authentication failed for user: {username}")
             raise serializers.ValidationError(
-                {"password": "Invalid credentials."})
-        if not user.is_active:
-            raise serializers.ValidationError(
-                {"non_field_errors": ["Account is disabled."]}
+                {"password": "Invalid credentials. Check username or password."}
             )
 
         data['user'] = user
-        # ensure remember_me is returned with validated_data
         data['remember_me'] = data.get('remember_me', False)
         return data
 
