@@ -30,7 +30,6 @@ class JobCategory(models.Model):
 
 # Create your models here
 class Job(models.Model):
-    
     STATUS_CHOICES = (
         ('open', 'Open'),
         ('in_progress', 'In Progress'),
@@ -51,6 +50,7 @@ class Job(models.Model):
     preferred_freelancer_level = models.CharField(max_length=50, choices=(
         ('entry', 'Entry Level'),
         ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
         ('expert', 'Expert')
     ), default='intermediate')
     
@@ -114,6 +114,8 @@ class Job(models.Model):
             return False  # Limit reached
 
         self.selected_freelancers.add(user)
+        self.status = 'in_progress'
+        self.save(update_fields=['status'])
         return True
     
     

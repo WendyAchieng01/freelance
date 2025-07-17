@@ -251,12 +251,14 @@ class LoginView(APIView):
             
             # Get user_type from related profile
             user_type = getattr(user.profile, 'user_type', None)
+            email_verified = getattr(user, 'is_active',None)
 
             # Create response
             res = Response({
                 "message": "Login successful.",
                 "user": AuthUserSerializer(user).data,
                 "user_type":user_type,
+                "email_verified":email_verified,
                 "access": str(access_token),
                 "refresh": str(refresh),
                 "access_expires": datetime.fromtimestamp(access_token['exp']).isoformat(),
