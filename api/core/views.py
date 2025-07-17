@@ -21,6 +21,7 @@ from django.http import FileResponse
 from django.db.models import Count,Prefetch
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
+from wallet.models import WalletTransaction
 from accounts.models import Profile, FreelancerProfile,Skill
 from core.models import Job, JobCategory,Chat, Message, MessageAttachment, Review,JobBookmark,Notification,Response as JobResponse
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
@@ -105,7 +106,8 @@ class JobViewSet(viewsets.ModelViewSet):
     serializer_class = JobSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_class = JobFilter
-    search_fields = ['title', 'description', 'category']
+    search_fields = ['title', 'description',
+                     'skills_required__name', 'category__name']
     lookup_field = 'slug'
 
     def get_permissions(self):
@@ -164,7 +166,8 @@ class JobViewSet(viewsets.ModelViewSet):
         elif status_filter == 'bookmarked':
             base_qs = base_qs.filter(id__in=bookmarked_ids)
 
-        queryset = base_qs.filter(filters).distinct().order_by(ordering)
+        #queryset = base_qs.filter(filters).distinct().order_by(ordering)
+        queryset = self.filter_queryset(base_qs)
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
 
@@ -245,17 +248,21 @@ class JobViewSet(viewsets.ModelViewSet):
         user = request.user
         bookmarked = False
         applied = False
+        wallet = 0
+        
 
         if user.is_authenticated and hasattr(user, 'profile') and user.profile.user_type == 'freelancer':
             bookmarked = user.bookmarks.filter(id=instance.id).exists()
             applied = JobResponse.objects.filter(user=user, job=instance).exists()
+            wallet = WalletTransaction.objects.filter(user=instance.client, status='completed', job__isnull=False).aggregate(total=Sum('amount'))['total'] or 0
+            
 
         data['bookmarked'] = bookmarked
         data['has_applied'] = applied
-        data['has_applied_and_bookmarked'] = bookmarked and applied
-        data['client_total_jobs'] = Job.objects.filter(client=instance.client).count()
+        data['client_total_jobs'] = Job.objects.filter(client=instance.client,status='completed').count()
         data['application_count'] = instance.responses.count()
-
+        data['total_paid']= wallet
+        
         return DRFResponse(data)
 
     @extend_schema(exclude=True)
@@ -380,12 +387,16 @@ class ApplyToJobView(APIView):
             return DRFResponse({'detail': 'You have already applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ApplyResponseSerializer(data=request.data)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
 
         job_response = JobResponse.objects.create(
             job=job,
             user=request.user,
-            extra_data=serializer.validated_data.get('extra_data', None)
+            extra_data=serializer.validated_data.get('extra_data', None),
+            cv=serializer.validated_data.get('cv',None),
+            portfolio=serializer.validated_data.get('portfolio',None),
+            cover_letter=serializer.validated_data.get('cover_letter',None)
         )
 
         response_serializer = ApplyResponseSerializer(job_response)
@@ -526,13 +537,15 @@ class ResponseListForJobView(generics.GenericAPIView):
                 )
 
             responses = JobResponse.objects.filter(job=job)
+            job_status = ('open' if job.selected_freelancer is None else 'complete' if job.status == 'completed' else 'in progress')
             paginator = self.pagination_class()
             page = paginator.paginate_queryset(responses, request)
             serializer = self.get_serializer(page, many=True)
 
             return paginator.get_paginated_response({
                 "job": JobSerializer(job, context={"request": request}).data,
-                "applications": serializer.data
+                'job_status':job_status,
+                
             })
 
         elif role == 'freelancer':
@@ -545,9 +558,19 @@ class ResponseListForJobView(generics.GenericAPIView):
                 )
 
             serializer = self.get_serializer(response)
+            job_status = ('open' if job.selected_freelancer is None else 'complete' if job.status ==
+                            'completed' else 'in progress')
+            accepted_or_rejected = (
+                'pending' if job.selected_freelancer is None
+                else 'rejected' if job.selected_freelancer != request.user
+                else 'accepted'
+            )
+
             return DRFResponse({
                 "job": JobSerializer(job, context={"request": request}).data,
-                "application": serializer.data
+                'job_status':job_status,
+                'accepted_or_rejected':accepted_or_rejected
+                
             }, status=status.HTTP_200_OK)
 
         return DRFResponse(
@@ -737,7 +760,8 @@ class AdvancedJobSearchAPIView(generics.ListAPIView):
 
     filter_backends = [DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter]
     filterset_class = AdvancedJobFilter
-    search_fields = ['title', 'description', 'category']
+    search_fields = ['title', 'description',
+                     'skills_required__name', 'category__name']
     ordering_fields = ['posted_date', 'price']
     ordering = ['-posted_date']
 
@@ -954,12 +978,37 @@ class RemoveBookmarkView(APIView):
     },
     tags=["Jobs", "Client"]
 )
-class ClientJobStatusView(APIView):
+class ClientJobStatusView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = JobSearchSerializer
+    pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = AdvancedJobFilter
+    search_fields = ['title', 'description',
+                     'skills_required__name', 'category__name']
+    ordering = ['-posted_date']
 
-    def get(self, request):
-        user = request.user
+    def get_queryset(self):
+        user = self.request.user
         profile = user.profile
+
+        if profile.user_type != 'client':
+            return Job.objects.none()
+
+        queryset = Job.objects.filter(client=profile)
+
+        status_filter = self.request.query_params.get('status')
+        if status_filter == 'active':
+            status_filter = 'in_progress'
+
+        if status_filter in ['open', 'in_progress', 'completed']:
+            queryset = queryset.filter(status=status_filter)
+
+        return queryset.order_by(*self.ordering)
+
+    def list(self, request, *args, **kwargs):
+        profile = request.user.profile
 
         if profile.user_type != 'client':
             return DRFResponse(
@@ -967,26 +1016,16 @@ class ClientJobStatusView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        status_filter = request.query_params.get('status')
-        if status_filter == 'active':
-            status_filter = 'in_progress'
-
-        try:
-            filters = get_job_filters(request)
-        except ValueError as e:
-            return DRFResponse({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        ordering = request.query_params.get('ordering', '-posted_date')
-        paginator = PageNumberPagination()
-        paginator.page_size = 10
-
-        jobs_qs = Job.objects.filter(client=profile).filter(
-            filters).order_by(ordering)
+        queryset = self.filter_queryset(self.get_queryset())
+        paginator = self.paginator
+        page = paginator.paginate_queryset(queryset, request)
 
         # Stats
-        total_open = jobs_qs.filter(status='open').count()
-        total_completed = jobs_qs.filter(status='completed').count()
-        total_in_progress = jobs_qs.filter(status='in_progress').count()
+        total_open = Job.objects.filter(client=profile, status='open').count()
+        total_completed = Job.objects.filter(
+            client=profile, status='completed').count()
+        total_in_progress = Job.objects.filter(
+            client=profile, status='in_progress').count()
         total_applications = JobResponse.objects.filter(
             job__client=profile).count()
         total_rejections = JobResponse.objects.filter(job__client=profile).exclude(
@@ -1003,30 +1042,11 @@ class ClientJobStatusView(APIView):
             'total_selected': total_selected,
         }
 
-        # No filter — return all
-        if not status_filter:
-            paginated = paginator.paginate_queryset(jobs_qs, request)
-            serializer = JobSearchSerializer(paginated, many=True)
-            return paginator.get_paginated_response({
-                'status': 'all',
-                'count': jobs_qs.count(),
-                'jobs': serializer.data,
-                **stats
-            })
-
-        if status_filter in ['open', 'in_progress', 'completed']:
-            filtered = jobs_qs.filter(status=status_filter)
-            paginated = paginator.paginate_queryset(filtered, request)
-            serializer = JobSearchSerializer(paginated, many=True)
-            return paginator.get_paginated_response({
-                'status': status_filter,
-                'count': filtered.count(),
-                'jobs': serializer.data,
-                **stats
-            })
+        # Custom logic for status views like applied/selected/rejected
+        status_filter = self.request.query_params.get('status')
 
         if status_filter == 'applied':
-            jobs = jobs_qs.prefetch_related('responses__user__profile').annotate(
+            jobs = queryset.prefetch_related('responses__user__profile').annotate(
                 application_count=Count('responses'))
             job_applications = []
             for job in jobs:
@@ -1106,10 +1126,13 @@ class ClientJobStatusView(APIView):
                 **stats
             })
 
-        return DRFResponse({
-            'detail': 'Invalid status filter. Use open, in_progress, completed, applied, selected, or rejected.'
-        }, status=status.HTTP_400_BAD_REQUEST)
-
+        serializer = self.get_serializer(page, many=True)
+        return paginator.get_paginated_response({
+            'status': status_filter or 'all',
+            'count': queryset.count(),
+            'jobs': serializer.data,
+            **stats
+        })
 
 @extend_schema(
     summary="Job Dashboard Summary",

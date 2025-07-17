@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from core.models import Response, Job
 
 MAX_FILE_SIZE_MB = 3
 
@@ -12,3 +13,5 @@ def validate_file(file, allowed_extensions):
     if file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
         raise serializers.ValidationError(
             f"File size must be under {MAX_FILE_SIZE_MB}MB")
+
+

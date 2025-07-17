@@ -19,7 +19,7 @@ class NestedResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Response
-        fields = ['id', 'user', 'submitted_at', 'extra_data']
+        fields = ['id', 'user', 'submitted_at', 'extra_data', 'cv', 'cover_letter', 'portfolio']
 
     def get_user(self, obj):
         try:
@@ -32,7 +32,8 @@ class NestedResponseSerializer(serializers.ModelSerializer):
                 'username': obj.user.username,
                 'portfolio': freelancer_profile.portfolio_link if freelancer_profile.portfolio_link else None,
                 'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
-                'email_verified': True if obj.user.is_active else False
+                'email_verified': True if obj.user.is_active else False,
+                'date_joined': obj.user.date_joined
             }
         except (Profile.DoesNotExist, FreelancerProfile.DoesNotExist):
             return obj.user.username if obj.user else None
@@ -133,7 +134,8 @@ class JobSerializer(serializers.ModelSerializer):
                 'location': obj.client.user.profile.location,
                 #'email': obj.client.user.email,
                 'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
-                'email_verified': True if obj.client.user.is_active else False
+                'email_verified': True if obj.client.user.is_active else False,
+                'date_joined': obj.client.user.date_joined
             }
         return None
 
@@ -290,13 +292,18 @@ class JobSearchSerializer(serializers.ModelSerializer):
     bookmarked = serializers.SerializerMethodField()
     has_applied = serializers.SerializerMethodField()
     has_applied_and_bookmarked = serializers.SerializerMethodField()
+    skills_required = serializers.ListField(
+        child=serializers.CharField(), write_only=True)
+    skills_required_display = SkillSerializer(
+        many=True, read_only=True, source='skills_required')
+    responses = NestedResponseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Job
         fields = [
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
-            'client', 'selected_freelancer', 'payment_verified',
+            'client', 'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified','responses',
             'urgency', 'bookmarked', 'has_applied', 'has_applied_and_bookmarked'
         ]
 
