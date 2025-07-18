@@ -33,7 +33,7 @@ class Paystack:
         }
         data = {
             "email": email,
-            "amount": amount * 100,  # Convert to kobo for Paystack
+            "amount": amount,
             "reference": reference,
             "callback_url": callback_url,
         }

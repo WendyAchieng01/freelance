@@ -55,7 +55,7 @@ class PaymentInitiateView(APIView):
         paystack = Paystack()
         paystack_status, paystack_data = paystack.initialize_transaction(
             email=payment.email,
-            amount=payment.amount_value(),  # in kobo
+            amount=payment.amount_value(), 
             reference=payment.ref,
             callback_url=callback_url
         )

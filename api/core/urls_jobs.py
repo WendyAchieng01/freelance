@@ -4,7 +4,7 @@ from .views import (
                     ApplyToJobView,UnapplyFromJobView,JobDiscoveryView,UpdateResponseFilesView,
                     ResponseListForJobView, AcceptFreelancerView, RejectFreelancerView,
                     JobsWithResponsesView,AdvancedJobSearchAPIView,
-                    ClientJobStatusView,NotificationSummaryView,JobDashboardSummaryView
+                    ClientJobStatusView,DashboardSummaryView
                     
 )
 
@@ -14,6 +14,8 @@ job_create = JobViewSet.as_view({'post': 'create'})
 job_detail = JobViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})
 job_matches = JobViewSet.as_view({'get': 'matches'})
 job_complete = JobViewSet.as_view({'post': 'mark_completed'})
+job_underreview = JobViewSet.as_view({'get': 'underreview'})
+job_marked_for_review = JobViewSet.as_view({'patch': 'mark_for_review'})
 
 
 
@@ -28,11 +30,8 @@ urlpatterns = [
     path('by-client/',ClientJobStatusView.as_view(), name='client-job-status'),
     
     
-    #notification
-    path('notifications/summary/', NotificationSummaryView.as_view(), name='notification-summary'),
-    
     #dashboard
-    path('dashboard/summary/', JobDashboardSummaryView.as_view(), name='dashboard-summary'),
+    path('dashboard/summary/', DashboardSummaryView.as_view(), name='dashboard-summary'),
     
     #job categories
     path('categories/', JobCategoryListCreateView.as_view(), name='jobcategory-list-create'),
@@ -52,11 +51,13 @@ urlpatterns = [
     path('<slug:slug>/update-files/', UpdateResponseFilesView.as_view(), name='update-response-files'),
 
     
-    #path('aplications/', JobsWithResponsesView.as_view(), name='job-applications-list'),
+
     path('<slug:slug>/aplications/', ResponseListForJobView.as_view(), name='job-applications'),
+    path('jobs/<slug:slug>/applications/<slug:response_slug>/mark-for-review/',job_marked_for_review, name='job-mark-for-review'),
+    path('jobs/<slug:slug>/underreview/', job_underreview, name='job-underreview'),
     path('<slug:slug>/accept/<str:identifier>/', AcceptFreelancerView.as_view(), name='accept-freelancer'),
     path('<slug:slug>/reject/<str:identifier>/', RejectFreelancerView.as_view(), name='reject-freelancer'),
-    
+
     path('discover/<str:status_filter>/', JobDiscoveryView.as_view(), name='job-discovery'),
     
     

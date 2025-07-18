@@ -45,3 +45,37 @@ CATEGORY_CHOICES = [
     ('tech_support', 'Technical Support'),
     ('procurement', 'Procurement and Logistics'),
 ]
+
+
+# Job status choices for Job model
+JOB_STATUS_CHOICES = (
+    ('open', 'Open'),
+    ('in_progress', 'In Progress'),
+    ('completed', 'Completed'),
+)
+
+# Application status choices for Response model
+APPLICATION_STATUS_CHOICES = (
+    ('submitted', 'Submitted'),
+    ('under_review', 'Under Review'),
+    ('accepted', 'Accepted'),
+    ('rejected', 'Rejected'),
+)
+
+# Allowed status filter options for JobViewSet
+ALLOWED_STATUS_FILTERS = {
+    'all_users': JOB_STATUS_CHOICES, 
+    'freelancer_only': [
+        ('applied', 'Applied'),
+        ('rejected', 'Rejected'),
+        ('active', 'Active'),
+        ('bookmarked', 'Bookmarked'), 
+    ]
+}
+
+EXPERIENCE_LEVEL= (
+    ('entry', 'Entry Level'),
+    ('intermediate', 'Intermediate'),
+    ('advanced', 'Advanced'),
+    ('expert', 'Expert'),
+)

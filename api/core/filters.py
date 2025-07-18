@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.db.models import Count
 from django_filters import rest_framework as filters
 from core.models import Job, Response as JobResponse
+from core.choices import JOB_STATUS_CHOICES
 
 
 class JobFilter(filters.FilterSet):
@@ -27,21 +28,29 @@ class JobFilter(filters.FilterSet):
     category_slug = filters.CharFilter(
         field_name='category__slug', lookup_expr='iexact')
 
-    level = filters.CharFilter(
-        field_name='preferred_freelancer_level', lookup_expr='iexact')
+    experience_level = filters.ChoiceFilter(
+        field_name='preferred_freelancer_level',
+        choices=Job._meta.get_field('preferred_freelancer_level').choices,
+        lookup_expr='exact'
+    )
 
-    min_applications = filters.NumberFilter(method='filter_min_applications')
-    max_applications = filters.NumberFilter(method='filter_max_applications')
+    min_bids = filters.NumberFilter(method='filter_min_bids')
+    max_bids = filters.NumberFilter(method='filter_max_bids')
 
     skills_required = filters.CharFilter(method='filter_skills_required')
 
-    def filter_min_applications(self, queryset, name, value):
-        queryset = queryset.annotate(application_count=Count('responses'))
-        return queryset.filter(application_count__gte=value)
+    # Use ChoiceFilter for status to restrict to JOB_STATUS_CHOICES
+    status = filters.ChoiceFilter(
+        field_name='status',
+        choices=JOB_STATUS_CHOICES,
+        lookup_expr='exact'
+    )
 
-    def filter_max_applications(self, queryset, name, value):
-        queryset = queryset.annotate(application_count=Count('responses'))
-        return queryset.filter(application_count__lte=value)
+    def filter_min_bids(self, queryset, name, value):
+        return queryset.annotate(bid_count=Count('responses')).filter(bid_count__gte=value)
+
+    def filter_max_bids(self, queryset, name, value):
+        return queryset.annotate(bid_count=Count('responses')).filter(bid_count__lte=value)
 
     def filter_skills_required(self, queryset, name, value):
         return queryset.filter(skills_required__name__icontains=value).distinct()
@@ -49,11 +58,11 @@ class JobFilter(filters.FilterSet):
     class Meta:
         model = Job
         fields = [
-            'status', 'category', 'level',
+            'status', 'category', 'category_slug', 'experience_level',
             'price__gte', 'price__lte',
             'deadline_before', 'deadline_after',
             'posted_before', 'posted_after',
-            'min_applications', 'max_applications', 'skills_required',
+            'min_bids', 'max_bids', 'skills_required',
         ]
 
 
