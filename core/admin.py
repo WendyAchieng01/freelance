@@ -44,6 +44,7 @@ class JobAdmin(admin.ModelAdmin):
                 'max_freelancers',
                 'required_freelancers',
                 'preferred_freelancer_level',
+                'reviewed_responses',
                 'payment_verified',
                 'slug',
                 'is_max_freelancers_reached_display'
@@ -82,10 +83,28 @@ class JobCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Response)
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ('user', 'job', 'submitted_at', 'slug')
-    search_fields = ('user__username', 'job__title', 'slug')
+    list_display = ('user', 'job', 'submitted_at',
+                    'status', 'marked_for_review')
+    search_fields = ('user__username', 'job__title',
+                        'status', 'marked_for_review')
     readonly_fields = ('submitted_at', 'slug')
+    actions = ['mark_under_review', 'unmark_under_review']
     ordering = ('-submitted_at',)
+    
+    admin.action(description="Mark selected responses as Under Review")
+
+    def mark_under_review(self, request, queryset):
+        for response in queryset:
+            response.marked_for_review = True
+            response.status = 'under_review'
+            response.save()
+
+    @admin.action(description="Unmark selected responses (set to Submitted)")
+    def unmark_under_review(self, request, queryset):
+        for response in queryset:
+            response.marked_for_review = False
+            response.status = 'submitted'
+            response.save()
 
     def save_model(self, request, obj, form, change):
         if not obj.slug:

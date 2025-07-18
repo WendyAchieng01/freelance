@@ -1,14 +1,17 @@
+import os
+from django.db.models import Sum
+from django.utils import timezone
+from payment.models import Payment
+from datetime import datetime, time
 from rest_framework import serializers
+from api.core.utils import validate_file
+from payments.models import PaypalPayments
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
-from accounts.models import Profile,Skill
-from core.models import Job,JobCategory, Response, Chat, Message, MessageAttachment, Review,JobBookmark,Notification
-from accounts.models import FreelancerProfile
-from api.accounts.serializers import ProfileMiniSerializer,SkillSerializer
-import os
-from datetime import datetime, time
-from django.utils import timezone
-from api.core.utils import validate_file
+from accounts.models import Profile, Skill, FreelancerProfile
+from api.accounts.serializers import ProfileMiniSerializer, SkillSerializer
+from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification
+
 
 
 User = get_user_model()
@@ -19,7 +22,7 @@ class NestedResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Response
-        fields = ['id', 'user', 'submitted_at', 'extra_data', 'cv', 'cover_letter', 'portfolio']
+        fields = ['user','id', 'submitted_at', 'extra_data', 'cv', 'cover_letter', 'portfolio']
 
     def get_user(self, obj):
         try:
@@ -52,7 +55,6 @@ class JobCategorySerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField()
     selected_freelancer = serializers.SerializerMethodField()
-    responses = NestedResponseSerializer(many=True, read_only=True)
     
     category = serializers.CharField(write_only=True)
     category_display = serializers.SerializerMethodField(read_only=True)
@@ -62,18 +64,18 @@ class JobSerializer(serializers.ModelSerializer):
     
     client_rating = serializers.SerializerMethodField()
     client_review_count = serializers.SerializerMethodField()
-    client_recent_reviews = serializers.SerializerMethodField()
+    #client_recent_reviews = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Job
         fields = [
-            'id', 'client','status','title', 'category', 'category_display', 'description', 'price',
+            'client','id','status','title', 'category', 'category_display', 'description', 'price',
             'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
             'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'responses',
-            'client_rating', 'client_review_count', 'client_recent_reviews'
+            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count'
+            
         ]
         read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
         
@@ -125,19 +127,44 @@ class JobSerializer(serializers.ModelSerializer):
 
     def get_client(self, obj):
         profile = obj.client.user.profile
+        user = obj.client.user
+
         if obj.client:
+            # From PaypalPayments (only verified & completed)
+            paypal_total = PaypalPayments.objects.filter(
+                user=user,
+                verified=True,
+                status='completed'
+            ).aggregate(total=Sum('amount'))['total'] or 0
+
+            # From Payment (only verified)
+            payment_total = Payment.objects.filter(
+                user=user,
+                verified=True
+            ).aggregate(total=Sum('amount'))['total'] or 0
+
+            total_paid = round(paypal_total + payment_total, 2)
+
+            hired_count = Job.objects.filter(
+                client__user=user,
+                selected_freelancer__isnull=False
+            ).values('selected_freelancer').distinct().count()
+
             return {
-                'id':obj.client.user.id,
-                'first_name': obj.client.user.first_name,
-                'last_name': obj.client.user.last_name,
-                'username': obj.client.user.username,
-                'location': obj.client.user.profile.location,
-                #'email': obj.client.user.email,
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'username': user.username,
+                'location': profile.location,
                 'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
-                'email_verified': True if obj.client.user.is_active else False,
-                'date_joined': obj.client.user.date_joined
+                'email_verified': user.is_active,
+                'date_joined': user.date_joined,
+                'client_rating': round(Review.average_rating_for(user), 2),
+                'total_amount_paid': total_paid,
+                'total_freelancers_hired': hired_count
             }
         return None
+        
 
     def get_selected_freelancer(self, obj):
         if not obj.selected_freelancer:
@@ -152,6 +179,20 @@ class JobSerializer(serializers.ModelSerializer):
             'rating': rating,
             'recent_reviews': ReviewSerializer(recent_reviews, many=True).data
         }
+    
+    def get_responses(self, obj):
+        user = self.context['request'].user
+        if not user.is_authenticated:
+            return []
+
+        if user == obj.client.user:
+            # Client sees all responses
+            responses = obj.responses.all()
+        else:
+            # Freelancer sees only their response
+            responses = obj.responses.filter(user=user)
+
+        return NestedResponseSerializer(responses, many=True).data
             
 
 class ApplyResponseSerializer(serializers.ModelSerializer):
@@ -203,8 +244,12 @@ class ResponseListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Response
-        fields = ['id', 'user', 'extra_data', 'submitted_at',
-                    'cv_url', 'cover_letter_url', 'portfolio_url','slug']
+        fields = [
+            'user',
+            'id', 'extra_data', 'submitted_at',
+            'cv_url', 'cover_letter_url', 'portfolio_url',
+            'slug', 'status', 'marked_for_review'
+        ]
 
     def get_user(self, obj):
         profile = getattr(obj.user, 'profile', None)
@@ -228,23 +273,30 @@ class ResponseListSerializer(serializers.ModelSerializer):
         return obj.portfolio.url if obj.portfolio else None
 
     def validate_cv(self, value):
-        if value:
-            validate_file(value, ['.pdf', '.doc', '.docx'])
-        return value
-
+        return validate_file(value, ['pdf', 'doc', 'docx'])
 
     def validate_cover_letter(self, value):
-        if value:
-            validate_file(value, ['.pdf', '.doc', '.docx'])
-        return value
-
+        return validate_file(value, ['pdf', 'doc', 'docx'])
 
     def validate_portfolio(self, value):
-        if value:
-            validate_file(value, ['.pdf', '.doc', '.docx',
-                        '.jpg', '.jpeg', '.png'])
-        return value
-        
+        return validate_file(value, ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'])
+
+
+class ResponseReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Response
+        fields = ['marked_for_review']
+        read_only_fields = [] 
+
+    def update(self, instance, validated_data):
+        marked_for_review = validated_data.get(
+            'marked_for_review', instance.marked_for_review)
+        if marked_for_review:
+            instance.mark_for_review()
+        else:
+            instance.unmark_review()
+        return instance
+    
 
 class FreelancerBriefSerializer(serializers.ModelSerializer):
     class Meta:
@@ -287,25 +339,63 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class JobSearchSerializer(serializers.ModelSerializer):
+    client = serializers.SerializerMethodField()
     category = JobCategorySerializer(read_only=True)
     urgency = serializers.SerializerMethodField()
     bookmarked = serializers.SerializerMethodField()
     has_applied = serializers.SerializerMethodField()
-    has_applied_and_bookmarked = serializers.SerializerMethodField()
     skills_required = serializers.ListField(
         child=serializers.CharField(), write_only=True)
     skills_required_display = SkillSerializer(
         many=True, read_only=True, source='skills_required')
-    responses = NestedResponseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Job
         fields = [
+            'client',
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
-            'client', 'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified','responses',
-            'urgency', 'bookmarked', 'has_applied', 'has_applied_and_bookmarked'
+            'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified',
+            'urgency', 'bookmarked', 'has_applied'
         ]
+        
+    def get_client(self, obj):
+        client = getattr(obj, 'client', None)
+        if not client or not hasattr(client, 'user'):
+            return None
+
+        user = client.user
+        profile = getattr(user, 'profile', None)
+        if not profile:
+            return None
+
+        paypal_total = PaypalPayments.objects.filter(
+            user=user, verified=True, status='completed'
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        payment_total = Payment.objects.filter(
+            user=user, verified=True
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        total_paid = round(paypal_total + payment_total, 2)
+
+        hired_count = Job.objects.filter(
+            client__user=user, selected_freelancer__isnull=False
+        ).values('selected_freelancer').distinct().count()
+
+        return {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'location': profile.location,
+            'profile_pic': profile.profile_pic.url if profile.profile_pic else None,
+            'email_verified': user.is_active,
+            'date_joined': user.date_joined,
+            'client_rating': round(Review.average_rating_for(user), 2),
+            'total_amount_paid': total_paid,
+            'total_freelancers_hired': hired_count
+        }
 
     def get_urgency(self, obj):
         if obj.deadline_date:

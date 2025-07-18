@@ -1,18 +1,19 @@
 import uuid
 from django.db import models
-from django.db.models import Avg
-from django.contrib.auth.models import User
-from django.utils import timezone
-from django.core.validators import FileExtensionValidator
-from accounts.models import Profile
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
+from django.db.models import Avg
+from django.utils import timezone
+from accounts.models import Profile
+from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.urls import reverse
 from datetime import timedelta
 from accounts.models import Skill
 from django.utils.timezone import now
-from .choices import CATEGORY_CHOICES
+from .choices import CATEGORY_CHOICES,APPLICATION_STATUS_CHOICES,JOB_STATUS_CHOICES,EXPERIENCE_LEVEL
 
 
 class JobCategory(models.Model):
@@ -30,36 +31,26 @@ class JobCategory(models.Model):
 
 # Create your models here
 class Job(models.Model):
-    STATUS_CHOICES = (
-        ('open', 'Open'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-    )
-    
+
     title = models.CharField(max_length=100)
     category = models.ForeignKey(JobCategory, on_delete=models.SET_NULL,null=True,related_name='jobs')
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     posted_date = models.DateTimeField(auto_now_add=True)
     deadline_date = models.DateTimeField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    status = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default='open')
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
-    max_freelancers = models.IntegerField(default=1, help_text="Total number of applications to receive")
+    max_freelancers = models.IntegerField(default=50, help_text="Set total number of applications to receive")
     required_freelancers = models.PositiveSmallIntegerField(default=1, help_text="If the job requires more than one freelancer")
     skills_required = models.ManyToManyField(Skill, related_name="required_skills")
-    preferred_freelancer_level = models.CharField(max_length=50, choices=(
-        ('entry', 'Entry Level'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced'),
-        ('expert', 'Expert')
-    ), default='intermediate')
-    
-    # New field to track selected freelancer
+    preferred_freelancer_level = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, default='intermediate')
+    reviewed_responses = models.ManyToManyField(
+        'Response', related_name='marked_jobs', blank=True)
+    # track selected freelancer
     selected_freelancer = models.ForeignKey(User,  null=True, blank=True, on_delete=models.SET_NULL, 
         related_name='selected_jobs'
     )
-    
-    # New field to track payment status (optional, depending on your payment flow)
+
     payment_verified = models.BooleanField(default=False)
     slug = models.SlugField(unique=True, blank=True, null=True)
     
@@ -118,6 +109,11 @@ class Job(models.Model):
         self.save(update_fields=['status'])
         return True
     
+    def mark_response_for_review(self, response):
+        if response.job != self:
+            raise ValidationError("Cannot mark response for a different job.")
+        self.reviewed_responses.add(response)
+    
     
     @property
     def is_max_freelancers_reached(self):
@@ -156,19 +152,27 @@ class JobBookmark(models.Model):
 
 class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, related_name='responses', on_delete=models.CASCADE)
+    job = models.ForeignKey(
+        'Job', related_name='responses', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(auto_now_add=True)
-    extra_data = models.JSONField(null=True, blank=True) 
+    extra_data = models.JSONField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
     cv = models.FileField(upload_to='responses/cvs/', null=True, blank=True)
-    cover_letter = models.FileField(upload_to='responses/cover_letters/', null=True, blank=True)
-    portfolio = models.FileField(upload_to='responses/portfolios/', null=True, blank=True)
-
+    cover_letter = models.FileField(
+        upload_to='responses/cover_letters/', null=True, blank=True)
+    portfolio = models.FileField(
+        upload_to='responses/portfolios/', null=True, blank=True)
+    status = models.CharField(
+        max_length=20,choices=APPLICATION_STATUS_CHOICES,default='submitted',
+        null=True,blank=True
+    )
+    marked_for_review = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('job', 'user',)
-        
+
     def save(self, *args, **kwargs):
+        # Auto-generate slug
         if not self.slug:
             base_slug = slugify(f'{self.job.title}-{self.user.username}')
             unique_slug = base_slug
@@ -177,8 +181,44 @@ class Response(models.Model):
                 unique_slug = f'{base_slug}-{num}'
                 num += 1
             self.slug = unique_slug
+
+        # Auto-update response status based on job status
+        self.auto_update_status()
         super().save(*args, **kwargs)
-    
+
+    def auto_update_status(self):
+        """Automate response status updates based on job state."""
+        if self.job.status == 'completed' and self.status not in ['rejected', 'accepted']:
+            self.status = 'rejected' 
+
+        elif self.job.selected_freelancer == self.user:
+            self.status = 'accepted'
+
+        elif self.job.status == 'in_progress' and self.status == 'submitted':
+            self.status = 'under_review'
+
+
+    def is_accepted(self):
+        return self.status == 'accepted'
+
+    def is_rejected(self):
+        return self.status == 'rejected'
+
+    def is_under_review(self):
+        return self.status == 'under_review'
+
+    def is_submitted(self):
+        return self.status == 'submitted'
+    def mark_for_review(self):
+        self.marked_for_review = True
+        self.status = 'under_review'
+        self.save()
+
+    def unmark_review(self):
+        self.marked_for_review = False
+        if self.status == 'under_review':
+            self.status = 'submitted'
+        self.save()
 
     def __str__(self):
         return f"Response by {self.user.username} for {self.job.title}"

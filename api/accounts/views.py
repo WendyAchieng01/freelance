@@ -659,19 +659,40 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
         return ClientProfile.objects.filter(profile__user=self.request.user)
 
     def get_object(self):
-        identifier = self.kwargs.get(
-            'client_profile_slug') or self.kwargs.get('slug')
+        request = self.request
+        identifier = (
+            self.kwargs.get('client_profile_slug')
+            or self.kwargs.get('slug')
+            or self.kwargs.get('user_id')
+            or self.kwargs.get('username')
+        )
+
         logger.debug(f"Fetching object with identifier: {identifier}")
+
         if identifier == 'me':
-            obj = get_object_or_404(
-                ClientProfile, profile__user=self.request.user)
+            obj = get_object_or_404(ClientProfile, profile__user=request.user)
         else:
-            obj = get_object_or_404(ClientProfile, slug=identifier)
-        if obj.profile.user != self.request.user:
+            try:
+                obj = ClientProfile.objects.get(slug=identifier)
+            except ClientProfile.DoesNotExist:
+                try:
+                    user = User.objects.get(id=identifier)
+                    obj = ClientProfile.objects.get(profile__user=user)
+                except (User.DoesNotExist, ClientProfile.DoesNotExist):
+                    try:
+                        user = User.objects.get(username=identifier)
+                        obj = ClientProfile.objects.get(profile__user=user)
+                    except (User.DoesNotExist, ClientProfile.DoesNotExist):
+                        logger.warning(
+                            f"No client profile found for identifier: {identifier}")
+                        raise Http404("Client profile not found.")
+
+        if obj.profile.user != request.user:
             logger.warning(
-                f"Permission denied for user {self.request.user} on profile {obj.slug}")
+                f"Permission denied for user {request.user} on profile {obj.slug}")
             raise PermissionDenied(
                 "You do not have permission to access this profile.")
+
         return obj
 
     def create(self, request, *args, **kwargs):
