@@ -219,14 +219,14 @@ def create_job(request):
             job.client = request.user.profile
             job.status = 'open'
             job.save()
-            form.save_m2m()  # Save ManyToMany data (e.g., skills_required)
+            form.save_m2m()  
 
             messages.success(request, 'Job posted successfully!')
             return redirect('core:client_posted_jobs')
     else:
         form = CreateJobForm()
 
-    categories = JobCategory.objects.all()  # Replace static choices with dynamic categories
+    categories = JobCategory.objects.all()  
     return render(request, 'create_job.html', {
         'form': form,
         'categories': categories
