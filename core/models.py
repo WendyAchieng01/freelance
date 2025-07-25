@@ -28,31 +28,28 @@ class JobCategory(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-
-# Create your models here
 class Job(models.Model):
-
     title = models.CharField(max_length=100)
-    category = models.ForeignKey(JobCategory, on_delete=models.SET_NULL,null=True,related_name='jobs')
+    category = models.ForeignKey(JobCategory, on_delete=models.SET_NULL, null=True, related_name='jobs')
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     posted_date = models.DateTimeField(auto_now_add=True)
     deadline_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default='open')
     client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
-    max_freelancers = models.IntegerField(default=50, help_text="Set total number of applications to receive")
+    max_freelancers = models.IntegerField(default=1, help_text="Set total number of applications to receive")
     required_freelancers = models.PositiveSmallIntegerField(default=1, help_text="If the job requires more than one freelancer")
     skills_required = models.ManyToManyField(Skill, related_name="required_skills")
     preferred_freelancer_level = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, default='intermediate')
-    reviewed_responses = models.ManyToManyField(
-        'Response', related_name='marked_jobs', blank=True)
-    # track selected freelancer
-    selected_freelancer = models.ForeignKey(User,  null=True, blank=True, on_delete=models.SET_NULL, 
-        related_name='selected_jobs'
-    )
-
+    reviewed_responses = models.ManyToManyField('Response', related_name='marked_jobs', blank=True)
+    selected_freelancer = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='selected_jobs')
     payment_verified = models.BooleanField(default=False)
-    slug = models.SlugField(unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)  
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.title:
+            self.slug = slugify(self.title)[:255]  
+        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         if self.slug:
@@ -382,7 +379,5 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"
-    
-    
-        return self.name
+
 
