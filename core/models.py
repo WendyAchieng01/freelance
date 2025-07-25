@@ -68,7 +68,7 @@ class Job(models.Model):
             return reverse('payment-initiate-slug', kwargs={'slug': self.slug})
         return reverse('payment-initiate-id', kwargs={'id': self.id})
     
-    def mark_as_completed(self, force=False):
+    def mark_as_completed(self, force=True):
         """
         Marks the job as completed if all conditions are met.
         """

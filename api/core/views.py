@@ -129,7 +129,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         job = self.get_object()
-        if job.selected_freelancer:
+        if job.selected_freelancer and self.request.user.profile != job.client:
             raise ValidationError(
                 "You cannot modify a job after it has been assigned.")
         serializer.save()
@@ -283,7 +283,6 @@ class JobViewSet(viewsets.ModelViewSet):
             bookmarked = user.bookmarks.filter(id=instance.id).exists()
             applied = JobResponse.objects.filter(
                 user=user, job=instance).exists()
-            
             
 
         data['bookmarked'] = bookmarked
