@@ -6,7 +6,7 @@ from core.forms import CreateJobForm, ResponseForm
 from core.models import *
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponseRedirect, FileResponse
 from django.urls import reverse
 import json
@@ -689,5 +689,90 @@ def about_gen(request):
     return render(request, 'about_gen.html')
 
 def contact_gen(request):
+    if request.method == 'POST':
+        # Get form data
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        
+        # Store form data to repopulate form if there's an error
+        form_data = {
+            'name': name,
+            'email': email,
+            'message': message
+        }
+        
+        # Basic validation
+        if not name or not email or not message:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'contact_gen.html', {'form_data': form_data})
+        
+        # Email validation (basic)
+        if '@' not in email or '.' not in email.split('@')[-1]:
+            messages.error(request, 'Please enter a valid email address.')
+            return render(request, 'contact_gen.html', {'form_data': form_data})
+        
+        try:
+            # Prepare email content
+            subject = f'Contact Form Submission from {name}'
+            email_message = f"""
+            New contact form submission:
+            
+            Name: {name}
+            Email: {email}
+            
+            Message:
+            {message}
+            
+            ---
+            This message was sent from your website contact form.
+            """
+            
+            # Send email
+            send_mail(
+                subject=subject,
+                message=email_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.EMAIL_HOST_USER],  # Send to your email
+                fail_silently=False,
+            )
+            
+            # Send confirmation email to user (optional)
+            confirmation_subject = 'Thank you for contacting us'
+            confirmation_message = f"""
+            Hi {name},
+            
+            Thank you for your message. We have received your inquiry and will get back to you soon.
+            
+            Your message:
+            {message}
+            
+            Best regards,
+            Nill Tech Solutions Team
+            """
+            
+            send_mail(
+                subject=confirmation_subject,
+                message=confirmation_message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True,  # Don't fail if confirmation email fails
+            )
+            
+            messages.success(request, 'Thank you! Your message has been sent successfully.')
+            return HttpResponseRedirect(request.path)  # Redirect to prevent resubmission
+            
+        except BadHeaderError:
+            messages.error(request, 'Invalid header found. Please check your input.')
+            logger.error(f'BadHeaderError in contact form submission from {email}')
+            return render(request, 'contact_gen.html', {'form_data': form_data})
+            
+        except Exception as e:
+            messages.error(request, 'Unable to send your message. Please try again later.')
+            logger.error(f'Error sending contact form email: {str(e)}')
+            return render(request, 'contact_gen.html', {'form_data': form_data})
+    
+    # GET request - just show the form
     return render(request, 'contact_gen.html')
+
 
