@@ -14,6 +14,7 @@ from api.payment.paystack import Paystack
 from urllib.parse import urlencode,unquote
 
 
+
 class PaymentInitiateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -37,6 +38,8 @@ class PaymentInitiateView(APIView):
         
         # Prevent duplicate verified payments
         if job.payment_verified:
+            #print(f"This is job payment url {job.get_payment_url()} while this is job absolute {job.get_absolute_url()}")
+
             return redirect(job.get_absolute_url())
 
         # Create a new payment instance also ref is  set automatically
@@ -73,12 +76,12 @@ class PaymentInitiateView(APIView):
             }, status=status.HTTP_200_OK)
 
         else:
-            # Handle error gracefully
-            request.session['payment_error'] = paystack_data
-            return Response({'error': paystack_data}, status=status.HTTP_400_BAD_REQUEST)
-        
-            # request.session['payment_error'] = paystack_data
-            # return redirect(job.get_payment_url())
+            error_msg = paystack_data.get(
+                'message', 'Payment initialization failed.')
+            redirect_id = job.slug if hasattr(job, 'slug') and job.slug else job.id
+            params = urlencode({'error': error_msg})
+            
+            return redirect(f'/{redirect_id}/proceed-to-pay/?{params}')
 
 
 def get_nested_values(data, *keys):
