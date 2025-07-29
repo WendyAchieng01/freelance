@@ -131,7 +131,7 @@ class JobViewSet(viewsets.ModelViewSet):
         job = self.get_object()
         if job.selected_freelancer and self.request.user.profile != job.client:
             raise ValidationError(
-                "You cannot modify a job after it has been assigned.")
+                "You cannot modify this job.")
         serializer.save()
 
     @extend_schema(
@@ -311,6 +311,8 @@ class JobViewSet(viewsets.ModelViewSet):
         job = self.get_object()
         matches = match_freelancers_to_job(job)
         return DRFResponse([{
+            'job_title': job.title,
+            'job_slug': job.slug,
             'freelancer': m[0].profile.user.username,
             'score': m[1],
             'skills': [s.name for s in m[0].skills.all()]
@@ -320,13 +322,19 @@ class JobViewSet(viewsets.ModelViewSet):
         summary="Mark a job as completed",
         responses={200: OpenApiResponse(description="Marked completed")}
     )
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsJobOwner])
+    @action(
+        detail=True,
+        methods=['patch'],
+        permission_classes=[IsAuthenticated, IsJobOwner],
+        url_path='complete'  
+    )
     def mark_completed(self, request, slug=None):
         job = self.get_object()
         success = job.mark_as_completed()
         if success:
             return DRFResponse({'detail': 'Job marked as completed.'}, status=status.HTTP_200_OK)
         return DRFResponse({'detail': 'Failed to mark job as completed.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
     @extend_schema(
         summary="List job applications",

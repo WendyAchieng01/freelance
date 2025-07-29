@@ -13,7 +13,7 @@ job_list = JobViewSet.as_view({'get': 'list'})
 job_create = JobViewSet.as_view({'post': 'create'})
 job_detail = JobViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})
 job_matches = JobViewSet.as_view({'get': 'matches'})
-job_complete = JobViewSet.as_view({'post': 'mark_completed'})
+job_complete = JobViewSet.as_view({'patch': 'mark_completed'})
 job_underreview = JobViewSet.as_view({'get': 'underreview'})
 job_marked_for_review = JobViewSet.as_view({'patch': 'mark_for_review'})
 
@@ -42,8 +42,8 @@ urlpatterns = [
     path('list/', job_list, name='job-list'),
     path('create/', job_create, name='job-create'),
     path('<slug:slug>/', job_detail, name='job-detail-slug'),
-    path('<slug:slug>/', job_matches, name='job-matches'),
-    path('<slug:slug>/', job_complete, name='job-complete'),
+    path('<slug:slug>/matches/', job_matches, name='job-matches'),
+    path('<slug:slug>/complete/', job_complete, name='job-complete'),
     
     #apply and unapply
     path('<slug:slug>/apply/', ApplyToJobView.as_view(), name='job-apply'),
@@ -53,8 +53,8 @@ urlpatterns = [
     
 
     path('<slug:slug>/aplications/', ResponseListForJobView.as_view(), name='job-applications'),
-    path('jobs/<slug:slug>/applications/<slug:response_slug>/mark-for-review/',job_marked_for_review, name='job-mark-for-review'),
-    path('jobs/<slug:slug>/underreview/', job_underreview, name='job-underreview'),
+    path('<slug:slug>/applications/<slug:response_slug>/mark-for-review/',job_marked_for_review, name='job-mark-for-review'),
+    path('<slug:slug>/underreview/', job_underreview, name='job-underreview'),
     path('<slug:slug>/accept/<str:identifier>/', AcceptFreelancerView.as_view(), name='accept-freelancer'),
     path('<slug:slug>/reject/<str:identifier>/', RejectFreelancerView.as_view(), name='reject-freelancer'),
 
