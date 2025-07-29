@@ -19,11 +19,13 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from api.accounts.views import PasswordResetConfirmView
 
 
 
 urlpatterns = [
     path('api/v1/', include('api.urls')),
+    path('auth/password-reset-confirm/<str:uidb64>/<str:token>/',PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('core/', include('core.urls', namespace='core')),
     path('academy/', include('academy.urls', namespace='academy')),

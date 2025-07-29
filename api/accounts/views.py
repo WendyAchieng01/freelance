@@ -357,7 +357,7 @@ class PasswordResetRequestView(APIView):
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
                 current_site = get_current_site(request)
-                reset_url = f'http://{current_site.domain}/api/v1/auth/password-reset-confirm/{uid}/{token}/'
+                reset_url = f'http://{current_site.domain}/auth/password-reset-confirm/{uid}/{token}/'
 
                 subject = 'Reset Your Password'
                 message_text = f'Hi {user.username},\n\nPlease click the link to reset your password: {reset_url}'
