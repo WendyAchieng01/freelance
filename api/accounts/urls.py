@@ -17,7 +17,7 @@ urlpatterns = [
      path('auth/logout/', views.LogoutView.as_view(), name='logout'),
      path('auth/password-change/',views.PasswordChangeView.as_view(), name='password-change'),
      path('auth/password-reset/', views.PasswordResetRequestView.as_view(),name='password-reset-request'),
-     path('auth/password-reset-confirm/<str:uidb64>/<str:token>/',views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
+
 
      path('freelance/', include('api.accounts.urls_freelancer')),
      path('clients/', include('api.accounts.urls_client')),
