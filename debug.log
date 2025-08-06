@@ -1,0 +1,748 @@
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 44912]
+HTTP 302 response started for ['127.0.0.1', 44912]
+HTTP close for ['127.0.0.1', 44912]
+HTTP response complete for ['127.0.0.1', 44912]
+[32mHTTP GET /admin/ 302 [0.12, 127.0.0.1:44912][0m
+HTTP b'GET' request for ['127.0.0.1', 44912]
+HTTP 200 response started for ['127.0.0.1', 44912]
+HTTP close for ['127.0.0.1', 44912]
+HTTP response complete for ['127.0.0.1', 44912]
+[mHTTP GET /admin/login/?next=/admin/ 200 [0.03, 127.0.0.1:44912][0m
+HTTP b'GET' request for ['127.0.0.1', 44912]
+HTTP b'GET' request for ['127.0.0.1', 44918]
+HTTP b'GET' request for ['127.0.0.1', 44924]
+HTTP b'GET' request for ['127.0.0.1', 44932]
+HTTP b'GET' request for ['127.0.0.1', 44946]
+HTTP 200 response started for ['127.0.0.1', 44932]
+HTTP 200 response started for ['127.0.0.1', 44918]
+HTTP 200 response started for ['127.0.0.1', 44912]
+HTTP 200 response started for ['127.0.0.1', 44924]
+HTTP 200 response started for ['127.0.0.1', 44946]
+HTTP response chunk for ['127.0.0.1', 44932]
+HTTP close for ['127.0.0.1', 44932]
+HTTP response complete for ['127.0.0.1', 44932]
+[mHTTP GET /static/admin/css/login.css 200 [0.18, 127.0.0.1:44932][0m
+HTTP response chunk for ['127.0.0.1', 44918]
+HTTP close for ['127.0.0.1', 44918]
+HTTP response complete for ['127.0.0.1', 44918]
+[mHTTP GET /static/admin/css/dark_mode.css 200 [0.18, 127.0.0.1:44918][0m
+HTTP response chunk for ['127.0.0.1', 44912]
+HTTP close for ['127.0.0.1', 44912]
+HTTP response complete for ['127.0.0.1', 44912]
+[mHTTP GET /static/admin/css/base.css 200 [0.18, 127.0.0.1:44912][0m
+HTTP response chunk for ['127.0.0.1', 44924]
+HTTP close for ['127.0.0.1', 44924]
+HTTP response complete for ['127.0.0.1', 44924]
+[mHTTP GET /static/admin/css/nav_sidebar.css 200 [0.18, 127.0.0.1:44924][0m
+HTTP response chunk for ['127.0.0.1', 44946]
+HTTP close for ['127.0.0.1', 44946]
+HTTP response complete for ['127.0.0.1', 44946]
+[mHTTP GET /static/admin/css/responsive.css 200 [0.18, 127.0.0.1:44946][0m
+HTTP b'GET' request for ['127.0.0.1', 44946]
+HTTP 200 response started for ['127.0.0.1', 44946]
+HTTP response chunk for ['127.0.0.1', 44946]
+HTTP close for ['127.0.0.1', 44946]
+HTTP response complete for ['127.0.0.1', 44946]
+[mHTTP GET /static/admin/js/theme.js 200 [0.00, 127.0.0.1:44946][0m
+HTTP b'GET' request for ['127.0.0.1', 44946]
+HTTP 200 response started for ['127.0.0.1', 44946]
+HTTP response chunk for ['127.0.0.1', 44946]
+HTTP close for ['127.0.0.1', 44946]
+HTTP response complete for ['127.0.0.1', 44946]
+[mHTTP GET /static/admin/js/nav_sidebar.js 200 [0.01, 127.0.0.1:44946][0m
+HTTP b'GET' request for ['127.0.0.1', 44946]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 44946]
+HTTP close for ['127.0.0.1', 44946]
+HTTP response complete for ['127.0.0.1', 44946]
+[33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:44946][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 37502]
+HTTP 302 response started for ['127.0.0.1', 37502]
+HTTP close for ['127.0.0.1', 37502]
+HTTP response complete for ['127.0.0.1', 37502]
+[32mHTTP POST /admin/login/?next=/admin/ 302 [1.06, 127.0.0.1:37502][0m
+HTTP b'GET' request for ['127.0.0.1', 37502]
+HTTP 200 response started for ['127.0.0.1', 37502]
+HTTP close for ['127.0.0.1', 37502]
+HTTP response complete for ['127.0.0.1', 37502]
+[mHTTP GET /admin/ 200 [0.12, 127.0.0.1:37502][0m
+HTTP b'GET' request for ['127.0.0.1', 37502]
+HTTP disconnect for ['127.0.0.1', 37502]
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/css/dashboard.css 200 [0.02, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37516]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/img/icon-addlink.svg 200 [0.01, 127.0.0.1:37512][0m
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP close for ['127.0.0.1', 37516]
+HTTP response complete for ['127.0.0.1', 37516]
+[mHTTP GET /static/admin/img/icon-changelink.svg 200 [0.00, 127.0.0.1:37516][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /admin/auth/user/ 200 [0.06, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37516]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37516]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP b'GET' request for ['127.0.0.1', 37558]
+HTTP b'GET' request for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/img/search.svg 200 [0.09, 127.0.0.1:37512][0m
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP close for ['127.0.0.1', 37516]
+HTTP response complete for ['127.0.0.1', 37516]
+[mHTTP GET /static/admin/img/icon-yes.svg 200 [0.09, 127.0.0.1:37516][0m
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/admin/css/changelists.css 200 [0.09, 127.0.0.1:37526][0m
+HTTP 200 response started for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP close for ['127.0.0.1', 37558]
+HTTP response complete for ['127.0.0.1', 37558]
+[mHTTP GET /static/admin/js/jquery.init.js 200 [0.01, 127.0.0.1:37558][0m
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP close for ['127.0.0.1', 37566]
+HTTP response complete for ['127.0.0.1', 37566]
+[mHTTP GET /static/admin/js/filters.js 200 [0.01, 127.0.0.1:37566][0m
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /admin/jsi18n/ 200 [0.10, 127.0.0.1:37542][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/vendor/jquery/jquery.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/core.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/admin/RelatedObjectLookups.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/actions.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/urlify.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/admin/js/prepopulate.js 200 [0.00, 127.0.0.1:37526][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/js/vendor/xregexp/xregexp.js 200 [0.00, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/admin/img/tooltag-add.svg 200 [0.00, 127.0.0.1:37512][0m
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/admin/img/sorting-icons.svg 200 [0.01, 127.0.0.1:37526][0m
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /static/admin/img/icon-viewlink.svg 200 [0.01, 127.0.0.1:37542][0m
+HTTP b'POST' request for ['127.0.0.1', 37512]
+HTTP 302 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[32mHTTP POST /admin/logout/ 302 [0.15, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /core/ 200 [0.02, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP b'GET' request for ['127.0.0.1', 37566]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37566]
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/css/index.css 200 [0.01, 127.0.0.1:37526][0m
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP close for ['127.0.0.1', 37566]
+HTTP response complete for ['127.0.0.1', 37566]
+[mHTTP GET /static/js/nicepage.js 200 [0.01, 127.0.0.1:37566][0m
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/css/nicepage.css 200 [0.02, 127.0.0.1:37512][0m
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /static/js/jquery.js 200 [0.02, 127.0.0.1:37542][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37566]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP b'GET' request for ['127.0.0.1', 37516]
+HTTP b'GET' request for ['127.0.0.1', 37558]
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP 200 response started for ['127.0.0.1', 37516]
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37558]
+HTTP 200 response started for ['127.0.0.1', 37566]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /static/images/pic4.jpg 200 [0.01, 127.0.0.1:37542][0m
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/images/pic7.jpg 200 [0.01, 127.0.0.1:37526][0m
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP close for ['127.0.0.1', 37516]
+HTTP response complete for ['127.0.0.1', 37516]
+[mHTTP GET /static/images/pic6.jpg 200 [0.01, 127.0.0.1:37516][0m
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP close for ['127.0.0.1', 37558]
+HTTP response complete for ['127.0.0.1', 37558]
+[mHTTP GET /static/images/transcription.jpg 200 [0.01, 127.0.0.1:37558][0m
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP close for ['127.0.0.1', 37566]
+HTTP response complete for ['127.0.0.1', 37566]
+[mHTTP GET /static/images/pic3.jpg 200 [0.02, 127.0.0.1:37566][0m
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/images/pic8.jpg 200 [0.02, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP b'GET' request for ['127.0.0.1', 37516]
+HTTP b'GET' request for ['127.0.0.1', 37558]
+HTTP b'GET' request for ['127.0.0.1', 37566]
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37558]
+HTTP 200 response started for ['127.0.0.1', 37516]
+HTTP 200 response started for ['127.0.0.1', 37566]
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP close for ['127.0.0.1', 37558]
+HTTP response complete for ['127.0.0.1', 37558]
+[mHTTP GET /static/images/data.jpg 200 [0.01, 127.0.0.1:37558][0m
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP close for ['127.0.0.1', 37516]
+HTTP response complete for ['127.0.0.1', 37516]
+[mHTTP GET /static/images/Untitled-1.png 200 [0.02, 127.0.0.1:37516][0m
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP close for ['127.0.0.1', 37566]
+HTTP response complete for ['127.0.0.1', 37566]
+[mHTTP GET /static/images/meeting.jpg 200 [0.01, 127.0.0.1:37566][0m
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/images/virtual.jpg 200 [0.02, 127.0.0.1:37526][0m
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /static/images/development.jpg 200 [0.02, 127.0.0.1:37542][0m
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/images/shape-2-min.png 200 [0.02, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37558]
+HTTP b'GET' request for ['127.0.0.1', 37516]
+HTTP b'GET' request for ['127.0.0.1', 37566]
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP b'GET' request for ['127.0.0.1', 37526]
+HTTP b'GET' request for ['127.0.0.1', 37542]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37558]
+HTTP 200 response started for ['127.0.0.1', 37566]
+HTTP 200 response started for ['127.0.0.1', 37526]
+HTTP 200 response started for ['127.0.0.1', 37542]
+HTTP 200 response started for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/images/pic1.jpg 200 [0.01, 127.0.0.1:37512][0m
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP response chunk for ['127.0.0.1', 37558]
+HTTP close for ['127.0.0.1', 37558]
+HTTP response complete for ['127.0.0.1', 37558]
+[mHTTP GET /static/images/professional-businesspeople-discussing-business-strategy5.jpg 200 [0.02, 127.0.0.1:37558][0m
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP response chunk for ['127.0.0.1', 37566]
+HTTP close for ['127.0.0.1', 37566]
+HTTP response complete for ['127.0.0.1', 37566]
+[mHTTP GET /static/images/9662cc81-5028-aab1-59c0-7bbed84c701d.jpg 200 [0.01, 127.0.0.1:37566][0m
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP response chunk for ['127.0.0.1', 37526]
+HTTP close for ['127.0.0.1', 37526]
+HTTP response complete for ['127.0.0.1', 37526]
+[mHTTP GET /static/images/nill.jpg 200 [0.01, 127.0.0.1:37526][0m
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP response chunk for ['127.0.0.1', 37542]
+HTTP close for ['127.0.0.1', 37542]
+HTTP response complete for ['127.0.0.1', 37542]
+[mHTTP GET /static/images/pic2.jpg 200 [0.01, 127.0.0.1:37542][0m
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP response chunk for ['127.0.0.1', 37516]
+HTTP close for ['127.0.0.1', 37516]
+HTTP response complete for ['127.0.0.1', 37516]
+[mHTTP GET /static/images/pic5.jpg 200 [0.02, 127.0.0.1:37516][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /accounts/signup1/ 200 [0.01, 127.0.0.1:37512][0m
+HTTP b'GET' request for ['127.0.0.1', 37512]
+HTTP 200 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[mHTTP GET /static/css/Signup.css 200 [0.01, 127.0.0.1:37512][0m
+HTTP b'POST' request for ['127.0.0.1', 37512]
+Internal Server Error: /accounts/signup1/
+Traceback (most recent call last):
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/wendy/Documents/Projects/freelance/accounts/views.py", line 671, in signup_gen
+    email.send()
+    ~~~~~~~~~~^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 750, in login
+    raise last_exception
+  File "/usr/lib/python3.13/smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ~~~~~~~~~^
+        authmethod, getattr(self, method_name),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        initial_response_ok=initial_response_ok)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 5b1f17b1804b1-459e587e154sm48434685e9.27 - gsmtp')
+HTTP 500 response started for ['127.0.0.1', 37512]
+HTTP response chunk for ['127.0.0.1', 37512]
+HTTP close for ['127.0.0.1', 37512]
+HTTP response complete for ['127.0.0.1', 37512]
+[35;1mHTTP POST /accounts/signup1/ 500 [3.36, 127.0.0.1:37512][0m
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/wendy/Documents/Projects/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 46434]
+HTTP 200 response started for ['127.0.0.1', 46434]
+HTTP close for ['127.0.0.1', 46434]
+HTTP response complete for ['127.0.0.1', 46434]
+[mHTTP GET /accounts/signup1/ 200 [0.06, 127.0.0.1:46434][0m
+HTTP b'GET' request for ['127.0.0.1', 46434]
+HTTP disconnect for ['127.0.0.1', 46434]
+HTTP b'POST' request for ['127.0.0.1', 55760]
+Internal Server Error: /accounts/signup1/
+Traceback (most recent call last):
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/wendy/Documents/Projects/freelance/accounts/views.py", line 671, in signup_gen
+    email.send()
+    ~~~~~~~~~~^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+  File "/home/wendy/Documents/Projects/freelance/venv/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 750, in login
+    raise last_exception
+  File "/usr/lib/python3.13/smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ~~~~~~~~~^
+        authmethod, getattr(self, method_name),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        initial_response_ok=initial_response_ok)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'Authentication Failed')
+HTTP 500 response started for ['127.0.0.1', 55760]
+HTTP response chunk for ['127.0.0.1', 55760]
+HTTP close for ['127.0.0.1', 55760]
+HTTP response complete for ['127.0.0.1', 55760]
+[35;1mHTTP POST /accounts/signup1/ 500 [10.82, 127.0.0.1:55760][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /accounts/signup1/ 200 [0.08, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 304 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[36mHTTP GET /static/css/nicepage.css 304 [0.01, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP b'GET' request for ['127.0.0.1', 51854]
+HTTP b'GET' request for ['127.0.0.1', 51860]
+HTTP b'GET' request for ['127.0.0.1', 51876]
+HTTP 304 response started for ['127.0.0.1', 51854]
+HTTP close for ['127.0.0.1', 51854]
+HTTP response complete for ['127.0.0.1', 51854]
+[36mHTTP GET /static/css/Signup.css 304 [0.03, 127.0.0.1:51854][0m
+HTTP 304 response started for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[36mHTTP GET /static/js/jquery.js 304 [0.03, 127.0.0.1:51860][0m
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP 304 response started for ['127.0.0.1', 51876]
+HTTP close for ['127.0.0.1', 51876]
+HTTP response complete for ['127.0.0.1', 51876]
+[36mHTTP GET /static/js/nicepage.js 304 [0.04, 127.0.0.1:51876][0m
+HTTP response chunk for ['127.0.0.1', 51838]
+HTTP response chunk for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /static/images/nill.jpg 200 [0.05, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51854]
+HTTP disconnect for ['127.0.0.1', 51854]
+HTTP b'POST' request for ['127.0.0.1', 51838]
+HTTP 302 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[32mHTTP POST /accounts/signup1/ 302 [11.30, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /accounts/verification-pending/ 200 [0.07, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51860]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[33mHTTP GET /favicon.ico 404 [0.03, 127.0.0.1:51860][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 302 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[32mHTTP GET /accounts/verify-email/Mg/cu4ab9-99168c2f624b83163ad6d5628727c4ed/ 302 [1.12, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /accounts/profile_creation/ 200 [0.05, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51860]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:51860][0m
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /accounts/client_form/2/ 200 [0.18, 127.0.0.1:51838][0m
+HTTP b'GET' request for ['127.0.0.1', 51860]
+HTTP b'GET' request for ['127.0.0.1', 51838]
+HTTP b'GET' request for ['127.0.0.1', 58150]
+HTTP 200 response started for ['127.0.0.1', 51838]
+HTTP 200 response started for ['127.0.0.1', 51860]
+HTTP b'GET' request for ['127.0.0.1', 58166]
+HTTP b'GET' request for ['127.0.0.1', 58168]
+HTTP b'GET' request for ['127.0.0.1', 58180]
+HTTP 200 response started for ['127.0.0.1', 58166]
+HTTP 304 response started for ['127.0.0.1', 58180]
+HTTP close for ['127.0.0.1', 58180]
+HTTP response complete for ['127.0.0.1', 58180]
+[36mHTTP GET /static/css/index.css 304 [0.00, 127.0.0.1:58180][0m
+HTTP 200 response started for ['127.0.0.1', 58150]
+HTTP 200 response started for ['127.0.0.1', 58168]
+HTTP response chunk for ['127.0.0.1', 51838]
+HTTP close for ['127.0.0.1', 51838]
+HTTP response complete for ['127.0.0.1', 51838]
+[mHTTP GET /static/css/main.css 200 [0.08, 127.0.0.1:51838][0m
+HTTP response chunk for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[mHTTP GET /static/css/theme.min.css 200 [0.08, 127.0.0.1:51860][0m
+HTTP response chunk for ['127.0.0.1', 58150]
+HTTP response chunk for ['127.0.0.1', 58150]
+HTTP close for ['127.0.0.1', 58150]
+HTTP response complete for ['127.0.0.1', 58150]
+[mHTTP GET /static/js/bootstrap.bundle.min.js 200 [0.08, 127.0.0.1:58150][0m
+HTTP response chunk for ['127.0.0.1', 58168]
+HTTP close for ['127.0.0.1', 58168]
+HTTP response complete for ['127.0.0.1', 58168]
+[mHTTP GET /static/js/ind.js 200 [0.08, 127.0.0.1:58168][0m
+HTTP response chunk for ['127.0.0.1', 58166]
+HTTP close for ['127.0.0.1', 58166]
+HTTP response complete for ['127.0.0.1', 58166]
+[mHTTP GET /static/js/aos.js 200 [0.11, 127.0.0.1:58166][0m
+HTTP b'GET' request for ['127.0.0.1', 58150]
+HTTP b'GET' request for ['127.0.0.1', 51860]
+HTTP 200 response started for ['127.0.0.1', 51860]
+HTTP 200 response started for ['127.0.0.1', 58150]
+HTTP b'GET' request for ['127.0.0.1', 58166]
+HTTP b'GET' request for ['127.0.0.1', 58168]
+HTTP response chunk for ['127.0.0.1', 58150]
+HTTP response chunk for ['127.0.0.1', 58150]
+HTTP close for ['127.0.0.1', 58150]
+HTTP response complete for ['127.0.0.1', 58150]
+[mHTTP GET /static/images/logo/logo.png 200 [0.06, 127.0.0.1:58150][0m
+HTTP 200 response started for ['127.0.0.1', 58166]
+HTTP 200 response started for ['127.0.0.1', 58168]
+HTTP response chunk for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[mHTTP GET /static/images/profile/profile.png 200 [0.06, 127.0.0.1:51860][0m
+HTTP response chunk for ['127.0.0.1', 58168]
+HTTP close for ['127.0.0.1', 58168]
+HTTP response complete for ['127.0.0.1', 58168]
+[mHTTP GET /static/fonts/inter-v12-latin-300.woff2 200 [0.02, 127.0.0.1:58168][0m
+HTTP response chunk for ['127.0.0.1', 58166]
+HTTP close for ['127.0.0.1', 58166]
+HTTP response complete for ['127.0.0.1', 58166]
+[mHTTP GET /static/fonts/inter-v12-latin-500.woff2 200 [0.02, 127.0.0.1:58166][0m
+HTTP b'GET' request for ['127.0.0.1', 58150]
+HTTP b'GET' request for ['127.0.0.1', 51860]
+HTTP 404 response started for ['127.0.0.1', 51860]
+HTTP close for ['127.0.0.1', 51860]
+HTTP response complete for ['127.0.0.1', 51860]
+[33mHTTP GET /static/images/favicon-16x16.png 404 [0.02, 127.0.0.1:51860][0m
+HTTP 404 response started for ['127.0.0.1', 58150]
+HTTP close for ['127.0.0.1', 58150]
+HTTP response complete for ['127.0.0.1', 58150]
+[33mHTTP GET /static/images/apple-touch-icon.png 404 [0.03, 127.0.0.1:58150][0m
