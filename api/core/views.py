@@ -330,9 +330,17 @@ class JobViewSet(viewsets.ModelViewSet):
     )
     def mark_completed(self, request, slug=None):
         job = self.get_object()
+        
+        if job.status == 'completed':
+            return DRFResponse(
+                {'detail': 'This job is already marked as completed.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
         success = job.mark_as_completed()
         if success:
             return DRFResponse({'detail': 'Job marked as completed.'}, status=status.HTTP_200_OK)
+        
         return DRFResponse({'detail': 'Failed to mark job as completed.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -1450,6 +1458,8 @@ class JobDiscoveryView(APIView):
         }
     )
 )
+
+
 class ChatViewSet(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
     permission_classes = [IsAuthenticated]
@@ -1506,7 +1516,7 @@ class ChatViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsChatParticipant]
     parser_classes = [MultiPartParser]
     
 

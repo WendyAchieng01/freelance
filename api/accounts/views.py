@@ -28,6 +28,8 @@ from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from urllib.parse import urlencode
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
@@ -356,8 +358,14 @@ class PasswordResetRequestView(APIView):
                     email=serializer.validated_data['email'])
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                current_site = get_current_site(request)
-                reset_url = f'http://{current_site.domain}/auth/password-reset-confirm/{uid}/{token}/'
+                
+                def build_password_reset_url(uid, token):
+                    base_url = settings.FRONTEND_URL.rstrip("/")
+                    query_params = urlencode({"uid": uid, "token": token})
+                    return f"{base_url}/auth/password-reset-confirm/?{query_params}"
+                
+                current_site = build_password_reset_url(uid,token)
+                reset_url = f'{current_site}'
 
                 subject = 'Reset Your Password'
                 message_text = f'Hi {user.username},\n\nPlease click the link to reset your password: {reset_url}'
