@@ -46,10 +46,6 @@ class Job(models.Model):
     payment_verified = models.BooleanField(default=False)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)  
 
-    def save(self, *args, **kwargs):
-        if not self.slug and self.title:
-            self.slug = slugify(self.title)[:255]  
-        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         if self.slug:

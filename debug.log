@@ -746,3 +746,1630 @@ HTTP 404 response started for ['127.0.0.1', 58150]
 HTTP close for ['127.0.0.1', 58150]
 HTTP response complete for ['127.0.0.1', 58150]
 [33mHTTP GET /static/images/apple-touch-icon.png 404 [0.03, 127.0.0.1:58150][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 302 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[32mHTTP GET /admin/ 302 [0.06, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 200 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[mHTTP GET /admin/login/?next=/admin/ 200 [0.02, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 304 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[36mHTTP GET /static/admin/css/login.css 304 [0.00, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:42832][0m
+HTTP b'POST' request for ['127.0.0.1', 42832]
+HTTP 200 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[mHTTP POST /admin/login/?next=/admin/ 200 [0.38, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 304 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[36mHTTP GET /static/admin/css/login.css 304 [0.00, 127.0.0.1:42832][0m
+HTTP b'POST' request for ['127.0.0.1', 42832]
+HTTP 200 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[mHTTP POST /admin/login/?next=/admin/ 200 [0.40, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 304 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[36mHTTP GET /static/admin/css/login.css 304 [0.00, 127.0.0.1:42832][0m
+HTTP b'POST' request for ['127.0.0.1', 42832]
+HTTP 200 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[mHTTP POST /admin/login/?next=/admin/ 200 [0.40, 127.0.0.1:42832][0m
+HTTP b'GET' request for ['127.0.0.1', 42832]
+HTTP 304 response started for ['127.0.0.1', 42832]
+HTTP close for ['127.0.0.1', 42832]
+HTTP response complete for ['127.0.0.1', 42832]
+[36mHTTP GET /static/admin/css/login.css 304 [0.00, 127.0.0.1:42832][0m
+Using selector: EpollSelector
+HTTP b'POST' request for ['127.0.0.1', 34712]
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP POST /admin/login/?next=/admin/ 200 [0.39, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+HTTP 304 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[36mHTTP GET /static/admin/css/login.css 304 [0.00, 127.0.0.1:34712][0m
+HTTP b'POST' request for ['127.0.0.1', 34712]
+HTTP 302 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[32mHTTP POST /admin/login/?next=/admin/ 302 [0.41, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP GET /admin/ 200 [0.02, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP GET /admin/core/job/ 200 [0.03, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+Not Found: /api/docs/
+HTTP 404 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[33mHTTP GET /api/docs/ 404 [0.01, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP GET /api/v1/docs/ 200 [0.01, 127.0.0.1:34712][0m
+HTTP b'GET' request for ['127.0.0.1', 34712]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 34712]
+HTTP response chunk for ['127.0.0.1', 34712]
+HTTP response chunk for ['127.0.0.1', 34712]
+HTTP response chunk for ['127.0.0.1', 34712]
+HTTP response chunk for ['127.0.0.1', 34712]
+HTTP response chunk for ['127.0.0.1', 34712]
+HTTP close for ['127.0.0.1', 34712]
+HTTP response complete for ['127.0.0.1', 34712]
+[mHTTP GET /api/v1/schema/ 200 [0.27, 127.0.0.1:34712][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 52828]
+HTTP 200 response started for ['127.0.0.1', 52828]
+HTTP close for ['127.0.0.1', 52828]
+HTTP response complete for ['127.0.0.1', 52828]
+[mHTTP GET /api/v1/docs/ 200 [0.06, 127.0.0.1:52828][0m
+HTTP b'GET' request for ['127.0.0.1', 52828]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 52828]
+HTTP response chunk for ['127.0.0.1', 52828]
+HTTP response chunk for ['127.0.0.1', 52828]
+HTTP response chunk for ['127.0.0.1', 52828]
+HTTP response chunk for ['127.0.0.1', 52828]
+HTTP response chunk for ['127.0.0.1', 52828]
+HTTP close for ['127.0.0.1', 52828]
+HTTP response complete for ['127.0.0.1', 52828]
+[mHTTP GET /api/v1/schema/ 200 [0.31, 127.0.0.1:52828][0m
+HTTP b'POST' request for ['127.0.0.1', 54372]
+Bad Request: /api/v1/auth/register/
+HTTP 400 response started for ['127.0.0.1', 54372]
+HTTP close for ['127.0.0.1', 54372]
+HTTP response complete for ['127.0.0.1', 54372]
+[31;1mHTTP POST /api/v1/auth/register/ 400 [0.00, 127.0.0.1:54372][0m
+HTTP b'POST' request for ['127.0.0.1', 54372]
+HTTP 201 response started for ['127.0.0.1', 54372]
+HTTP close for ['127.0.0.1', 54372]
+HTTP response complete for ['127.0.0.1', 54372]
+[mHTTP POST /api/v1/auth/register/ 201 [6.35, 127.0.0.1:54372][0m
+HTTP b'GET' request for ['127.0.0.1', 60270]
+HTTP 200 response started for ['127.0.0.1', 60270]
+HTTP close for ['127.0.0.1', 60270]
+HTTP response complete for ['127.0.0.1', 60270]
+[mHTTP GET /admin/core/job/ 200 [0.06, 127.0.0.1:60270][0m
+HTTP b'GET' request for ['127.0.0.1', 60270]
+HTTP 200 response started for ['127.0.0.1', 60270]
+HTTP close for ['127.0.0.1', 60270]
+HTTP response complete for ['127.0.0.1', 60270]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:60270][0m
+HTTP b'GET' request for ['127.0.0.1', 60270]
+HTTP 200 response started for ['127.0.0.1', 60270]
+HTTP close for ['127.0.0.1', 60270]
+HTTP response complete for ['127.0.0.1', 60270]
+[mHTTP GET /admin/auth/user/ 200 [0.03, 127.0.0.1:60270][0m
+HTTP b'GET' request for ['127.0.0.1', 60270]
+HTTP 200 response started for ['127.0.0.1', 60270]
+HTTP close for ['127.0.0.1', 60270]
+HTTP response complete for ['127.0.0.1', 60270]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:60270][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 37996]
+Bad Request: /api/v1/auth/register/
+HTTP 400 response started for ['127.0.0.1', 37996]
+HTTP close for ['127.0.0.1', 37996]
+HTTP response complete for ['127.0.0.1', 37996]
+[31;1mHTTP POST /api/v1/auth/register/ 400 [0.01, 127.0.0.1:37996][0m
+HTTP b'POST' request for ['127.0.0.1', 37996]
+Internal Server Error: /api/v1/auth/register/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 131, in post
+    email.send()
+    ~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 136, in send_messages
+    sent = self._send(message)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 155, in _send
+    self.connection.sendmail(
+    ~~~~~~~~~~~~~~~~~~~~~~~~^
+        from_email, recipients, message.as_bytes(linesep="\r\n")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib/python3.13/smtplib.py", line 897, in sendmail
+    raise SMTPDataError(code, resp)
+smtplib.SMTPDataError: (550, b'5.4.6 Unusual sending activity detected. <a href=https://www.zoho.com/mail/help/usage-policy.html target=_blank>Learn more.</a> To unblock <a href=https://mail.zoho.com/UnblockMe target=_blank>Click here.</a>')
+HTTP 500 response started for ['127.0.0.1', 37996]
+HTTP response chunk for ['127.0.0.1', 37996]
+HTTP close for ['127.0.0.1', 37996]
+HTTP response complete for ['127.0.0.1', 37996]
+[35;1mHTTP POST /api/v1/auth/register/ 500 [8.93, 127.0.0.1:37996][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/auth/user/ 200 [0.12, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/auth/user/5/change/ 200 [0.11, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP b'GET' request for ['127.0.0.1', 38602]
+HTTP b'GET' request for ['127.0.0.1', 38612]
+HTTP 304 response started for ['127.0.0.1', 38602]
+HTTP close for ['127.0.0.1', 38602]
+HTTP response complete for ['127.0.0.1', 38602]
+[36mHTTP GET /static/admin/js/SelectBox.js 304 [0.07, 127.0.0.1:38602][0m
+HTTP 304 response started for ['127.0.0.1', 38612]
+HTTP close for ['127.0.0.1', 38612]
+HTTP response complete for ['127.0.0.1', 38612]
+[36mHTTP GET /static/admin/js/SelectFilter2.js 304 [0.07, 127.0.0.1:38612][0m
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/jsi18n/ 200 [0.08, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 304 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[36mHTTP GET /static/admin/img/selector-icons.svg 304 [0.00, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/auth/user/5/delete/ 200 [0.06, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 304 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[36mHTTP GET /static/admin/js/cancel.js 304 [0.00, 127.0.0.1:38594][0m
+HTTP b'POST' request for ['127.0.0.1', 38594]
+HTTP 302 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[32mHTTP POST /admin/auth/user/5/delete/ 302 [0.07, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/auth/user/ 200 [0.02, 127.0.0.1:38594][0m
+HTTP b'GET' request for ['127.0.0.1', 38594]
+HTTP 200 response started for ['127.0.0.1', 38594]
+HTTP close for ['127.0.0.1', 38594]
+HTTP response complete for ['127.0.0.1', 38594]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:38594][0m
+HTTP b'POST' request for ['127.0.0.1', 58764]
+HTTP 201 response started for ['127.0.0.1', 58764]
+HTTP close for ['127.0.0.1', 58764]
+HTTP response complete for ['127.0.0.1', 58764]
+[mHTTP POST /api/v1/auth/register/ 201 [4.02, 127.0.0.1:58764][0m
+HTTP b'GET' request for ['127.0.0.1', 48308]
+HTTP 200 response started for ['127.0.0.1', 48308]
+HTTP close for ['127.0.0.1', 48308]
+HTTP response complete for ['127.0.0.1', 48308]
+[mHTTP GET /api/v1/verify-email/Ng/cufhtt-b72cee8c617c625b13a3f39ec7ea6d9e/ 200 [0.07, 127.0.0.1:48308][0m
+HTTP b'GET' request for ['127.0.0.1', 48308]
+HTTP b'GET' request for ['127.0.0.1', 48312]
+HTTP b'GET' request for ['127.0.0.1', 48328]
+HTTP b'GET' request for ['127.0.0.1', 48340]
+HTTP b'GET' request for ['127.0.0.1', 48354]
+HTTP b'GET' request for ['127.0.0.1', 48366]
+HTTP 304 response started for ['127.0.0.1', 48308]
+HTTP close for ['127.0.0.1', 48308]
+HTTP response complete for ['127.0.0.1', 48308]
+[36mHTTP GET /static/rest_framework/css/bootstrap.min.css 304 [0.01, 127.0.0.1:48308][0m
+HTTP b'GET' request for ['127.0.0.1', 48308]
+HTTP 304 response started for ['127.0.0.1', 48312]
+HTTP close for ['127.0.0.1', 48312]
+HTTP response complete for ['127.0.0.1', 48312]
+[36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.01, 127.0.0.1:48312][0m
+HTTP 304 response started for ['127.0.0.1', 48328]
+HTTP close for ['127.0.0.1', 48328]
+HTTP response complete for ['127.0.0.1', 48328]
+[36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.01, 127.0.0.1:48328][0m
+HTTP 304 response started for ['127.0.0.1', 48340]
+HTTP close for ['127.0.0.1', 48340]
+HTTP response complete for ['127.0.0.1', 48340]
+[36mHTTP GET /static/rest_framework/css/default.css 304 [0.01, 127.0.0.1:48340][0m
+HTTP 304 response started for ['127.0.0.1', 48354]
+HTTP close for ['127.0.0.1', 48354]
+HTTP response complete for ['127.0.0.1', 48354]
+[36mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 304 [0.01, 127.0.0.1:48354][0m
+HTTP 304 response started for ['127.0.0.1', 48366]
+HTTP close for ['127.0.0.1', 48366]
+HTTP response complete for ['127.0.0.1', 48366]
+[36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.01, 127.0.0.1:48366][0m
+HTTP b'GET' request for ['127.0.0.1', 48312]
+HTTP b'GET' request for ['127.0.0.1', 48328]
+HTTP b'GET' request for ['127.0.0.1', 48340]
+HTTP b'GET' request for ['127.0.0.1', 48354]
+HTTP 304 response started for ['127.0.0.1', 48308]
+HTTP close for ['127.0.0.1', 48308]
+HTTP response complete for ['127.0.0.1', 48308]
+[36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.02, 127.0.0.1:48308][0m
+HTTP 304 response started for ['127.0.0.1', 48340]
+HTTP close for ['127.0.0.1', 48340]
+HTTP response complete for ['127.0.0.1', 48340]
+[36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.01, 127.0.0.1:48340][0m
+HTTP 304 response started for ['127.0.0.1', 48312]
+HTTP close for ['127.0.0.1', 48312]
+HTTP response complete for ['127.0.0.1', 48312]
+[36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.01, 127.0.0.1:48312][0m
+HTTP 304 response started for ['127.0.0.1', 48354]
+HTTP close for ['127.0.0.1', 48354]
+HTTP response complete for ['127.0.0.1', 48354]
+[36mHTTP GET /static/rest_framework/js/default.js 304 [0.01, 127.0.0.1:48354][0m
+HTTP 304 response started for ['127.0.0.1', 48328]
+HTTP close for ['127.0.0.1', 48328]
+HTTP response complete for ['127.0.0.1', 48328]
+[36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.01, 127.0.0.1:48328][0m
+HTTP b'GET' request for ['127.0.0.1', 48328]
+HTTP 304 response started for ['127.0.0.1', 48328]
+HTTP close for ['127.0.0.1', 48328]
+HTTP response complete for ['127.0.0.1', 48328]
+[36mHTTP GET /static/rest_framework/img/grid.png 304 [0.00, 127.0.0.1:48328][0m
+HTTP b'GET' request for ['127.0.0.1', 38428]
+HTTP 200 response started for ['127.0.0.1', 38428]
+HTTP close for ['127.0.0.1', 38428]
+HTTP response complete for ['127.0.0.1', 38428]
+[mHTTP GET /api/v1/docs/ 200 [0.02, 127.0.0.1:38428][0m
+HTTP b'GET' request for ['127.0.0.1', 38428]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 38428]
+HTTP response chunk for ['127.0.0.1', 38428]
+HTTP response chunk for ['127.0.0.1', 38428]
+HTTP response chunk for ['127.0.0.1', 38428]
+HTTP response chunk for ['127.0.0.1', 38428]
+HTTP response chunk for ['127.0.0.1', 38428]
+HTTP close for ['127.0.0.1', 38428]
+HTTP response complete for ['127.0.0.1', 38428]
+[mHTTP GET /api/v1/schema/ 200 [0.24, 127.0.0.1:38428][0m
+HTTP b'POST' request for ['127.0.0.1', 57100]
+HTTP 201 response started for ['127.0.0.1', 57100]
+HTTP close for ['127.0.0.1', 57100]
+HTTP response complete for ['127.0.0.1', 57100]
+[mHTTP POST /api/v1/auth/register/ 201 [4.22, 127.0.0.1:57100][0m
+HTTP b'GET' request for ['127.0.0.1', 57100]
+HTTP 200 response started for ['127.0.0.1', 57100]
+HTTP close for ['127.0.0.1', 57100]
+HTTP response complete for ['127.0.0.1', 57100]
+[mHTTP GET /api/v1/verify-email/Nw/cufhzn-8b0b88b96029b023fbfc0f4e4417dfde/ 200 [0.04, 127.0.0.1:57100][0m
+HTTP b'GET' request for ['127.0.0.1', 57100]
+HTTP b'GET' request for ['127.0.0.1', 37764]
+HTTP b'GET' request for ['127.0.0.1', 37774]
+HTTP b'GET' request for ['127.0.0.1', 37784]
+HTTP b'GET' request for ['127.0.0.1', 37792]
+HTTP b'GET' request for ['127.0.0.1', 37806]
+HTTP 200 response started for ['127.0.0.1', 57100]
+HTTP response chunk for ['127.0.0.1', 57100]
+HTTP response chunk for ['127.0.0.1', 57100]
+HTTP close for ['127.0.0.1', 57100]
+HTTP response complete for ['127.0.0.1', 57100]
+[mHTTP GET /static/rest_framework/css/bootstrap.min.css 200 [0.02, 127.0.0.1:57100][0m
+HTTP b'GET' request for ['127.0.0.1', 57100]
+HTTP 200 response started for ['127.0.0.1', 37792]
+HTTP 200 response started for ['127.0.0.1', 37764]
+HTTP 200 response started for ['127.0.0.1', 37774]
+HTTP 200 response started for ['127.0.0.1', 37784]
+HTTP 200 response started for ['127.0.0.1', 37806]
+HTTP response chunk for ['127.0.0.1', 37792]
+HTTP response chunk for ['127.0.0.1', 37792]
+HTTP close for ['127.0.0.1', 37792]
+HTTP response complete for ['127.0.0.1', 37792]
+[mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 200 [0.01, 127.0.0.1:37792][0m
+HTTP response chunk for ['127.0.0.1', 37764]
+HTTP close for ['127.0.0.1', 37764]
+HTTP response complete for ['127.0.0.1', 37764]
+[mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 200 [0.02, 127.0.0.1:37764][0m
+HTTP response chunk for ['127.0.0.1', 37774]
+HTTP close for ['127.0.0.1', 37774]
+HTTP response complete for ['127.0.0.1', 37774]
+[mHTTP GET /static/rest_framework/css/prettify.css 200 [0.02, 127.0.0.1:37774][0m
+HTTP response chunk for ['127.0.0.1', 37784]
+HTTP close for ['127.0.0.1', 37784]
+HTTP response complete for ['127.0.0.1', 37784]
+[mHTTP GET /static/rest_framework/css/default.css 200 [0.02, 127.0.0.1:37784][0m
+HTTP response chunk for ['127.0.0.1', 37806]
+HTTP close for ['127.0.0.1', 37806]
+HTTP response complete for ['127.0.0.1', 37806]
+[mHTTP GET /static/rest_framework/js/ajax-form.js 200 [0.02, 127.0.0.1:37806][0m
+HTTP 200 response started for ['127.0.0.1', 57100]
+HTTP response chunk for ['127.0.0.1', 57100]
+HTTP close for ['127.0.0.1', 57100]
+HTTP response complete for ['127.0.0.1', 57100]
+[mHTTP GET /static/rest_framework/js/csrf.js 200 [0.01, 127.0.0.1:57100][0m
+HTTP b'GET' request for ['127.0.0.1', 37764]
+HTTP b'GET' request for ['127.0.0.1', 37774]
+HTTP b'GET' request for ['127.0.0.1', 37784]
+HTTP b'GET' request for ['127.0.0.1', 37806]
+HTTP b'GET' request for ['127.0.0.1', 37792]
+HTTP 200 response started for ['127.0.0.1', 37764]
+HTTP 200 response started for ['127.0.0.1', 37774]
+HTTP 200 response started for ['127.0.0.1', 37784]
+HTTP 200 response started for ['127.0.0.1', 37806]
+HTTP response chunk for ['127.0.0.1', 37764]
+HTTP close for ['127.0.0.1', 37764]
+HTTP response complete for ['127.0.0.1', 37764]
+[mHTTP GET /static/rest_framework/js/bootstrap.min.js 200 [0.01, 127.0.0.1:37764][0m
+HTTP response chunk for ['127.0.0.1', 37774]
+HTTP close for ['127.0.0.1', 37774]
+HTTP response complete for ['127.0.0.1', 37774]
+[mHTTP GET /static/rest_framework/js/prettify-min.js 200 [0.01, 127.0.0.1:37774][0m
+HTTP response chunk for ['127.0.0.1', 37784]
+HTTP close for ['127.0.0.1', 37784]
+HTTP response complete for ['127.0.0.1', 37784]
+[mHTTP GET /static/rest_framework/js/default.js 200 [0.01, 127.0.0.1:37784][0m
+HTTP 200 response started for ['127.0.0.1', 37792]
+HTTP response chunk for ['127.0.0.1', 37806]
+HTTP close for ['127.0.0.1', 37806]
+HTTP response complete for ['127.0.0.1', 37806]
+[mHTTP GET /static/rest_framework/js/load-ajax-form.js 200 [0.01, 127.0.0.1:37806][0m
+HTTP response chunk for ['127.0.0.1', 37792]
+HTTP close for ['127.0.0.1', 37792]
+HTTP response complete for ['127.0.0.1', 37792]
+[mHTTP GET /static/rest_framework/img/grid.png 200 [0.01, 127.0.0.1:37792][0m
+HTTP b'GET' request for ['127.0.0.1', 37774]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 37774]
+HTTP close for ['127.0.0.1', 37774]
+HTTP response complete for ['127.0.0.1', 37774]
+[33mHTTP GET /favicon.ico 404 [0.01, 127.0.0.1:37774][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.09, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.06, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.08, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.05, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.04, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.06, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.09, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.07, 127.0.0.1:41542][0m
+HTTP b'POST' request for ['127.0.0.1', 41542]
+HTTP 201 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP POST /api/v1/jobs/create/ 201 [0.06, 127.0.0.1:41542][0m
+HTTP b'GET' request for ['127.0.0.1', 41542]
+HTTP 200 response started for ['127.0.0.1', 41542]
+HTTP close for ['127.0.0.1', 41542]
+HTTP response complete for ['127.0.0.1', 41542]
+[mHTTP GET /api/v1/jobs/list/ 200 [0.10, 127.0.0.1:41542][0m
+HTTP b'GET' request for ['127.0.0.1', 33788]
+HTTP 200 response started for ['127.0.0.1', 33788]
+HTTP close for ['127.0.0.1', 33788]
+HTTP response complete for ['127.0.0.1', 33788]
+[mHTTP GET /api/v1/jobs/list/ 200 [0.16, 127.0.0.1:33788][0m
+HTTP b'POST' request for ['127.0.0.1', 58348]
+HTTP 201 response started for ['127.0.0.1', 58348]
+HTTP close for ['127.0.0.1', 58348]
+HTTP response complete for ['127.0.0.1', 58348]
+[mHTTP POST /api/v1/jobs/voice-over-for-animated-video/apply/ 201 [0.03, 127.0.0.1:58348][0m
+HTTP b'POST' request for ['127.0.0.1', 58348]
+User zeze bookmarked job 'voice-over-for-animated-video'
+HTTP 201 response started for ['127.0.0.1', 58348]
+HTTP close for ['127.0.0.1', 58348]
+HTTP response complete for ['127.0.0.1', 58348]
+[mHTTP POST /api/v1/bookmarks/voice-over-for-animated-video/add/ 201 [0.03, 127.0.0.1:58348][0m
+HTTP b'POST' request for ['127.0.0.1', 36952]
+Bad Request: /api/v1/jobs/voice-over-for-animated-video/reject/cece/
+HTTP 400 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[31;1mHTTP POST /api/v1/jobs/voice-over-for-animated-video/reject/cece/ 400 [0.01, 127.0.0.1:36952][0m
+HTTP b'POST' request for ['127.0.0.1', 36952]
+Bad Request: /api/v1/jobs/voice-over-for-animated-video/accept/cece/
+HTTP 400 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[31;1mHTTP POST /api/v1/jobs/voice-over-for-animated-video/accept/cece/ 400 [0.01, 127.0.0.1:36952][0m
+HTTP b'POST' request for ['127.0.0.1', 36952]
+HTTP 200 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[mHTTP POST /api/v1/jobs/voice-over-for-animated-video/accept/zeze/ 200 [0.01, 127.0.0.1:36952][0m
+HTTP b'POST' request for ['127.0.0.1', 36952]
+HTTP 200 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[mHTTP POST /api/v1/payments/initiate/voice-over-for-animated-video/ 200 [0.03, 127.0.0.1:36952][0m
+HTTP b'GET' request for ['127.0.0.1', 36952]
+Starting new HTTPS connection (1): api.paystack.co:443
+https://api.paystack.co:443 "POST /transaction/initialize HTTP/11" 200 None
+HTTP 200 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[mHTTP GET /api/v1/payment/initiate/voice-over-for-animated-video/ 200 [1.54, 127.0.0.1:36952][0m
+HTTP b'GET' request for ['127.0.0.1', 36952]
+Starting new HTTPS connection (1): api.paystack.co:443
+https://api.paystack.co:443 "GET /transaction/verify/eZ5JI7OjYTAoaDLVPe9sSjm4nUIPCxFktoWz2yuxzshAow8Jm-L1FSf-fDK7sCs2pLA HTTP/11" 200 788
+HTTP 302 response started for ['127.0.0.1', 36952]
+HTTP close for ['127.0.0.1', 36952]
+HTTP response complete for ['127.0.0.1', 36952]
+[32mHTTP GET /api/v1/payment/callback/?trxref=eZ5JI7OjYTAoaDLVPe9sSjm4nUIPCxFktoWz2yuxzshAow8Jm-L1FSf-fDK7sCs2pLA&reference=eZ5JI7OjYTAoaDLVPe9sSjm4nUIPCxFktoWz2yuxzshAow8Jm-L1FSf-fDK7sCs2pLA 302 [1.39, 127.0.0.1:36952][0m
+HTTP b'GET' request for ['127.0.0.1', 49636]
+HTTP 200 response started for ['127.0.0.1', 49636]
+HTTP close for ['127.0.0.1', 49636]
+HTTP response complete for ['127.0.0.1', 49636]
+[mHTTP GET /api/v1/jobs/voice-over-for-animated-video/ 200 [0.09, 127.0.0.1:49636][0m
+HTTP b'GET' request for ['127.0.0.1', 49636]
+HTTP 200 response started for ['127.0.0.1', 49636]
+HTTP response chunk for ['127.0.0.1', 49636]
+HTTP response chunk for ['127.0.0.1', 49636]
+HTTP close for ['127.0.0.1', 49636]
+HTTP response complete for ['127.0.0.1', 49636]
+[mHTTP GET /static/rest_framework/css/bootstrap.min.css 200 [0.01, 127.0.0.1:49636][0m
+HTTP b'GET' request for ['127.0.0.1', 49640]
+HTTP 200 response started for ['127.0.0.1', 49640]
+HTTP b'GET' request for ['127.0.0.1', 49650]
+HTTP b'GET' request for ['127.0.0.1', 49654]
+HTTP b'GET' request for ['127.0.0.1', 49670]
+HTTP b'GET' request for ['127.0.0.1', 49686]
+HTTP b'GET' request for ['127.0.0.1', 49636]
+HTTP response chunk for ['127.0.0.1', 49640]
+HTTP close for ['127.0.0.1', 49640]
+HTTP response complete for ['127.0.0.1', 49640]
+[mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 200 [0.02, 127.0.0.1:49640][0m
+HTTP b'GET' request for ['127.0.0.1', 49640]
+HTTP 200 response started for ['127.0.0.1', 49654]
+HTTP 200 response started for ['127.0.0.1', 49650]
+HTTP 200 response started for ['127.0.0.1', 49686]
+HTTP 200 response started for ['127.0.0.1', 49670]
+HTTP 200 response started for ['127.0.0.1', 49636]
+HTTP response chunk for ['127.0.0.1', 49654]
+HTTP close for ['127.0.0.1', 49654]
+HTTP response complete for ['127.0.0.1', 49654]
+[mHTTP GET /static/rest_framework/css/default.css 200 [0.05, 127.0.0.1:49654][0m
+HTTP response chunk for ['127.0.0.1', 49650]
+HTTP close for ['127.0.0.1', 49650]
+HTTP response complete for ['127.0.0.1', 49650]
+[mHTTP GET /static/rest_framework/css/prettify.css 200 [0.05, 127.0.0.1:49650][0m
+HTTP response chunk for ['127.0.0.1', 49686]
+HTTP close for ['127.0.0.1', 49686]
+HTTP response complete for ['127.0.0.1', 49686]
+[mHTTP GET /static/rest_framework/js/ajax-form.js 200 [0.05, 127.0.0.1:49686][0m
+HTTP response chunk for ['127.0.0.1', 49636]
+HTTP close for ['127.0.0.1', 49636]
+HTTP response complete for ['127.0.0.1', 49636]
+[mHTTP GET /static/rest_framework/js/csrf.js 200 [0.06, 127.0.0.1:49636][0m
+HTTP response chunk for ['127.0.0.1', 49670]
+HTTP response chunk for ['127.0.0.1', 49670]
+HTTP close for ['127.0.0.1', 49670]
+HTTP response complete for ['127.0.0.1', 49670]
+[mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 200 [0.06, 127.0.0.1:49670][0m
+HTTP 200 response started for ['127.0.0.1', 49640]
+HTTP b'GET' request for ['127.0.0.1', 49654]
+HTTP b'GET' request for ['127.0.0.1', 49650]
+HTTP b'GET' request for ['127.0.0.1', 49686]
+HTTP b'GET' request for ['127.0.0.1', 49670]
+HTTP response chunk for ['127.0.0.1', 49640]
+HTTP close for ['127.0.0.1', 49640]
+HTTP response complete for ['127.0.0.1', 49640]
+[mHTTP GET /static/rest_framework/js/bootstrap.min.js 200 [0.07, 127.0.0.1:49640][0m
+HTTP 200 response started for ['127.0.0.1', 49654]
+HTTP 200 response started for ['127.0.0.1', 49650]
+HTTP 200 response started for ['127.0.0.1', 49686]
+HTTP 200 response started for ['127.0.0.1', 49670]
+HTTP response chunk for ['127.0.0.1', 49654]
+HTTP close for ['127.0.0.1', 49654]
+HTTP response complete for ['127.0.0.1', 49654]
+[mHTTP GET /static/rest_framework/js/prettify-min.js 200 [0.04, 127.0.0.1:49654][0m
+HTTP response chunk for ['127.0.0.1', 49650]
+HTTP close for ['127.0.0.1', 49650]
+HTTP response complete for ['127.0.0.1', 49650]
+[mHTTP GET /static/rest_framework/js/default.js 200 [0.04, 127.0.0.1:49650][0m
+HTTP response chunk for ['127.0.0.1', 49670]
+HTTP close for ['127.0.0.1', 49670]
+HTTP response complete for ['127.0.0.1', 49670]
+[mHTTP GET /static/rest_framework/img/grid.png 200 [0.03, 127.0.0.1:49670][0m
+HTTP response chunk for ['127.0.0.1', 49686]
+HTTP close for ['127.0.0.1', 49686]
+HTTP response complete for ['127.0.0.1', 49686]
+[mHTTP GET /static/rest_framework/js/load-ajax-form.js 200 [0.04, 127.0.0.1:49686][0m
+HTTP b'GET' request for ['127.0.0.1', 49654]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 49654]
+HTTP close for ['127.0.0.1', 49654]
+HTTP response complete for ['127.0.0.1', 49654]
+[33mHTTP GET /favicon.ico 404 [0.02, 127.0.0.1:49654][0m
+HTTP b'PATCH' request for ['127.0.0.1', 41022]
+HTTP 200 response started for ['127.0.0.1', 41022]
+HTTP close for ['127.0.0.1', 41022]
+HTTP response complete for ['127.0.0.1', 41022]
+[mHTTP PATCH /api/v1/jobs/voice-over-for-animated-video/complete/ 200 [0.04, 127.0.0.1:41022][0m
+HTTP b'PATCH' request for ['127.0.0.1', 41022]
+Bad Request: /api/v1/jobs/voice-over-for-animated-video/complete/
+HTTP 400 response started for ['127.0.0.1', 41022]
+HTTP close for ['127.0.0.1', 41022]
+HTTP response complete for ['127.0.0.1', 41022]
+[31;1mHTTP PATCH /api/v1/jobs/voice-over-for-animated-video/complete/ 400 [0.01, 127.0.0.1:41022][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'PATCH' request for ['127.0.0.1', 34072]
+Bad Request: /api/v1/jobs/voice-over-for-animated-video/complete/
+HTTP 400 response started for ['127.0.0.1', 34072]
+HTTP close for ['127.0.0.1', 34072]
+HTTP response complete for ['127.0.0.1', 34072]
+[31;1mHTTP PATCH /api/v1/jobs/voice-over-for-animated-video/complete/ 400 [0.03, 127.0.0.1:34072][0m
+HTTP b'POST' request for ['127.0.0.1', 35374]
+HTTP 200 response started for ['127.0.0.1', 35374]
+HTTP close for ['127.0.0.1', 35374]
+HTTP response complete for ['127.0.0.1', 35374]
+[mHTTP POST /api/v1/auth/login/ 200 [0.84, 127.0.0.1:35374][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 47846]
+Internal Server Error: /api/v1/auth/password-reset/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 360, in post
+    print(current_site)
+          ^^^^
+NameError: name 'curr' is not defined
+HTTP 500 response started for ['127.0.0.1', 47846]
+HTTP response chunk for ['127.0.0.1', 47846]
+HTTP close for ['127.0.0.1', 47846]
+HTTP response complete for ['127.0.0.1', 47846]
+[35;1mHTTP POST /api/v1/auth/password-reset/ 500 [0.11, 127.0.0.1:47846][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 50832]
+HTTP 200 response started for ['127.0.0.1', 50832]
+HTTP close for ['127.0.0.1', 50832]
+HTTP response complete for ['127.0.0.1', 50832]
+[mHTTP POST /api/v1/auth/password-reset/ 200 [6.12, 127.0.0.1:50832][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 37718]
+Internal Server Error: /api/v1/auth/password-reset/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 367, in post
+    current_site = build_password_reset_url(uid,token)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 363, in build_password_reset_url
+    base_url = settings.FRONTEND_BASE_URL.rstrip("/")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/conf/__init__.py", line 83, in __getattr__
+    val = getattr(_wrapped, name)
+AttributeError: 'Settings' object has no attribute 'FRONTEND_BASE_URL'. Did you mean: 'FRONTEND_URL'?
+HTTP 500 response started for ['127.0.0.1', 37718]
+HTTP response chunk for ['127.0.0.1', 37718]
+HTTP close for ['127.0.0.1', 37718]
+HTTP response complete for ['127.0.0.1', 37718]
+[35;1mHTTP POST /api/v1/auth/password-reset/ 500 [0.13, 127.0.0.1:37718][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 35170]
+HTTP 200 response started for ['127.0.0.1', 35170]
+HTTP close for ['127.0.0.1', 35170]
+HTTP response complete for ['127.0.0.1', 35170]
+[mHTTP POST /api/v1/auth/password-reset/ 200 [4.65, 127.0.0.1:35170][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 45682]
+Internal Server Error: /api/v1/auth/password-reset/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 369, in post
+    reset_url = f'https://{current_site.domain}/auth/password-reset-confirm/{uid}/{token}/'
+                           ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'domain'
+HTTP 500 response started for ['127.0.0.1', 45682]
+HTTP response chunk for ['127.0.0.1', 45682]
+HTTP close for ['127.0.0.1', 45682]
+HTTP response complete for ['127.0.0.1', 45682]
+[35;1mHTTP POST /api/v1/auth/password-reset/ 500 [0.13, 127.0.0.1:45682][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 49172]
+HTTP 200 response started for ['127.0.0.1', 49172]
+HTTP close for ['127.0.0.1', 49172]
+HTTP response complete for ['127.0.0.1', 49172]
+[mHTTP POST /api/v1/auth/password-reset/ 200 [4.78, 127.0.0.1:49172][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 52064]
+Internal Server Error: /api/v1/auth/password-reset/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py", line 383, in post
+    email.send()
+    ~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 86, in open
+    self.connection = self.connection_class(
+                      ~~~~~~~~~~~~~~~~~~~~~^
+        self.host, self.port, **connection_params
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib/python3.13/smtplib.py", line 255, in __init__
+    (code, msg) = self.connect(host, port)
+                  ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 341, in connect
+    self.sock = self._get_socket(host, port, self.timeout)
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/smtplib.py", line 312, in _get_socket
+    return socket.create_connection((host, port), timeout,
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+                                    self.source_address)
+                                    ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.13/socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+OSError: [Errno 101] Network is unreachable
+HTTP 500 response started for ['127.0.0.1', 52064]
+HTTP response chunk for ['127.0.0.1', 52064]
+HTTP response chunk for ['127.0.0.1', 52064]
+HTTP close for ['127.0.0.1', 52064]
+HTTP response complete for ['127.0.0.1', 52064]
+[35;1mHTTP POST /api/v1/auth/password-reset/ 500 [0.14, 127.0.0.1:52064][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 41272]
+HTTP 200 response started for ['127.0.0.1', 41272]
+HTTP close for ['127.0.0.1', 41272]
+HTTP response complete for ['127.0.0.1', 41272]
+[mHTTP POST /api/v1/auth/password-reset/ 200 [4.21, 127.0.0.1:41272][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 48218]
+HTTP 200 response started for ['127.0.0.1', 48218]
+HTTP close for ['127.0.0.1', 48218]
+HTTP response complete for ['127.0.0.1', 48218]
+[mHTTP GET /api/v1/jobs/voice-over-for-animated-video/aplications/ 200 [0.07, 127.0.0.1:48218][0m
+HTTP b'GET' request for ['127.0.0.1', 48218]
+HTTP 200 response started for ['127.0.0.1', 48218]
+HTTP close for ['127.0.0.1', 48218]
+HTTP response complete for ['127.0.0.1', 48218]
+[mHTTP GET /api/v1/messages/chats/ 200 [0.01, 127.0.0.1:48218][0m
+HTTP b'GET' request for ['127.0.0.1', 41448]
+HTTP 200 response started for ['127.0.0.1', 41448]
+HTTP close for ['127.0.0.1', 41448]
+HTTP response complete for ['127.0.0.1', 41448]
+[mHTTP GET /api/v1/messages/chats/?page=1 200 [0.01, 127.0.0.1:41448][0m
+HTTP b'GET' request for ['127.0.0.1', 41448]
+HTTP 200 response started for ['127.0.0.1', 41448]
+HTTP close for ['127.0.0.1', 41448]
+HTTP response complete for ['127.0.0.1', 41448]
+[mHTTP GET /api/v1/messages/chats/ 200 [0.01, 127.0.0.1:41448][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/core/chat/ 200 [0.20, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/core/message/ 200 [0.09, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/core/response/ 200 [0.10, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/core/review/ 200 [0.07, 127.0.0.1:38170][0m
+HTTP b'GET' request for ['127.0.0.1', 38170]
+HTTP 200 response started for ['127.0.0.1', 38170]
+HTTP close for ['127.0.0.1', 38170]
+HTTP response complete for ['127.0.0.1', 38170]
+[mHTTP GET /admin/jsi18n/ 200 [0.03, 127.0.0.1:38170][0m
+/home/g3/APP/Nil/Nil/freelance/core/models.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/core/models.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/core/signals.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/core/models.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/core/signals.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 49428]
+HTTP 301 response started for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[32mHTTP GET /api/v1/docs 301 [0.09, 127.0.0.1:49428][0m
+HTTP b'GET' request for ['127.0.0.1', 49428]
+HTTP 200 response started for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[mHTTP GET /api/v1/docs/ 200 [0.18, 127.0.0.1:49428][0m
+HTTP b'GET' request for ['127.0.0.1', 49428]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 49428]
+HTTP response chunk for ['127.0.0.1', 49428]
+HTTP response chunk for ['127.0.0.1', 49428]
+HTTP response chunk for ['127.0.0.1', 49428]
+HTTP response chunk for ['127.0.0.1', 49428]
+HTTP response chunk for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[mHTTP GET /api/v1/schema/ 200 [0.53, 127.0.0.1:49428][0m
+HTTP b'POST' request for ['127.0.0.1', 49428]
+Bad Request: /api/v1/auth/login/
+HTTP 400 response started for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[31;1mHTTP POST /api/v1/auth/login/ 400 [0.01, 127.0.0.1:49428][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/auth/user/ 200 [0.17, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/auth/user/4/change/ 200 [0.21, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP b'GET' request for ['127.0.0.1', 51122]
+HTTP b'GET' request for ['127.0.0.1', 51132]
+HTTP 304 response started for ['127.0.0.1', 51132]
+HTTP close for ['127.0.0.1', 51132]
+HTTP response complete for ['127.0.0.1', 51132]
+[36mHTTP GET /static/admin/js/SelectFilter2.js 304 [0.01, 127.0.0.1:51132][0m
+HTTP 304 response started for ['127.0.0.1', 51122]
+HTTP close for ['127.0.0.1', 51122]
+HTTP response complete for ['127.0.0.1', 51122]
+[36mHTTP GET /static/admin/js/SelectBox.js 304 [0.01, 127.0.0.1:51122][0m
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 304 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[36mHTTP GET /static/admin/img/selector-icons.svg 304 [0.00, 127.0.0.1:55464][0m
+HTTP b'POST' request for ['127.0.0.1', 55464]
+HTTP 302 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[32mHTTP POST /admin/auth/user/4/change/ 302 [0.12, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/auth/user/ 200 [0.09, 127.0.0.1:55464][0m
+HTTP b'GET' request for ['127.0.0.1', 55464]
+HTTP 200 response started for ['127.0.0.1', 55464]
+HTTP close for ['127.0.0.1', 55464]
+HTTP response complete for ['127.0.0.1', 55464]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:55464][0m
+HTTP b'POST' request for ['127.0.0.1', 49428]
+HTTP 200 response started for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[mHTTP POST /api/v1/auth/login/ 200 [0.92, 127.0.0.1:49428][0m
+HTTP b'GET' request for ['127.0.0.1', 49428]
+HTTP 200 response started for ['127.0.0.1', 49428]
+HTTP close for ['127.0.0.1', 49428]
+HTTP response complete for ['127.0.0.1', 49428]
+[mHTTP GET /api/v1/jobs/list/ 200 [0.12, 127.0.0.1:49428][0m
+HTTP b'POST' request for ['127.0.0.1', 57272]
+Bad Request: /api/v1/jobs/business-logo-and-branding-package/apply/
+HTTP 400 response started for ['127.0.0.1', 57272]
+HTTP close for ['127.0.0.1', 57272]
+HTTP response complete for ['127.0.0.1', 57272]
+[31;1mHTTP POST /api/v1/jobs/business-logo-and-branding-package/apply/ 400 [0.01, 127.0.0.1:57272][0m
+HTTP b'POST' request for ['127.0.0.1', 57272]
+Bad Request: /api/v1/jobs/business-logo-and-branding-package/apply/
+HTTP 400 response started for ['127.0.0.1', 57272]
+HTTP close for ['127.0.0.1', 57272]
+HTTP response complete for ['127.0.0.1', 57272]
+[31;1mHTTP POST /api/v1/jobs/business-logo-and-branding-package/apply/ 400 [0.02, 127.0.0.1:57272][0m
+HTTP b'POST' request for ['127.0.0.1', 57272]
+Bad Request: /api/v1/jobs/business-logo-and-branding-package/apply/
+HTTP 400 response started for ['127.0.0.1', 57272]
+HTTP close for ['127.0.0.1', 57272]
+HTTP response complete for ['127.0.0.1', 57272]
+[31;1mHTTP POST /api/v1/jobs/business-logo-and-branding-package/apply/ 400 [0.01, 127.0.0.1:57272][0m
+HTTP b'POST' request for ['127.0.0.1', 57272]
+HTTP 201 response started for ['127.0.0.1', 57272]
+HTTP close for ['127.0.0.1', 57272]
+HTTP response complete for ['127.0.0.1', 57272]
+[mHTTP POST /api/v1/jobs/business-logo-and-branding-package/apply/ 201 [0.04, 127.0.0.1:57272][0m
+HTTP b'POST' request for ['127.0.0.1', 46800]
+Unauthorized: /api/v1/jobs/business-logo-and-branding-package/accept/cece/
+HTTP 401 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[31;1mHTTP POST /api/v1/jobs/business-logo-and-branding-package/accept/cece/ 401 [0.01, 127.0.0.1:46800][0m
+HTTP b'POST' request for ['127.0.0.1', 46800]
+Unauthorized: /api/v1/auth/login/
+HTTP 401 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[31;1mHTTP POST /api/v1/auth/login/ 401 [0.00, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 46800]
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP GET /api/v1/docs/ 200 [0.02, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 46800]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP response chunk for ['127.0.0.1', 46800]
+HTTP response chunk for ['127.0.0.1', 46800]
+HTTP response chunk for ['127.0.0.1', 46800]
+HTTP response chunk for ['127.0.0.1', 46800]
+HTTP response chunk for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP GET /api/v1/schema/ 200 [0.52, 127.0.0.1:46800][0m
+HTTP b'POST' request for ['127.0.0.1', 46800]
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP POST /api/v1/auth/login/ 200 [0.78, 127.0.0.1:46800][0m
+HTTP b'POST' request for ['127.0.0.1', 46800]
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP POST /api/v1/jobs/business-logo-and-branding-package/accept/cece/ 200 [0.01, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 46800]
+Starting new HTTPS connection (1): api.paystack.co:443
+https://api.paystack.co:443 "POST /transaction/initialize HTTP/11" 200 None
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP GET /api/v1/payment/initiate/business-logo-and-branding-package/ 200 [1.61, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 46800]
+Starting new HTTPS connection (1): api.paystack.co:443
+https://api.paystack.co:443 "GET /transaction/verify/rb-3mYUropHeZRjeBrrPLdRhNO589gfyLwnhnHYtgia8jMj2-j9ecONCAyGtYmkobd8 HTTP/11" 200 784
+HTTP 302 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[32mHTTP GET /api/v1/payment/callback/?trxref=rb-3mYUropHeZRjeBrrPLdRhNO589gfyLwnhnHYtgia8jMj2-j9ecONCAyGtYmkobd8&reference=rb-3mYUropHeZRjeBrrPLdRhNO589gfyLwnhnHYtgia8jMj2-j9ecONCAyGtYmkobd8 302 [1.64, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 49996]
+HTTP 200 response started for ['127.0.0.1', 49996]
+HTTP close for ['127.0.0.1', 49996]
+HTTP response complete for ['127.0.0.1', 49996]
+[mHTTP GET /api/v1/jobs/business-logo-and-branding-package/ 200 [0.12, 127.0.0.1:49996][0m
+HTTP b'POST' request for ['127.0.0.1', 46800]
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP POST /api/v1/jobs/business-logo-and-branding-package/accept/cece/ 200 [0.07, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 46800]
+HTTP 200 response started for ['127.0.0.1', 46800]
+HTTP close for ['127.0.0.1', 46800]
+HTTP response complete for ['127.0.0.1', 46800]
+[mHTTP GET /api/v1/messages/chats/ 200 [0.02, 127.0.0.1:46800][0m
+HTTP b'GET' request for ['127.0.0.1', 44856]
+HTTP 200 response started for ['127.0.0.1', 44856]
+HTTP close for ['127.0.0.1', 44856]
+HTTP response complete for ['127.0.0.1', 44856]
+[mHTTP GET /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 200 [0.01, 127.0.0.1:44856][0m
+HTTP b'POST' request for ['127.0.0.1', 44856]
+HTTP 201 response started for ['127.0.0.1', 44856]
+HTTP close for ['127.0.0.1', 44856]
+HTTP response complete for ['127.0.0.1', 44856]
+[mHTTP POST /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 201 [0.11, 127.0.0.1:44856][0m
+HTTP b'GET' request for ['127.0.0.1', 49752]
+HTTP 200 response started for ['127.0.0.1', 49752]
+HTTP close for ['127.0.0.1', 49752]
+HTTP response complete for ['127.0.0.1', 49752]
+[mHTTP GET /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 200 [0.02, 127.0.0.1:49752][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 51778]
+HTTP 201 response started for ['127.0.0.1', 51778]
+HTTP close for ['127.0.0.1', 51778]
+HTTP response complete for ['127.0.0.1', 51778]
+[mHTTP POST /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 201 [0.10, 127.0.0.1:51778][0m
+HTTP b'GET' request for ['127.0.0.1', 44458]
+HTTP 200 response started for ['127.0.0.1', 44458]
+HTTP close for ['127.0.0.1', 44458]
+HTTP response complete for ['127.0.0.1', 44458]
+[mHTTP GET /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 200 [0.02, 127.0.0.1:44458][0m
+HTTP b'POST' request for ['127.0.0.1', 36436]
+HTTP 201 response started for ['127.0.0.1', 36436]
+HTTP close for ['127.0.0.1', 36436]
+HTTP response complete for ['127.0.0.1', 36436]
+[mHTTP POST /api/v1/messages/chats/4a74d769-ee3a-4656-84ad-fdf03b829f4a/ 201 [0.05, 127.0.0.1:36436][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 34316]
+Forbidden: /api/v1/reviews/
+HTTP 403 response started for ['127.0.0.1', 34316]
+HTTP close for ['127.0.0.1', 34316]
+HTTP response complete for ['127.0.0.1', 34316]
+[31;1mHTTP POST /api/v1/reviews/ 403 [0.02, 127.0.0.1:34316][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 34156]
+Forbidden: /api/v1/reviews/
+HTTP 403 response started for ['127.0.0.1', 34156]
+HTTP close for ['127.0.0.1', 34156]
+HTTP response complete for ['127.0.0.1', 34156]
+[31;1mHTTP POST /api/v1/reviews/ 403 [0.03, 127.0.0.1:34156][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/permissions.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 59034]
+HTTP 200 response started for ['127.0.0.1', 59034]
+HTTP close for ['127.0.0.1', 59034]
+HTTP response complete for ['127.0.0.1', 59034]
+[mHTTP GET /api/v1/jobs/list/ 200 [0.15, 127.0.0.1:59034][0m
+HTTP b'PATCH' request for ['127.0.0.1', 59034]
+Bad Request: /api/v1/jobs/voice-over-for-animated-video/complete/
+HTTP 400 response started for ['127.0.0.1', 59034]
+HTTP close for ['127.0.0.1', 59034]
+HTTP response complete for ['127.0.0.1', 59034]
+[31;1mHTTP PATCH /api/v1/jobs/voice-over-for-animated-video/complete/ 400 [0.01, 127.0.0.1:59034][0m
+HTTP b'POST' request for ['127.0.0.1', 59034]
+HTTP 201 response started for ['127.0.0.1', 59034]
+HTTP close for ['127.0.0.1', 59034]
+HTTP response complete for ['127.0.0.1', 59034]
+[mHTTP POST /api/v1/reviews/ 201 [0.03, 127.0.0.1:59034][0m
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000

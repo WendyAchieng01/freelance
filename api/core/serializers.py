@@ -1,4 +1,6 @@
 import os
+import mimetypes
+from django.conf import settings
 from django.db.models import Sum
 from django.utils import timezone
 from payment.models import Payment
@@ -433,12 +435,37 @@ class BookmarkedJobSerializer(serializers.ModelSerializer):
         return obj.job.responses.filter(user=user).exists()
 
 
-
 class MessageAttachmentSerializer(serializers.ModelSerializer):
+    download_url = serializers.SerializerMethodField()
+    preview_url = serializers.SerializerMethodField()
+
     class Meta:
         model = MessageAttachment
-        fields = ['id', 'file', 'filename', 'uploaded_at',
-                        'file_size', 'content_type', 'thumbnail']
+        fields = [
+            'id', 'file', 'filename', 'uploaded_at',
+            'file_size', 'content_type', 'thumbnail',
+            'download_url', 'preview_url'
+        ]
+
+    def get_download_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.file.url)
+        return f"{settings.MEDIA_URL}{obj.file}"
+
+    def get_preview_url(self, obj):
+        """Return preview URL for images, else None."""
+        if obj.thumbnail:  # If a generated thumbnail exists, use it
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.thumbnail.url) if request else f"{settings.MEDIA_URL}{obj.thumbnail}"
+
+        # Fallback: if file is an image, use the file itself as preview
+        mime_type, _ = mimetypes.guess_type(obj.file.name)
+        if mime_type and mime_type.startswith('image/'):
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.file.url) if request else f"{settings.MEDIA_URL}{obj.file}"
+
+        return None
 
 
 class MessageSerializer(serializers.ModelSerializer):
