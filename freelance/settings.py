@@ -228,16 +228,22 @@ PAYPAL_URL = (
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.zoho.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "kyioskmarket@gmail.com"
-EMAIL_HOST_PASSWORD = "qsyocyzdmceiyqby"
-DEFAULT_FROM_EMAIL = "kyioskmarket@gmail.com"
+<<<<<<< HEAD
+
 #EMAIL_HOST_USER = 'info@nilltechsolutions.com'
 #EMAIL_HOST_PASSWORD = 'nillsol12@'
 #DEFAULT_FROM_EMAIL = 'info@nilltechsolutions.com'
+=======
+EMAIL_USE_SSL = False  
+
+EMAIL_HOST_USER = 'info@nilltechsolutions.com'
+EMAIL_HOST_PASSWORD = 'nillsol12@'  
+DEFAULT_FROM_EMAIL = 'info@nilltechsolutions.com'
+>>>>>>> ed8d9d7a5cf66a253981b0379cffe53700233d36
+
 
 
 CHANNEL_LAYERS = {
