@@ -114,8 +114,14 @@ class RegisterView(APIView):
             user = serializer.save()
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            current_site = get_current_site(request)
-            verification_url = f'http://{current_site.domain}/api/v1/verify-email/{uid}/{token}/'
+
+            def build_verify_email_url(uid, token):
+                base_url = settings.FRONTEND_URL.rstrip("/")
+                query_params = urlencode({"uid": uid, "token": token})
+                return f"{base_url}/auth/verify-email/?{query_params}"
+
+            current_site = build_verify_email_url(uid, token)
+            verification_url = f'{current_site}'
 
             subject = 'Verify Your Email Address'
             message_text = f'Hi {user.username},\n\nPlease click the link to verify your email: {verification_url}'
@@ -194,8 +200,15 @@ class ResendVerificationView(APIView):
         # Generate verification token and link
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        current_site = get_current_site(request)
-        verification_url = f'http://{current_site.domain}/api/v1/verify-email/{uid}/{token}/'
+        
+        def build_verify_email_url(uid, token):
+                    base_url = settings.FRONTEND_URL.rstrip("/")
+                    query_params = urlencode({"uid": uid, "token": token})
+                    return f"{base_url}/auth/verify-email/?{query_params}"
+        
+        
+        current_site = build_verify_email_url(uid,token)
+        verification_url = f'{current_site}'
 
         # Email content
         subject = 'Verify Your Email Address'
