@@ -2403,3 +2403,253 @@ Watching for file changes with StatReloader
 HTTP/2 support enabled
 Configuring endpoint tcp:port=8000:interface=127.0.0.1
 Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 56982]
+HTTP 200 response started for ['127.0.0.1', 56982]
+HTTP close for ['127.0.0.1', 56982]
+HTTP response complete for ['127.0.0.1', 56982]
+[mHTTP GET /api/v1/docs/ 200 [0.15, 127.0.0.1:56982][0m
+HTTP b'GET' request for ['127.0.0.1', 56982]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 56982]
+HTTP response chunk for ['127.0.0.1', 56982]
+HTTP response chunk for ['127.0.0.1', 56982]
+HTTP response chunk for ['127.0.0.1', 56982]
+HTTP response chunk for ['127.0.0.1', 56982]
+HTTP response chunk for ['127.0.0.1', 56982]
+HTTP close for ['127.0.0.1', 56982]
+HTTP response complete for ['127.0.0.1', 56982]
+[mHTTP GET /api/v1/schema/ 200 [0.46, 127.0.0.1:56982][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 39450]
+HTTP 201 response started for ['127.0.0.1', 39450]
+HTTP close for ['127.0.0.1', 39450]
+HTTP response complete for ['127.0.0.1', 39450]
+[mHTTP POST /api/v1/auth/register/ 201 [5.09, 127.0.0.1:39450][0m
+HTTP b'GET' request for ['127.0.0.1', 49240]
+HTTP 200 response started for ['127.0.0.1', 49240]
+HTTP close for ['127.0.0.1', 49240]
+HTTP response complete for ['127.0.0.1', 49240]
+[mHTTP GET /api/v1/verify-email/OA/cufoj9-67da99596a0a56e80ddbdf6f96445a1c/ 200 [0.10, 127.0.0.1:49240][0m
+HTTP b'GET' request for ['127.0.0.1', 49240]
+HTTP b'GET' request for ['127.0.0.1', 49254]
+HTTP b'GET' request for ['127.0.0.1', 49258]
+HTTP b'GET' request for ['127.0.0.1', 49262]
+HTTP b'GET' request for ['127.0.0.1', 49264]
+HTTP b'GET' request for ['127.0.0.1', 49268]
+HTTP 200 response started for ['127.0.0.1', 49240]
+HTTP 200 response started for ['127.0.0.1', 49262]
+HTTP 200 response started for ['127.0.0.1', 49258]
+HTTP response chunk for ['127.0.0.1', 49240]
+HTTP response chunk for ['127.0.0.1', 49240]
+HTTP close for ['127.0.0.1', 49240]
+HTTP response complete for ['127.0.0.1', 49240]
+[mHTTP GET /static/rest_framework/css/bootstrap.min.css 200 [0.03, 127.0.0.1:49240][0m
+HTTP 304 response started for ['127.0.0.1', 49264]
+HTTP close for ['127.0.0.1', 49264]
+HTTP response complete for ['127.0.0.1', 49264]
+[36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.02, 127.0.0.1:49264][0m
+HTTP 304 response started for ['127.0.0.1', 49268]
+HTTP close for ['127.0.0.1', 49268]
+HTTP response complete for ['127.0.0.1', 49268]
+[36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.02, 127.0.0.1:49268][0m
+HTTP 200 response started for ['127.0.0.1', 49254]
+HTTP response chunk for ['127.0.0.1', 49262]
+HTTP close for ['127.0.0.1', 49262]
+HTTP response complete for ['127.0.0.1', 49262]
+[mHTTP GET /static/rest_framework/js/prettify-min.js 200 [0.03, 127.0.0.1:49262][0m
+HTTP response chunk for ['127.0.0.1', 49258]
+HTTP close for ['127.0.0.1', 49258]
+HTTP response complete for ['127.0.0.1', 49258]
+[mHTTP GET /static/rest_framework/js/bootstrap.min.js 200 [0.03, 127.0.0.1:49258][0m
+HTTP b'GET' request for ['127.0.0.1', 49240]
+HTTP b'GET' request for ['127.0.0.1', 49264]
+HTTP b'GET' request for ['127.0.0.1', 49268]
+HTTP response chunk for ['127.0.0.1', 49254]
+HTTP response chunk for ['127.0.0.1', 49254]
+HTTP close for ['127.0.0.1', 49254]
+HTTP response complete for ['127.0.0.1', 49254]
+[mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 200 [0.04, 127.0.0.1:49254][0m
+HTTP b'GET' request for ['127.0.0.1', 49258]
+HTTP 304 response started for ['127.0.0.1', 49264]
+HTTP close for ['127.0.0.1', 49264]
+HTTP response complete for ['127.0.0.1', 49264]
+[36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.01, 127.0.0.1:49264][0m
+HTTP 304 response started for ['127.0.0.1', 49268]
+HTTP close for ['127.0.0.1', 49268]
+HTTP response complete for ['127.0.0.1', 49268]
+[36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.01, 127.0.0.1:49268][0m
+HTTP 304 response started for ['127.0.0.1', 49240]
+HTTP close for ['127.0.0.1', 49240]
+HTTP response complete for ['127.0.0.1', 49240]
+[36mHTTP GET /static/rest_framework/css/default.css 304 [0.02, 127.0.0.1:49240][0m
+HTTP b'GET' request for ['127.0.0.1', 49262]
+HTTP 304 response started for ['127.0.0.1', 49258]
+HTTP close for ['127.0.0.1', 49258]
+HTTP response complete for ['127.0.0.1', 49258]
+[36mHTTP GET /static/rest_framework/js/default.js 304 [0.01, 127.0.0.1:49258][0m
+HTTP 304 response started for ['127.0.0.1', 49262]
+HTTP close for ['127.0.0.1', 49262]
+HTTP response complete for ['127.0.0.1', 49262]
+[36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.01, 127.0.0.1:49262][0m
+HTTP b'GET' request for ['127.0.0.1', 49262]
+HTTP 304 response started for ['127.0.0.1', 49262]
+HTTP close for ['127.0.0.1', 49262]
+HTTP response complete for ['127.0.0.1', 49262]
+[36mHTTP GET /static/rest_framework/img/grid.png 304 [0.00, 127.0.0.1:49262][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/urls.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/auth/user/ 200 [0.25, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/jsi18n/ 200 [0.01, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/auth/user/8/change/ 200 [0.25, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP b'GET' request for ['127.0.0.1', 41430]
+HTTP b'GET' request for ['127.0.0.1', 41436]
+HTTP 304 response started for ['127.0.0.1', 41430]
+HTTP close for ['127.0.0.1', 41430]
+HTTP response complete for ['127.0.0.1', 41430]
+[36mHTTP GET /static/admin/js/SelectBox.js 304 [0.01, 127.0.0.1:41430][0m
+HTTP 304 response started for ['127.0.0.1', 41436]
+HTTP close for ['127.0.0.1', 41436]
+HTTP response complete for ['127.0.0.1', 41436]
+[36mHTTP GET /static/admin/js/SelectFilter2.js 304 [0.01, 127.0.0.1:41436][0m
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 304 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[36mHTTP GET /static/admin/img/selector-icons.svg 304 [0.01, 127.0.0.1:41414][0m
+HTTP b'POST' request for ['127.0.0.1', 41414]
+HTTP 302 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[32mHTTP POST /admin/auth/user/8/change/ 302 [0.11, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/auth/user/ 200 [0.07, 127.0.0.1:41414][0m
+HTTP b'GET' request for ['127.0.0.1', 41414]
+HTTP 200 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP GET /admin/jsi18n/ 200 [0.02, 127.0.0.1:41414][0m
+HTTP b'POST' request for ['127.0.0.1', 41414]
+HTTP 201 response started for ['127.0.0.1', 41414]
+HTTP close for ['127.0.0.1', 41414]
+HTTP response complete for ['127.0.0.1', 41414]
+[mHTTP POST /api/v1/auth/register/ 201 [4.77, 127.0.0.1:41414][0m
