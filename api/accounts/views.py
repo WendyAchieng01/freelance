@@ -26,6 +26,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.http import FileResponse, Http404
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth import password_validation
+from rest_framework.exceptions import ValidationError
 from django.utils.encoding import force_bytes
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -38,9 +40,9 @@ from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanRe
 
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,AuthUserSerializer,
-    PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,
+    PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,VerifyEmailSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,FreelancerProfileReadSerializer,
-    LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,
+    LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,ProfileWriteSerializer,
     ClientProfileWriteSerializer, ClientProfileReadSerializer,ClientListSerializer
 )
 
@@ -146,33 +148,63 @@ class VerifyEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     @extend_schema(
-        summary="Verify Email",
-        description="Verify user email using the token from the email link. Returns JWT tokens on success.",
+        summary="Verify Email (GET)",
+        description="Verify user email using token and uid from the email link. Returns JWT tokens on success.",
+        parameters=[
+            {
+                "name": "uid",
+                "in": "query",
+                "required": True,
+                "description": "Base64 encoded user ID from verification link",
+                "schema": {"type": "string"}
+            },
+            {
+                "name": "token",
+                "in": "query",
+                "required": True,
+                "description": "Verification token from verification link",
+                "schema": {"type": "string"}
+            }
+        ],
         responses={
-            200: OpenApiResponse(description="Email verified, JWT tokens returned."),
-            400: OpenApiResponse(description="Invalid or expired token.")
+            200: OpenApiResponse(description="Email verified successfully"),
+            400: OpenApiResponse(description="Invalid or expired token"),
         }
     )
-    def get(self, request, uidb64, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-            if default_token_generator.check_token(user, token):
-                user.is_active = True
-                user.save()
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    "message": "Email verified.",
-                    "access": str(refresh.access_token),
-                    "refresh": str(refresh)
-                }, status=status.HTTP_200_OK)
-            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
-        except (TypeError, ValueError, User.DoesNotExist):
-            return Response({"error": "Invalid verification link."}, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request):
+        serializer = VerifyEmailSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.save()
+        return Response(data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="Verify Email (POST)",
+        description="Verify user email using token and uid in the request body. Returns JWT tokens on success.",
+        request=VerifyEmailSerializer,
+        responses={
+            200: OpenApiResponse(description="Email verified successfully"),
+            400: OpenApiResponse(description="Invalid or expired token"),
+        },
+        examples=[
+            OpenApiExample(
+                "Verification Example",
+                value={
+                    "uid": "MTQ",
+                    "token": "cuklrq-6aae3489aff22c004276561564bedbe8"
+                },
+                request_only=True
+            )
+        ]
+    )
+    def post(self, request):
+        serializer = VerifyEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.save()
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class ResendVerificationView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
 
     @extend_schema(
         summary="Resend verification email",
@@ -189,42 +221,50 @@ class ResendVerificationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         email = serializer.validated_data['email']
+
+        # Look up user
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email) 
         except User.DoesNotExist:
             return Response({"error": "No user with this email found."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if already active
         if user.is_active:
             return Response({"error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate verification token and link
-        token = default_token_generator.make_token(user)
+        # Create UID and token
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        
-        def build_verify_email_url(uid, token):
-                    base_url = settings.FRONTEND_URL.rstrip("/")
-                    query_params = urlencode({"uid": uid, "token": token})
-                    return f"{base_url}/auth/verify-email/?{query_params}"
-        
-        
-        current_site = build_verify_email_url(uid,token)
-        verification_url = f'{current_site}'
+        token = default_token_generator.make_token(user)
+
+        # Build verification URL
+        base_url = settings.FRONTEND_URL.rstrip("/")
+        query_params = urlencode({"uid": uid, "token": token})
+        verification_url = f"{base_url}/auth/verify-email/?{query_params}"
 
         # Email content
-        subject = 'Verify Your Email Address'
-        message_text = f'Hi {user.username},\n\nPlease click the link to verify your email: {verification_url}'
+        subject = "Verify Your Email Address"
+        message_text = (
+            f"Hi {user.username},\n\n"
+            f"Please click the link to verify your email: {verification_url}\n\n"
+            "This link will expire in 24 hours."
+        )
         message_html = format_html(
             '<div style="font-family: Arial, sans-serif; text-align: center;">'
             f'<h2>Hi {user.username},</h2>'
             '<p>Please click the button below to verify your email address:</p>'
-            f'<a href="{verification_url}" style="display: inline-block; background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">'
-            'Verify Email</a><p>This link will expire in 24 hours.</p>'
+            f'<a href="{verification_url}" style="display: inline-block; background-color: #007bff; '
+            'color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; '
+            'font-size: 16px;">Verify Email</a>'
+            '<p>This link will expire in 24 hours.</p>'
             '</div>'
         )
 
-        # Send email
+        # Send email 
         email_message = EmailMultiAlternatives(
-            subject, message_text, 'info@nilltechsolutions.com', [user.email]
+            subject,
+            message_text,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email]
         )
         email_message.attach_alternative(message_html, "text/html")
         email_message.send()
@@ -368,36 +408,50 @@ class PasswordResetRequestView(APIView):
         if serializer.is_valid():
             try:
                 user = User.objects.get(
-                    email=serializer.validated_data['email'])
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                
-                def build_password_reset_url(uid, token):
-                    base_url = settings.FRONTEND_URL.rstrip("/")
-                    query_params = urlencode({"uid": uid, "token": token})
-                    return f"{base_url}/auth/password-reset-confirm/?{query_params}"
-                
-                current_site = build_password_reset_url(uid,token)
-                reset_url = f'{current_site}'
+                    email=serializer.validated_data['email'],
+                    is_active=True
+                )
 
-                subject = 'Reset Your Password'
-                message_text = f'Hi {user.username},\n\nPlease click the link to reset your password: {reset_url}'
+                # Create uid + token
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+
+                # Build reset URL for frontend
+                base_url = settings.FRONTEND_URL.rstrip("/")
+                query_params = urlencode({"uid": uid, "token": token})
+                reset_url = f"{base_url}/auth/password-reset-confirm/?{query_params}"
+
+                # Email content
+                subject = "Reset Your Password"
+                message_text = (
+                    f"Hi {user.username},\n\n"
+                    f"Please click the link to reset your password: {reset_url}"
+                )
                 message_html = format_html(
                     '<div style="font-family: Arial, sans-serif; text-align: center;">'
                     f'<h2>Hi {user.username},</h2>'
                     '<p>Please click the button below to reset your password:</p>'
-                    f'<a href="{reset_url}" style="display: inline-block; background-color: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">'
-                    'Reset Password</a><p>If you didn\'t request this, ignore this email.</p>'
+                    f'<a href="{reset_url}" style="display: inline-block; background-color: #dc3545; '
+                    'color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; '
+                    'font-size: 16px;">Reset Password</a>'
+                    '<p>If you didn\'t request this, ignore this email.</p>'
                     '</div>'
                 )
+
                 email = EmailMultiAlternatives(
-                    subject, message_text, 'info@nilltechsolutions.com', [user.email])
+                    subject,
+                    message_text,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email]
+                )
                 email.attach_alternative(message_html, "text/html")
                 email.send()
 
-                return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
             except User.DoesNotExist:
-                return Response({"message": "Email sent."}, status=status.HTTP_200_OK)
+                pass  
+
+            return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -406,31 +460,42 @@ class PasswordResetConfirmView(APIView):
 
     @extend_schema(
         summary="Confirm Password Reset",
-        description="Reset password using token and UID from email link.",
-        request=PasswordResetConfirmSerializer,
+        description="Reset password using UID and token from email link.",
+        request=PasswordChangeSerializer,
         responses={
             200: OpenApiResponse(description="Password reset successful."),
             400: OpenApiResponse(description="Invalid or expired token.")
         }
     )
-    def post(self, request, uidb64, token):
-        serializer = PasswordResetConfirmSerializer(
-            data={'uidb64': uidb64, 'token': token, 'new_password': request.data.get('new_password')})
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
         if serializer.is_valid():
+            uidb64 = serializer.validated_data['uid']
+            token = serializer.validated_data['token']
+
             try:
                 uid = force_str(urlsafe_base64_decode(uidb64))
                 user = User.objects.get(pk=uid)
-                if default_token_generator.check_token(user, token):
-                    user.set_password(
-                        serializer.validated_data['new_password'])
-                    user.save()
-                    return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
-                return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
             except (TypeError, ValueError, User.DoesNotExist):
                 return Response({"error": "Invalid reset link."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # is token is valid
+            if not default_token_generator.check_token(user, token):
+                return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Re-run password validation 
+            serializer.context['user'] = user
+            # raises error if invalid
+            serializer.validate(serializer.validated_data)
+
+            # Set new password
+            user.set_password(serializer.validated_data['new_password1'])
+            user.save()
+
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
 @extend_schema(
     summary="Get or update your own profile",
     description="GET returns current user's profile. PUT/PATCH updates it. DELETE deletes the profile.",
@@ -470,10 +535,10 @@ class ProfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        # Show only opposite user_type profiles (exclude own)
-        opposite_type = 'client' if user.profile.user_type == 'freelancer' else 'freelancer'
-        return Profile.objects.filter(user_type=opposite_type).exclude(user=user)
+        if self.action in ['list', 'retrieve']:
+            return ProfileWriteSerializer  
+        
+        return super().get_serializer_class()
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -483,18 +548,31 @@ class ProfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
     @action(detail=False, methods=['get', 'put', 'patch', 'delete'], url_path='me')
     def me(self, request):
-        profile = get_object_or_404(Profile, user=request.user)
+        profile = request.user.profile
+
         if request.method == 'GET':
-            serializer = self.get_serializer(profile)
-            user = AuthUserSerializer(request.user)
+            if profile.user_type == 'freelancer':
+                freelancer = getattr(profile, 'freelancer_profile', None)
+                if not freelancer:
+                    return Response({'detail': 'Freelancer profile not found.'}, status=404)
+                serializer = FreelancerProfileReadSerializer(freelancer)
+            elif profile.user_type == 'client':
+                client = getattr(profile, 'client_profile', None)
+                if not client:
+                    return Response({'detail': 'Client profile not found.'}, status=404)
+                serializer = ClientProfileReadSerializer(client)
+            else:
+                serializer = ProfileWriteSerializer(profile)
+
             return Response(serializer.data)
-        
+
         elif request.method in ['PUT', 'PATCH']:
-            serializer = self.get_serializer(
+            serializer = ProfileWriteSerializer(
                 profile, data=request.data, partial=(request.method == 'PATCH'))
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
+
         elif request.method == 'DELETE':
             profile.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

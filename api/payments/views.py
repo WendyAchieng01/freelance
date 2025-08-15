@@ -47,8 +47,8 @@ class InitiatePaypalPayment(APIView):
             "invoice": payment.invoice,
             "currency_code": "USD",
             "notify_url": request.build_absolute_uri(reverse("paypal-ipn")),
-            "return_url": f"https://{settings.FRONTEND_URL}/api/v1/jobs/{slug}/",
-            "cancel_return": f"https://{settings.FRONTEND_URL}/api/v1/jobs/{slug}/",
+            "return_url": f"{settings.FRONTEND_URL}/jobs/{slug}/",
+            "cancel_return": f"{settings.FRONTEND_URL}/jobs/{slug}/",
         }
         
 
@@ -84,11 +84,11 @@ class PaypalSuccessView(View):
             job.payment_verified = True
             job.save()
             
-            return redirect(f"{domain}/api/v1/job/{job.slug}/?{params}")
+            return redirect(f"{domain}/job/{job.slug}/?{params}")
 
         else:
             # Redirect to frontend with success message
-            return redirect(f"{domain}/api/v1/job/{job.slug}/?{params}")
+            return redirect(f"{domain}/job/{job.slug}/?{params}")
 
 
 class PaypalFailedView(View):
@@ -101,7 +101,7 @@ class PaypalFailedView(View):
 
         domain = f"{settings.FRONTEND_URL}"
         error = "Payment failed or was cancelled. Please try again."
-        return redirect(f"{domain}/api/v1/job/{job.slug}/proceed-to-pay/?error={error}")
+        return redirect(f"{domain}/job/{job.slug}/proceed-to-pay/?error={error}")
 
 
 class PaymentStatus(APIView):

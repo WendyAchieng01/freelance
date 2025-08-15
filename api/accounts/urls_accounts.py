@@ -21,10 +21,7 @@ user_detail_actions = UserViewSet.as_view({
 
 
 # ProfileViewSet Actions
-profile_list_create = ProfileViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
+
 profile_detail = ProfileViewSet.as_view({
     'get': 'retrieve'
 })
@@ -67,7 +64,6 @@ urlpatterns = [
     path('users/<int:pk>/', user_detail_actions, name='user-detail'),
     
     # Profile URLs
-    path('profiles/', profile_list_create, name='profile-list-create'),
     path('profiles/me/', profile_me, name='profile-me'),
 
     # Skill URLs

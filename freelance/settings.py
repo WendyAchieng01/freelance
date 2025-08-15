@@ -44,7 +44,7 @@ ALLOWED_HOSTS = [
 
 #ALLOWED_HOSTS = ['*']
 
-FRONTEND_URL = "nilltechsolutions.com"  # '0724-154-159-254-165.ngrok-free.app'
+FRONTEND_URL = "nilltechsolutions.com"  # 'nilltechsolutions.com
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"

@@ -2,6 +2,10 @@ from django.db.models import Q
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from rest_framework_simplejwt.tokens import RefreshToken
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from django.contrib.auth import get_user_model
@@ -60,26 +64,47 @@ class ProfileMiniSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.Serializer):
     user = UserSerializer()
-    password1 = serializers.CharField(write_only=True, help_text="Password.")
+    password1 = serializers.CharField(
+        write_only=True,
+        help_text="Password.",
+        style={'input_type': 'password'}
+    )
     password2 = serializers.CharField(
-        write_only=True, help_text="Confirm password.")
+        write_only=True,
+        help_text="Confirm password.",
+        style={'input_type': 'password'}
+    )
     user_type = serializers.ChoiceField(
         choices=[('freelancer', 'Freelancer'), ('client', 'Client')],
         help_text="User type."
     )
 
     def validate(self, data):
+        # Password match check
         if data['password1'] != data['password2']:
             raise serializers.ValidationError(
-                {"password2": "Passwords do not match."})
+                {"password2": "Passwords do not match."}
+            )
 
         user_data = data.get('user', {})
-        if User.objects.filter(username=user_data.get('username')).exists():
+
+        # Unique username check
+        if User.objects.filter(username__iexact=user_data.get('username')).exists():
             raise serializers.ValidationError(
-                {"user.username": "Username is already taken."})
-        if User.objects.filter(email=user_data.get('email')).exists():
+                {"user.username": "Username is already taken."}
+            )
+
+        # Unique email check
+        if User.objects.filter(email__iexact=user_data.get('email')).exists():
             raise serializers.ValidationError(
-                {"user.email": "Email is already taken."})
+                {"user.email": "Email is already taken."}
+            )
+
+        temp_user = User(
+            username=user_data.get('username', ''),
+            email=user_data.get('email', '')
+        )
+        validate_password(data['password1'], temp_user)
 
         return data
 
@@ -172,20 +197,34 @@ class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField(help_text="JWT refresh token")
 
 
-
 class PasswordChangeSerializer(serializers.Serializer):
+    uid = serializers.CharField(
+        write_only=True, help_text="Base64 encoded user ID from the reset link.")
+    token = serializers.CharField(
+        write_only=True, help_text="Password reset token from the reset link.")
     new_password1 = serializers.CharField(
-        write_only=True, help_text="New password.")
+        write_only=True,
+        help_text="New password.",
+        style={'input_type': 'password'}
+    )
     new_password2 = serializers.CharField(
-        write_only=True, help_text="Confirm new password.")
+        write_only=True,
+        help_text="Confirm new password.",
+        style={'input_type': 'password'}
+    )
 
     def validate(self, data):
+        # Ensure passwords match
         if data['new_password1'] != data['new_password2']:
             raise serializers.ValidationError(
-                {"new_password2": "Passwords do not match."})
-            validate_password(data['new_password1']
-                )
+                {"new_password2": "Passwords do not match."}
+            )
+
+        # Validate password strength
+        validate_password(data['new_password1'], self.context.get('user'))
+
         return data
+
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
@@ -206,6 +245,43 @@ class ResendVerificationSerializer(serializers.Serializer):
         help_text="Registered email address for verification."
     )
 
+
+class VerifyEmailSerializer(serializers.Serializer):
+    uid = serializers.CharField(
+        help_text="Base64 encoded user ID from the verification link.")
+    token = serializers.CharField(
+        help_text="Verification token from the verification link.")
+
+    def validate(self, attrs):
+        uidb64 = attrs.get("uid")
+        token = attrs.get("token")
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, User.DoesNotExist):
+            raise serializers.ValidationError(
+                {"error": "Invalid verification link."})
+
+        if not default_token_generator.check_token(user, token):
+            raise serializers.ValidationError(
+                {"error": "Invalid or expired token."})
+
+        attrs["user"] = user
+        return attrs
+
+    def save(self):
+        user = self.validated_data["user"]
+        user.is_active = True
+        user.save()
+
+        refresh = RefreshToken.for_user(user)
+        return {
+            "message": "Email verified.",
+            "access": str(refresh.access_token),
+            "refresh": str(refresh)
+        }
+        
 
 class ProfileSerializer(serializers.ModelSerializer):
     profile = ProfileMiniSerializer()

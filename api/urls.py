@@ -10,7 +10,6 @@ urlpatterns = [
     path('payment/', include('api.payment.urls')),
     path('payments/', include('api.payments.urls')),
     path('wallet/', include('api.wallet.urls')),
-    #path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     #comment the 3 lines below when in production
