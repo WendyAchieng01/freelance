@@ -1841,22 +1841,38 @@ class NotificationViewSet(viewsets.ModelViewSet):
                 )
 
 
-
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated, CanReview]
-    
 
     def get_queryset(self):
+        username = self.request.query_params.get('username')
         recipient_id = self.request.query_params.get('recipient')
-        if recipient_id:
-            return Review.objects.filter(recipient_id=recipient_id)
-        return Review.objects.all()
+
+        queryset = Review.objects.all()
+
+        if username:
+            queryset = queryset.filter(recipient__username=username)
+        elif recipient_id:
+            queryset = queryset.filter(recipient_id=recipient_id)
+
+        return queryset
 
     @extend_schema(
         summary="List reviews",
-        description="Retrieve a list of reviews. Optionally filter by recipient user ID using ?recipient= query parameter.",
+        description=(
+            "Retrieve a list of reviews. "
+            "Optionally filter by recipient username using `?username=` "
+            "or by recipient user ID using `?recipient=`."
+        ),
         parameters=[
+            OpenApiParameter(
+                name='username',
+                description='Filter reviews by recipient username',
+                required=False,
+                type=str,
+                location=OpenApiParameter.QUERY,
+            ),
             OpenApiParameter(
                 name='recipient',
                 description='Filter reviews by recipient user ID',
@@ -1865,9 +1881,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
                 location=OpenApiParameter.QUERY,
             )
         ],
-        responses={
-            200: ReviewSerializer(many=True),
-        },
+        responses={200: ReviewSerializer(many=True)},
         tags=["Reviews"],
     )
     def list(self, request, *args, **kwargs):
@@ -1936,14 +1950,16 @@ class ReviewViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
-    
+
     def perform_create(self, serializer):
         try:
             serializer.save(reviewer=self.request.user)
         except (DatabaseError, IntegrityError) as e:
             logger.error(f"Database error during review creation: {e}")
             raise serializers.ValidationError(
-                {"detail": f"Database error while saving review: {str(e)}"})
+                {"detail": f"Database error while saving review: {str(e)}"}
+            )
+
 
 
 class UserReviewSummaryView(APIView):

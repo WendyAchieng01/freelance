@@ -12,6 +12,7 @@ from core.models import Job
 from api.payment.serializers import PaymentSerializer
 from api.payment.paystack import Paystack  
 from urllib.parse import urlencode,unquote
+from django.conf import settings
 
 
 
@@ -52,7 +53,7 @@ class PaymentInitiateView(APIView):
         payment.save()  #  ref is generated
 
         # Prepare callback URL
-        callback_url = request.build_absolute_uri('/api/v1/payment/callback/')
+        callback_url = request.build_absolute_uri('/payment/callback/')
 
         # Call Paystack to initialize the transaction
         paystack = Paystack()
@@ -111,7 +112,7 @@ class PaymentCallbackView(APIView):
 
     def get(self, request):
         ref = request.GET.get("reference")
-        base_url = getattr(settings, "FRONTEND_BASE_URL", "https://nilltechsolutions.com")
+        base_url = settings.FRONTEND_URL
 
         if not ref:
             error_params = urlencode(
@@ -154,20 +155,21 @@ class PaymentCallbackView(APIView):
             verified = payment.job.payment_verified
 
             if verified:
-                return redirect(f"{base_url}/api/v1/jobs/{job.slug or job.id}/")
+                print(f"/jobs/{job.slug or job.id}/")
+                return redirect(f"/jobs/{job.slug or job.id}/")
             else:
                 error_params = urlencode(
                     {'error': 'Payment could not be verified. Please try again.'})
-                return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+                return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
         except requests.RequestException as e:
             error_params = urlencode(
                 {'error': f"Paystack request failed: {str(e)}"})
-            return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
         except Exception as e:
             error_params = urlencode({'error': f"Internal error: {str(e)}"})
-            return redirect(f"{base_url}/api/v1/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
 
 
 class ProceedToPayAPIView(APIView):
