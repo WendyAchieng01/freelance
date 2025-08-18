@@ -4,6 +4,7 @@ from .views import (
     ProfileViewSet,
     SkillViewSet,
     LanguageViewSet,
+    PortfolioProjectViewSet
 )
 
 
@@ -32,6 +33,7 @@ profile_me = ProfileViewSet.as_view({
     'delete': 'me'
 })
 
+
 # SkillViewSet Actions
 skill_list_create = SkillViewSet.as_view({
     'get': 'list',
@@ -56,6 +58,18 @@ language_detail_actions = LanguageViewSet.as_view({
     'delete': 'destroy'
 })
 
+portfolio_project_list = PortfolioProjectViewSet.as_view({
+    "get": "list",
+    "post": "create",
+})
+
+portfolio_project_detail = PortfolioProjectViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "update",
+    "delete": "destroy",
+})
+
 
 # --- URL Patterns ---
 urlpatterns = [
@@ -73,5 +87,12 @@ urlpatterns = [
     # Language URLs
     path('languages/', language_list_create, name='language-list-create'),
     path('languages/<int:pk>/', language_detail_actions, name='language-detail'),
+    
+    path("profiles/me/portfolio-projects/",portfolio_project_list,
+        name="portfolio-project-list",
+    ),
+    path("profiles/me/portfolio-projects/<slug:slug>/",portfolio_project_detail,
+        name="portfolio-project-detail",
+    ),
 
 ]

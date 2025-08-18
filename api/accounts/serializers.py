@@ -6,7 +6,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
+from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language,PortfolioProject
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from django.contrib.auth import get_user_model
 from core.models import Job, Response, Chat, Message, MessageAttachment, Review
@@ -325,7 +325,46 @@ class LanguageSerializer(serializers.ModelSerializer):
             'name': {'help_text': 'Language name (e.g., English, Swahili).'}}
 
 
+class PortfolioProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortfolioProject
+        fields = [
+            "id",
+            "freelancer",
+            "project_title",
+            "role",
+            "description",
+            "link",
+            "slug",
+            "project_media",
+            "created_at",
+        ]
+        read_only_fields = ["id", "freelancer", "slug", "created_at"]
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        user = request.user
+        # Auto-set freelancer from the user’s profile (if exists)
+        freelancer_profile = getattr(user.profile, "freelancer_profile", None)
+        validated_data["freelancer"] = freelancer_profile
+        validated_data["user"] = user
+        return super().create(validated_data)
+
+
 #freelance profile form
+class PortfolioProjectReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortfolioProject
+        fields = [
+            'slug',
+            'project_title',
+            'role',
+            'description',
+            'link',
+            'project_media',
+            'created_at',
+        ]
+        read_only_fields = fields
 
 
 class FreelancerProfileReadSerializer(serializers.ModelSerializer):
@@ -333,18 +372,21 @@ class FreelancerProfileReadSerializer(serializers.ModelSerializer):
     languages = serializers.StringRelatedField(many=True)
     skills = serializers.StringRelatedField(many=True)
     full_name = serializers.SerializerMethodField()
-    
+
     rating = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
     recent_reviews = serializers.SerializerMethodField()
 
+    portfolio_projects = serializers.SerializerMethodField()
+
     class Meta:
         model = FreelancerProfile
         fields = [
-            'id','full_name','profile','experience_years',
-            'hourly_rate','portfolio_link','availability','languages',
-            'skills','is_visible','slug',
-            'rating', 'review_count', 'recent_reviews'
+            'id', 'full_name', 'profile', 'experience_years',
+            'hourly_rate', 'portfolio_link', 'availability', 'languages',
+            'skills', 'is_visible', 'slug',
+            'rating', 'review_count', 'recent_reviews',
+            'portfolio_projects', 
         ]
 
     def get_full_name(self, obj):
@@ -362,6 +404,11 @@ class FreelancerProfileReadSerializer(serializers.ModelSerializer):
         reviews = Review.recent_reviews_for(obj.profile.user, limit=3)
         return ReviewSerializer(reviews, many=True).data
 
+    def get_portfolio_projects(self, obj):
+        """Return up to 4 portfolio projects for this freelancer."""
+        projects = PortfolioProject.objects.filter(user=obj.profile.user)[:4]
+        return PortfolioProjectReadSerializer(projects, many=True).data
+
 
 class ProfileWriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -374,8 +421,13 @@ class ProfileWriteSerializer(serializers.ModelSerializer):
 
 class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
     profile = ProfileWriteSerializer()
-    languages = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all(), many=True)
-    skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True, required=False)
+    languages = serializers.PrimaryKeyRelatedField(
+        queryset=Language.objects.all(), many=True
+    )
+    skills = serializers.PrimaryKeyRelatedField(
+        queryset=Skill.objects.all(), many=True, required=False
+    )
+
 
     class Meta:
         model = FreelancerProfile
@@ -386,10 +438,11 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
             'availability',
             'languages',
             'skills',
-            'is_visible'
+            'is_visible',
         ]
 
     def update_nested_profile(self, profile, profile_data):
+        """Update nested Profile model fields inside FreelancerProfile."""
         for field in profile_data:
             setattr(profile, field, profile_data[field])
         profile.user_type = 'freelancer'
@@ -402,34 +455,31 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
         return self._create_or_update(validated_data, instance)
 
     def _create_or_update(self, validated_data, instance=None):
-        # Pop nested and many-to-many fields from validated_data
+        """
+        Create or update FreelancerProfile with nested Profile,
+        languages, skills, and portfolio projects.
+        """
         profile_data = validated_data.pop('profile', {})
         languages = validated_data.pop('languages', [])
         skills = validated_data.pop('skills', [])
 
-        # Get or create the user’s profile
         user = self.context['request'].user
         profile, _ = Profile.objects.get_or_create(user=user)
         self.update_nested_profile(profile, profile_data)
 
-        # Create or use existing FreelancerProfile instance
+        # Create/update FreelancerProfile
         freelancer = instance or FreelancerProfile(profile=profile)
-
-        # Set direct fields only
         for attr, value in validated_data.items():
             setattr(freelancer, attr, value)
-
-        # Save the instance
         freelancer.save()
 
-        # Set many-to-many fields if provided
+        # Update m2m
         if languages:
             freelancer.languages.set(languages)
         if skills:
             freelancer.skills.set(skills)
 
         return freelancer
-
 
 
 class FreelancerListSerializer(serializers.ModelSerializer):

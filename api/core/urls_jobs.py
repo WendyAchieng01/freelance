@@ -7,6 +7,7 @@ from .views import (
                     ClientJobStatusView,DashboardSummaryView
                     
 )
+from api.payment.views import ProceedToPayAPIView
 
 
 job_list = JobViewSet.as_view({'get': 'list'})
@@ -60,6 +61,8 @@ urlpatterns = [
 
     path('discover/<str:status_filter>/', JobDiscoveryView.as_view(), name='job-discovery'),
     
-    
+    path("<slug_or_id>/proceed-to-pay/", ProceedToPayAPIView.as_view(), name="proceed-to-pay"),
+    path("<slug_or_id>/success/", ProceedToPayAPIView.as_view(), {"state": "success"}, name="payment-success"),
+    path("<slug_or_id>/failed/", ProceedToPayAPIView.as_view(),{"state": "failed"}, name="payment-failed"),
 
 ]

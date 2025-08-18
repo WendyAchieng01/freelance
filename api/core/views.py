@@ -24,6 +24,7 @@ from django.core.exceptions import PermissionDenied
 from accounts.models import Profile, FreelancerProfile,Skill
 from core.models import Job, JobCategory,Chat, Message, MessageAttachment, Review,JobBookmark,Notification,Response as JobResponse
 from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
+from api.core.jobsmatch import JobMatcher
 from api.wallet.utility import get_wallet_stats
 
 from rest_framework.response import Response as DRFResponse
@@ -104,19 +105,25 @@ def get_skills_required_choices():
 
 
 class JobViewSet(viewsets.ModelViewSet):
-
-    queryset = Job.objects.all().select_related('client', 'selected_freelancer')
+    queryset = Job.objects.all().select_related(
+        'client', 'selected_freelancer'
+    ).prefetch_related('skills_required')
     serializer_class = JobSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    filterset_class = JobFilter
-    search_fields = ['title', 'description','level',
-                        'skills_required__name', 'category__name']
+    filterset_class = JobDiscoveryFilter
+    search_fields = [
+        'title',
+        'description',
+        'preferred_freelancer_level',
+        'skills_required__name',
+        'category__name',
+    ]
     lookup_field = 'slug'
 
     def get_permissions(self):
-        if self.action in ['list','retrieve']:
+        if self.action in ['list', 'retrieve']:
             return [AllowAny()]
-        if self.action in ['applications', 'underreview','mark_for_review']:
+        if self.action in ['applications', 'underreview', 'mark_for_review']:
             return [IsAuthenticated(), IsClient()]
         if self.action == 'create':
             return [IsAuthenticated(), IsClient()]
@@ -130,98 +137,103 @@ class JobViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         job = self.get_object()
         if job.selected_freelancer and self.request.user.profile != job.client:
-            raise ValidationError(
-                "You cannot modify this job.")
+            raise ValidationError("You cannot modify this job.")
         serializer.save()
 
+    def _get_enriched_paginated_response(self, queryset, extra_meta=None):
+        """
+        Utility to paginate, serialize and enrich jobs with `bookmarked` and `has_applied`.
+        """
+        user = self.request.user
+        profile = getattr(user, 'profile', None)
+        is_freelancer = user.is_authenticated and getattr(profile, 'user_type', '') == 'freelancer'
+
+        bookmarked_ids, applied_ids = set(), set()
+        if is_freelancer:
+            bookmarked_ids = set(user.bookmarks.values_list('job_id', flat=True))
+            applied_ids = set(
+                JobResponse.objects.filter(user=user).values_list('job_id', flat=True)
+            )
+
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+
+        enriched = []
+        for job in serializer.data:
+            job_id = job.get('id')
+            enriched.append({
+                **job,
+                'bookmarked': job_id in bookmarked_ids,
+                'has_applied': job_id in applied_ids,
+            })
+
+        paginated = self.get_paginated_response(enriched)
+        paginated.data['job_count'] = queryset.count()
+        if extra_meta:
+            paginated.data.update(extra_meta)
+        return paginated
+
     @extend_schema(
-        summary="List jobs with filters and flags",
+        summary="Discover jobs with advanced filters",
         description=(
-            "Supports status filters: open, in_progress, completed, applied, rejected, active, bookmarked. "
-            "Additional filters: experience_level (entry, intermediate, advanced, expert), "
-            "min_bids, max_bids, price__gte, price__lte, category, category_slug, skills_required, "
-            "deadline_before, deadline_after, posted_before, posted_after. "
-            "Adds flags: bookmarked, has_applied, has_applied_and_bookmarked."
+            "Supports filtering by match_type (best_match, most_recent, near_deadline, entry_level), "
+            "category, level (entry, intermediate, advanced, expert), min_price, max_price, skills, "
+            "status, deadline_before, deadline_after, posted_before, posted_after. "
+            "Adds flags: bookmarked, has_applied."
         ),
         responses={200: OpenApiResponse(response=JobSerializer(many=True))}
     )
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
+    def discover(self, request):
+        queryset = self.filter_queryset(self.get_queryset()).distinct()
+        return self._get_enriched_paginated_response(queryset)
+
     def list(self, request, *args, **kwargs):
         user = request.user
         profile = getattr(user, 'profile', None)
-        is_freelancer = user.is_authenticated and getattr(
-            profile, 'user_type', '') == 'freelancer'
+        is_freelancer = user.is_authenticated and getattr(profile, 'user_type', '') == 'freelancer'
 
         status_filter = request.query_params.get('status')
+        match_type = request.query_params.get('match_type')
         ordering = request.query_params.get('ordering', '-posted_date')
 
-        # Define allowed status filters
         job_statuses = [choice[0] for choice in JOB_STATUS_CHOICES]
-        freelancer_filters = [choice[0]
-                            for choice in ALLOWED_STATUS_FILTERS['freelancer_only']]
-        allowed_status_filters = job_statuses + \
-            (freelancer_filters if is_freelancer else [])
+        freelancer_filters = [choice[0] for choice in ALLOWED_STATUS_FILTERS['freelancer_only']]
+        allowed_status_filters = job_statuses + (freelancer_filters if is_freelancer else [])
 
-        # Validate status filter
         if status_filter and status_filter not in allowed_status_filters:
             return DRFResponse(
                 {'detail': f'Invalid status filter. Available options: {", ".join(allowed_status_filters)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        bookmarked_ids = set()
-        applied_ids = set()
+        # 🚀 Handle best_match separately (bypass filter_backends completely)
+        if match_type == "best_match":
+            queryset = JobMatcher.get_best_matches(user, Job.objects.all())
+        else:
+            base_qs = self.get_queryset()
 
-        if is_freelancer:
-            bookmarked_ids = set(
-                user.bookmarks.values_list('job_id', flat=True))
-            applied_ids = set(JobResponse.objects.filter(
-                user=user).values_list('job_id', flat=True))
+            if status_filter == 'applied' and is_freelancer:
+                base_qs = base_qs.filter(
+                    responses__user=user, responses__status__in=['submitted', 'under_review']
+                )
+            elif status_filter == 'rejected' and is_freelancer:
+                base_qs = base_qs.filter(responses__user=user, responses__status='rejected')
+            elif status_filter == 'active' and is_freelancer:
+                base_qs = base_qs.filter(status='in_progress', selected_freelancer=user)
+            elif status_filter == 'bookmarked' and is_freelancer:
+                base_qs = base_qs.filter(id__in=user.bookmarks.values_list('job_id', flat=True))
+            elif status_filter in job_statuses:
+                base_qs = base_qs.filter(status=status_filter)
 
-        base_qs = Job.objects.all()
+            queryset = self.filter_queryset(base_qs).distinct().order_by(ordering)
 
-        # Apply status filters
-        if status_filter == 'applied' and is_freelancer:
-            base_qs = base_qs.filter(responses__user=user, responses__status__in=[
-                                        'submitted', 'under_review'])
-        elif status_filter == 'rejected' and is_freelancer:
-            base_qs = base_qs.filter(
-                responses__user=user, responses__status='rejected')
-        elif status_filter == 'active' and is_freelancer:
-            base_qs = base_qs.filter(
-                status='in_progress', selected_freelancer=user)
-        elif status_filter == 'bookmarked' and is_freelancer:
-            base_qs = base_qs.filter(id__in=bookmarked_ids)
-        elif status_filter in job_statuses:
-            base_qs = base_qs.filter(status=status_filter)
-
-        # Apply JobFilter filters and order
-        queryset = self.filter_queryset(base_qs).distinct().order_by(ordering)
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True)
-
-        # Enrich response with flags
-        enriched = []
-        for job in serializer.data:
-            job_id = job.get('id')
-            bookmarked = job_id in bookmarked_ids
-            applied = job_id in applied_ids
-            enriched.append({
-                **job,
-                'bookmarked': bookmarked,
-                'has_applied': applied,
-            })
-
-        result = {
-            'status': status_filter or 'all',
-            'job_count': queryset.count(),
-            'results': enriched
-        }
-
-        # Include application count for 'applied' filter
+        extra_meta = {'status': status_filter or 'all'}
         if status_filter == 'applied':
-            result['application_count'] = len(applied_ids)
+            extra_meta['application_count'] = queryset.filter(responses__user=user).count()
 
-        return self.get_paginated_response(result['results'])
+        return self._get_enriched_paginated_response(queryset, extra_meta=extra_meta)
+
     
     @extend_schema(
         summary="Get jobs for current user",
@@ -287,7 +299,6 @@ class JobViewSet(viewsets.ModelViewSet):
 
         data['bookmarked'] = bookmarked
         data['has_applied'] = applied
-        data['current_applications_count'] = JobResponse.objects.filter(job=instance,status='submitted').count()
 
         return DRFResponse(data)
 
@@ -1023,15 +1034,14 @@ class RemoveBookmarkView(APIView):
     },
     tags=["Jobs", "Client"]
 )
+
 class ClientJobStatusView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = JobSerializer
     pagination_class = PageNumberPagination
-    filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = AdvancedJobFilter
-    search_fields = ['title', 'description',
-                     'skills_required__name', 'category__name']
+    search_fields = ['title', 'description', 'skills_required__name', 'category__name']
     ordering = ['-posted_date']
 
     def get_queryset(self):
@@ -1041,7 +1051,9 @@ class ClientJobStatusView(generics.ListAPIView):
         if profile.user_type != 'client':
             return Job.objects.none()
 
-        queryset = Job.objects.filter(client=profile)
+        queryset = Job.objects.filter(client=profile).annotate(
+            application_count=Count('responses')
+        )
 
         status_filter = self.request.query_params.get('status')
         if status_filter == 'active':
@@ -1065,28 +1077,24 @@ class ClientJobStatusView(generics.ListAPIView):
         paginator = self.paginator
         page = paginator.paginate_queryset(queryset, request)
 
-
-        # Custom logic for status views like applied/selected/rejected
         status_filter = self.request.query_params.get('status')
 
         if status_filter == 'applied':
-            jobs = queryset.prefetch_related('responses__user__profile').annotate(
-                application_count=Count('responses'))
+            jobs = queryset.prefetch_related('responses__user__profile')
             job_applications = []
             for job in jobs:
                 responses = job.responses.all()
-                serialized_responses = ResponseListSerializer(
-                    responses, many=True).data
+                serialized_responses = ResponseListSerializer(responses, many=True).data
                 job_applications.append({
                     'job_id': job.id,
                     'job_title': job.title,
                     'job_slug': job.slug,
+                    'application_count': job.application_count,  # ✅ added here
                     'applications': serialized_responses,
                 })
             paginated = paginator.paginate_queryset(job_applications, request)
             return paginator.get_paginated_response({
                 'status': 'applied',
-                'count': len(job_applications),
                 'jobs': paginated,
             })
 
@@ -1095,7 +1103,9 @@ class ClientJobStatusView(generics.ListAPIView):
                 job__client=profile,
                 user=F('job__selected_freelancer'),
                 job__selected_freelancer__isnull=False
-            ).select_related('job', 'user', 'user__profile')
+            ).select_related('job', 'user', 'user__profile').annotate(
+                application_count=Count('job__responses')
+            )
 
             job_selections = {}
             for response in responses:
@@ -1105,11 +1115,11 @@ class ClientJobStatusView(generics.ListAPIView):
                         'job_id': job.id,
                         'job_title': job.title,
                         'job_slug': job.slug,
+                        'application_count': job.responses.count(),  
                         'selected_freelancer': []
                     }
                 serialized = ResponseListSerializer(response).data
-                job_selections[job.id]['selected_freelancer'].append(
-                    serialized)
+                job_selections[job.id]['selected_freelancer'].append(serialized)
 
             selection_list = list(job_selections.values())
             paginated = paginator.paginate_queryset(selection_list, request)
@@ -1122,7 +1132,9 @@ class ClientJobStatusView(generics.ListAPIView):
         if status_filter == 'rejected':
             responses = JobResponse.objects.filter(
                 job__client=profile
-            ).exclude(user=F('job__selected_freelancer')).select_related('user', 'job', 'user__profile')
+            ).exclude(user=F('job__selected_freelancer')).select_related(
+                'user', 'job', 'user__profile'
+            )
 
             job_rejections = {}
             for response in responses:
@@ -1132,11 +1144,11 @@ class ClientJobStatusView(generics.ListAPIView):
                         'job_id': job.id,
                         'job_title': job.title,
                         'job_slug': job.slug,
+                        'application_count': job.responses.count(),  # ✅ added
                         'rejected_applicants': []
                     }
                 serialized = ResponseListSerializer(response).data
-                job_rejections[job.id]['rejected_applicants'].append(
-                    serialized)
+                job_rejections[job.id]['rejected_applicants'].append(serialized)
 
             rejection_list = list(job_rejections.values())
             paginated = paginator.paginate_queryset(rejection_list, request)
@@ -1152,7 +1164,6 @@ class ClientJobStatusView(generics.ListAPIView):
             'count': queryset.count(),
             'jobs': serializer.data,
         })
-
 
 @extend_schema(
     summary="Unified Dashboard Summary",
@@ -2076,3 +2087,5 @@ class UserReviewSummaryView(APIView):
                 
 
         return paginator.get_paginated_response(response_data)
+
+
