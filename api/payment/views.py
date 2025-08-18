@@ -8,6 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
 from payment.models import Payment
+from payments.models import PaypalPayments
 from core.models import Job
 from api.payment.serializers import PaymentSerializer
 from api.payment.paystack import Paystack  
@@ -54,6 +55,8 @@ class PaymentInitiateView(APIView):
 
         # Prepare callback URL
         callback_url = request.build_absolute_uri('/payment/callback/')
+        print('this is the callback url')
+        print(callback_url)
 
         # Call Paystack to initialize the transaction
         paystack = Paystack()
@@ -79,10 +82,11 @@ class PaymentInitiateView(APIView):
         else:
             error_msg = paystack_data.get(
                 'message', 'Payment initialization failed.')
+            print(error_msg)
             redirect_id = job.slug if hasattr(job, 'slug') and job.slug else job.id
             params = urlencode({'error': error_msg})
             
-            return redirect(f'/{redirect_id}/proceed-to-pay/?{params}')
+            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/failed/?{params}")
 
 
 def get_nested_values(data, *keys):
@@ -106,23 +110,20 @@ def get_nested_values(data, *keys):
     return results if len(keys) > 1 else results[keys[0]]
 
 
-
 class PaymentCallbackView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
         ref = request.GET.get("reference")
-        base_url = settings.FRONTEND_URL
-
         if not ref:
             error_params = urlencode(
                 {'error': 'Missing reference in callback.'})
-            return redirect(f"{base_url}/payment/failure/?{error_params}")
+            return redirect(f"{settings.FRONTEND_URL}/jobs/unknown/failed/?{error_params}")
 
         payment = get_object_or_404(Payment, ref=ref)
 
         try:
-            # Make a direct request to Paystack to retrieve full data
+            # Verify transaction with Paystack
             headers = {
                 "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
                 "Content-Type": "application/json",
@@ -131,71 +132,77 @@ class PaymentCallbackView(APIView):
             response = requests.get(verify_url, headers=headers)
             response.raise_for_status()
             paystack_data = response.json().get("data", {})
-            
 
-            # Save Paystack response to extra_data for auditing
+            # Save full Paystack response
             payment.extra_data = paystack_data
             payment.save(update_fields=["extra_data"])
-            
-            success_status = get_nested_values(paystack_data,'status')
-            success_ref = get_nested_values(paystack_data, 'reference')
-            
-            if success_status == 'success' and payment.ref == success_ref:
+
+            success_status = paystack_data.get("status")
+            gateway_response = paystack_data.get("gateway_response")
+
+            if success_status == "success":
                 payment.verified = True
                 payment.save()
-                
                 if payment.job:
                     job = payment.job
                     job.status = "open"
-                    job.payment_verified = True 
+                    job.payment_verified = True
                     job.save()
-            
 
-            # Now verify the payment using model method
-            verified = payment.job.payment_verified
+                    # Redirect to frontend success page
+                    success_url = f"/jobs/{job.slug}/success/?ref={payment.ref}"
+                    return redirect(success_url)
 
-            if verified:
-                print(f"/jobs/{job.slug or job.id}/")
-                return redirect(f"/jobs/{job.slug or job.id}/")
-            else:
-                error_params = urlencode(
-                    {'error': 'Payment could not be verified. Please try again.'})
-                return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            # Failure branch
+            reason = gateway_response or "Payment could not be verified."
+            error_params = urlencode({"error": reason})
+            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
 
         except requests.RequestException as e:
             error_params = urlencode(
-                {'error': f"Paystack request failed: {str(e)}"})
-            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+                {"error": f"Paystack request failed: {str(e)}"})
+            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
 
         except Exception as e:
-            error_params = urlencode({'error': f"Internal error: {str(e)}"})
-            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/proceed-to-pay/?{error_params}")
+            error_params = urlencode({"error": f"Internal error: {str(e)}"})
+            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
+
 
 
 class ProceedToPayAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get(self, request, slug_or_id):
-        error_message = request.GET.get('error')
-        error_message = unquote(error_message) if error_message else None
-
-        # Fetch job by slug or ID
-        job = None
+    def get(self, request, slug_or_id, state=None):
+        invoice = request.GET.get("invoice")
         try:
             if slug_or_id.isdigit():
                 job = get_object_or_404(Job, id=int(slug_or_id))
             else:
                 job = get_object_or_404(Job, slug=slug_or_id)
         except Exception as e:
-            return Response({"error": f"Job not found: {str(e)}"}, status=404)
+            return Response({"status": "failed", "error": f"Job not found: {str(e)}"}, status=404)
 
-        # Get latest payment attempt for this job (optional)
-        payment = Payment.objects.filter(
-            job=job).order_by('-date_created').first()
+        payment = None
+        if invoice:
+            payment = PaypalPayments.objects.filter(invoice=invoice).first()
+        else:
+            payment = Payment.objects.filter(
+                job=job).order_by('-date_created').first()
 
-        # Respond with relevant job + payment info + payment URL
+        if state == "failed" or (payment and payment.verified == False):
+            return Response({
+                "status": "failed",
+                "job": {"id": job.id, "slug": job.slug, "title": job.title},
+                "payment": {
+                    "ref": getattr(payment, "invoice", None),
+                    "amount": getattr(payment, "amount", None),
+                    "verified": getattr(payment, "verified", None),
+                } if payment else None,
+                "error": getattr(payment, "error", "Payment failed"),
+            }, status=400)
+
         return Response({
-            "message": "Proceed to payment",
+            "status": "success",
             "job": {
                 "id": job.id,
                 "slug": job.slug,
@@ -205,11 +212,8 @@ class ProceedToPayAPIView(APIView):
                 "payment_verified": job.payment_verified,
             },
             "payment": {
-                "ref": payment.ref if payment else None,
-                "amount": payment.amount if payment else None,
-                "verified": payment.verified if payment else None,
-                "email": payment.email if payment else None,
+                "ref": getattr(payment, "invoice", None),
+                "amount": getattr(payment, "amount", None),
+                "verified": getattr(payment, "verified", None),
             } if payment else None,
-            "payment_url": request.build_absolute_uri(job.get_payment_url()),
-            "error": error_message
-        }, status=status.HTTP_200_OK)
+        }, status=200)

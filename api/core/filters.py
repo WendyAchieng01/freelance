@@ -1,3 +1,4 @@
+import django_filters as filters
 import django_filters
 from datetime import datetime
 from datetime import timedelta
@@ -6,7 +7,8 @@ from django.utils import timezone
 from django.db.models import Count
 from django_filters import rest_framework as filters
 from core.models import Job, Response as JobResponse
-from core.choices import JOB_STATUS_CHOICES
+from core.choices import EXPERIENCE_LEVEL, JOB_STATUS_CHOICES
+from api.core.jobsmatch import JobMatcher
 
 
 class JobFilter(filters.FilterSet):
@@ -109,15 +111,74 @@ class AdvancedJobFilter(filters.FilterSet):
         ]
 
 
-class JobDiscoveryFilter(django_filters.FilterSet):
-    category = django_filters.CharFilter(
-        field_name='category', lookup_expr='iexact')
-    preferred_freelancer_level = django_filters.CharFilter(
-        field_name='preferred_freelancer_level', lookup_expr='iexact')
+class JobDiscoveryFilter(filters.FilterSet):
+    """
+    Enhanced filter for job discovery with flexible filtering
+    """
+    match_type = filters.CharFilter(method='filter_by_match_type')
+    category = filters.CharFilter(
+        field_name='category__name', lookup_expr='iexact'
+    )
+    level = filters.ChoiceFilter(
+        field_name='preferred_freelancer_level',
+        choices=EXPERIENCE_LEVEL,
+        lookup_expr='exact'
+    )
+
+    min_price = filters.NumberFilter(field_name='price', lookup_expr='gte')
+    max_price = filters.NumberFilter(field_name='price', lookup_expr='lte')
+    skills = filters.CharFilter(method='filter_by_skills')
+    status = filters.CharFilter(field_name='status', lookup_expr='exact')
+
+    deadline_before = filters.DateFilter(field_name='deadline_date', lookup_expr='lte')
+    deadline_after = filters.DateFilter(field_name='deadline_date', lookup_expr='gte')
+
+    posted_before = filters.DateFilter(field_name='posted_date', lookup_expr='lte')
+    posted_after = filters.DateFilter(field_name='posted_date', lookup_expr='gte')
 
     class Meta:
         model = Job
-        fields = ['category', 'preferred_freelancer_level']
+        fields = [
+            'match_type',
+            'category',
+            'level',
+            'min_price',
+            'max_price',
+            'skills',
+            'status',
+            'deadline_before',
+            'deadline_after',
+            'posted_before',
+            'posted_after'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+    def filter_by_match_type(self, queryset, name, value):
+        if not value:
+            return queryset
+
+        valid_match_types = ['best_match', 'most_recent',
+                            'near_deadline', 'entry_level']
+        if value not in valid_match_types:
+            return queryset.none()
+
+        user = getattr(self.request, "user", None)
+
+        if value == "best_match":
+            return JobMatcher.get_jobs_for_freelancer(user, value, Job.objects.all(), min_skills=1)
+
+        # Others can safely reuse current queryset
+        return JobMatcher.get_jobs_for_freelancer(user, value, queryset, min_skills=1)
+
+    def filter_by_skills(self, queryset, name, value):
+        if not value:
+            return queryset
+
+        skills = [s.strip().lower() for s in value.split(",") if s.strip()]
+        return JobMatcher.filter_by_skills(queryset, skills)
 
 
 def get_job_filters(request):

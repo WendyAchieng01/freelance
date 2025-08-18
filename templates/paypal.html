@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simulate PayPal Payment</title>
+</head>
+
+<body>
+    <h2>Simulate PayPal Payment</h2>
+    <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+        <!-- Required PayPal command -->
+        <input type="hidden" name="cmd" value="_xclick">
+
+        <!-- Business email -->
+        <input type="hidden" name="business" value="niltest@business.com">
+
+        <!-- Item details -->
+        <input type="hidden" name="item_name" value="App Development for Startup">
+        <input type="hidden" name="amount" value="300">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="hidden" name="invoice" value="job-11">
+
+        <!-- Notification & Redirect URLs -->
+        <input type="hidden" name="notify_url" value="http://127.0.0.1:8000/paypal/">
+        <input type="hidden" name="cancel_return" value="http://127.0.0.1:8000/jobs/app-development-for-startup/">
+        <input type="hidden" name="return" value="http://127.0.0.1:8000/jobs/app-development-for-startup/">
+
+        <!-- PayPal Button -->
+        <input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif"
+            alt="Pay with PayPal">
+        <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif">
+    </form>
+</body>
+
+</html>

@@ -67,6 +67,8 @@ class JobSerializer(serializers.ModelSerializer):
     client_rating = serializers.SerializerMethodField()
     client_review_count = serializers.SerializerMethodField()
     #client_recent_reviews = serializers.SerializerMethodField()
+    
+    application_count = serializers.SerializerMethodField(read_only=True)
 
 
     class Meta:
@@ -76,7 +78,7 @@ class JobSerializer(serializers.ModelSerializer):
             'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
             'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count'
+            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count','application_count'
             
         ]
         read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
@@ -98,7 +100,7 @@ class JobSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category = validated_data.pop('category')
         skills = validated_data.pop('skills_required', [])
-        job = Job.objects.create(**validated_data, category=category)
+        job = Job.objects.create(**validated_data, category=category).lower()
         job.skills_required.set(skills)
         return job
 
@@ -113,6 +115,11 @@ class JobSerializer(serializers.ModelSerializer):
         if skills is not None:
             instance.skills_required.set(skills)
         return instance
+    
+    def get_application_count(self, obj):
+        if hasattr(obj, "application_count"):
+            return obj.application_count
+        return obj.responses.count()
 
     def get_category_display(self, obj):
         return obj.category.name if obj.category else None
@@ -469,19 +476,49 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    # Existing: show attachments on read
     attachments = MessageAttachmentSerializer(many=True, read_only=True)
+
+    # New: allow multiple files on write
+    new_attachments = serializers.ListField(
+        child=serializers.FileField(
+            max_length=100000,
+            allow_empty_file=False,
+            use_url=False
+        ),
+        write_only=True,
+        required=False
+    )
+
     sender = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Message
-        fields = ['id', 'chat', 'sender', 'content','is_read',
-                    'timestamp', 'is_read', 'is_deleted', 'attachments']
-        read_only_fields = ['chat', 'sender',
-                            'is_deleted', 'timestamp']
+        fields = [
+            'id', 'chat', 'sender', 'content', 'is_read',
+            'timestamp', 'is_deleted',
+            'attachments',  
+            'new_attachments', 
+        ]
+        read_only_fields = ['chat', 'sender', 'is_deleted', 'timestamp']
 
     def create(self, validated_data):
-        # `chat` and `sender` are set in the view, `is_read` defaults to False
-        return Message.objects.create(**validated_data)
+        attachments_data = validated_data.pop('new_attachments', [])
+
+        # Create the Message itself
+        message = Message.objects.create(**validated_data)
+
+        for file in attachments_data:
+            MessageAttachment.objects.create(
+                message=message,
+                file=file,
+                filename=file.name,
+                file_size=file.size,
+                content_type=file.content_type if hasattr(
+                    file, 'content_type') else ''
+            )
+
+        return message
 
 
 class ChatSerializer(serializers.ModelSerializer):

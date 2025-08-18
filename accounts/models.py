@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 from django.conf import settings
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 
 
 
@@ -242,6 +243,7 @@ class Skill(models.Model):
     def __str__(self):
         return self.get_name_display()
 
+
 class Language(models.Model):
     LANGUAGE_CHOICES = (
         ('english', 'English'),
@@ -298,3 +300,51 @@ def create_profile(sender, instance, created, **kwargs):
         user_profile.save()
 
 post_save.connect(create_profile, sender=User)
+
+
+def project_media_upload_path(instance, filename):
+    return f'portfolio/{instance.user.username}/{filename}'
+
+
+class PortfolioProject(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="portfolio_projects")
+    freelancer = models.ForeignKey(
+        "FreelancerProfile", on_delete=models.CASCADE, related_name="portfolio_projects", null=True, blank=True)
+    project_title = models.CharField(max_length=200)
+    role = models.CharField(max_length=100)
+    description = models.TextField()
+    link = models.URLField(blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True)
+    project_media = models.FileField(
+        upload_to=project_media_upload_path,
+        blank=True,
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Portfolio Project"
+        verbose_name_plural = "Portfolio Projects"
+        ordering = ["-created_at"]
+
+    def clean(self):
+        """Ensure a user cannot have more than 4 portfolio projects."""
+        if not self.pk and PortfolioProject.objects.filter(user=self.user).count() >= 4:
+            raise ValidationError(
+                "You can only add up to 4 portfolio projects.")
+
+    def save(self, *args, **kwargs):
+        if not self.slug or "update_fields" in kwargs and "project_title" in kwargs["update_fields"]:
+            base_slug = slugify(self.project_title)
+            unique_slug = base_slug
+            num = 1
+            while PortfolioProject.objects.filter(slug=unique_slug).exclude(pk=self.pk).exists():
+                unique_slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = unique_slug
+
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.project_title} ({self.user.username})"

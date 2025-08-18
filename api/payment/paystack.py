@@ -7,7 +7,7 @@ class Paystack:
     base_url = "https://api.paystack.co/"
 
     def verify_payment(self, ref, *args, **kwargs):
-        path = f'transaction/verify/{ref}'
+        path = f"transaction/verify/{ref}"
         headers = {
             "Authorization": f"Bearer {self.PAYSTACK_SK}",
             "Content-Type": "application/json",
@@ -15,18 +15,20 @@ class Paystack:
         url = self.base_url + path
         response = requests.get(url, headers=headers)
 
-        print(
-            f"\n\nTransaction with ref: {ref} has a response {response} and status_code of {response.status_code}\n\n")
-
-        if response.status_code == 200:
-            response_data = response.json()
-            return response_data['status'], response_data['data']
-
         response_data = response.json()
-        return response_data['status'], response_data['message']
+
+        if response.status_code == 200 and response_data.get("status"):
+            # Successful API call
+            return True, response_data.get("data", {})
+        else:
+            # Failed API call
+            return False, {
+                "message": response_data.get("message", "Verification failed"),
+                "data": response_data.get("data", {}),
+            }
 
     def initialize_transaction(self, email, amount, reference, callback_url):
-        path = 'transaction/initialize'
+        path = "transaction/initialize"
         headers = {
             "Authorization": f"Bearer {self.PAYSTACK_SK}",
             "Content-Type": "application/json",
@@ -40,10 +42,12 @@ class Paystack:
         url = self.base_url + path
         response = requests.post(url, headers=headers, json=data)
 
-        if response.status_code == 200:
-            response_data = response.json()
-            return response_data['status'], response_data['data']
+        response_data = response.json()
+
+        if response.status_code == 200 and response_data.get("status"):
+            return True, response_data.get("data", {})
         else:
-            response_data = response.json()
-            print(response.json())
-            return response_data['status'], response_data['message']
+            return False, {
+                "message": response_data.get("message", "Initialization failed"),
+                "data": response_data.get("data", {}),
+            }

@@ -44,7 +44,9 @@ ALLOWED_HOSTS = [
 
 #ALLOWED_HOSTS = ['*']
 
-FRONTEND_URL = "nilltechsolutions.com"  # 'nilltechsolutions.com
+FRONTEND_URL = "127.0.0.1:3000"
+BACKEND_URL= "127.0.0.1:8000"
+DOMAIN = "nilltechsolutions.com"
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -196,7 +198,9 @@ STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
 PAYSTACK_SECRET_KEY = 'sk_test_fe4eb40364e4a71a3b387c7a334861ed7977538f'
+
 PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 
 
@@ -227,7 +231,7 @@ PAYPAL_URL = (
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

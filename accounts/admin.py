@@ -32,3 +32,21 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    
+
+@admin.register(PortfolioProject)
+class PortfolioProjectAdmin(admin.ModelAdmin):
+    list_display = ("project_title", "role", "user", "created_at")
+    list_filter = ("created_at", "role", "user")
+    search_fields = ("project_title", "role", "description", "user__username")
+    ordering = ("-created_at",)
+    readonly_fields = ("created_at",)
+
+    fieldsets = (
+        ("Project Details", {
+            "fields": ("user", "project_title", "role", "description", "link", "project_media")
+        }),
+        ("Metadata", {
+            "fields": ("created_at",),
+        }),
+    )

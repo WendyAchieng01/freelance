@@ -15,7 +15,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
-from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter, extend_schema_view
 
 
 from django.core.mail import EmailMultiAlternatives
@@ -33,7 +33,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from urllib.parse import urlencode
 
-from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language
+from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language,PortfolioProject
 from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
 from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
@@ -43,7 +43,7 @@ from .serializers import (
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,VerifyEmailSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,FreelancerProfileReadSerializer,
     LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,ProfileWriteSerializer,
-    ClientProfileWriteSerializer, ClientProfileReadSerializer,ClientListSerializer
+    ClientProfileWriteSerializer, ClientProfileReadSerializer,ClientListSerializer,PortfolioProjectReadSerializer,PortfolioProjectSerializer
 )
 
 import logging
@@ -417,7 +417,7 @@ class PasswordResetRequestView(APIView):
                 token = default_token_generator.make_token(user)
 
                 # Build reset URL for frontend
-                base_url = settings.FRONTEND_URL.rstrip("/")
+                base_url = settings.DOMAIN.rstrip("/")
                 query_params = urlencode({"uid": uid, "token": token})
                 reset_url = f"{base_url}/auth/password-reset-confirm/?{query_params}"
 
@@ -915,9 +915,20 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
                         }
                     }
                 },
-                "experience_years": {"type": "integer"},
-                "hourly_rate": {"type": "number"},
-                "availability": {"type": "string"},
+                "experience_years": {
+                    "type": "integer",
+                    "description": "Years of professional experience"
+                },
+                "hourly_rate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Freelancer's hourly rate"
+                },
+                "availability": {
+                    "type": "string",
+                    "enum": ["full_time", "part_time", "contract", "unavailable"],
+                    "description": "Current availability"
+                },
                 "languages": {
                     "type": "array",
                     "items": {"type": "integer"},
@@ -928,7 +939,36 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
                     "items": {"type": "integer"},
                     "description": "List of skill IDs"
                 },
-                "is_visible": {"type": "boolean"}
+                "is_visible": {
+                    "type": "boolean",
+                    "description": "Whether profile is publicly visible"
+                },
+                "portfolio_projects": {
+                    "type": "array",
+                    "description": "List of portfolio projects (max 4)",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "description": "Project ID (required for updates)"
+                            },
+                            "project_title": {"type": "string"},
+                            "role": {"type": "string"},
+                            "description": {"type": "string"},
+                            "link": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "External project link"
+                            },
+                            "project_media": {
+                                "type": "string",
+                                "format": "binary",
+                                "description": "Upload project-related media (image/video)"
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -1023,3 +1063,58 @@ class FreelancerWriteViewSet(viewsets.ModelViewSet):
             "http_code": status.HTTP_204_NO_CONTENT
         }, status=status.HTTP_204_NO_CONTENT)
         
+
+@extend_schema(
+    tags=["Portfolio Projects"],
+    summary="List Portfolio Projects",
+    description="Retrieve all portfolio projects belonging to the authenticated user.",
+    responses={200: PortfolioProjectSerializer(many=True)},
+)
+@extend_schema(
+    methods=["POST"],
+    summary="Create Portfolio Project",
+    description="Create a new portfolio project for the authenticated user. The user is automatically set from the authentication context.",
+    request=PortfolioProjectSerializer,
+    responses={201: PortfolioProjectSerializer},
+)
+class PortfolioProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = PortfolioProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return PortfolioProject.objects.filter(user=self.request.user)
+
+    @extend_schema(
+        summary="Retrieve Portfolio Project",
+        description="Retrieve a specific portfolio project by slug.",
+        responses={200: PortfolioProjectSerializer},
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Update Portfolio Project",
+        description="Update a specific portfolio project by slug. Partial updates are supported.",
+        request=PortfolioProjectSerializer,
+        responses={200: PortfolioProjectSerializer},
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Partial Update Portfolio Project",
+        description="Partially update a specific portfolio project by slug.",
+        request=PortfolioProjectSerializer,
+        responses={200: PortfolioProjectSerializer},
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Delete Portfolio Project",
+        description="Delete a specific portfolio project by slug.",
+        responses={204: OpenApiResponse(description="No content")},
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
