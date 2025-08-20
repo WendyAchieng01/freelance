@@ -76,3 +76,4 @@ def handle_ipn(sender, **kwargs):
             payment.save()
             print(
                 f"[IPN] Unhandled status: {ipn_obj.payment_status} for invoice={payment.invoice}")
+

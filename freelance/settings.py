@@ -34,17 +34,18 @@ DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 
 
 ALLOWED_HOSTS = [
+    'c8174bad5510.ngrok-free.app',
     'localhost',
     '127.0.0.1',
     'web-production-b953.up.railway.app',  
     'www.nilltechsolutions.com',
-    'nilltechsolutions.com'
+    'nilltechsolutions.com',
 ]
 
 
 #ALLOWED_HOSTS = ['*']
 
-FRONTEND_URL = "127.0.0.1:3000"
+FRONTEND_URL = "http://127.0.0.1:3000"
 BACKEND_URL= "127.0.0.1:8000"
 DOMAIN = "nilltechsolutions.com"
 
@@ -214,19 +215,21 @@ MESSAGE_TAGS = {
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "niltest@business.com"
-PAYPAL_TEST = True  # Use sandbox mode during testing
-PAYPAL_SANDBOX = True
-PAYPAL_IPN_STRICT = False #temporarily
+PAYPAL_RECEIVER_EMAIL = "sb-aaf24345346136@business.example.com"
+PAYPAL_TEST = True 
+#PAYPAL_SANDBOX = True
+#PAYPAL_IPN_STRICT = False #temporarily
+
+PAYPAL_CLIENT_ID = ""
+PAYPAL_SECRET = ""
+PAYPAL_MODE = "sandbox"  # or "live"
 
 
-# Set PayPal URL based on environment
+
+
 PAYPAL_URL = (
-    "https://www.sandbox.paypal.com/cgi-bin/webscr"
-    if PAYPAL_TEST
-    else "https://www.paypal.com/cgi-bin/webscr"
+    "https://api-m.sandbox.paypal.com" if PAYPAL_TEST else "https://api-m.paypal.com"
 )
-
 
 
 

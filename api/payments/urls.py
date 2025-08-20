@@ -1,9 +1,22 @@
 from django.urls import path
-from . import views
+from .views import (
+    InitiatePaypalPayment,
+    CapturePaypalPayment,
+    PaymentStatus,
+    PaypalSuccessView,
+    PaypalFailedView,
+)
+
+app_name = "api.payments"
 
 urlpatterns = [
-    path('initiate/<slug:slug>/',views.InitiatePaypalPayment.as_view(), name='initiate-by-slug'),
-    #path('status/<int:payment_id>/',views.PaymentStatus.as_view(), name='paypal-status'),
-    path("success/slug/<str:invoice>/", views.PaypalSuccessView.as_view(), name="successful_response_by_slug"),
-    path("cancel/slug/<str:invoice>/", views.PaypalFailedView.as_view(), name="cancelled_response_by_slug"),
+    path("<slug:slug>/initiate/", InitiatePaypalPayment.as_view(),    name="paypal-initiate",),
+    path("<slug:slug>/capture/<str:order_id>/", CapturePaypalPayment.as_view(),     name="paypal-capture",),
+    path("<slug:slug>/status/<int:payment_id>/", PaymentStatus.as_view(),      name="paypal-status",),
+    path("<slug:slug>/success/<str:invoice>/", PaypalSuccessView.as_view(),     name="paypal-success",),
+    path("<slug:slug>/failed/<str:invoice>/", PaypalFailedView.as_view(),      name="paypal-failed",)
 ]
+
+
+
+

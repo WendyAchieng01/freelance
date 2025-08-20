@@ -1,10 +1,12 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from api.payments.views import PaypalWebhookView
 
 urlpatterns = [
     path('', include('api.accounts.urls')),
     path('', include('api.core.urls')),
+    path("paypal/webhook/", PaypalWebhookView.as_view(), name="paypal-webhook"),
     path('academy/', include('api.academy.urls')),
     path('invoice/', include('api.invoicemanagement.urls')),
     path('payment/', include('api.payment.urls')),
