@@ -8,23 +8,25 @@
 
 <body>
     <h2>Simulate PayPal Payment</h2>
-    <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+    <form action="https://api-m.sandbox.paypal.com" method="post">
         <!-- Required PayPal command -->
         <input type="hidden" name="cmd" value="_xclick">
 
         <!-- Business email -->
-        <input type="hidden" name="business" value="niltest@business.com">
+        <input type="hidden" name="business" value="sb-aaf24345346136@business.example.com">
 
         <!-- Item details -->
-        <input type="hidden" name="item_name" value="App Development for Startup">
-        <input type="hidden" name="amount" value="300">
+        <input type="hidden" name="item_name" value="SEO Optimization for Blog">
+        <input type="hidden" name="amount" value="650">
         <input type="hidden" name="currency_code" value="USD">
-        <input type="hidden" name="invoice" value="job-11">
+        <input type="hidden" name="invoice" value="job-5">
 
         <!-- Notification & Redirect URLs -->
-        <input type="hidden" name="notify_url" value="http://127.0.0.1:8000/paypal/">
-        <input type="hidden" name="cancel_return" value="http://127.0.0.1:8000/jobs/app-development-for-startup/">
-        <input type="hidden" name="return" value="http://127.0.0.1:8000/jobs/app-development-for-startup/">
+        <input type="hidden" name="notify_url" value="https://44f95c068d24.ngrok-free.app/paypal/">
+        <input type="hidden" name="cancel_return"
+            value="http://127.0.0.1:3000/jobs/seo-optimization-for-blog/failed/?invoice=job-5">
+        <input type="hidden" name="return"
+            value="http://127.0.0.1:3000/jobs/seo-optimization-for-blog/success/?invoice=job-5">
 
         <!-- PayPal Button -->
         <input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif"

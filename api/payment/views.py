@@ -14,6 +14,7 @@ from api.payment.serializers import PaymentSerializer
 from api.payment.paystack import Paystack  
 from urllib.parse import urlencode,unquote
 from django.conf import settings
+from django.urls import reverse
 
 
 
@@ -54,7 +55,9 @@ class PaymentInitiateView(APIView):
         payment.save()  #  ref is generated
 
         # Prepare callback URL
-        callback_url = request.build_absolute_uri('/payment/callback/')
+        callback_url = request.build_absolute_uri(
+            reverse("payment-callback")
+        )
         print('this is the callback url')
         print(callback_url)
 
@@ -150,13 +153,15 @@ class PaymentCallbackView(APIView):
                     job.save()
 
                     # Redirect to frontend success page
-                    success_url = f"/jobs/{job.slug}/success/?ref={payment.ref}"
+                    success_url = f"{settings.FRONTEND_URL}/jobs/{job.slug}/success/?ref={payment.ref}"
                     return redirect(success_url)
 
-            # Failure branch
-            reason = gateway_response or "Payment could not be verified."
-            error_params = urlencode({"error": reason})
-            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
+            else:
+                reason = gateway_response or "Payment could not be verified."
+                error_params = urlencode({"error": reason})
+
+                error_url = f"{settings.FRONTEND_URL}/jobs/{payment.job.slug}/failed/?{error_params}"
+                return redirect(error_url)
 
         except requests.RequestException as e:
             error_params = urlencode(
@@ -168,52 +173,109 @@ class PaymentCallbackView(APIView):
             return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
 
 
-
 class ProceedToPayAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, slug_or_id, state=None):
         invoice = request.GET.get("invoice")
+
+        # Locate the job
         try:
             if slug_or_id.isdigit():
                 job = get_object_or_404(Job, id=int(slug_or_id))
             else:
                 job = get_object_or_404(Job, slug=slug_or_id)
         except Exception as e:
-            return Response({"status": "failed", "error": f"Job not found: {str(e)}"}, status=404)
+            return Response(
+                {"status": "failed", "error": f"Job not found: {str(e)}"},
+                status=404,
+            )
 
-        payment = None
+        # Select Payment model depending on provider
         if invoice:
+            # PayPal flow
             payment = PaypalPayments.objects.filter(invoice=invoice).first()
+            provider = "paypal"
         else:
+            # Paystack flow
             payment = Payment.objects.filter(
-                job=job).order_by('-date_created').first()
+                job=job).order_by("-date_created").first()
+            provider = "paystack"
 
-        if state == "failed" or (payment and payment.verified == False):
-            return Response({
-                "status": "failed",
-                "job": {"id": job.id, "slug": job.slug, "title": job.title},
-                "payment": {
-                    "ref": getattr(payment, "invoice", None),
-                    "amount": getattr(payment, "amount", None),
-                    "verified": getattr(payment, "verified", None),
-                } if payment else None,
-                "error": getattr(payment, "error", "Payment failed"),
-            }, status=400)
+        # Handle failed payments
+        if state == "failed" or (payment and not payment.verified):
+            return Response(
+                {
+                    "status": "failed",
+                    "provider": provider,
+                    "job": {
+                        "id": job.id,
+                        "slug": job.slug,
+                        "title": job.title,
+                    },
+                    "payment": {
+                        "ref": getattr(payment, "invoice", None)
+                        if provider == "paypal"
+                        else getattr(payment, "ref", None),
+                        "amount": str(getattr(payment, "amount", None)),
+                        "verified": getattr(payment, "verified", None),
+                    }
+                    if payment
+                    else None,
+                    "error": getattr(payment, "error", "Payment failed"),
+                },
+                status=400,
+            )
 
-        return Response({
-            "status": "success",
-            "job": {
-                "id": job.id,
-                "slug": job.slug,
-                "title": job.title,
-                "price": job.price,
-                "status": job.status,
-                "payment_verified": job.payment_verified,
+        # Success response
+        payment_data = None
+        if payment:
+            if provider == "paystack":
+                # Pick only useful nested data
+                extra = {}
+                if payment.extra_data:
+                    extra = get_nested_values(
+                        payment.extra_data,
+                        "gateway_response",
+                        "paid_at",
+                        "channel",
+                        "currency",
+                        "fees",
+                        "authorization.bank",
+                        "authorization.channel",
+                        "authorization.mobile_money_number",
+                        "customer.email",
+                    )
+
+                payment_data = {
+                    "ref": payment.ref,
+                    "amount": payment.amount,
+                    "verified": payment.verified,
+                    "extra": extra,
+                }
+
+            elif provider == "paypal":
+                payment_data = {
+                    "ref": payment.invoice,
+                    "amount": str(payment.amount),
+                    "verified": payment.verified,
+                    "status": payment.status,
+                    "extra": payment.extra_data, 
+                }
+
+        return Response(
+            {
+                "status": "success",
+                "provider": provider,
+                "job": {
+                    "id": job.id,
+                    "slug": job.slug,
+                    "title": job.title,
+                    "price": job.price,
+                    "status": job.status,
+                    "payment_verified": job.payment_verified,
+                },
+                "payment": payment_data,
             },
-            "payment": {
-                "ref": getattr(payment, "invoice", None),
-                "amount": getattr(payment, "amount", None),
-                "verified": getattr(payment, "verified", None),
-            } if payment else None,
-        }, status=200)
+            status=200,
+        )
