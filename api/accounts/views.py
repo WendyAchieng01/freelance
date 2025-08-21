@@ -29,7 +29,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth import password_validation
 from rest_framework.exceptions import ValidationError
 from django.utils.encoding import force_bytes
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404,redirect
 from django.conf import settings
 from urllib.parse import urlencode
 
@@ -118,7 +118,7 @@ class RegisterView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             def build_verify_email_url(uid, token):
-                base_url = settings.FRONTEND_URL.rstrip("/")
+                base_url = settings.BACKEND_URL.rstrip("/")
                 query_params = urlencode({"uid": uid, "token": token})
                 return f"{base_url}/auth/verify-email/?{query_params}"
 
@@ -170,12 +170,15 @@ class VerifyEmailView(APIView):
             200: OpenApiResponse(description="Email verified successfully"),
             400: OpenApiResponse(description="Invalid or expired token"),
         }
-    )
+    )    
     def get(self, request):
         serializer = VerifyEmailSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
-        return Response(data, status=status.HTTP_200_OK)
+        redirect_url = f"{settings.FRONTEND_URL}/auth/login"
+
+        
+        return redirect(redirect_url)
 
     @extend_schema(
         summary="Verify Email (POST)",
@@ -200,7 +203,9 @@ class VerifyEmailView(APIView):
         serializer = VerifyEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
-        return Response(data, status=status.HTTP_200_OK)
+        redirect_url = f"{settings.FRONTEND_URL}/auth/login"
+
+        return redirect(redirect_url)
 
 
 class ResendVerificationView(APIView):
@@ -237,7 +242,7 @@ class ResendVerificationView(APIView):
         token = default_token_generator.make_token(user)
 
         # Build verification URL
-        base_url = settings.FRONTEND_URL.rstrip("/")
+        base_url = settings.BACKEND_URL.rstrip("/")
         query_params = urlencode({"uid": uid, "token": token})
         verification_url = f"{base_url}/auth/verify-email/?{query_params}"
 

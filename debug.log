@@ -29092,3 +29092,1789 @@ Watching for file changes with StatReloader
 HTTP/2 support enabled
 Configuring endpoint tcp:port=8000:interface=127.0.0.1
 Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 36244]
+HTTP 200 response started for ['127.0.0.1', 36244]
+HTTP close for ['127.0.0.1', 36244]
+HTTP response complete for ['127.0.0.1', 36244]
+[mHTTP GET /docs/ 200 [0.13, 127.0.0.1:36244][0m
+HTTP b'GET' request for ['127.0.0.1', 36244]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 36244]
+HTTP response chunk for ['127.0.0.1', 36244]
+HTTP response chunk for ['127.0.0.1', 36244]
+HTTP response chunk for ['127.0.0.1', 36244]
+HTTP response chunk for ['127.0.0.1', 36244]
+HTTP response chunk for ['127.0.0.1', 36244]
+HTTP close for ['127.0.0.1', 36244]
+HTTP response complete for ['127.0.0.1', 36244]
+[mHTTP GET /schema/ 200 [0.77, 127.0.0.1:36244][0m
+HTTP b'POST' request for ['127.0.0.1', 36244]
+HTTP 200 response started for ['127.0.0.1', 36244]
+HTTP close for ['127.0.0.1', 36244]
+HTTP response complete for ['127.0.0.1', 36244]
+[mHTTP POST /auth/login/ 200 [0.81, 127.0.0.1:36244][0m
+HTTP b'POST' request for ['127.0.0.1', 56812]
+Internal Server Error: /jobs/create/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 19, in create
+    self.perform_create(serializer)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/views.py", line 135, in perform_create
+    serializer.save(client=self.request.user.profile)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py", line 103, in create
+    job = Job.objects.create(**validated_data, category=category).lower()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Job' object has no attribute 'lower'
+HTTP 500 response started for ['127.0.0.1', 56812]
+HTTP close for ['127.0.0.1', 56812]
+HTTP response complete for ['127.0.0.1', 56812]
+[35;1mHTTP POST /jobs/create/ 500 [0.10, 127.0.0.1:56812][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 55362]
+HTTP 201 response started for ['127.0.0.1', 55362]
+HTTP close for ['127.0.0.1', 55362]
+HTTP response complete for ['127.0.0.1', 55362]
+[mHTTP POST /jobs/create/ 201 [0.09, 127.0.0.1:55362][0m
+Using selector: EpollSelector
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/freelance/settings.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 45778]
+HTTP 200 response started for ['127.0.0.1', 45778]
+HTTP close for ['127.0.0.1', 45778]
+HTTP response complete for ['127.0.0.1', 45778]
+[mHTTP GET /docs/ 200 [0.15, 127.0.0.1:45778][0m
+HTTP b'GET' request for ['127.0.0.1', 45778]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 45778]
+HTTP response chunk for ['127.0.0.1', 45778]
+HTTP response chunk for ['127.0.0.1', 45778]
+HTTP response chunk for ['127.0.0.1', 45778]
+HTTP response chunk for ['127.0.0.1', 45778]
+HTTP response chunk for ['127.0.0.1', 45778]
+HTTP close for ['127.0.0.1', 45778]
+HTTP response complete for ['127.0.0.1', 45778]
+[mHTTP GET /schema/ 200 [0.88, 127.0.0.1:45778][0m
+HTTP b'POST' request for ['127.0.0.1', 60332]
+HTTP 201 response started for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[mHTTP POST /auth/register/ 201 [1.13, 127.0.0.1:60332][0m
+HTTP b'GET' request for ['127.0.0.1', 60332]
+HTTP 200 response started for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[mHTTP GET /auth/verify-email/?uid=MTY&token=cuwngl-0c40c99c1a87a810ae487601c74d922d 200 [0.13, 127.0.0.1:60332][0m
+HTTP b'GET' request for ['127.0.0.1', 60332]
+HTTP b'GET' request for ['127.0.0.1', 58594]
+HTTP b'GET' request for ['127.0.0.1', 58596]
+HTTP b'GET' request for ['127.0.0.1', 58598]
+HTTP b'GET' request for ['127.0.0.1', 58604]
+HTTP b'GET' request for ['127.0.0.1', 58616]
+HTTP 304 response started for ['127.0.0.1', 58596]
+HTTP close for ['127.0.0.1', 58596]
+HTTP response complete for ['127.0.0.1', 58596]
+[36mHTTP GET /static/rest_framework/css/prettify.css 304 [0.05, 127.0.0.1:58596][0m
+HTTP 304 response started for ['127.0.0.1', 58598]
+HTTP close for ['127.0.0.1', 58598]
+HTTP response complete for ['127.0.0.1', 58598]
+[36mHTTP GET /static/rest_framework/css/bootstrap-tweaks.css 304 [0.05, 127.0.0.1:58598][0m
+HTTP 304 response started for ['127.0.0.1', 58616]
+HTTP close for ['127.0.0.1', 58616]
+HTTP response complete for ['127.0.0.1', 58616]
+[36mHTTP GET /static/rest_framework/js/csrf.js 304 [0.05, 127.0.0.1:58616][0m
+HTTP 304 response started for ['127.0.0.1', 58604]
+HTTP close for ['127.0.0.1', 58604]
+HTTP response complete for ['127.0.0.1', 58604]
+[36mHTTP GET /static/rest_framework/css/default.css 304 [0.05, 127.0.0.1:58604][0m
+HTTP 200 response started for ['127.0.0.1', 60332]
+HTTP 200 response started for ['127.0.0.1', 58594]
+HTTP b'GET' request for ['127.0.0.1', 58596]
+HTTP b'GET' request for ['127.0.0.1', 58598]
+HTTP b'GET' request for ['127.0.0.1', 58616]
+HTTP response chunk for ['127.0.0.1', 60332]
+HTTP response chunk for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[mHTTP GET /static/rest_framework/css/bootstrap.min.css 200 [0.09, 127.0.0.1:60332][0m
+HTTP response chunk for ['127.0.0.1', 58594]
+HTTP response chunk for ['127.0.0.1', 58594]
+HTTP close for ['127.0.0.1', 58594]
+HTTP response complete for ['127.0.0.1', 58594]
+[mHTTP GET /static/rest_framework/js/jquery-3.7.1.min.js 200 [0.08, 127.0.0.1:58594][0m
+HTTP b'GET' request for ['127.0.0.1', 58604]
+HTTP b'GET' request for ['127.0.0.1', 60332]
+HTTP 304 response started for ['127.0.0.1', 58596]
+HTTP close for ['127.0.0.1', 58596]
+HTTP response complete for ['127.0.0.1', 58596]
+[36mHTTP GET /static/rest_framework/js/bootstrap.min.js 304 [0.05, 127.0.0.1:58596][0m
+HTTP 304 response started for ['127.0.0.1', 58598]
+HTTP close for ['127.0.0.1', 58598]
+HTTP response complete for ['127.0.0.1', 58598]
+[36mHTTP GET /static/rest_framework/js/ajax-form.js 304 [0.06, 127.0.0.1:58598][0m
+HTTP 304 response started for ['127.0.0.1', 58616]
+HTTP close for ['127.0.0.1', 58616]
+HTTP response complete for ['127.0.0.1', 58616]
+[36mHTTP GET /static/rest_framework/js/prettify-min.js 304 [0.06, 127.0.0.1:58616][0m
+HTTP 304 response started for ['127.0.0.1', 58604]
+HTTP close for ['127.0.0.1', 58604]
+HTTP response complete for ['127.0.0.1', 58604]
+[36mHTTP GET /static/rest_framework/js/load-ajax-form.js 304 [0.05, 127.0.0.1:58604][0m
+HTTP 304 response started for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[36mHTTP GET /static/rest_framework/js/default.js 304 [0.04, 127.0.0.1:60332][0m
+HTTP b'GET' request for ['127.0.0.1', 60332]
+HTTP 304 response started for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[36mHTTP GET /static/rest_framework/img/grid.png 304 [0.01, 127.0.0.1:60332][0m
+HTTP b'GET' request for ['127.0.0.1', 60332]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 60332]
+HTTP close for ['127.0.0.1', 60332]
+HTTP response complete for ['127.0.0.1', 60332]
+[33mHTTP GET /favicon.ico 404 [0.04, 127.0.0.1:60332][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 56836]
+HTTP 201 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[mHTTP POST /auth/register/ 201 [1.21, 127.0.0.1:56836][0m
+HTTP b'GET' request for ['127.0.0.1', 56836]
+HTTP 302 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[32mHTTP GET /auth/verify-email/?uid=MTc&token=cuwnsy-505c9408350d2ca860ce34b5646c38ad 302 [0.05, 127.0.0.1:56836][0m
+HTTP b'GET' request for ['127.0.0.1', 56836]
+Not Found: /auth/verify-email/ http://127.0.0.1:3000/auth/login
+HTTP 404 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[33mHTTP GET /auth/verify-email/%20http://127.0.0.1:3000/auth/login 404 [0.02, 127.0.0.1:56836][0m
+HTTP b'GET' request for ['127.0.0.1', 56836]
+HTTP 302 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[32mHTTP GET /auth/verify-email/?uid=MTc&token=cuwnsy-505c9408350d2ca860ce34b5646c38ad 302 [0.05, 127.0.0.1:56836][0m
+HTTP b'GET' request for ['127.0.0.1', 56836]
+Not Found: /auth/verify-email/ http://127.0.0.1:3000/auth/login
+HTTP 404 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[33mHTTP GET /auth/verify-email/%20http://127.0.0.1:3000/auth/login 404 [0.04, 127.0.0.1:56836][0m
+HTTP b'POST' request for ['127.0.0.1', 56836]
+HTTP 200 response started for ['127.0.0.1', 56836]
+HTTP close for ['127.0.0.1', 56836]
+HTTP response complete for ['127.0.0.1', 56836]
+[mHTTP POST /auth/login/ 200 [1.01, 127.0.0.1:56836][0m
+HTTP b'GET' request for ['127.0.0.1', 52328]
+HTTP 302 response started for ['127.0.0.1', 52328]
+HTTP close for ['127.0.0.1', 52328]
+HTTP response complete for ['127.0.0.1', 52328]
+[32mHTTP GET /auth/verify-email/?uid=MTY&token=cuwngl-0c40c99c1a87a810ae487601c74d922d 302 [0.07, 127.0.0.1:52328][0m
+HTTP b'GET' request for ['127.0.0.1', 52328]
+Not Found: /auth/verify-email/ http://127.0.0.1:3000/auth/login
+HTTP 404 response started for ['127.0.0.1', 52328]
+HTTP close for ['127.0.0.1', 52328]
+HTTP response complete for ['127.0.0.1', 52328]
+[33mHTTP GET /auth/verify-email/%20http://127.0.0.1:3000/auth/login 404 [0.07, 127.0.0.1:52328][0m
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/accounts/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 35340]
+Bad Request: /auth/register/
+HTTP 400 response started for ['127.0.0.1', 35340]
+HTTP close for ['127.0.0.1', 35340]
+HTTP response complete for ['127.0.0.1', 35340]
+[31;1mHTTP POST /auth/register/ 400 [0.03, 127.0.0.1:35340][0m
+HTTP b'POST' request for ['127.0.0.1', 35340]
+HTTP 201 response started for ['127.0.0.1', 35340]
+HTTP close for ['127.0.0.1', 35340]
+HTTP response complete for ['127.0.0.1', 35340]
+[mHTTP POST /auth/register/ 201 [0.94, 127.0.0.1:35340][0m
+HTTP b'GET' request for ['127.0.0.1', 35340]
+HTTP 302 response started for ['127.0.0.1', 35340]
+HTTP close for ['127.0.0.1', 35340]
+HTTP response complete for ['127.0.0.1', 35340]
+[32mHTTP GET /auth/verify-email/?uid=MTg&token=cuwodn-e3a52368117a5e971e474b128a686d50 302 [0.08, 127.0.0.1:35340][0m
+HTTP b'POST' request for ['127.0.0.1', 52228]
+HTTP 200 response started for ['127.0.0.1', 52228]
+HTTP close for ['127.0.0.1', 52228]
+HTTP response complete for ['127.0.0.1', 52228]
+[mHTTP POST /auth/login/ 200 [0.72, 127.0.0.1:52228][0m
+HTTP b'POST' request for ['127.0.0.1', 33222]
+Bad Request: /auth/resend-verification/
+HTTP 400 response started for ['127.0.0.1', 33222]
+HTTP close for ['127.0.0.1', 33222]
+HTTP response complete for ['127.0.0.1', 33222]
+[31;1mHTTP POST /auth/resend-verification/ 400 [0.01, 127.0.0.1:33222][0m
+HTTP b'GET' request for ['127.0.0.1', 40958]
+HTTP 200 response started for ['127.0.0.1', 40958]
+HTTP close for ['127.0.0.1', 40958]
+HTTP response complete for ['127.0.0.1', 40958]
+[mHTTP GET /admin/ 200 [0.28, 127.0.0.1:40958][0m
+HTTP b'GET' request for ['127.0.0.1', 40974]
+HTTP b'GET' request for ['127.0.0.1', 40986]
+HTTP b'GET' request for ['127.0.0.1', 40994]
+HTTP b'GET' request for ['127.0.0.1', 41006]
+HTTP b'GET' request for ['127.0.0.1', 41014]
+HTTP b'GET' request for ['127.0.0.1', 41022]
+HTTP 304 response started for ['127.0.0.1', 40986]
+HTTP close for ['127.0.0.1', 40986]
+HTTP response complete for ['127.0.0.1', 40986]
+[36mHTTP GET /static/admin/js/theme.js 304 [0.01, 127.0.0.1:40986][0m
+HTTP 304 response started for ['127.0.0.1', 41006]
+HTTP close for ['127.0.0.1', 41006]
+HTTP response complete for ['127.0.0.1', 41006]
+[36mHTTP GET /static/admin/css/dashboard.css 304 [0.01, 127.0.0.1:41006][0m
+HTTP 304 response started for ['127.0.0.1', 41022]
+HTTP close for ['127.0.0.1', 41022]
+HTTP response complete for ['127.0.0.1', 41022]
+[36mHTTP GET /static/admin/css/responsive.css 304 [0.01, 127.0.0.1:41022][0m
+HTTP 304 response started for ['127.0.0.1', 40994]
+HTTP close for ['127.0.0.1', 40994]
+HTTP response complete for ['127.0.0.1', 40994]
+[36mHTTP GET /static/admin/css/nav_sidebar.css 304 [0.01, 127.0.0.1:40994][0m
+HTTP 304 response started for ['127.0.0.1', 41014]
+HTTP close for ['127.0.0.1', 41014]
+HTTP response complete for ['127.0.0.1', 41014]
+[36mHTTP GET /static/admin/css/dark_mode.css 304 [0.01, 127.0.0.1:41014][0m
+HTTP 304 response started for ['127.0.0.1', 40974]
+HTTP close for ['127.0.0.1', 40974]
+HTTP response complete for ['127.0.0.1', 40974]
+[36mHTTP GET /static/admin/css/base.css 304 [0.02, 127.0.0.1:40974][0m
+HTTP b'GET' request for ['127.0.0.1', 40974]
+HTTP 304 response started for ['127.0.0.1', 40974]
+HTTP close for ['127.0.0.1', 40974]
+HTTP response complete for ['127.0.0.1', 40974]
+[36mHTTP GET /static/admin/js/nav_sidebar.js 304 [0.00, 127.0.0.1:40974][0m
+HTTP b'GET' request for ['127.0.0.1', 40974]
+HTTP b'GET' request for ['127.0.0.1', 41014]
+HTTP 304 response started for ['127.0.0.1', 40974]
+HTTP close for ['127.0.0.1', 40974]
+HTTP response complete for ['127.0.0.1', 40974]
+[36mHTTP GET /static/admin/img/icon-addlink.svg 304 [0.01, 127.0.0.1:40974][0m
+HTTP 304 response started for ['127.0.0.1', 41014]
+HTTP close for ['127.0.0.1', 41014]
+HTTP response complete for ['127.0.0.1', 41014]
+[36mHTTP GET /static/admin/img/icon-changelink.svg 304 [0.01, 127.0.0.1:41014][0m
+HTTP b'GET' request for ['127.0.0.1', 41014]
+Not Found: /favicon.ico
+HTTP 404 response started for ['127.0.0.1', 41014]
+HTTP close for ['127.0.0.1', 41014]
+HTTP response complete for ['127.0.0.1', 41014]
+[33mHTTP GET /favicon.ico 404 [0.04, 127.0.0.1:41014][0m
+HTTP b'GET' request for ['127.0.0.1', 45880]
+HTTP 200 response started for ['127.0.0.1', 45880]
+HTTP close for ['127.0.0.1', 45880]
+HTTP response complete for ['127.0.0.1', 45880]
+[mHTTP GET /jobs/list/ 200 [0.17, 127.0.0.1:45880][0m
+HTTP b'GET' request for ['127.0.0.1', 55100]
+HTTP 200 response started for ['127.0.0.1', 55100]
+HTTP close for ['127.0.0.1', 55100]
+HTTP response complete for ['127.0.0.1', 55100]
+[mHTTP GET /docs/ 200 [0.03, 127.0.0.1:55100][0m
+HTTP b'GET' request for ['127.0.0.1', 55100]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 55100]
+HTTP response chunk for ['127.0.0.1', 55100]
+HTTP response chunk for ['127.0.0.1', 55100]
+HTTP response chunk for ['127.0.0.1', 55100]
+HTTP response chunk for ['127.0.0.1', 55100]
+HTTP response chunk for ['127.0.0.1', 55100]
+HTTP close for ['127.0.0.1', 55100]
+HTTP response complete for ['127.0.0.1', 55100]
+[mHTTP GET /schema/ 200 [0.68, 127.0.0.1:55100][0m
+HTTP b'POST' request for ['127.0.0.1', 55100]
+Authentication failed for user: sesko
+Bad Request: /auth/login/
+HTTP 400 response started for ['127.0.0.1', 55100]
+HTTP close for ['127.0.0.1', 55100]
+HTTP response complete for ['127.0.0.1', 55100]
+[31;1mHTTP POST /auth/login/ 400 [0.81, 127.0.0.1:55100][0m
+HTTP b'POST' request for ['127.0.0.1', 55100]
+HTTP 200 response started for ['127.0.0.1', 55100]
+HTTP close for ['127.0.0.1', 55100]
+HTTP response complete for ['127.0.0.1', 55100]
+[mHTTP POST /auth/login/ 200 [0.79, 127.0.0.1:55100][0m
+HTTP b'GET' request for ['127.0.0.1', 55100]
+HTTP 200 response started for ['127.0.0.1', 55100]
+HTTP close for ['127.0.0.1', 55100]
+HTTP response complete for ['127.0.0.1', 55100]
+[mHTTP GET /bookmarks/ 200 [0.02, 127.0.0.1:55100][0m
+HTTP b'GET' request for ['127.0.0.1', 54792]
+HTTP 200 response started for ['127.0.0.1', 54792]
+HTTP close for ['127.0.0.1', 54792]
+HTTP response complete for ['127.0.0.1', 54792]
+[mHTTP GET /bookmarks/ 200 [0.02, 127.0.0.1:54792][0m
+HTTP b'GET' request for ['127.0.0.1', 54792]
+HTTP 200 response started for ['127.0.0.1', 54792]
+HTTP close for ['127.0.0.1', 54792]
+HTTP response complete for ['127.0.0.1', 54792]
+[mHTTP GET /jobs/list/ 200 [0.13, 127.0.0.1:54792][0m
+HTTP b'POST' request for ['127.0.0.1', 54792]
+User sesko bookmarked job 'enterprise-erp-system-implementation'
+HTTP 201 response started for ['127.0.0.1', 54792]
+HTTP close for ['127.0.0.1', 54792]
+HTTP response complete for ['127.0.0.1', 54792]
+[mHTTP POST /bookmarks/enterprise-erp-system-implementation/add/ 201 [0.02, 127.0.0.1:54792][0m
+HTTP b'GET' request for ['127.0.0.1', 54792]
+HTTP 200 response started for ['127.0.0.1', 54792]
+HTTP close for ['127.0.0.1', 54792]
+HTTP response complete for ['127.0.0.1', 54792]
+[mHTTP GET /bookmarks/ 200 [0.03, 127.0.0.1:54792][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 39116]
+HTTP 200 response started for ['127.0.0.1', 39116]
+HTTP close for ['127.0.0.1', 39116]
+HTTP response complete for ['127.0.0.1', 39116]
+[mHTTP GET /bookmarks/ 200 [0.06, 127.0.0.1:39116][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 46516]
+HTTP 200 response started for ['127.0.0.1', 46516]
+HTTP close for ['127.0.0.1', 46516]
+HTTP response complete for ['127.0.0.1', 46516]
+[mHTTP GET /docs/ 200 [0.14, 127.0.0.1:46516][0m
+HTTP b'GET' request for ['127.0.0.1', 46516]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 46516]
+HTTP response chunk for ['127.0.0.1', 46516]
+HTTP response chunk for ['127.0.0.1', 46516]
+HTTP response chunk for ['127.0.0.1', 46516]
+HTTP response chunk for ['127.0.0.1', 46516]
+HTTP response chunk for ['127.0.0.1', 46516]
+HTTP close for ['127.0.0.1', 46516]
+HTTP response complete for ['127.0.0.1', 46516]
+[mHTTP GET /schema/ 200 [0.76, 127.0.0.1:46516][0m
+HTTP b'POST' request for ['127.0.0.1', 46516]
+HTTP 200 response started for ['127.0.0.1', 46516]
+HTTP close for ['127.0.0.1', 46516]
+HTTP response complete for ['127.0.0.1', 46516]
+[mHTTP POST /auth/login/ 200 [0.73, 127.0.0.1:46516][0m
+HTTP b'GET' request for ['127.0.0.1', 46516]
+HTTP 200 response started for ['127.0.0.1', 46516]
+HTTP close for ['127.0.0.1', 46516]
+HTTP response complete for ['127.0.0.1', 46516]
+[mHTTP GET /bookmarks/ 200 [0.04, 127.0.0.1:46516][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 55648]
+HTTP 200 response started for ['127.0.0.1', 55648]
+HTTP close for ['127.0.0.1', 55648]
+HTTP response complete for ['127.0.0.1', 55648]
+[mHTTP GET /bookmarks/ 200 [0.07, 127.0.0.1:55648][0m
+HTTP b'GET' request for ['127.0.0.1', 55648]
+HTTP 200 response started for ['127.0.0.1', 55648]
+HTTP close for ['127.0.0.1', 55648]
+HTTP response complete for ['127.0.0.1', 55648]
+[mHTTP GET /docs/ 200 [0.13, 127.0.0.1:55648][0m
+HTTP b'GET' request for ['127.0.0.1', 55648]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 55648]
+HTTP response chunk for ['127.0.0.1', 55648]
+HTTP response chunk for ['127.0.0.1', 55648]
+HTTP response chunk for ['127.0.0.1', 55648]
+HTTP response chunk for ['127.0.0.1', 55648]
+HTTP response chunk for ['127.0.0.1', 55648]
+HTTP close for ['127.0.0.1', 55648]
+HTTP response complete for ['127.0.0.1', 55648]
+[mHTTP GET /schema/ 200 [1.01, 127.0.0.1:55648][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'POST' request for ['127.0.0.1', 57830]
+HTTP 200 response started for ['127.0.0.1', 57830]
+HTTP close for ['127.0.0.1', 57830]
+HTTP response complete for ['127.0.0.1', 57830]
+[mHTTP POST /auth/login/ 200 [0.92, 127.0.0.1:57830][0m
+HTTP b'GET' request for ['127.0.0.1', 57830]
+HTTP 200 response started for ['127.0.0.1', 57830]
+HTTP close for ['127.0.0.1', 57830]
+HTTP response complete for ['127.0.0.1', 57830]
+[mHTTP GET /bookmarks/ 200 [0.04, 127.0.0.1:57830][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 35768]
+HTTP 200 response started for ['127.0.0.1', 35768]
+HTTP close for ['127.0.0.1', 35768]
+HTTP response complete for ['127.0.0.1', 35768]
+[mHTTP GET /bookmarks/ 200 [0.07, 127.0.0.1:35768][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 42816]
+HTTP 200 response started for ['127.0.0.1', 42816]
+HTTP close for ['127.0.0.1', 42816]
+HTTP response complete for ['127.0.0.1', 42816]
+[mHTTP GET /docs/ 200 [0.15, 127.0.0.1:42816][0m
+HTTP b'GET' request for ['127.0.0.1', 42816]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 42816]
+HTTP response chunk for ['127.0.0.1', 42816]
+HTTP response chunk for ['127.0.0.1', 42816]
+HTTP response chunk for ['127.0.0.1', 42816]
+HTTP response chunk for ['127.0.0.1', 42816]
+HTTP response chunk for ['127.0.0.1', 42816]
+HTTP close for ['127.0.0.1', 42816]
+HTTP response complete for ['127.0.0.1', 42816]
+[mHTTP GET /schema/ 200 [1.05, 127.0.0.1:42816][0m
+HTTP b'POST' request for ['127.0.0.1', 42816]
+HTTP 200 response started for ['127.0.0.1', 42816]
+HTTP close for ['127.0.0.1', 42816]
+HTTP response complete for ['127.0.0.1', 42816]
+[mHTTP POST /auth/login/ 200 [0.72, 127.0.0.1:42816][0m
+HTTP b'GET' request for ['127.0.0.1', 42816]
+HTTP 200 response started for ['127.0.0.1', 42816]
+HTTP close for ['127.0.0.1', 42816]
+HTTP response complete for ['127.0.0.1', 42816]
+[mHTTP GET /bookmarks/ 200 [0.03, 127.0.0.1:42816][0m
+HTTP b'GET' request for ['127.0.0.1', 42816]
+HTTP 200 response started for ['127.0.0.1', 42816]
+HTTP close for ['127.0.0.1', 42816]
+HTTP response complete for ['127.0.0.1', 42816]
+[mHTTP GET /jobs/list/ 200 [0.17, 127.0.0.1:42816][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 41740]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 525, in to_representation
+    for field in fields:
+                 ^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 386, in _readable_fields
+    for field in self.fields.values():
+                 ^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1081, in get_fields
+    field_names = self.get_field_names(declared_fields, info)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1177, in get_field_names
+    assert field_name in fields, (
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: The field 'has_applied_and_bookmarked' was declared on serializer BookmarkedJobSerializer, but has not been included in the 'fields' option.
+HTTP 500 response started for ['127.0.0.1', 41740]
+HTTP close for ['127.0.0.1', 41740]
+HTTP response complete for ['127.0.0.1', 41740]
+[35;1mHTTP GET /bookmarks/ 500 [0.10, 127.0.0.1:41740][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 49842]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 1870, in to_representation
+    return method(value)
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py", line 459, in get_bookmarked
+    return JobBookmark.objects.filter(user=user, job__slug=obj.slug).exists()
+                                                           ^^^^^^^^
+AttributeError: 'JobBookmark' object has no attribute 'slug'
+HTTP 500 response started for ['127.0.0.1', 49842]
+HTTP close for ['127.0.0.1', 49842]
+HTTP response complete for ['127.0.0.1', 49842]
+[35;1mHTTP GET /bookmarks/ 500 [0.11, 127.0.0.1:49842][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 60590]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 1870, in to_representation
+    return method(value)
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py", line 460, in get_has_applied
+    return obj.job.responses.filter(freelancer__user=user).exists()
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1491, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1303, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1768, in names_to_path
+    raise FieldError(
+    ...<2 lines>...
+    )
+django.core.exceptions.FieldError: Cannot resolve keyword 'freelancer' into field. Choices are: cover_letter, cv, extra_data, id, job, job_id, marked_for_review, marked_jobs, portfolio, slug, status, submitted_at, user, user_id
+HTTP 500 response started for ['127.0.0.1', 60590]
+HTTP close for ['127.0.0.1', 60590]
+HTTP response complete for ['127.0.0.1', 60590]
+[35;1mHTTP GET /bookmarks/ 500 [0.16, 127.0.0.1:60590][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 41244]
+HTTP 200 response started for ['127.0.0.1', 41244]
+HTTP close for ['127.0.0.1', 41244]
+HTTP response complete for ['127.0.0.1', 41244]
+[mHTTP GET /bookmarks/ 200 [0.06, 127.0.0.1:41244][0m
+HTTP b'GET' request for ['127.0.0.1', 41244]
+HTTP 200 response started for ['127.0.0.1', 41244]
+HTTP close for ['127.0.0.1', 41244]
+HTTP response complete for ['127.0.0.1', 41244]
+[mHTTP GET /bookmarks/ 200 [0.03, 127.0.0.1:41244][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 38478]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/fields.py", line 1870, in to_representation
+    return method(value)
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py", line 153, in get_client
+    profile = obj.client.user.profile
+              ^^^^^^^^^^
+AttributeError: 'JobBookmark' object has no attribute 'client'
+HTTP 500 response started for ['127.0.0.1', 38478]
+HTTP close for ['127.0.0.1', 38478]
+HTTP response complete for ['127.0.0.1', 38478]
+[35;1mHTTP GET /bookmarks/ 500 [0.10, 127.0.0.1:38478][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 58804]
+HTTP 200 response started for ['127.0.0.1', 58804]
+HTTP close for ['127.0.0.1', 58804]
+HTTP response complete for ['127.0.0.1', 58804]
+[mHTTP GET /bookmarks/ 200 [0.06, 127.0.0.1:58804][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 59364]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 525, in to_representation
+    for field in fields:
+                 ^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 386, in _readable_fields
+    for field in self.fields.values():
+                 ^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1105, in get_fields
+    field_class, field_kwargs = self.build_field(
+                                ~~~~~~~~~~~~~~~~^
+        source, info, model, depth
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1251, in build_field
+    return self.build_unknown_field(field_name, model_class)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1369, in build_unknown_field
+    raise ImproperlyConfigured(
+    ...<2 lines>...
+    )
+django.core.exceptions.ImproperlyConfigured: Field name `has_applied_and_bookmarked` is not valid for model `JobBookmark` in `api.core.serializers.BookmarkedJobSerializer`.
+HTTP 500 response started for ['127.0.0.1', 59364]
+HTTP close for ['127.0.0.1', 59364]
+HTTP response complete for ['127.0.0.1', 59364]
+[35;1mHTTP GET /bookmarks/ 500 [0.11, 127.0.0.1:59364][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 45114]
+HTTP 200 response started for ['127.0.0.1', 45114]
+HTTP close for ['127.0.0.1', 45114]
+HTTP response complete for ['127.0.0.1', 45114]
+[mHTTP GET /bookmarks/ 200 [0.06, 127.0.0.1:45114][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 39542]
+Internal Server Error: /bookmarks/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/mixins.py", line 43, in list
+    return self.get_paginated_response(serializer.data)
+                                       ^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 525, in to_representation
+    for field in fields:
+                 ^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 386, in _readable_fields
+    for field in self.fields.values():
+                 ^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ~~~~~~~~~^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 374, in fields
+    for key, value in self.get_fields().items():
+                      ~~~~~~~~~~~~~~~^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1081, in get_fields
+    field_names = self.get_field_names(declared_fields, info)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/serializers.py", line 1177, in get_field_names
+    assert field_name in fields, (
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: The field 'has_applied' was declared on serializer JobSearchSerializer, but has not been included in the 'fields' option.
+HTTP 500 response started for ['127.0.0.1', 39542]
+HTTP close for ['127.0.0.1', 39542]
+HTTP response complete for ['127.0.0.1', 39542]
+[35;1mHTTP GET /bookmarks/ 500 [0.14, 127.0.0.1:39542][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/serializers.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 58194]
+HTTP 200 response started for ['127.0.0.1', 58194]
+HTTP close for ['127.0.0.1', 58194]
+HTTP response complete for ['127.0.0.1', 58194]
+[mHTTP GET /bookmarks/ 200 [0.05, 127.0.0.1:58194][0m
+HTTP b'GET' request for ['127.0.0.1', 40798]
+HTTP 200 response started for ['127.0.0.1', 40798]
+HTTP close for ['127.0.0.1', 40798]
+HTTP response complete for ['127.0.0.1', 40798]
+[mHTTP GET /jobs/enterprise-erp-system-implementation/ 200 [0.04, 127.0.0.1:40798][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 46702]
+HTTP 200 response started for ['127.0.0.1', 46702]
+HTTP close for ['127.0.0.1', 46702]
+HTTP response complete for ['127.0.0.1', 46702]
+[mHTTP GET /jobs/enterprise-erp-system-implementation/ 200 [0.07, 127.0.0.1:46702][0m
+HTTP b'GET' request for ['127.0.0.1', 56936]
+HTTP 200 response started for ['127.0.0.1', 56936]
+HTTP close for ['127.0.0.1', 56936]
+HTTP response complete for ['127.0.0.1', 56936]
+[mHTTP GET /docs/ 200 [0.12, 127.0.0.1:56936][0m
+HTTP b'GET' request for ['127.0.0.1', 56936]
+Advanced search executed by: anonymous | Params: {}
+Advanced search executed by: anonymous | Params: {}
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+User AnonymousUser has no profile.
+HTTP 200 response started for ['127.0.0.1', 56936]
+HTTP response chunk for ['127.0.0.1', 56936]
+HTTP response chunk for ['127.0.0.1', 56936]
+HTTP response chunk for ['127.0.0.1', 56936]
+HTTP response chunk for ['127.0.0.1', 56936]
+HTTP response chunk for ['127.0.0.1', 56936]
+HTTP close for ['127.0.0.1', 56936]
+HTTP response complete for ['127.0.0.1', 56936]
+[mHTTP GET /schema/ 200 [0.78, 127.0.0.1:56936][0m
+HTTP b'POST' request for ['127.0.0.1', 56936]
+HTTP 200 response started for ['127.0.0.1', 56936]
+HTTP close for ['127.0.0.1', 56936]
+HTTP response complete for ['127.0.0.1', 56936]
+[mHTTP POST /auth/login/ 200 [0.95, 127.0.0.1:56936][0m
+HTTP b'GET' request for ['127.0.0.1', 56936]
+Internal Server Error: /jobs/list/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/views.py", line 217, in list
+    return self._get_enriched_paginated_response(queryset, extra_meta=extra_meta)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/views.py", line 152, in _get_enriched_paginated_response
+    paginated = self.get_paginated_response()
+TypeError: GenericAPIView.get_paginated_response() missing 1 required positional argument: 'data'
+HTTP 500 response started for ['127.0.0.1', 56936]
+HTTP close for ['127.0.0.1', 56936]
+HTTP response complete for ['127.0.0.1', 56936]
+[35;1mHTTP GET /jobs/list/ 500 [0.06, 127.0.0.1:56936][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 57952]
+Internal Server Error: /jobs/list/
+Traceback (most recent call last):
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/exception.py", line 42, in inner
+    response = await get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 518, in thread_handler
+    raise exc_info[1]
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/core/handlers/base.py", line 253, in _get_response_async
+    response = await wrapped_callback(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+        request, *callback_args, **callback_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 468, in __call__
+    ret = await asyncio.shield(exec_coro)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/current_thread_executor.py", line 40, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/asgiref/sync.py", line 522, in thread_handler
+    return func(*args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/g3/APP/Nil/Nil/freelance/env/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/g3/APP/Nil/Nil/freelance/api/core/views.py", line 203, in list
+    return self._get_enriched_paginated_response(queryset, extra_meta=extra_meta)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'JobViewSet' object has no attribute '_get_enriched_paginated_response'
+HTTP 500 response started for ['127.0.0.1', 57952]
+HTTP close for ['127.0.0.1', 57952]
+HTTP response complete for ['127.0.0.1', 57952]
+[35;1mHTTP GET /jobs/list/ 500 [0.10, 127.0.0.1:57952][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 40100]
+HTTP 200 response started for ['127.0.0.1', 40100]
+HTTP close for ['127.0.0.1', 40100]
+HTTP response complete for ['127.0.0.1', 40100]
+[mHTTP GET /jobs/list/ 200 [0.16, 127.0.0.1:40100][0m
+HTTP b'GET' request for ['127.0.0.1', 40100]
+HTTP 200 response started for ['127.0.0.1', 40100]
+HTTP close for ['127.0.0.1', 40100]
+HTTP response complete for ['127.0.0.1', 40100]
+[mHTTP GET /jobs/enterprise-erp-system-implementation/ 200 [0.03, 127.0.0.1:40100][0m
+HTTP b'POST' request for ['127.0.0.1', 40100]
+User sesko bookmarked job 'enterprise-erp-system-implementation'
+HTTP 200 response started for ['127.0.0.1', 40100]
+HTTP close for ['127.0.0.1', 40100]
+HTTP response complete for ['127.0.0.1', 40100]
+[mHTTP POST /bookmarks/enterprise-erp-system-implementation/add/ 200 [0.01, 127.0.0.1:40100][0m
+HTTP b'GET' request for ['127.0.0.1', 40100]
+HTTP 200 response started for ['127.0.0.1', 40100]
+HTTP close for ['127.0.0.1', 40100]
+HTTP response complete for ['127.0.0.1', 40100]
+[mHTTP GET /bookmarks/ 200 [0.03, 127.0.0.1:40100][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 34594]
+HTTP 200 response started for ['127.0.0.1', 34594]
+HTTP close for ['127.0.0.1', 34594]
+HTTP response complete for ['127.0.0.1', 34594]
+[mHTTP GET /jobs/enterprise-erp-system-implementation/ 200 [0.07, 127.0.0.1:34594][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 33076]
+HTTP 200 response started for ['127.0.0.1', 33076]
+HTTP close for ['127.0.0.1', 33076]
+HTTP response complete for ['127.0.0.1', 33076]
+[mHTTP GET /jobs/enterprise-erp-system-implementation/ 200 [0.06, 127.0.0.1:33076][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+HTTP b'GET' request for ['127.0.0.1', 42570]
+HTTP 200 response started for ['127.0.0.1', 42570]
+HTTP close for ['127.0.0.1', 42570]
+HTTP response complete for ['127.0.0.1', 42570]
+[mHTTP GET /jobs/list/?match_type=boorkmarked 200 [0.03, 127.0.0.1:42570][0m
+/home/g3/APP/Nil/Nil/freelance/api/core/filters.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/filters.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/APP/Nil/Nil/freelance/api/core/jobsmatch.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+/home/g3/APP/Nil/Nil/freelance/api/core/jobsmatch.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
