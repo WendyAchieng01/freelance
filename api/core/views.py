@@ -18,6 +18,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from django.shortcuts import get_object_or_404,redirect
 from django.http import FileResponse
+from django.db.models import Exists, OuterRef
 from django.db.models import Count,Prefetch
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
@@ -143,6 +144,7 @@ class JobViewSet(viewsets.ModelViewSet):
     def _get_enriched_paginated_response(self, queryset, extra_meta=None):
         """
         Utility to paginate, serialize and enrich jobs with `bookmarked` and `has_applied`.
+        Ensures correct values for the authenticated freelancer.
         """
         user = self.request.user
         profile = getattr(user, 'profile', None)
@@ -150,6 +152,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
         bookmarked_ids, applied_ids = set(), set()
         if is_freelancer:
+            # Collect IDs once (efficient lookups later)
             bookmarked_ids = set(user.bookmarks.values_list('job_id', flat=True))
             applied_ids = set(
                 JobResponse.objects.filter(user=user).values_list('job_id', flat=True)
@@ -161,16 +164,19 @@ class JobViewSet(viewsets.ModelViewSet):
         enriched = []
         for job in serializer.data:
             job_id = job.get('id')
-            enriched.append({
+            enriched_job = {
                 **job,
-                'bookmarked': job_id in bookmarked_ids,
-                'has_applied': job_id in applied_ids,
-            })
+                "bookmarked": bool(job_id in bookmarked_ids),
+                "has_applied": bool(job_id in applied_ids),
+            }
+            enriched.append(enriched_job)
 
         paginated = self.get_paginated_response(enriched)
-        paginated.data['job_count'] = queryset.count()
+        paginated.data["job_count"] = queryset.count()
+
         if extra_meta:
             paginated.data.update(extra_meta)
+
         return paginated
 
     @extend_schema(
@@ -207,7 +213,7 @@ class JobViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 🚀 Handle best_match separately (bypass filter_backends completely)
+        # Handle best_match separately (bypass filter_backends completely)
         if match_type == "best_match":
             queryset = JobMatcher.get_best_matches(user, Job.objects.all())
         else:
@@ -246,37 +252,28 @@ class JobViewSet(viewsets.ModelViewSet):
         profile = user.profile
         paginator = self.paginator
 
-        is_freelancer = profile.user_type == 'freelancer'
-        bookmarked_ids = set()
-        applied_ids = set()
-
-        if is_freelancer:
-            bookmarked_ids = set(
-                user.bookmarks.values_list('job_id', flat=True))
-            applied_ids = set(JobResponse.objects.filter(
-                user=user).values_list('job_id', flat=True))
-            queryset = Job.objects.filter(id__in=applied_ids)
+        if profile.user_type == 'freelancer':
+            queryset = Job.objects.filter(
+                responses__user=user
+            )
         elif profile.user_type == 'client':
             queryset = Job.objects.filter(client=profile)
         else:
             return DRFResponse({'detail': 'Invalid user type.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        queryset = queryset.annotate(
+            bookmarked=Exists(
+                JobBookmark.objects.filter(user=user, job__slug=OuterRef("slug"))
+            ),
+            has_applied=Exists(
+                JobResponse.objects.filter(user=user, job__slug=OuterRef("slug"))
+            )
+        )
+
         page = paginator.paginate_queryset(queryset, request)
         serializer = self.get_serializer(page, many=True)
 
-        enriched = []
-        for job in serializer.data:
-            job_id = job.get('id')
-            bookmarked = job_id in bookmarked_ids
-            applied = job_id in applied_ids
-            enriched.append({
-                **job,
-                'bookmarked': bookmarked,
-                'has_applied': applied,
-                'has_applied_and_bookmarked': bookmarked and applied
-            })
-
-        return paginator.get_paginated_response(enriched)
+        return paginator.get_paginated_response(serializer.data)
 
     @extend_schema(
         summary="Retrieve job details with flags and stats",
@@ -292,10 +289,8 @@ class JobViewSet(viewsets.ModelViewSet):
         applied = False
 
         if user.is_authenticated and hasattr(user, 'profile') and user.profile.user_type == 'freelancer':
-            bookmarked = user.bookmarks.filter(id=instance.id).exists()
-            applied = JobResponse.objects.filter(
-                user=user, job=instance).exists()
-            
+            bookmarked = user.bookmarks.filter(job=instance).exists()
+            applied = JobResponse.objects.filter(user=user, job=instance).exists()
 
         data['bookmarked'] = bookmarked
         data['has_applied'] = applied

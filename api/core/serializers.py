@@ -69,6 +69,8 @@ class JobSerializer(serializers.ModelSerializer):
     #client_recent_reviews = serializers.SerializerMethodField()
     
     application_count = serializers.SerializerMethodField(read_only=True)
+    bookmarked = serializers.BooleanField(read_only=True)
+    has_applied = serializers.BooleanField(read_only=True)
 
 
     class Meta:
@@ -78,7 +80,8 @@ class JobSerializer(serializers.ModelSerializer):
             'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
             'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count','application_count'
+            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count','application_count',
+            'bookmarked', 'has_applied',
             
         ]
         read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
@@ -100,7 +103,7 @@ class JobSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category = validated_data.pop('category')
         skills = validated_data.pop('skills_required', [])
-        job = Job.objects.create(**validated_data, category=category).lower()
+        job = Job.objects.create(**validated_data, category=category)
         job.skills_required.set(skills)
         return job
 
@@ -121,6 +124,18 @@ class JobSerializer(serializers.ModelSerializer):
             return obj.application_count
         return obj.responses.count()
 
+    def get_bookmarked(self, obj):
+        user = self.context['request'].user
+        if not user.is_authenticated:
+            return False
+        return JobBookmark.objects.filter(user=user, job__slug=obj.slug).exists()
+
+    def get_has_applied(self, obj):
+        user = self.context['request'].user
+        if not user.is_authenticated:
+            return False
+        return Response.objects.filter(user=user, job__slug=obj.slug).exists()
+    
     def get_category_display(self, obj):
         return obj.category.name if obj.category else None
     
@@ -350,9 +365,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 class JobSearchSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField()
     category = JobCategorySerializer(read_only=True)
-    urgency = serializers.SerializerMethodField()
-    bookmarked = serializers.SerializerMethodField()
-    has_applied = serializers.SerializerMethodField()
     skills_required = serializers.ListField(
         child=serializers.CharField(), write_only=True)
     skills_required_display = SkillSerializer(
@@ -365,7 +377,7 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
             'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified',
-            'urgency', 'bookmarked', 'has_applied'
+            
         ]
         
     def get_client(self, obj):
@@ -425,21 +437,33 @@ class JobSearchSerializer(serializers.ModelSerializer):
         return obj.id in bookmarked_ids and obj.id in applied_ids
 
 
-
 class BookmarkedJobSerializer(serializers.ModelSerializer):
     slug = serializers.CharField(source='job.slug', read_only=True)
     job = JobSearchSerializer(read_only=True)
-    has_applied_and_bookmarked = serializers.SerializerMethodField()
+    has_applied = serializers.SerializerMethodField()
+    bookmarked = serializers.SerializerMethodField()
 
     class Meta:
         model = JobBookmark
-        fields = ['id', 'slug', 'job', 'created_at','has_applied_and_bookmarked']
-        
-    def get_has_applied_and_bookmarked(self, obj):
+        fields = [
+            'id',
+            'slug',
+            'job',
+            'created_at',
+            'bookmarked',
+            'has_applied',
+        ]
+
+    def get_bookmarked(self, obj):
+        return True
+
+    def get_has_applied(self, obj):
         user = self.context.get('request').user
         if not user.is_authenticated:
             return False
         return obj.job.responses.filter(user=user).exists()
+
+
 
 
 class MessageAttachmentSerializer(serializers.ModelSerializer):

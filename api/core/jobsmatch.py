@@ -174,7 +174,8 @@ class JobMatcher:
         if queryset is None:
             queryset = Job.objects.all()
 
-        valid = {'best_match', 'most_recent', 'near_deadline', 'entry_level'}
+        valid = {'best_match', 'most_recent',
+                 'near_deadline', 'entry_level', 'boorkmarked'}
         if filter_type not in valid:
             return queryset
 
