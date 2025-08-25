@@ -86,10 +86,12 @@ class PaymentInitiateView(APIView):
             error_msg = paystack_data.get(
                 'message', 'Payment initialization failed.')
             print(error_msg)
-            redirect_id = job.slug if hasattr(job, 'slug') and job.slug else job.id
-            params = urlencode({'error': error_msg})
             
-            return redirect(f"/jobs/{payment.job.slug or payment.job.id}/failed/?{params}")
+            message = error_msg
+            params = urlencode({"success": "false", "message": message})
+            
+            redirect_id = job.slug if hasattr(job, 'slug') and job.slug else job.id
+            return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/{redirect_id}/?{params}")
 
 
 def get_nested_values(data, *keys):
@@ -119,13 +121,14 @@ class PaymentCallbackView(APIView):
     def get(self, request):
         ref = request.GET.get("reference")
         if not ref:
-            error_params = urlencode(
-                {'error': 'Missing reference in callback.'})
-            return redirect(f"{settings.FRONTEND_URL}/jobs/unknown/failed/?{error_params}")
-
-        payment = get_object_or_404(Payment, ref=ref)
+            message = "Missing payment reference."
+            params = urlencode({"success": "false", "message": message})
+            return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/?{params}")
 
         try:
+            payment = get_object_or_404(Payment, ref=ref)
+            job = payment.job
+
             # Verify transaction with Paystack
             headers = {
                 "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
@@ -147,31 +150,30 @@ class PaymentCallbackView(APIView):
                 payment.verified = True
                 payment.save()
                 if payment.job:
-                    job = payment.job
                     job.status = "open"
                     job.payment_verified = True
                     job.save()
 
-                    # Redirect to frontend success page
-                    success_url = f"{settings.FRONTEND_URL}/jobs/{job.slug}/success/?ref={payment.ref}"
+                    message = "Payment successful! You can now proceed to hire."
+                    params = urlencode({"success": "true", "message": message})
+                    success_url = f"{settings.FRONTEND_URL}/client/my-jobs/{job.slug}/?{params}"
                     return redirect(success_url)
 
             else:
                 reason = gateway_response or "Payment could not be verified."
-                error_params = urlencode({"error": reason})
-
-                error_url = f"{settings.FRONTEND_URL}/jobs/{payment.job.slug}/failed/?{error_params}"
+                params = urlencode({"success": "false", "message": reason})
+                error_url = f"{settings.FRONTEND_URL}/client/my-jobs/{payment.job.slug}/?{params}"
                 return redirect(error_url)
 
         except requests.RequestException as e:
-            error_params = urlencode(
-                {"error": f"Paystack request failed: {str(e)}"})
-            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
+            message = f"Paystack request failed: {str(e)}"
+            params = urlencode({"success": "false", "message": message})
+            return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/{payment.job.slug}/?{params}")
 
         except Exception as e:
-            error_params = urlencode({"error": f"Internal error: {str(e)}"})
-            return redirect(f"/jobs/{payment.job.slug}/failed/?{error_params}")
-
+            message = f"Internal error: {str(e)}"
+            params = urlencode({"success": "false", "message": message})
+            return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/{payment.job.slug}/?{params}")
 
 class ProceedToPayAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
