@@ -1,7 +1,66 @@
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+venv.bak/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
 *.pyo
 *.pyd
-*.egg-info/
-.env
+*.mo
+db.sqlite3
+db.sqlite3-journal
+
+# Media & static files
 media/
+staticfiles/
+static/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Local environment configs
+*.env
+.env.*
+
