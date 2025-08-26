@@ -36,6 +36,7 @@ DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [
     'c8174bad5510.ngrok-free.app',
     'localhost',
+    'localhost:3000',
     '127.0.0.1',
     'web-production-b953.up.railway.app',  
     'www.nilltechsolutions.com',
@@ -45,9 +46,9 @@ ALLOWED_HOSTS = [
 
 #ALLOWED_HOSTS = ['*']
 
-FRONTEND_URL = "http://127.0.0.1:3000"
-BACKEND_URL= "127.0.0.1:8000"
-DOMAIN = "nilltechsolutions.com"
+FRONTEND_URL = "http://localhost:3000"
+BACKEND_URL= "http://127.0.0.1:8000"
+DOMAIN = "nilltech.brainversetechnologies.co.ke"
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -312,6 +313,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
     "https://nilltechsolutions.com",
     "http://nilltech.brainversetechnologies.co.ke",
     "https://nilltech.brainversetechnologies.co.ke",
