@@ -1595,6 +1595,11 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         content = serializer.validated_data.get('content')
+        attachments_files = [
+            file for key, file in request.FILES.items() 
+            if key.startswith('attachments')
+        ]
+
         if not content:
             return DRFResponse(
                 {"message": "Message content cannot be empty."},
@@ -1605,7 +1610,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             sender=request.user, chat=chat, is_read=False)
 
         # Handle attachments
-        for file in request.FILES.getlist('attachments'):
+        for file in attachments_files:
             try:
                 MessageAttachment.objects.create(
                     message=message,
