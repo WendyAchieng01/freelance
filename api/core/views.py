@@ -1084,7 +1084,7 @@ class ClientJobStatusView(generics.ListAPIView):
                     'job_id': job.id,
                     'job_title': job.title,
                     'job_slug': job.slug,
-                    'application_count': job.application_count,  # ✅ added here
+                    'application_count': job.application_count,
                     'applications': serialized_responses,
                 })
             paginated = paginator.paginate_queryset(job_applications, request)
@@ -1139,7 +1139,7 @@ class ClientJobStatusView(generics.ListAPIView):
                         'job_id': job.id,
                         'job_title': job.title,
                         'job_slug': job.slug,
-                        'application_count': job.responses.count(),  # ✅ added
+                        'application_count': job.responses.count(), 
                         'rejected_applicants': []
                     }
                 serialized = ResponseListSerializer(response).data
