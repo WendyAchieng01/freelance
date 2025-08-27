@@ -31170,3 +31170,14 @@ HTTP 201 response started for ['127.0.0.1', 41526]
 HTTP close for ['127.0.0.1', 41526]
 HTTP response complete for ['127.0.0.1', 41526]
 [mHTTP POST /messages/chats/b783f7d1-09c7-4328-a80f-949eedcf2fa3/ 201 [0.08, 127.0.0.1:41526][0m
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
+/home/g3/Imo/freelance/api/payments/views.py changed, reloading.
+Using selector: EpollSelector
+Watching for file changes with StatReloader
+HTTP/2 support enabled
+Configuring endpoint tcp:port=8000:interface=127.0.0.1
+Listening on TCP address 127.0.0.1:8000
