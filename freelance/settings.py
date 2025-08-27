@@ -29,8 +29,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
-#DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
 
 
 ALLOWED_HOSTS = [
@@ -44,7 +44,6 @@ ALLOWED_HOSTS = [
 ]
 
 
-#ALLOWED_HOSTS = ['*']
 
 FRONTEND_URL = "http://localhost:3000"
 BACKEND_URL= "http://127.0.0.1:8000"
@@ -241,7 +240,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = "smartmindtechpro@gmail.com"
-EMAIL_HOST_PASSWORD = "lhoxkhakifcxhoqz"
+EMAIL_HOST_PASSWORD = "lhoxkhakifcxho"
 DEFAULT_FROM_EMAIL = "smartmindtechpro@gmail.com"
 
 
