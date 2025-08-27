@@ -402,7 +402,7 @@ class JobViewSet(viewsets.ModelViewSet):
             400: OpenApiResponse(description="Invalid request or response not found")
         }
     )
-    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsClient], url_path='applications/(?P<response_slug>[-\w]+)/mark-for-review')
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsClient], url_path=r'applications/(?P<response_slug>[-\w]+)/mark-for-review')
     def mark_for_review(self, request, slug=None, response_slug=None):
         job = self.get_object()
         try:
