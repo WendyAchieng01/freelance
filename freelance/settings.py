@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import ssl
@@ -20,7 +21,7 @@ import dj_database_url
 from decouple import config
 #from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
-
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,8 +31,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
-
 
 ALLOWED_HOSTS = [
     'c8174bad5510.ngrok-free.app',
@@ -267,12 +266,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Secure cookies and redirects
-SECURE_SSL_REDIRECT = not DEBUG and not DEVELOPMENT
-SESSION_COOKIE_SECURE = not DEBUG and not DEVELOPMENT
-CSRF_COOKIE_SECURE = not DEBUG and not DEVELOPMENT
-SECURE_HSTS_SECONDS = 31536000 if not DEBUG and not DEVELOPMENT else 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG and not DEVELOPMENT
-SECURE_HSTS_PRELOAD = not DEBUG and not DEVELOPMENT
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
