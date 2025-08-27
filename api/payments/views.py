@@ -182,34 +182,55 @@ class PaypalSuccessView(View):
         try:
             payment = PaypalPayments.objects.get(invoice=invoice)
             job = payment.job
-            params = urlencode({
-                "ref": payment.invoice,
-                "status": payment.status,
-                "verified": str(payment.verified).lower()
-            })
-            return redirect(f"{settings.FRONTEND_URL}/jobs/{job.slug}/success/?{params}")
-        except PaypalPayments.DoesNotExist:
-            return redirect(f"{settings.FRONTEND_URL}/jobs/?error=payment_not_found")
 
+            message = "Payment successful! You can now proceed to hire!"            
+            params = urlencode({
+                "success": "true",
+                "message": message,
+            })
+            
+            redirect_url = f"{settings.FRONTEND_URL}/client/my-jobs/{job.slug}/?{params}"
+            return redirect(redirect_url)
+        
+        except PaypalPayments.DoesNotExist:
+            message = "Payment failed! Payment could not be found."            
+            params = urlencode({
+                "success": "false",
+                "message": message,
+            })
+
+            redirect_url = f"{settings.FRONTEND_URL}/client/my-jobs/?{params}"
+            return redirect(redirect_url)
 
 class PaypalFailedView(View):
     def get(self, request, invoice):
         try:
             payment = PaypalPayments.objects.get(invoice=invoice)
             job = payment.job
-            error_msg = "Payment cancelled or failed."
+
+            message = "Payment cancelled or failed."
+            
             if payment.extra_data and "details" in payment.extra_data:
-                # PayPal sometimes includes failure reason in "details"
                 details = payment.extra_data.get("details", [])
-                if details:
-                    error_msg = details[0].get("description", error_msg)
+                if details and isinstance(details, list):
+                    message = details[0].get("description", message)
+            
             params = urlencode({
-                "invoice": payment.invoice,
-                "error": error_msg
+                "success": "false",
+                "message": message,
             })
-            return redirect(f"{settings.FRONTEND_URL}/jobs/{job.slug}/failed/?{params}")
+            
+            return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/{job.slug}/?{params}")
+            
         except PaypalPayments.DoesNotExist:
-            return redirect(f"{settings.FRONTEND_URL}/jobs/?error=payment_not_found")
+            message = "Payment failed! Payment could not be found."
+            params = urlencode({
+                "success": "false",
+                "message": message,
+            })
+            
+            redirect_url = f"{settings.FRONTEND_URL}/client/my-jobs/?{params}"
+            return redirect(redirect_url)
 
 
 class PaymentStatus(APIView):
