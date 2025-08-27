@@ -47,6 +47,7 @@ htmlcov/
 *.pyd
 *.mo
 db.sqlite3
+debug.log
 db.sqlite3-journal
 
 # Media & static files
