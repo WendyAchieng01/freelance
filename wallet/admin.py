@@ -1,3 +1,4 @@
+from .models import WalletTransaction, PaymentPeriod, Rate
 from django.contrib import admin
 from wallet.models import WalletTransaction,Rate
 
@@ -5,25 +6,14 @@ from wallet.models import WalletTransaction,Rate
 @admin.register(WalletTransaction)
 class WalletTransactionAdmin(admin.ModelAdmin):
     list_display = (
-        'user',
-        'transaction_type',
-        'payment_type',
-        'transaction_id',
-        'amount',
-        'status',
-        'job',
-        'timestamp',
+        'user', 'transaction_type', 'amount', 'status',
+        'job', 'payment_period', 'timestamp'
     )
-    list_filter = (
-        'transaction_type',
-        'payment_type',
-        'status',
-        'user',
-    )
-    search_fields = (
-        'user__username',
-        'transaction_id',
-    )
+    list_filter = ('status', 'transaction_type',
+                    'payment_type', 'payment_period')
+    search_fields = ('user__username', 'transaction_id')
+    autocomplete_fields = ('user', 'job', 'payment_period')
+
     readonly_fields = (
         'timestamp',
         'extra_data',
@@ -51,7 +41,18 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         return True
 
 
+@admin.register(PaymentPeriod)
+class PaymentPeriodAdmin(admin.ModelAdmin):
+    list_display = ('name', 'start_date', 'end_date')
+    list_filter = ('start_date', 'end_date')
+    search_fields = ('name',)
+    ordering = ('-start_date',)
+
+
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
     list_display = ('rate_amount', 'effective_from')
-    ordering = ['-effective_from']
+    ordering = ('-effective_from',)
+
+
+

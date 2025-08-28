@@ -32,7 +32,7 @@ class Command(BaseCommand):
                     f"Payment {payment.id} missing order_id, skipping")
                 continue
 
-            url = f"https://api-m.sandbox.paypal.com/v2/checkout/orders/{order_id}"
+            url = f"{settings.PAYPAL_ORDERS_URL}/{order_id}"
             try:
                 response = requests.get(url, headers=headers)
                 data = response.json()

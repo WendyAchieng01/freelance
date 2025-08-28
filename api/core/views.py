@@ -45,6 +45,7 @@ from .permissions import (
 from core.choices import JOB_STATUS_CHOICES, ALLOWED_STATUS_FILTERS
 from payment.models import Payment
 from payments.models import PaypalPayments
+from wallet.models import WalletTransaction
 from django.db.models import Q,F,Value, IntegerField,Sum
 
 import logging
@@ -216,6 +217,7 @@ class JobViewSet(viewsets.ModelViewSet):
         # Handle best_match separately (bypass filter_backends completely)
         if match_type == "best_match":
             queryset = JobMatcher.get_best_matches(user, Job.objects.all())
+
         else:
             base_qs = self.get_queryset()
 
@@ -1201,7 +1203,8 @@ class DashboardSummaryView(APIView):
 
             # Unread messages
             chat_filter = Q(client=profile) if profile.user_type == 'client' else Q(
-                freelancer=profile)
+                freelancer=profile
+            )
             unread_messages = Message.objects.filter(
                 chat__in=Chat.objects.filter(chat_filter)
             ).exclude(sender=user).filter(is_read=False).count()
@@ -1235,15 +1238,19 @@ class DashboardSummaryView(APIView):
             elif profile.user_type == 'freelancer':
                 responses = JobResponse.objects.filter(user=user)
 
-                completed_jobs = Job.objects.filter(
-                    selected_freelancer=user, status='completed')
-                in_progress_jobs = Job.objects.filter(
-                    selected_freelancer=user, status='in_progress')
+                # Using WalletTransaction for earnings
+                total_earnings = WalletTransaction.total_earnings(user)
+                gross_earnings = WalletTransaction.total_gross_earnings(user)
 
-                total_earnings = completed_jobs.aggregate(
-                    total=Sum('price'))['total'] or 0
-                pending_earnings = in_progress_jobs.aggregate(
-                    total=Sum('price'))['total'] or 0
+                # Pending earnings → jobs picked but not completed yet
+                pending_earnings = WalletTransaction.objects.filter(
+                    user=user, status__in=['in_progress', 'pending']
+                ).aggregate(total=Sum('amount'))['total'] or 0
+
+                completed_jobs = WalletTransaction.completed_jobs_total(user)
+                in_progress_jobs = Job.objects.filter(
+                    selected_freelancer=user, status='in_progress'
+                )
 
                 summary['activity'] = {
                     'jobs_applied': responses.count(),
@@ -1252,7 +1259,7 @@ class DashboardSummaryView(APIView):
                     'jobs_under_review': responses.filter(status='under_review').count(),
                     'jobs_submitted': responses.filter(status='submitted').count(),
                     'jobs_assigned': in_progress_jobs.count(),
-                    'jobs_completed': completed_jobs.count(),
+                    'jobs_completed': completed_jobs,
                 }
 
                 summary['bookmarks'] = {
@@ -1260,8 +1267,9 @@ class DashboardSummaryView(APIView):
                 }
 
                 summary['wallet'] = {
-                    'total_earnings': float(total_earnings),
-                    'pending_earnings': float(pending_earnings)
+                    'gross_earnings': float(gross_earnings),
+                    'net_earnings': float(total_earnings),
+                    'pending_earnings': float(pending_earnings),
                 }
 
             summary['messages'] = {
@@ -1279,6 +1287,7 @@ class DashboardSummaryView(APIView):
             return DRFResponse({
                 'error': 'Failed to retrieve dashboard summary.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class JobDiscoveryPagination(PageNumberPagination):
