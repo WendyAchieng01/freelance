@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 def get_paypal_access_token():
-    url = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
+    url = settings.PAYPAL_OAUTH_URL
     auth = (settings.PAYPAL_CLIENT_ID, settings.PAYPAL_SECRET)
     headers = {"Accept": "application/json", "Accept-Language": "en_US"}
     data = {"grant_type": "client_credentials"}
