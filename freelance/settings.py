@@ -12,16 +12,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import ssl
 import socket
 import dj_database_url
-from decouple import config
+#from decouple import config
 #from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
-load_dotenv()
+#load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,10 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    'c8174bad5510.ngrok-free.app',
+    '2782b2720510.ngrok-free.app',
     'localhost',
     'localhost:3000',
     '127.0.0.1',
@@ -214,26 +214,25 @@ MESSAGE_TAGS = {
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "sb-aaf24345346136@business.example.com"
+PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
 PAYPAL_TEST = True 
-#PAYPAL_SANDBOX = True
-#PAYPAL_IPN_STRICT = False #temporarily
 
-PAYPAL_CLIENT_ID = ""
-PAYPAL_SECRET = ""
+PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q"
+PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
 PAYPAL_MODE = "sandbox"  # or "live"
 
-
-
-
 PAYPAL_URL = (
-    "https://api-m.sandbox.paypal.com" if PAYPAL_TEST else "https://api-m.paypal.com"
+    "https://api-m.sandbox.paypal.com"
+    if PAYPAL_TEST
+    else "https://api-m.paypal.com"
 )
 
+PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
+PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

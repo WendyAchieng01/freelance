@@ -175,6 +175,7 @@ class PaymentCallbackView(APIView):
             params = urlencode({"success": "false", "message": message})
             return redirect(f"{settings.FRONTEND_URL}/client/my-jobs/{payment.job.slug}/?{params}")
 
+
 class ProceedToPayAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -204,7 +205,7 @@ class ProceedToPayAPIView(APIView):
                 job=job).order_by("-date_created").first()
             provider = "paystack"
 
-        # Handle failed payments
+        # Handle failed / not verified payments
         if state == "failed" or (payment and not payment.verified):
             return Response(
                 {
@@ -214,6 +215,7 @@ class ProceedToPayAPIView(APIView):
                         "id": job.id,
                         "slug": job.slug,
                         "title": job.title,
+                        "price": job.price,
                     },
                     "payment": {
                         "ref": getattr(payment, "invoice", None)
@@ -221,10 +223,11 @@ class ProceedToPayAPIView(APIView):
                         else getattr(payment, "ref", None),
                         "amount": str(getattr(payment, "amount", None)),
                         "verified": getattr(payment, "verified", None),
+                        "status": getattr(payment, "status", None),
                     }
                     if payment
                     else None,
-                    "error": getattr(payment, "error", "Payment failed"),
+                    "error": getattr(payment, "error", "Payment not verified"),
                 },
                 status=400,
             )
@@ -248,7 +251,6 @@ class ProceedToPayAPIView(APIView):
                         "authorization.mobile_money_number",
                         "customer.email",
                     )
-
                 payment_data = {
                     "ref": payment.ref,
                     "amount": payment.amount,
@@ -257,12 +259,13 @@ class ProceedToPayAPIView(APIView):
                 }
 
             elif provider == "paypal":
+                # Include full details
                 payment_data = {
                     "ref": payment.invoice,
                     "amount": str(payment.amount),
                     "verified": payment.verified,
                     "status": payment.status,
-                    "extra": payment.extra_data, 
+                    "extra": payment.extra_data,
                 }
 
         return Response(
