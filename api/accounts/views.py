@@ -1,3 +1,10 @@
+from django.contrib.auth.models import User
+from .serializers import ClientProfileWriteSerializer, ClientProfileReadSerializer
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework import viewsets, status, permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta, datetime
 from rest_framework.exceptions import ValidationError, NotFound
@@ -501,79 +508,114 @@ class PasswordResetConfirmView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
 @extend_schema(
-    summary="Get or update your own profile",
-    description="GET returns current user's profile. PUT/PATCH updates it. DELETE deletes the profile.",
+    methods=['GET', 'PUT', 'PATCH', 'DELETE'],
+    summary="Retrieve or modify the authenticated user's profile",
+    description="GET retrieves profile, PUT/PATCH updates, DELETE removes the profile.",
     request={
-            "multipart/form-data": {
-                "type": "object",
-                "properties": {
-                    "profile_pic": {
-                        "type": "string",
-                        "format": "binary",
-                        "description": "Optional profile picture file"
-                    },
-                    "phone": {"type": "string"},
-                    "location": {"type": "string"},
-                    "bio": {"type": "string"},
-                    "pay_id": {"type": "string"},
-                    "pay_id_no": {"type": "string"},
-                    "id_card": {
-                        "type": "string",
-                        "format": "binary",
-                        "description": "National ID or document"
-                    },
+        "multipart/form-data": {
+            "type": "object",
+            "properties": {
+                "phone": {"type": "string", "description": "User phone number"},
+                "location": {"type": "string", "description": "User location"},
+                "bio": {"type": "string", "description": "User bio"},
+                "profile_pic": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Profile picture file"
                 },
-                "required": []
-            }
+                "pay_id": {
+                    "type": "string",
+                    "enum": ["M-Pesa", "Binance"],
+                    "description": "Payment method"
+                },
+                "pay_id_no": {"type": "string", "description": "Payment identifier"},
+                "id_card": {"type": "string", "description": "National ID or verification document"},
+                "user_type": {
+                    "type": "string",
+                    "enum": ["freelancer", "client"],
+                    "description": "Type of user"
+                }
+            },
+            "required": []
+        },
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "phone": {"type": "string"},
+                "location": {"type": "string"},
+                "bio": {"type": "string"},
+                "profile_pic": {"type": "string", "format": "base64"},
+                "pay_id": {"type": "string", "enum": ["M-Pesa", "Binance"]},
+                "pay_id_no": {"type": "string"},
+                "id_card": {"type": "string"},
+                "user_type": {"type": "string", "enum": ["freelancer", "client"]}
+            },
+            "required": []
+        }
     },
     responses={
-        200: ProfileSerializer,
-        204: OpenApiResponse(description="Profile deleted successfully."),
-        400: OpenApiResponse(description="Validation error.")
+        200: OpenApiResponse(description="Profile retrieved or updated successfully"),
+        204: OpenApiResponse(description="Profile deleted successfully"),
+        400: OpenApiResponse(description="Validation error"),
+        403: OpenApiResponse(description="Permission denied")
     },
-    methods=["GET", "PUT", "PATCH", "DELETE"]
+    examples=[
+        OpenApiExample(
+            "Sample JSON PUT",
+            summary="Example of JSON body for updating profile",
+            value={
+                "phone": "254712345678",
+                "location": "Nairobi, Kenya",
+                "bio": "Updated bio",
+                "profile_pic": "<base64-string>",
+                "pay_id": "M-Pesa",
+                "pay_id_no": "12345678",
+                "id_card": "876857",
+                "user_type": "client"
+            },
+            request_only=True,
+            response_only=False
+        ),
+        OpenApiExample(
+            "Sample multipart/form-data",
+            summary="Example of multipart/form-data body",
+            value={
+                "phone": "254712345678",
+                "location": "Nairobi, Kenya",
+                "bio": "Updated bio",
+                "profile_pic": "<file upload>",
+                "pay_id": "M-Pesa",
+                "pay_id_no": "12345678",
+                "id_card": "876857",
+                "user_type": "client"
+            },
+            request_only=True,
+            response_only=False
+        )
+    ]
 )
-class ProfileViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                        mixins.RetrieveModelMixin,viewsets.GenericViewSet):
+
+class ProfileViewSet(viewsets.GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.action in ['list', 'retrieve']:
-            return ProfileWriteSerializer  
-        
-        return super().get_serializer_class()
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        if Profile.objects.filter(user=user).exists():
-            raise ValidationError("This user already has a profile.")
-        serializer.save(user=user)
+        return Profile.objects.filter(user=self.request.user)
 
     @action(detail=False, methods=['get', 'put', 'patch', 'delete'], url_path='me')
     def me(self, request):
         profile = request.user.profile
 
         if request.method == 'GET':
-            if profile.user_type == 'freelancer':
-                freelancer = getattr(profile, 'freelancer_profile', None)
-                if not freelancer:
-                    return Response({'detail': 'Freelancer profile not found.'}, status=404)
-                serializer = FreelancerProfileReadSerializer(freelancer)
-            elif profile.user_type == 'client':
-                client = getattr(profile, 'client_profile', None)
-                if not client:
-                    return Response({'detail': 'Client profile not found.'}, status=404)
-                serializer = ClientProfileReadSerializer(client)
-            else:
-                serializer = ProfileWriteSerializer(profile)
-
+            serializer = self.get_serializer(profile)
             return Response(serializer.data)
 
         elif request.method in ['PUT', 'PATCH']:
-            serializer = ProfileWriteSerializer(
-                profile, data=request.data, partial=(request.method == 'PATCH'))
+            serializer = self.get_serializer(
+                profile, data=request.data, partial=(request.method == 'PATCH'), context={'request': request}
+            )
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
@@ -708,46 +750,65 @@ class ClientProfileListView(generics.ListAPIView):
 @extend_schema(
     summary="Create, update, retrieve or delete client profile",
     request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "phone": {"type": "string"},
+                "location": {"type": "string"},
+                "bio": {"type": "string"},
+                "pay_id": {"type": "string", "enum": ["M-Pesa", "Binance"]},
+                "pay_id_no": {"type": "string"},
+                "id_card": {"type": "string"},
+                "company_name": {"type": "string"},
+                "company_website": {"type": "string"},
+                "industry": {"type": "string"},
+                "project_budget": {"type": "number"},
+                "preferred_freelancer_level": {
+                    "type": "string",
+                    "enum": ["entry", "intermediate", "expert"]
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of language names (e.g. 'english', 'french')"
+                }
+            },
+            "required": ["phone", "company_name"]
+        },
         "multipart/form-data": {
             "type": "object",
             "properties": {
-                "profile": {
-                    "type": "object",
-                    "properties": {
-                        "phone": {"type": "string"},
-                        "location": {"type": "string"},
-                        "bio": {"type": "string"},
-                        "pay_id": {"type": "string"},
-                        "pay_id_no": {"type": "string"},
-                        "profile_pic": {
-                            "type": "string",
-                            "format": "binary",
-                            "description": "Profile picture"
-                        },
-                        "id_card": {
-                            "type": "string",
-                            "format": "binary",
-                            "description": "National ID or verification doc"
-                        }
-                    }
+                "phone": {"type": "string"},
+                "location": {"type": "string"},
+                "bio": {"type": "string"},
+                "pay_id": {"type": "string", "enum": ["M-Pesa", "Binance"]},
+                "pay_id_no": {"type": "string"},
+                "id_card": {"type": "string"},
+                "profile_picture": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional profile picture"
                 },
                 "company_name": {"type": "string"},
                 "company_website": {"type": "string"},
                 "industry": {"type": "string"},
                 "project_budget": {"type": "number"},
-                "preferred_freelancer_level": {"type": "string"},
+                "preferred_freelancer_level": {
+                    "type": "string",
+                    "enum": ["entry", "intermediate", "expert"]
+                },
                 "languages": {
                     "type": "array",
-                    "items": {"type": "integer"},
-                    "description": "List of language IDs"
-                },
-                "is_verified": {"type": "boolean"}
-            }
+                    "items": {"type": "string"},
+                    "description": "List of language names (e.g. 'english', 'french')"
+                }
+            },
+            "required": ["phone", "company_name"]
         }
     },
     responses={
         201: OpenApiResponse(description="Client profile created successfully."),
-        200: OpenApiResponse(description="Client profile updated successfully."),
+        200: OpenApiResponse(description="Client profile retrieved/updated successfully."),
         400: OpenApiResponse(description="Validation error."),
         403: OpenApiResponse(description="Permission denied."),
         204: OpenApiResponse(description="Client profile deleted.")
@@ -756,67 +817,46 @@ class ClientProfileListView(generics.ListAPIView):
 
 class ClientWriteViewSet(viewsets.ModelViewSet):
     serializer_class = ClientProfileWriteSerializer
-    permission_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     lookup_field = 'slug'
 
     def get_queryset(self):
         return ClientProfile.objects.filter(profile__user=self.request.user)
 
     def get_object(self):
-        request = self.request
-        identifier = (
-            self.kwargs.get('client_profile_slug')
-            or self.kwargs.get('slug')
-            or self.kwargs.get('user_id')
-            or self.kwargs.get('username')
-        )
-
-        logger.debug(f"Fetching object with identifier: {identifier}")
-
+        identifier = self.kwargs.get('slug') or 'me'
         if identifier == 'me':
-            obj = get_object_or_404(ClientProfile, profile__user=request.user)
+            obj = get_object_or_404(
+                ClientProfile, profile__user=self.request.user)
         else:
-            try:
-                obj = ClientProfile.objects.get(slug=identifier)
-            except ClientProfile.DoesNotExist:
-                try:
-                    user = User.objects.get(id=identifier)
-                    obj = ClientProfile.objects.get(profile__user=user)
-                except (User.DoesNotExist, ClientProfile.DoesNotExist):
-                    try:
-                        user = User.objects.get(username=identifier)
-                        obj = ClientProfile.objects.get(profile__user=user)
-                    except (User.DoesNotExist, ClientProfile.DoesNotExist):
-                        logger.warning(
-                            f"No client profile found for identifier: {identifier}")
-                        raise Http404("Client profile not found.")
+            obj = get_object_or_404(ClientProfile, slug=identifier)
 
-        if obj.profile.user != request.user:
-            logger.warning(
-                f"Permission denied for user {request.user} on profile {obj.slug}")
+        # Enforce ownership
+        if obj.profile.user != self.request.user:
             raise PermissionDenied(
                 "You do not have permission to access this profile.")
-
         return obj
 
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return ClientProfileReadSerializer
+        return ClientProfileWriteSerializer
+
     def create(self, request, *args, **kwargs):
-        logger.debug(
-            f"Creating client profile for user: {request.user.username}")
         if ClientProfile.objects.filter(profile__user=request.user).exists():
-            logger.warning(
-                f"Profile already exists for user: {request.user.username}")
             return Response({
                 "message": "Client profile already exists.",
                 "data": None,
                 "http_code": status.HTTP_400_BAD_REQUEST
             }, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(
             data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
-        read_serializer = ClientProfileReadSerializer(client)
-        logger.info(
-            f"Client profile created for user: {request.user.username}")
+        read_serializer = ClientProfileReadSerializer(
+            client, context={'request': request})
         return Response({
             "message": "Client profile created successfully.",
             "data": read_serializer.data,
@@ -825,8 +865,8 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = ClientProfileReadSerializer(instance)
-        logger.debug(f"Retrieved profile: {instance.slug}")
+        serializer = ClientProfileReadSerializer(
+            instance, context={'request': request})
         return Response({
             "message": "Client profile retrieved successfully.",
             "data": serializer.data,
@@ -835,13 +875,15 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        partial = request.method == 'PATCH'
         serializer = self.get_serializer(
-            instance, data=request.data, context={'request': request}, partial=(request.method == 'PATCH')
+            instance, data=request.data, partial=partial, context={
+                'request': request}
         )
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
-        read_serializer = ClientProfileReadSerializer(client)
-        logger.info(f"Updated profile: {client.slug}")
+        read_serializer = ClientProfileReadSerializer(
+            client, context={'request': request})
         return Response({
             "message": "Client profile updated successfully.",
             "data": read_serializer.data,
@@ -850,14 +892,12 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        self.perform_destroy(instance)
-        logger.info(f"Deleted profile: {instance.slug}")
+        instance.delete()
         return Response({
             "message": "Client profile deleted successfully.",
             "data": None,
             "http_code": status.HTTP_204_NO_CONTENT
         }, status=status.HTTP_204_NO_CONTENT)
-        
 
 @extend_schema(
     summary="Retrieve public freelancer profile",
@@ -900,25 +940,13 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         "multipart/form-data": {
             "type": "object",
             "properties": {
-                "profile": {
-                    "type": "object",
-                    "properties": {
-                        "phone": {"type": "string"},
-                        "location": {"type": "string"},
-                        "bio": {"type": "string"},
-                        "pay_id": {"type": "string"},
-                        "pay_id_no": {"type": "string"},
-                        "profile_pic": {
-                            "type": "string",
-                            "format": "binary",
-                            "description": "Profile picture"
-                        },
-                        "id_card": {
-                            "type": "string",
-                            "format": "binary",
-                            "description": "National ID or verification doc"
-                        }
-                    }
+                "phone": {"type": "string"},
+                "location": {"type": "string"},
+                "bio": {"type": "string"},
+                "profile_picture": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Profile picture"
                 },
                 "experience_years": {
                     "type": "integer",
@@ -931,50 +959,30 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
                 },
                 "availability": {
                     "type": "string",
-                    "enum": ["full_time", "part_time", "contract", "unavailable"],
+                    "enum": ["full_time", "part_time", "weekends", "custom", "not_available"],
                     "description": "Current availability"
-                },
-                "languages": {
-                    "type": "array",
-                    "items": {"type": "integer"},
-                    "description": "List of language IDs"
                 },
                 "skills": {
                     "type": "array",
-                    "items": {"type": "integer"},
-                    "description": "List of skill IDs"
+                    "items": {"type": "string"},
+                    "description": "List of skill names"
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of language names"
                 },
                 "is_visible": {
                     "type": "boolean",
                     "description": "Whether profile is publicly visible"
                 },
-                "portfolio_projects": {
-                    "type": "array",
-                    "description": "List of portfolio projects (max 4)",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "integer",
-                                "description": "Project ID (required for updates)"
-                            },
-                            "project_title": {"type": "string"},
-                            "role": {"type": "string"},
-                            "description": {"type": "string"},
-                            "link": {
-                                "type": "string",
-                                "format": "uri",
-                                "description": "External project link"
-                            },
-                            "project_media": {
-                                "type": "string",
-                                "format": "binary",
-                                "description": "Upload project-related media (image/video)"
-                            }
-                        }
-                    }
+                "portfolio_link": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Portfolio URL"
                 }
-            }
+            },
+            "required": ["phone", "experience_years", "hourly_rate"]
         }
     },
     responses={
@@ -985,28 +993,33 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         204: OpenApiResponse(description="Freelancer profile deleted.")
     }
 )
+
 class FreelancerWriteViewSet(viewsets.ModelViewSet):
     serializer_class = FreelancerProfileWriteSerializer
-    permission_classes = [permissions.IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = 'slug'
 
     def get_queryset(self):
+        # Only allow the user to see their own profile
         return FreelancerProfile.objects.filter(profile__user=self.request.user)
 
     def get_object(self):
         identifier = self.kwargs.get(
             'freelance_profile_slug') or self.kwargs.get('slug')
         logger.debug(f"Fetching object with identifier: {identifier}")
+
         if identifier == 'me':
             obj = get_object_or_404(
                 FreelancerProfile, profile__user=self.request.user)
         else:
             obj = get_object_or_404(FreelancerProfile, slug=identifier)
+
         if obj.profile.user != self.request.user:
             logger.warning(
                 f"Permission denied for user {self.request.user} on profile {obj.slug}")
             raise PermissionDenied(
                 "You do not have permission to access this profile.")
+
         return obj
 
     def create(self, request, *args, **kwargs):
@@ -1020,10 +1033,12 @@ class FreelancerWriteViewSet(viewsets.ModelViewSet):
                 "data": None,
                 "http_code": status.HTTP_400_BAD_REQUEST
             }, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(
             data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         freelancer = serializer.save()
+
         read_serializer = FreelancerProfileReadSerializer(freelancer)
         logger.info(
             f"Freelancer profile created for user: {request.user.username}")
@@ -1046,7 +1061,10 @@ class FreelancerWriteViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(
-            instance, data=request.data, context={'request': request}, partial=(request.method == 'PATCH')
+            instance,
+            data=request.data,
+            context={'request': request},
+            partial=(request.method == 'PATCH')
         )
         serializer.is_valid(raise_exception=True)
         freelancer = serializer.save()
