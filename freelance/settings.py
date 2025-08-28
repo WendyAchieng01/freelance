@@ -213,11 +213,11 @@ PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "sampleapp@gmail.com"
+PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
 PAYPAL_TEST = True 
 
-PAYPAL_CLIENT_ID = "Ab7w7v0sb0LmDg7dhKTxZ7Wgv1iqHN43IzwQiATruIrfw2iQ8dVsxnvj9NTYVcBhnMmiNCARmxfoSR3B"
-PAYPAL_SECRET = "EEpP1JZELK0sylL3_btnMP-5_WFR_hSrSSS8ZLoaVTOnflZBQr6wSjveRlIjqOz57ZJDdj5m1NEXGJBV"
+PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q"
+PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
 PAYPAL_MODE = "sandbox"  # or "live"
 
 PAYPAL_URL = (
