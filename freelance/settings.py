@@ -12,16 +12,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from datetime import timedelta
 import os
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import ssl
 import socket
 import dj_database_url
-#from decouple import config
+from decouple import config
 #from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
-#load_dotenv()
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,13 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'c8174bad5510.ngrok-free.app',
     'localhost',
     'localhost:3000',
-    '127.0.0.1:8000',
+    '127.0.0.1',
     'web-production-b953.up.railway.app',  
     'www.nilltechsolutions.com',
     'nilltechsolutions.com',
