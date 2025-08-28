@@ -161,7 +161,7 @@ class JobDiscoveryFilter(filters.FilterSet):
             return queryset
 
         valid_match_types = ['best_match', 'most_recent',
-                            'near_deadline', 'entry_level','boorkmarked']
+                             'near_deadline', 'entry_level', 'bookmarks']
         if value not in valid_match_types:
             return queryset.none()
 

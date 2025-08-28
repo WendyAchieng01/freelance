@@ -7,7 +7,7 @@ from django.db.models import (
 from django.db.models.functions import Abs, Cast
 from django.utils import timezone
 
-from core.models import Job
+from core.models import Job,JobBookmark
 from core.choices import EXPERIENCE_LEVEL
 
 
@@ -175,7 +175,7 @@ class JobMatcher:
             queryset = Job.objects.all()
 
         valid = {'best_match', 'most_recent',
-                 'near_deadline', 'entry_level', 'boorkmarked'}
+                 'near_deadline', 'entry_level', 'bookmarks'}
         if filter_type not in valid:
             return queryset
 
@@ -187,4 +187,10 @@ class JobMatcher:
             return JobMatcher.get_near_deadline(queryset)
         if filter_type == 'entry_level':
             return JobMatcher.get_entry_level(queryset)
+        if filter_type == 'bookmarks':
+            if not user or not user.is_authenticated:
+                return Job.objects.none()
+            job_ids = JobBookmark.objects.filter(
+                user=user).values_list('job_id', flat=True)
+            return Job.objects.filter(id__in=job_ids).order_by('-posted_date')
         return queryset
