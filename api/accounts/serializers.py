@@ -186,7 +186,6 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError({
                 "message": [
                     "Account is disabled. Please verify your email to activate.",
-                    f"Resend verification: {base_url}"
                 ]
             })
 
