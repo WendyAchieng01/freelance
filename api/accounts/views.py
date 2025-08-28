@@ -832,7 +832,6 @@ class ClientWriteViewSet(viewsets.ModelViewSet):
         else:
             obj = get_object_or_404(ClientProfile, slug=identifier)
 
-        # Enforce ownership
         if obj.profile.user != self.request.user:
             raise PermissionDenied(
                 "You do not have permission to access this profile.")
@@ -1000,7 +999,6 @@ class FreelancerWriteViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self):
-        # Only allow the user to see their own profile
         return FreelancerProfile.objects.filter(profile__user=self.request.user)
 
     def get_object(self):
