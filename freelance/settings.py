@@ -236,9 +236,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "smartmindtechpro@gmail.com"
-EMAIL_HOST_PASSWORD = "lhoxkhakifcxhoqz"
-DEFAULT_FROM_EMAIL = "smartmindtechpro@gmail.com"
+EMAIL_HOST_USER = "dev.brainverse@gmail.com"
+EMAIL_HOST_PASSWORD = "pxktdlddhjwniyod"
+DEFAULT_FROM_EMAIL = "dev.brainverse@gmail.com"
 
 
 
