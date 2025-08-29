@@ -44,9 +44,9 @@ ALLOWED_HOSTS = [
 
 
 
-FRONTEND_URL = "http://localhost:3000"
-BACKEND_URL= "http://127.0.0.1:8000"
-DOMAIN = "nilltech.brainversetechnologies.co.ke"
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
+DOMAIN = os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
