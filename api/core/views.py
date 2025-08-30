@@ -46,7 +46,8 @@ from core.choices import JOB_STATUS_CHOICES, ALLOWED_STATUS_FILTERS
 from payment.models import Payment
 from payments.models import PaypalPayments
 from wallet.models import WalletTransaction
-from django.db.models import Q,F,Value, IntegerField,Sum
+from django.db.models import Q,F,Value, IntegerField,Sum,DecimalField
+from django.db.models.functions import Coalesce
 
 import logging
 from datetime import timedelta
@@ -1213,14 +1214,19 @@ class DashboardSummaryView(APIView):
                 jobs = Job.objects.filter(client=profile)
                 responses = JobResponse.objects.filter(job__client=profile)
 
-                # Total spent from both payment sources
                 total_payment = Payment.objects.filter(
                     user=user, verified=True
-                ).aggregate(total=Sum('amount'))['total'] or 0
+                ).aggregate(
+                    total=Coalesce(Sum('amount', output_field=DecimalField()),
+                                0, output_field=DecimalField())
+                )['total']
 
                 total_paypal = PaypalPayments.objects.filter(
                     user=user, verified=True, status='completed'
-                ).aggregate(total=Sum('amount'))['total'] or 0
+                ).aggregate(
+                    total=Coalesce(Sum('amount', output_field=DecimalField()),
+                                0, output_field=DecimalField())
+                )['total']
 
                 summary['activity'] = {
                     'total_jobs_posted': jobs.count(),
@@ -1232,7 +1238,8 @@ class DashboardSummaryView(APIView):
                 }
 
                 summary['wallet'] = {
-                    'total_spent': float(total_payment) + float(total_paypal)
+                    # cast to float only at the very end for JSON
+                    'total_spent': float(total_payment + total_paypal)
                 }
 
             elif profile.user_type == 'freelancer':
