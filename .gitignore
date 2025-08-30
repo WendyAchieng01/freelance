@@ -65,3 +65,9 @@ static/
 *.env
 .env.*
 
+
+
+api/wallet/__pycache__/*
+core/__pycache__/*
+freelance/__pycache__/*
+wallet/__pycache__/*
