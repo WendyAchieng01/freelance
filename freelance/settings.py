@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0
 DEBUG =  True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    '2782b2720510.ngrok-free.app',
+    '1f1927a68ef1.ngrok-free.app',
     'localhost',
     'localhost:3000',
     '127.0.0.1',
@@ -230,7 +230,7 @@ PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

@@ -179,8 +179,9 @@ class PaymentCallbackView(APIView):
 class ProceedToPayAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get(self, request, slug_or_id, state=None):
-        invoice = request.GET.get("invoice")
+    def get(self, request, slug_or_id):
+        invoice = request.GET.get("invoice") 
+        success_param = request.GET.get("success")
 
         # Locate the job
         try:
@@ -196,17 +197,24 @@ class ProceedToPayAPIView(APIView):
 
         # Select Payment model depending on provider
         if invoice:
-            # PayPal flow
             payment = PaypalPayments.objects.filter(invoice=invoice).first()
             provider = "paypal"
         else:
-            # Paystack flow
             payment = Payment.objects.filter(
                 job=job).order_by("-date_created").first()
             provider = "paystack"
 
-        # Handle failed / not verified payments
-        if state == "failed" or (payment and not payment.verified):
+        # Determine fail status
+        failed = False
+        if success_param is not None:
+            
+            if success_param.lower() != "true":
+                failed = True
+        elif payment and not payment.verified:
+            
+            failed = True
+
+        if failed:
             return Response(
                 {
                     "status": "failed",
@@ -236,7 +244,6 @@ class ProceedToPayAPIView(APIView):
         payment_data = None
         if payment:
             if provider == "paystack":
-                # Pick only useful nested data
                 extra = {}
                 if payment.extra_data:
                     extra = get_nested_values(
@@ -257,9 +264,7 @@ class ProceedToPayAPIView(APIView):
                     "verified": payment.verified,
                     "extra": extra,
                 }
-
             elif provider == "paypal":
-                # Include full details
                 payment_data = {
                     "ref": payment.invoice,
                     "amount": str(payment.amount),
