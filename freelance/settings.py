@@ -43,9 +43,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = os.getenv('FRONTEND_URL')
-BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = os.getenv('DOMAIN')
+FRONTEND_URL = "127.0.0.1:3000" #os.getenv('FRONTEND_URL')
+BACKEND_URL = "127.0.0.1:8000" #os.getenv('BACKEND_URL')
+DOMAIN = "nilltechsolutions.com"  # os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"

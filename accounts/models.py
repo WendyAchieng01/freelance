@@ -102,7 +102,8 @@ class ClientProfile(models.Model):
 
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='client_profile')
     company_name = models.CharField(max_length=200, blank=True)
-    company_website = models.URLField(blank=True, null=True)
+    company_website = models.URLField(
+        blank=True, null=True, help_text="Enter URL in the format https://nilltechsolutions.com/")
     industry = models.CharField(max_length=100, choices=INDUSTRY_CHOICES, blank=True)
     project_budget = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
     preferred_freelancer_level = models.CharField(max_length=50, choices=(

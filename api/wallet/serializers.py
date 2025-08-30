@@ -21,3 +21,14 @@ class WalletTransactionSerializer(serializers.ModelSerializer):
 
     def get_net_earning(self, obj):
         return obj.net_earning()
+
+
+class ClientTransactionSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    job_id = serializers.IntegerField()
+    job_title = serializers.CharField()
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    verified = serializers.BooleanField()
+    status = serializers.CharField()
+    source = serializers.CharField()
+    created_at = serializers.DateTimeField()
