@@ -92,7 +92,8 @@ class WalletTransaction(models.Model):
         return Decimal('0.00')
 
     def save(self, *args, **kwargs):
-        # Fetch current rate
+
+        # Fetch current rate if not set
         if self.rate is None:
             try:
                 from wallet.models import Rate
@@ -100,26 +101,36 @@ class WalletTransaction(models.Model):
             except Rate.DoesNotExist:
                 self.rate = Decimal('8.00')
 
-        # Calculate net amount (price - rate%)
+        # Calculate amount from job if not explicitly set
         if self.job and self.amount is None:
             gross = self.job.price
             fee = (self.rate / Decimal('100')) * gross
             self.amount = gross - fee
 
-        # Assign payment period if not already set
+        # Assign payment period correctly
         if not self.payment_period:
-            tx_date = (self.timestamp or timezone.now()).date()
-            period = PaymentPeriod.get_period_for_date(tx_date)
+            # Prefer job assignment date if available
+            tx_date = None
+            if hasattr(self.job, "assigned_at") and self.job.assigned_at:
+                tx_date = self.job.assigned_at.date()
+            else:
+                tx_date = (self.timestamp or timezone.now()).date()
 
+            period = PaymentPeriod.get_period_for_date(tx_date)
             if period:
-                # only current/future periods allowed
-                if period.start_date >= timezone.now().date():
-                    self.payment_period = period
+                self.payment_period = period
+            else:
+                # fallback: always assign to current open period
+                current_period = PaymentPeriod.get_period_for_date(
+                    timezone.now().date())
+                if current_period:
+                    self.payment_period = current_period
                 else:
                     raise ValueError(
-                        "Cannot assign transaction to a past payment period. Please create a valid current/future period.")
+                        "No valid payment period exists for this transaction.")
 
         super().save(*args, **kwargs)
+
 
 
     @classmethod

@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG =  True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     '2782b2720510.ngrok-free.app',
@@ -43,10 +43,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-
-FRONTEND_URL = "http://localhost:3000"
-BACKEND_URL= "http://127.0.0.1:8000"
-DOMAIN = "nilltech.brainversetechnologies.co.ke"
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
+DOMAIN = os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -231,7 +230,7 @@ PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

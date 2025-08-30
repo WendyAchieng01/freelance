@@ -60,5 +60,4 @@ def assign_job_to_freelancer(job: Job):
             status='in_progress',
             job=job,
             rate=rate
-            # amount will be auto-calculated in save()
         )
