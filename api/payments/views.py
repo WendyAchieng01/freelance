@@ -26,19 +26,23 @@ from payments.models import PaypalPayments
 
 logger = logging.getLogger(__name__)
 
+frontend_url = getattr(settings, "FRONTEND_URL", "http://localhost:3000")
 
 
 class InitiatePaypalPayment(APIView):
+    
     def post(self, request, slug):
         job = get_object_or_404(Job, slug=slug)
+        amount_value = f"{job.price:.2f}"
+        paypal_invoice = f"job-{job.id}-{uuid.uuid4().hex[:10]}"
 
         # Create or get pending payment
         payment, _ = PaypalPayments.objects.get_or_create(
             job=job,
             defaults={
                 "user": request.user,
-                "invoice": f"job-{job.id}-{uuid.uuid4().hex[:10]}",
-                "amount": job.price,
+                "invoice": paypal_invoice,
+                "amount": amount_value,
                 "status": "pending",
                 "verified": False,
             }
@@ -58,50 +62,72 @@ class InitiatePaypalPayment(APIView):
                     "invoice_id": payment.invoice,
                     "amount": {
                         "currency_code": "USD",
-                        "value": str(job.price)
+                        "value": amount_value
                     }
                 }],
                 "application_context": {
-                    "return_url": f"{settings.FRONTEND_URL}/jobs/{job.slug}/success/?invoice={payment.invoice}",
-                    "cancel_url": f"{settings.FRONTEND_URL}/jobs/{job.slug}/failed/?invoice={payment.invoice}"
+                    "return_url": f"{frontend_url}/client/my-jobs/{job.slug}/?success=true&invoice={payment.invoice}",
+                    "cancel_url": f"{frontend_url}/client/my-jobs/{job.slug}/?success=false&invoice={payment.invoice}"
                 }
-
             }
 
+            #log request body
+            logger.debug("Sending PayPal order request: %s", body)
+
             response = requests.post(url, headers=headers, json=body)
-            response.raise_for_status()
+
+            if response.status_code >= 400:
+                try:
+                    error_data = response.json()
+                except Exception:
+                    error_data = response.text  # fallback
+
+                logger.error("PayPal order creation failed: %s", error_data)
+                return Response(
+                    {"error": "PayPal rejected the order", "details": error_data},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             order = response.json()
 
-            # Save PayPal order ID
+            # Save PayPal order response
             payment.extra_data = order
             payment.save()
 
-            # Find approval link
+            # Extract approval URL
             approve_url = next(
-                (link["href"]
-                    for link in order["links"] if link["rel"] == "approve"),
+                (link["href"] for link in order.get(
+                    "links", []) if link["rel"] == "approve"),
                 None
             )
 
-            return Response({
-                "order_id": order["id"],
-                "approve_url": approve_url
-            }, status=status.HTTP_201_CREATED)
+            return Response(
+                {
+                    "order_id": order.get("id"),
+                    "approve_url": approve_url,
+                    "raw": order, 
+                },
+                status=status.HTTP_201_CREATED
+            )
 
         except Exception as e:
-            logger.error(f"Failed to create PayPal order: {e}", exc_info=True)
+            logger.error(
+                "Unexpected error while creating PayPal order", exc_info=True)
             return Response(
-                {"error": "Could not initiate PayPal payment",
-                    "details": str(e)},
+                {
+                    "error": "Could not initiate PayPal payment",
+                    "details": str(e),
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 
 class CapturePaypalPayment(APIView):
     def post(self, request, order_id):
         try:
             access_token = get_paypal_access_token()
-            url = f"{settings.PAYPAL_ORDERS_URL}/{order_id}/capture"
+            url = f"{settings.PAYPAL_URL}/{order_id}/capture"
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {access_token}"
