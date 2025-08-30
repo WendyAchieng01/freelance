@@ -43,8 +43,8 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL =os.getenv('FRONTEND_URL')
-BACKEND_URL =os.getenv('BACKEND_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN = os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"

@@ -169,7 +169,7 @@ class Response(models.Model):
         'Job', related_name='responses', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(auto_now_add=True)
     extra_data = models.JSONField(null=True, blank=True)
-    slug = models.SlugField(unique=True, blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
     cv = models.FileField(upload_to='responses/cvs/', null=True, blank=True)
     cover_letter = models.FileField(
         upload_to='responses/cover_letters/', null=True, blank=True)
