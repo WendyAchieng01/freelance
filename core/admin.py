@@ -11,6 +11,7 @@ class JobAdmin(admin.ModelAdmin):
         'status',
         'client',
         'selected_freelancer',
+        'assigned_at',
         'price',
         'deadline_date',
         'payment_verified',
@@ -22,13 +23,14 @@ class JobAdmin(admin.ModelAdmin):
         'status',
         'preferred_freelancer_level',
         'payment_verified',
-        'deadline_date'
+        'deadline_date',
+        'assigned_at'
     )
     search_fields = ('title', 'description',
                      'client__user__username', 'selected_freelancer__username')
     ordering = ('-posted_date',)
     #date_hierarchy = 'posted_date'
-    readonly_fields = ('posted_date', 'slug',
+    readonly_fields = ('posted_date', 'slug', 'assigned_at',
                        'is_max_freelancers_reached_display')
     fieldsets = (
         (None, {
@@ -41,6 +43,7 @@ class JobAdmin(admin.ModelAdmin):
                 'status',
                 'client',
                 'selected_freelancer',
+                'assigned_at',
                 'max_freelancers',
                 'required_freelancers',
                 'preferred_freelancer_level',

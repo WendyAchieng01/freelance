@@ -43,6 +43,7 @@ class Job(models.Model):
     preferred_freelancer_level = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, default='intermediate')
     reviewed_responses = models.ManyToManyField('Response', related_name='marked_jobs', blank=True)
     selected_freelancer = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='selected_jobs')
+    assigned_at = models.DateTimeField(null=True, blank=True, help_text="When a freelancer was assigned")
     payment_verified = models.BooleanField(default=False)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)  
 
@@ -121,6 +122,25 @@ class Job(models.Model):
                 unique_slug = f'{base_slug}-{num}'
                 num += 1
             self.slug = unique_slug
+        
+        # Detect changes in selected_freelancer
+        if self.pk: 
+            old_job = Job.objects.filter(pk=self.pk).only(
+                "selected_freelancer").first()
+            if old_job and old_job.selected_freelancer != self.selected_freelancer:
+                if self.selected_freelancer:
+                    # new freelancer assigned
+                    from django.utils import timezone
+                    self.assigned_at = timezone.now()
+                else:
+                    # freelancer unassigned (reset assignment date)
+                    self.assigned_at = None
+        else:
+            # new job creation with freelancer pre-set
+            if self.selected_freelancer and not self.assigned_at:
+                from django.utils import timezone
+                self.assigned_at = timezone.now()
+        
         super().save(*args, **kwargs)
     
     def __str__(self):
