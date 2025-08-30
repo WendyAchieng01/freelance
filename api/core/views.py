@@ -1254,7 +1254,9 @@ class DashboardSummaryView(APIView):
                     user=user, status__in=['in_progress', 'pending']
                 ).aggregate(total=Sum('amount'))['total'] or 0
 
-                completed_jobs = WalletTransaction.completed_jobs_total(user)
+                completed_jobs = Job.objects.filter(
+                    selected_freelancer=user, status='completed'
+                )
                 in_progress_jobs = Job.objects.filter(
                     selected_freelancer=user, status='in_progress'
                 )
@@ -1266,7 +1268,7 @@ class DashboardSummaryView(APIView):
                     'jobs_under_review': responses.filter(status='under_review').count(),
                     'jobs_submitted': responses.filter(status='submitted').count(),
                     'jobs_assigned': in_progress_jobs.count(),
-                    'jobs_completed': completed_jobs,
+                    'jobs_completed': completed_jobs.count(),
                 }
 
                 summary['bookmarks'] = {
