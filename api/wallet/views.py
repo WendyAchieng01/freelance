@@ -9,7 +9,7 @@ from wallet.models import WalletTransaction,Rate
 from api.wallet.serializers import WalletTransactionSerializer,ClientTransactionSerializer
 from payments.models import PaypalPayments
 from payment.models import Payment
-
+from datetime import datetime
 
 import logging
 import json
@@ -77,8 +77,7 @@ class WalletTransactionListView(generics.ListAPIView):
         """
         user = self.request.user
         paystack_qs = Payment.objects.filter(user=user).select_related("job")
-        paypal_qs = PaypalPayments.objects.filter(
-            user=user).select_related("job")
+        paypal_qs = PaypalPayments.objects.filter(user=user).select_related("job")
 
         transactions = []
 
@@ -95,7 +94,7 @@ class WalletTransactionListView(generics.ListAPIView):
                     "initiated"
                 ),
                 "source": "paystack",
-                "created_at": p.date_created,
+                "created_at": p.date_created,   # should be datetime
             })
 
         for p in paypal_qs:
@@ -111,11 +110,13 @@ class WalletTransactionListView(generics.ListAPIView):
                     "initiated"
                 ),
                 "source": "paypal",
-                "created_at": getattr(p, "created_at", None),
+                "created_at": getattr(p, "created_at", None),  # may be None
             })
 
-        # newest first
-        transactions.sort(key=lambda x: x["created_at"] or 0, reverse=True)
+        transactions.sort(
+            key=lambda x: x["created_at"] if x["created_at"] else datetime.min,
+            reverse=True,
+        )
         return transactions
 
     def get_client_total_spent(self):
