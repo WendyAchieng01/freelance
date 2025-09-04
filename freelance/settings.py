@@ -45,7 +45,7 @@ ALLOWED_HOSTS = [
 
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = os.getenv('DOMAIN')
+DOMAIN = 'localhost:9000' #os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -230,7 +230,7 @@ PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
