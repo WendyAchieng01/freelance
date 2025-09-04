@@ -45,7 +45,7 @@ ALLOWED_HOSTS = [
 
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = 'localhost:9000' #os.getenv('DOMAIN')
+DOMAIN = os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
