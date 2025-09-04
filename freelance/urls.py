@@ -25,7 +25,6 @@ from api.accounts.views import PasswordResetConfirmView
 
 urlpatterns = [
     path('', include('api.urls')),
-    path('auth/password-reset-confirm/<str:uidb64>/<str:token>/',PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('core/', include('core.urls', namespace='core')),
     path('academy/', include('academy.urls', namespace='academy')),
