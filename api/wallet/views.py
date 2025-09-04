@@ -9,7 +9,9 @@ from wallet.models import WalletTransaction,Rate
 from api.wallet.serializers import WalletTransactionSerializer,ClientTransactionSerializer
 from payments.models import PaypalPayments
 from payment.models import Payment
-from datetime import datetime
+from datetime import datetime,timezone
+from django.utils import timezone as dj_timezone
+
 
 import logging
 import json
@@ -17,6 +19,15 @@ import json
 from core.models import Job
 
 logger = logging.getLogger(__name__)
+
+
+def normalize_dt(dt):
+    if dt is None:
+        # Make sure datetime.min is tz-aware
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if dj_timezone.is_naive(dt):
+        return dj_timezone.make_aware(dt, dj_timezone.get_current_timezone())
+    return dt
 
 
 class WalletTransactionListView(generics.ListAPIView):
@@ -94,7 +105,7 @@ class WalletTransactionListView(generics.ListAPIView):
                     "initiated"
                 ),
                 "source": "paystack",
-                "created_at": p.date_created,   # should be datetime
+                "created_at": p.date_created, 
             })
 
         for p in paypal_qs:
@@ -110,11 +121,11 @@ class WalletTransactionListView(generics.ListAPIView):
                     "initiated"
                 ),
                 "source": "paypal",
-                "created_at": getattr(p, "created_at", None),  # may be None
+                "created_at": getattr(p, "created_at", None), 
             })
 
         transactions.sort(
-            key=lambda x: x["created_at"] if x["created_at"] else datetime.min,
+            key=lambda x: normalize_dt(x["created_at"]),
             reverse=True,
         )
         return transactions
