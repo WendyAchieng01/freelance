@@ -7,4 +7,3 @@ class ApiConfig(AppConfig):
 
     def ready(self):
         import api.payments.views  
-        # Ensures the signal receiver is connected

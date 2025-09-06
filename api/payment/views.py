@@ -134,7 +134,7 @@ class PaymentCallbackView(APIView):
                 "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
                 "Content-Type": "application/json",
             }
-            verify_url = f"https://api.paystack.co/transaction/verify/{ref}"
+            verify_url = f"{settings.PAYPAL_VERIFY_URL}/{ref}"
             response = requests.get(verify_url, headers=headers)
             response.raise_for_status()
             paystack_data = response.json().get("data", {})

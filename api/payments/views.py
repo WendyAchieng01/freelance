@@ -26,7 +26,8 @@ from payments.models import PaypalPayments
 
 logger = logging.getLogger(__name__)
 
-frontend_url = getattr(settings, "FRONTEND_URL", "http://localhost:3000")
+frontend_url = getattr(settings, "FRONTEND_URL",
+                        "https://nilltech.brainversetechnologies.co.ke")
 
 
 class InitiatePaypalPayment(APIView):

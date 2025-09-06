@@ -15,7 +15,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     #comment the 3 lines below when in production
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    #path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    #path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    #path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

@@ -218,6 +218,11 @@ class JobViewSet(viewsets.ModelViewSet):
         # Handle best_match separately (bypass filter_backends completely)
         if match_type == "best_match":
             queryset = JobMatcher.get_best_matches(user, Job.objects.all())
+        elif match_type == "bookmarks" and is_freelancer:
+            queryset = Job.objects.filter(
+                id__in=JobBookmark.objects.filter(
+                    user=user).values_list('job_id', flat=True)
+            ).select_related('client').prefetch_related('skills_required')
 
         else:
             base_qs = self.get_queryset()
@@ -230,8 +235,6 @@ class JobViewSet(viewsets.ModelViewSet):
                 base_qs = base_qs.filter(responses__user=user, responses__status='rejected')
             elif status_filter == 'active' and is_freelancer:
                 base_qs = base_qs.filter(status='in_progress', selected_freelancer=user)
-            elif status_filter == 'bookmarked' and is_freelancer:
-                base_qs = base_qs.filter(id__in=user.bookmarks.values_list('job_id', flat=True))
             elif status_filter in job_statuses:
                 base_qs = base_qs.filter(status=status_filter)
 
