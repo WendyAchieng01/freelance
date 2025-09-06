@@ -30,10 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG =  True #os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    '1f1927a68ef1.ngrok-free.app',
     'localhost',
     'localhost:3000',
     '127.0.0.1',
@@ -213,10 +212,10 @@ PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 # PayPal configuration
 
 PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
-PAYPAL_TEST = True 
+PAYPAL_TEST = True  #when live change to False
 
-PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q"
-PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
+PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q" #replace
+PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g" #replace
 PAYPAL_MODE = "sandbox"  # or "live"
 
 PAYPAL_URL = (
@@ -227,10 +226,11 @@ PAYPAL_URL = (
 
 PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
+PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

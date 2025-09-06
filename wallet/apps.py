@@ -7,5 +7,5 @@ class WalletConfig(AppConfig):
     name = 'wallet'
 
     def ready(self):
-        import wallet.signals  # Connect signals
-        print("Wallet signals loaded")  # Debugging
+        import wallet.signals 
+        print("Wallet signals loaded")
