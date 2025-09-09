@@ -427,6 +427,16 @@ class ProfileWriteSerializer(serializers.ModelSerializer):
 
 
 class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
+    # User fields
+    username = serializers.CharField(
+        source="profile.user.username", required=False)
+    first_name = serializers.CharField(
+        source="profile.user.first_name", required=False, allow_blank=True)
+    last_name = serializers.CharField(
+        source="profile.user.last_name", required=False, allow_blank=True)
+    email = serializers.EmailField(source="profile.user.email", required=False)
+    
+    #profile
     phone = serializers.CharField(
         source="profile.phone", required=False, allow_blank=True)
     location = serializers.CharField(
@@ -452,6 +462,7 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FreelancerProfile
         fields = [
+            "first_name", "last_name", "email","username",
             "phone", "location", "bio", "profile_picture",
             "skills", "languages", "experience_years", "hourly_rate",
             "availability", "is_visible"
@@ -459,13 +470,22 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         profile_data = validated_data.pop("profile", {})
+        user_data = profile_data.pop("user", {})
         skills = validated_data.pop("skills", None)
         languages = validated_data.pop("languages", None)
 
         user = self.context["request"].user
+
+        # Update user fields
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        # Get or create profile
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.user_type = "freelancer"
 
+        # Update profile fields
         for attr, value in profile_data.items():
             setattr(profile, attr, value)
         profile.save()
@@ -480,18 +500,27 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
 
         return freelancer
 
+
     def update(self, instance, validated_data):
         profile_data = validated_data.pop("profile", {})
+        user_data = profile_data.pop("user", {})
         skills = validated_data.pop("skills", None)
         languages = validated_data.pop("languages", None)
 
+        # Update user fields
+        user = instance.profile.user
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        # Update profile fields
         profile = instance.profile
         profile.user_type = "freelancer"
-
         for attr, value in profile_data.items():
             setattr(profile, attr, value)
         profile.save()
 
+        # Update freelancer profile fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -502,6 +531,7 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
             instance.languages.set(languages)
 
         return instance
+
 
 
 class FreelancerListSerializer(serializers.ModelSerializer):
@@ -561,6 +591,13 @@ class ClientProfileReadSerializer(serializers.ModelSerializer):
 
 
 class ClientProfileWriteSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source="profile.user.username", required=False)
+    first_name = serializers.CharField(
+        source="profile.user.first_name", required=False, allow_blank=True)
+    last_name = serializers.CharField(
+        source="profile.user.last_name", required=False, allow_blank=True)
+    email = serializers.EmailField(source="profile.user.email", required=False)
     phone = serializers.CharField(
         source="profile.phone", required=False, allow_blank=True)
     location = serializers.CharField(
@@ -586,6 +623,7 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientProfile
         fields = [
+            "username", "first_name", "last_name", "email",
             "phone", "location", "bio", "pay_id", "pay_id_no", "id_card", "profile_picture",
             "company_name", "company_website", "industry", "project_budget",
             "preferred_freelancer_level", "languages",
@@ -593,8 +631,15 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         profile_data = validated_data.pop("profile", {})
+        user_data = profile_data.pop("user", {})
         languages = validated_data.pop("languages", None)
+
         user = self.context["request"].user
+
+        # Update user fields
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
 
         profile, _ = Profile.objects.get_or_create(user=user)
 
@@ -603,24 +648,34 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
         profile.user_type = "client"
         profile.save()
 
-        client = ClientProfile.objects.create(
-            profile=profile, **validated_data)
+        client = ClientProfile.objects.create(profile=profile, **validated_data)
 
         if languages:
             client.languages.set(languages)
 
         return client
 
+
     def update(self, instance, validated_data):
         profile_data = validated_data.pop("profile", {})
+        user_data = profile_data.pop("user", {})
         languages = validated_data.pop("languages", None)
-        profile = instance.profile
 
+        profile = instance.profile
+        user = profile.user
+
+        # Update user fields
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        # Update profile fields
         for attr, value in profile_data.items():
             setattr(profile, attr, value)
         profile.user_type = "client"
         profile.save()
 
+        # Update client profile fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -629,6 +684,7 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
             instance.languages.set(languages)
 
         return instance
+
     
 class ClientListSerializer(serializers.ModelSerializer):
     profile = ProfileMiniSerializer()

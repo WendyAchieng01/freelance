@@ -753,6 +753,11 @@ class ClientProfileListView(generics.ListAPIView):
         "application/json": {
             "type": "object",
             "properties": {
+                # User fields
+                "first_name": {"type": "string"},
+                "last_name": {"type": "string"},
+                "username":{"type":"string"},
+                "email": {"type": "string", "format": "email"},
                 "phone": {"type": "string"},
                 "location": {"type": "string"},
                 "bio": {"type": "string"},
@@ -939,6 +944,12 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         "multipart/form-data": {
             "type": "object",
             "properties": {
+                # User fields
+                "first_name": {"type": "string"},
+                "last_name": {"type": "string"},
+                "email": {"type": "string", "format": "email"},
+
+                # Profile fields
                 "phone": {"type": "string"},
                 "location": {"type": "string"},
                 "bio": {"type": "string"},
@@ -947,6 +958,8 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
                     "format": "binary",
                     "description": "Profile picture"
                 },
+
+                # FreelancerProfile fields
                 "experience_years": {
                     "type": "integer",
                     "description": "Years of professional experience"
@@ -992,6 +1005,7 @@ class FreelancerReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         204: OpenApiResponse(description="Freelancer profile deleted.")
     }
 )
+
 
 class FreelancerWriteViewSet(viewsets.ModelViewSet):
     serializer_class = FreelancerProfileWriteSerializer
