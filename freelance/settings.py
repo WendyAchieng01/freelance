@@ -42,7 +42,7 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = os.getenv('FRONTEND_URL')
+FRONTEND_URL =  os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN = os.getenv('DOMAIN')
 
@@ -227,6 +227,13 @@ PAYPAL_URL = (
 PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
+
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 
 # Email Settings
