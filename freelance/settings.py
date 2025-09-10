@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True    #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -42,9 +42,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = os.getenv('FRONTEND_URL')
-BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = os.getenv('DOMAIN')
+FRONTEND_URL = 'https://127.0.0.1:8000' #os.getenv('FRONTEND_URL')
+BACKEND_URL =  'https://127.0.0.1:8000' # os.getenv('BACKEND_URL')
+DOMAIN =   'https://127.0.0.1:8000' #os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
