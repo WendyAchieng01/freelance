@@ -236,7 +236,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'wessnathan10135@gmail.com'
-EMAIL_HOST_PASSWORD = 'znxfjdjzpkjrtyno'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'wessnathan10135@gmail.com'
 
 
