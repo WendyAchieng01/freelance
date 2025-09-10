@@ -214,8 +214,8 @@ PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
 PAYPAL_TEST = True  #when live change to False
 
-PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q" #replace
-PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g" #replace
+PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q" 
+PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
 PAYPAL_MODE = "sandbox"  # or "live"
 
 PAYPAL_URL = (
@@ -229,8 +229,9 @@ PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
