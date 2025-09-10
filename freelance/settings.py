@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -235,9 +235,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "dev.brainverse@gmail.com"
-EMAIL_HOST_PASSWORD = "pxktdlddhjwniyod"
-DEFAULT_FROM_EMAIL = "dev.brainverse@gmail.com"
+EMAIL_HOST_USER = 'wessnathan10135@gmail.com'
+EMAIL_HOST_PASSWORD = 'znxfjdjzpkjrtyno'
+DEFAULT_FROM_EMAIL = 'wessnathan10135@gmail.com'
 
 
 
