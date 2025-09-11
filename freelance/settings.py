@@ -42,9 +42,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL =  os.getenv('FRONTEND_URL')
-BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = os.getenv('DOMAIN')
+FRONTEND_URL =  "http://127.0.0.1:8000" #os.getenv('FRONTEND_URL')
+BACKEND_URL = "http://127.0.0.1:8000" #os.getenv('BACKEND_URL')
+DOMAIN = "http://127.0.0.1:8000" #os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -228,7 +228,8 @@ PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
-REDIS_URL = os.environ.get("REDIS_URL")
+'''
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1")
 
 
 if os.environ.get('REDIS_URL'):
@@ -261,6 +262,7 @@ else:
     CELERY_ACCEPT_CONTENT = ["json"]
     CELERY_TASK_SERIALIZER = "json"
     CELERY_RESULT_SERIALIZER = "json"
+    '''
 
 
 # Email Settings
@@ -270,7 +272,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = "info@nilltechsolutions.com"
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '352LfAv8unud')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
