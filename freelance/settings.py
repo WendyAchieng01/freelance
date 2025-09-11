@@ -228,13 +228,39 @@ PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")
 
-CELERY_BROKER_URL = os.getenv("REDIS_URL")
-CELERY_RESULT_BACKEND = os.getenv("REDIS_URL")
 
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
+if os.environ.get('REDIS_URL'):
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get('REDIS_URL'),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
+    }
+    # For Celery
+    CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+    CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+else:
+    # Local development settings
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
+    }
+    # For Celery
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+    CELERY_ACCEPT_CONTENT = ["json"]
+    CELERY_TASK_SERIALIZER = "json"
+    CELERY_RESULT_SERIALIZER = "json"
 
 
 # Email Settings
@@ -244,7 +270,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'wessnathan10135@gmail.com'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'tbjservahmvwrzky')
 DEFAULT_FROM_EMAIL = 'wessnathan10135@gmail.com'
 
 
