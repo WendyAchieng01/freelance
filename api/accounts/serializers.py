@@ -68,8 +68,9 @@ class ProfileMiniSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'user', 'phone', 'location', 'profile_pic', 'bio',
-            'pay_id', 'pay_id_no', 'id_card', 'device', 'user_type'
+            'pay_id', 'id_card', 'device', 'user_type'
         ]
+        read_only_fields = ['pay_id_no']
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -299,9 +300,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'phone', 'location', 'bio', 'profile_pic',
-            'pay_id', 'pay_id_no', 'id_card', 'user_type'
+            'pay_id', 'id_card', 'user_type'
         ]
-        read_only_fields = ['user', 'user_type',
+        read_only_fields = ['user', 'user_type','pay_id_no',
                             'date_modified', 'email_verified', 'device']
 
     def validate_pay_id(self, value):
@@ -422,7 +423,7 @@ class ProfileWriteSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'phone', 'location', 'profile_pic', 'bio',
-            'pay_id', 'pay_id_no', 'id_card', 'device'
+            'pay_id', 'id_card', 'device'
         ]
 
 
@@ -609,10 +610,11 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
         model = ClientProfile
         fields = [
             "username", "first_name", "last_name", "email",
-            "phone", "location", "bio", "pay_id", "pay_id_no", "id_card", "profile_picture",
+            "phone", "location", "bio", "pay_id", "id_card", "profile_picture",
             "company_name", "company_website", "industry", "project_budget",
             "preferred_freelancer_level", "languages",
         ]
+        read_only_fields = ["pay_id_no",]
 
     def create(self, validated_data):
         profile_data = validated_data.pop("profile", {})

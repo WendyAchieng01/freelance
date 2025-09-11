@@ -58,12 +58,6 @@ class FreelancerForm(forms.Form):
         choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')), 
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    pay_id_no = forms.CharField(
-        label="Pay ID Number*", 
-        max_length=20, 
-        required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
     skills = forms.ModelMultipleChoiceField(
         queryset=Skill.objects.all(),
         widget=forms.CheckboxSelectMultiple,
@@ -181,12 +175,6 @@ class ClientForm(forms.Form):
         choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')),
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    pay_id_no = forms.CharField(
-        label="Pay ID Number*",
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Pay ID Number'})
-    )
     company_website = forms.URLField(
         label="",
         required=False,
@@ -262,5 +250,5 @@ class ChangePasswordForm(SetPasswordForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['phone', 'location', 'bio', 'profile_pic', 'pay_id', 'pay_id_no', 'id_card']
+        fields = ['phone', 'location', 'bio', 'profile_pic', 'pay_id', 'id_card']
 

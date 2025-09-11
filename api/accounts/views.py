@@ -55,7 +55,7 @@ from .serializers import (
 
 import logging
 from datetime import timedelta
-from api.tasks import send_verification_email
+#from api.tasks import send_verification_email
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
-    
+
     @extend_schema(
         summary="Register a new user",
         request=RegisterSerializer,
@@ -124,15 +124,30 @@ class RegisterView(APIView):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            verification_url = f"{settings.BACKEND_URL.rstrip('/')}/auth/verify-email/?uid={uid}&token={token}"
+            def build_verify_email_url(uid, token):
+                base_url = settings.BACKEND_URL.rstrip("/")
+                query_params = urlencode({"uid": uid, "token": token})
+                return f"{base_url}/auth/verify-email/?{query_params}"
 
-            send_verification_email.delay(
-                user.username, user.email, verification_url)
+            current_site = build_verify_email_url(uid, token)
+            verification_url = f'{current_site}'
 
-            return Response({
-                "message": "User created, verification email sent. Please check your email inbox or spam."
-            }, status=status.HTTP_201_CREATED)
+            subject = 'Verify Your Email Address'
+            message_text = f'Hi {user.username},\n\nPlease click the link to verify your email: {verification_url}'
+            message_html = format_html(
+                '<div style="font-family: Arial, sans-serif; text-align: center;">'
+                f'<h2>Welcome, {user.username}!</h2>'
+                '<p>Please click the button below to verify your email address:</p>'
+                f'<a href="{verification_url}" style="display: inline-block; background-color: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">'
+                'Verify Email</a><p>If you didn\'t sign up, ignore this email.</p>'
+                '</div>'
+            )
+            email = EmailMultiAlternatives(
+                subject, message_text, 'info@nilltechsolutions.com', [user.email])
+            email.attach_alternative(message_html, "text/html")
+            email.send()
 
+            return Response({"message": "User created, verification email sent. Please check you eamil inbox or spam"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -239,15 +254,35 @@ class ResendVerificationView(APIView):
         query_params = urlencode({"uid": uid, "token": token})
         verification_url = f"{base_url}/auth/verify-email/?{query_params}"
 
-        # 🔹 Send email through Celery
-        send_verification_email.delay(
-            user.username,
-            user.email,
-            verification_url
+        # Email content
+        subject = "Verify Your Email Address"
+        message_text = (
+            f"Hi {user.username},\n\n"
+            f"Please click the link to verify your email: {verification_url}\n\n"
+            "This link will expire in 24 hours."
+        )
+        message_html = format_html(
+            '<div style="font-family: Arial, sans-serif; text-align: center;">'
+            f'<h2>Hi {user.username},</h2>'
+            '<p>Please click the button below to verify your email address:</p>'
+            f'<a href="{verification_url}" style="display: inline-block; background-color: #007bff; '
+            'color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; '
+            'font-size: 16px;">Verify Email</a>'
+            '<p>This link will expire in 24 hours.</p>'
+            '</div>'
         )
 
-        return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
+        # Send email
+        email_message = EmailMultiAlternatives(
+            subject,
+            message_text,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email]
+        )
+        email_message.attach_alternative(message_html, "text/html")
+        email_message.send()
 
+        return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
 
 
 class LoginView(APIView):
