@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
     'web-production-b953.up.railway.app',  
     'www.nilltechsolutions.com',
     'nilltechsolutions.com',
+    'freelance-w8gc.onrender.com',
 ]
 
 
@@ -297,6 +298,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://nilltechsolutions.com'
     "http://nilltech.brainversetechnologies.co.ke",
     "https://nilltech.brainversetechnologies.co.ke",
+    "http://freelance-w8gc.onrender.com",
+    "https://freelance-w8gc.onrender.com"
 ]
 
 # Secure cookies and redirects
@@ -349,6 +352,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com",
     "http://nilltech.brainversetechnologies.co.ke",
     "https://nilltech.brainversetechnologies.co.ke",
+    "https://freelance-w8gc.onrender.com",
+    "http://freelance-w8gc.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -369,6 +374,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://nilltech.brainversetechnologies.co.ke",
+    "https://freelance-w8gc.onrender.com",
 ]
 
 SESSION_COOKIE_SAMESITE = "None"
