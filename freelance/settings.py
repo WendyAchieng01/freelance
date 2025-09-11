@@ -228,7 +228,7 @@ PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
-REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")
+REDIS_URL = os.environ.get("REDIS_URL")
 
 
 if os.environ.get('REDIS_URL'):
@@ -242,8 +242,8 @@ if os.environ.get('REDIS_URL'):
         }
     }
     # For Celery
-    CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
-    CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+    CELERY_BROKER_URL = os.environ.get('REDIS_URL')
+    CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
 else:
     # Local development settings
     CACHES = {
