@@ -596,8 +596,6 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
         source="profile.bio", required=False, allow_blank=True)
     pay_id = serializers.CharField(
         source="profile.pay_id", required=False, allow_blank=True)
-    pay_id_no = serializers.CharField(
-        source="profile.pay_id_no", required=False, allow_blank=True)
     id_card = serializers.CharField(
         source="profile.id_card", required=False, allow_blank=True)
     profile_picture = serializers.ImageField(
