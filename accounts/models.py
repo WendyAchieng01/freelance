@@ -14,14 +14,13 @@ def generate_unique_pay_id():
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     date_modified = models.DateTimeField(auto_now=True)
     phone = models.CharField(max_length=20, blank=True)
     location = models.CharField(max_length=200, blank=True)
     bio = models.TextField(blank=True)
     profile_pic = models.ImageField(upload_to='profile_pic/', blank=True, null=True)
     pay_id = models.CharField(max_length=20, choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')), default='M-Pesa')
-    pay_id_no = models.CharField(max_length=20,unique=False,blank=True,editable=False)
     id_card = models.CharField(max_length=10, blank=True)
     user_type = models.CharField(max_length=20, choices=(('freelancer', 'Freelancer'), ('client', 'Client')), default='freelancer')
     email_verified = models.BooleanField(default=False)
@@ -30,11 +29,6 @@ class Profile(models.Model):
     class Meta:
         unique_together = (('user', 'user_type'), )
         
-    def save(self, *args, **kwargs):
-        if not self.pay_id_no:
-            self.pay_id_no = generate_unique_pay_id()
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return self.user.username
 

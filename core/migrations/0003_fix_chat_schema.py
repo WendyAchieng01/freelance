@@ -7,13 +7,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Add active field
-        migrations.AddField(
-            model_name='Chat',
-            name='active',
-            field=models.BooleanField(default=False),
-            preserve_default=True,
-        ),
+        
         # Add chat_uuid field
         migrations.AddField(
             model_name='Chat',
