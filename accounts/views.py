@@ -426,7 +426,6 @@ def freelancer_form(request, user_id):
             profile.location = form.cleaned_data['location']
             profile.profile_pic = form.cleaned_data['photo']
             profile.pay_id = form.cleaned_data['pay_id']
-            profile.pay_id_no = form.cleaned_data['pay_id_no']
             profile.save()
             
             # Create or update the FreelancerProfile
@@ -458,7 +457,6 @@ def freelancer_form(request, user_id):
                 'phone_number': profile.phone or '',
                 'location': profile.location or '',
                 'pay_id': profile.pay_id or '',
-                'pay_id_no': profile.pay_id_no or '',
             })
         
         # Add freelancer-specific data if it exists
