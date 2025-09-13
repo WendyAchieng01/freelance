@@ -19,6 +19,7 @@ import ssl
 import socket
 import dj_database_url
 from decouple import config
+import cloudinary
 #from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
 load_dotenv()
@@ -82,6 +83,9 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'tz_detect',
     'corsheaders',
+    
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -286,7 +290,7 @@ CHANNEL_LAYERS = {
 }
 
 #for attachment files
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+#DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 #for heroku csrf_token
 # CSRF Settings
@@ -399,6 +403,22 @@ SPECTACULAR_SETTINGS = {
         }
     ],
     #'ENUM_NAME_OVERRIDES': ENUM_NAME_OVERRIDES,
+}
+
+# Cloudinary configuration
+cloudinary.config(
+    cloud_name='dfg91rvuz', 
+    api_key='165888911785752',    
+    api_secret='ZYAXmP9M_pkUsJOb4OG9xrtXz6c', 
+    secure=True 
+)
+
+# Use Cloudinary for media file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Optional: Set a custom folder in Cloudinary for uploads (e.g., for organization)
+CLOUDINARY_STORAGE = {
+    'PREFIX': 'chat_attachments/',  # All uploads will be under this folder in Cloudinary
 }
 
 LOGGING = {

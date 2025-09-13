@@ -14,6 +14,9 @@ from datetime import timedelta
 from accounts.models import Skill
 from django.utils.timezone import now
 from .choices import CATEGORY_CHOICES,APPLICATION_STATUS_CHOICES,JOB_STATUS_CHOICES,EXPERIENCE_LEVEL
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class JobCategory(models.Model):
@@ -342,6 +345,30 @@ class MessageAttachment(models.Model):
         return f"Attachment: {self.filename}"
 
     def save(self, *args, **kwargs):
+        # Set filename, size, content_type if not already set (e.g., from upload)
+        if not self.filename and self.file:
+            self.filename = self.file.name
+        if not self.file_size and self.file:
+            self.file_size = self.file.size
+        if not self.content_type and self.file:
+            self.content_type = self.file.content_type
+
+        # Generate thumbnail if it's an image
+        if self.content_type.startswith('image/') and not self.thumbnail:
+            try:
+                img = Image.open(self.file)
+                img.thumbnail((200, 200))  # Adjust size as needed
+                thumb_io = BytesIO()
+                img.save(thumb_io, format=img.format)
+                thumb_file = SimpleUploadedFile(
+                    f'thumb_{self.filename}',
+                    thumb_io.getvalue(),
+                    content_type=self.content_type
+                )
+                self.thumbnail = thumb_file
+            except Exception:
+                pass  # Skip if thumbnail fails (e.g., not an image)
+
         super().save(*args, **kwargs)
 
 
