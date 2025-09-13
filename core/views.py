@@ -480,13 +480,17 @@ def download_attachment(request, attachment_id):
     
     # Security check - only chat participants can download
     if request.user.profile not in [attachment.message.chat.client, attachment.message.chat.freelancer]:
-        raise PermissionDenied
+        raise Http404("You don't have permission to access this file")
     
-    response = FileResponse(attachment.file)
-    response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
-    response['Content-Type'] = attachment.content_type
-    return response
-
+    try:
+        # Stream the file from Cloudinary
+        response = FileResponse(attachment.file.open('rb'), as_attachment=True)
+        response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
+        response['Content-Type'] = attachment.content_type
+        response['Content-Length'] = attachment.file_size
+        return response
+    except Exception:
+        raise Http404("File not found")
 
 
 @login_required
