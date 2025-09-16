@@ -1,4 +1,6 @@
 import uuid
+import cloudinary
+import cloudinary.uploader
 from django.db import models
 from django.conf import settings
 from django.db.models import Avg
@@ -23,7 +25,7 @@ from datetime import datetime
 from cloudinary import uploader
 from mimetypes import guess_type
 import logging
-
+from cloudinary.models import CloudinaryField
 logger = logging.getLogger(__name__)
 
 class JobCategory(models.Model):
@@ -172,38 +174,54 @@ class JobBookmark(models.Model):
     def __str__(self):
         return f"{self.user.username} bookmarked {self.job.title}"
 
+
 class Response(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey('Job', related_name='responses', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    job = models.ForeignKey(
+        'Job', related_name='responses', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(auto_now_add=True)
     extra_data = models.JSONField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
-    cv = models.FileField(
-        upload_to='response_attachments/cvs/%Y/%m/%d/',
+    cv = CloudinaryField(
+        'file',
+        folder='freelance/response_attachments/cvs',
+        resource_type='raw',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])]
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'doc', 'docx'])]
     )
-    cover_letter = models.FileField(
-        upload_to='response_attachments/cover_letters/%Y/%m/%d/',
+    cover_letter = CloudinaryField(
+        'file',
+        folder='freelance/response_attachments/cover_letters',
+        resource_type='raw',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])]
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'doc', 'docx'])]
     )
-    portfolio = models.FileField(
-        upload_to='response_attachments/portfolios/%Y/%m/%d/',
+    portfolio = CloudinaryField(
+        'file',
+        folder='freelance/response_attachments/portfolios',
+        resource_type='raw',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip'])]
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip'])]
     )
-    cv_size = models.IntegerField(null=True, blank=True)  # Store file size
+    cv_size = models.IntegerField(null=True, blank=True)
     cover_letter_size = models.IntegerField(null=True, blank=True)
     portfolio_size = models.IntegerField(null=True, blank=True)
-    cv_content_type = models.CharField(max_length=100, null=True, blank=True)  # MIME type
-    cover_letter_content_type = models.CharField(max_length=100, null=True, blank=True)
-    portfolio_content_type = models.CharField(max_length=100, null=True, blank=True)
-    portfolio_thumbnail = models.ImageField(
-        upload_to='response_attachments/thumbnails/%Y/%m/%d/',
+    cv_content_type = models.CharField(
+        max_length=100, null=True, blank=True)  # MIME type
+    cover_letter_content_type = models.CharField(
+        max_length=100, null=True, blank=True)
+    portfolio_content_type = models.CharField(
+        max_length=100, null=True, blank=True)
+    portfolio_thumbnail = CloudinaryField(
+        'image',
+        folder='freelance/response_attachments/thumbnails',
+        resource_type='image',
         null=True,
         blank=True,
         help_text="Auto-generated thumbnail for portfolio images"
@@ -218,69 +236,6 @@ class Response(models.Model):
         unique_together = ('job', 'user',)
 
     def save(self, *args, **kwargs):
-        # --- Set file metadata ---
-        if self.cv and not self.cv_size:
-            self.cv_size = self.cv.size
-            self.cv_content_type = getattr(self.cv.file, 'content_type', guess_type(self.cv.name)[0])
-
-        if self.cover_letter and not self.cover_letter_size:
-            self.cover_letter_size = self.cover_letter.size
-            self.cover_letter_content_type = getattr(self.cover_letter.file, 'content_type', guess_type(self.cover_letter.name)[0])
-
-        if self.portfolio and not self.portfolio_size:
-            self.portfolio_size = self.portfolio.size
-            self.portfolio_content_type = getattr(self.portfolio.file, 'content_type', guess_type(self.portfolio.name)[0])
-
-        # --- Upload to Cloudinary ---
-        for field in ['cv', 'cover_letter', 'portfolio']:
-            file_field = getattr(self, field)
-            if file_field and not getattr(self, f'{field}_size'):
-                upload_path = datetime.now().strftime(f'response_attachments/{field}s/%Y/%m/%d/')
-                file_name = os.path.basename(file_field.name)
-                public_id = f"{upload_path}{file_name}"
-
-                try:
-                    upload_result = uploader.upload(
-                        file_field,
-                        public_id=public_id,
-                        resource_type="auto",
-                        overwrite=True
-                    )
-                    setattr(self, field, upload_result['public_id'])
-                    setattr(self, f'{field}_size', upload_result.get('bytes'))
-                    # keep MIME type separate
-                    setattr(self, f'{field}_content_type', upload_result.get('format', getattr(file_field, 'content_type', 'application/octet-stream')))
-                except Exception as e:
-                    print(f"Cloudinary upload failed for {field}: {e}")
-                    raise
-
-        # --- Generate thumbnail for portfolio if it's an image ---
-        if (
-            self.portfolio
-            and self.portfolio_content_type
-            and self.portfolio_content_type.startswith('image/')
-            and not self.portfolio_thumbnail
-        ):
-            try:
-                img = Image.open(self.portfolio)
-                img.thumbnail((200, 200))
-                thumb_io = BytesIO()
-                img.save(thumb_io, format=img.format)
-
-                thumb_filename = f'thumb_{os.path.basename(self.portfolio.name)}'
-                thumb_public_id = f'response_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/{thumb_filename}'
-
-                thumb_upload = uploader.upload(
-                    thumb_io.getvalue(),
-                    public_id=thumb_public_id,
-                    resource_type="image",
-                    overwrite=True
-                )
-                self.portfolio_thumbnail = thumb_upload['public_id']
-            except Exception as e:
-                print(f"Thumbnail generation failed: {e}")
-
-        # --- Generate slug ---
         if not self.slug:
             base_slug = slugify(f'{self.job.title}-{self.user.username}')
             unique_slug = base_slug
@@ -290,21 +245,47 @@ class Response(models.Model):
                 num += 1
             self.slug = unique_slug
 
-        # --- Auto-update response status ---
         self.auto_update_status()
+
+        for field in ['cv', 'cover_letter', 'portfolio']:
+            file_field = getattr(self, field)
+            if file_field and not getattr(self, f'{field}_size'):
+                try:
+                    resource = cloudinary.api.resource(
+                        file_field.public_id, resource_type='raw' if field != 'portfolio_thumbnail' else 'image')
+                    setattr(self, f'{field}_size', resource.get('bytes'))
+                    setattr(self, f'{field}_content_type',
+                            resource.get('resource_type'))
+                except Exception as e:
+                    print(f"Failed to fetch metadata for {field}: {e}")
+
+
+        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+            try:
+                thumb_public_id = f'freelance/response_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/thumb_{self.portfolio.public_id.split("/")[-1]}'
+                upload_result = cloudinary.uploader.upload(
+                    self.portfolio.url,
+                    public_id=thumb_public_id,
+                    resource_type='image',
+                    transformation=[
+                        {'width': 200, 'height': 200, 'crop': 'thumb'}],
+                    overwrite=True
+                )
+                self.portfolio_thumbnail = upload_result['public_id']
+            except Exception as e:
+                print(f"Thumbnail generation failed: {e}")
+
+
         super().save(*args, **kwargs)
 
     def auto_update_status(self):
         """Automate response status updates based on job state."""
         if self.job.status == 'completed' and self.status not in ['rejected', 'accepted']:
-            self.status = 'rejected' 
-
+            self.status = 'rejected'
         elif self.job.selected_freelancer == self.user:
             self.status = 'accepted'
-
         elif self.job.status == 'in_progress' and self.status == 'submitted':
             self.status = 'under_review'
-
 
     def is_accepted(self):
         return self.status == 'accepted'
@@ -317,6 +298,7 @@ class Response(models.Model):
 
     def is_submitted(self):
         return self.status == 'submitted'
+
     def mark_for_review(self):
         self.marked_for_review = True
         self.status = 'under_review'
@@ -410,73 +392,69 @@ class Message(models.Model):
     def __str__(self):
         return f"Message from {self.sender.username} at {self.timestamp}"
     
+
 class MessageAttachment(models.Model):
-    message = models.ForeignKey('Message', on_delete=models.CASCADE, related_name='attachments')
-    file = models.FileField(
-        upload_to='chat_attachments/%Y/%m/%d/',
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])]
+    message = models.ForeignKey(
+        'Message', on_delete=models.CASCADE, related_name='attachments')
+    file = CloudinaryField(
+        'file',
+        folder='freelance/chat_attachments',
+        resource_type='raw',
+        validators=[FileExtensionValidator(allowed_extensions=[
+                                            'jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])],
+        null=True,
+        blank=True
     )
-    filename = models.CharField(max_length=255)
+    filename = models.CharField(max_length=255, null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_size = models.IntegerField()
-    content_type = models.CharField(max_length=100)
-    thumbnail = models.ImageField(
-        upload_to='chat_attachments/thumbnails/%Y/%m/%d/',
+    file_size = models.IntegerField(null=True, blank=True)
+    content_type = models.CharField(max_length=100, null=True, blank=True)
+    thumbnail = CloudinaryField(
+        'image',
+        folder='freelance/chat_attachments/thumbnails',
+        resource_type='image',
         null=True,
         blank=True,
         help_text="Auto-generated thumbnail for image files"
     )
 
     def save(self, *args, **kwargs):
-        if not self.filename and self.file:
-            self.filename = self.file.name
-            self.file_size = self.file.size
-            self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
+        # Set filename if not already set
+        if self.file and not self.filename:
+            self.filename = self.file.public_id.split('/')[-1]
 
-        # Generate folder path dynamically
-        upload_path = datetime.now().strftime('chat_attachments/%Y/%m/%d/')
-        file_name = os.path.basename(self.filename)
-        public_id = f"{upload_path}{file_name}"
-
-        # Upload file to Cloudinary with the correct public_id
-        if self.file and not self.pk:  # Only upload on creation
+        # Set file metadata (size and content type)
+        if self.file and not self.file_size:
             try:
-                upload_result = upload(
-                    self.file,
-                    public_id=public_id,
-                    resource_type="auto",  # Automatically detect file type
-                    overwrite=True
-                )
-                self.file = upload_result['public_id']  # Store Cloudinary public_id
-                self.file_size = upload_result.get('bytes', self.file_size)
-                self.content_type = upload_result.get('resource_type', self.content_type)
+                resource = cloudinary.api.resource(
+                    self.file.public_id, resource_type='raw')
+                self.file_size = resource.get('bytes')
+                self.content_type = resource.get('resource_type')
             except Exception as e:
-                print(f"Cloudinary upload failed: {e}")
-                raise
+                print(f"Failed to fetch metadata for file: {e}")
+                # Log error (handled by settings.LOGGING)
 
         # Generate thumbnail for images
-        if self.content_type.startswith('image/') and not self.thumbnail:
+        if self.file and self.content_type and self.content_type.startswith('image/') and not self.thumbnail:
             try:
-                img = Image.open(self.file)
-                img.thumbnail((200, 200))
-                thumb_io = BytesIO()
-                img.save(thumb_io, format=img.format)
-                thumb_filename = f'thumb_{file_name}'
-                thumb_public_id = f'chat_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/{thumb_filename}'
-                thumb_upload = upload(
-                    thumb_io.getvalue(),
+                thumb_public_id = f'freelance/chat_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/thumb_{self.file.public_id.split("/")[-1]}'
+                upload_result = cloudinary.uploader.upload(
+                    self.file.url,
                     public_id=thumb_public_id,
-                    resource_type="image",
+                    resource_type='image',
+                    transformation=[
+                        {'width': 200, 'height': 200, 'crop': 'thumb'}],
                     overwrite=True
                 )
-                self.thumbnail = thumb_upload['public_id']
+                self.thumbnail = upload_result['public_id']
             except Exception as e:
                 print(f"Thumbnail generation failed: {e}")
+                # Log error (handled by settings.LOGGING)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Attachment: {self.filename}"
+        return f"Attachment: {self.filename or 'Unnamed'}"
 
 
 class Notification(models.Model):
@@ -533,47 +511,41 @@ class Review(models.Model):
 
 class ResponseAttachment(models.Model):
     response = models.ForeignKey(
-        'Response', 
-        on_delete=models.CASCADE, 
+        'Response',
+        on_delete=models.CASCADE,
         related_name='attachments'
     )
-    file = models.FileField(
-        upload_to='response_attachments/%Y/%m/%d/',
-        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip'])]
+    file = CloudinaryField(
+        'file',
+        folder='freelance/response_attachments',
+        resource_type='raw',
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip'])],
+        null=True,
+        blank=True
     )
-    filename = models.CharField(max_length=255)
-    file_size = models.IntegerField()
-    content_type = models.CharField(max_length=100)
+    filename = models.CharField(max_length=255, null=True, blank=True)
+    file_size = models.IntegerField(null=True, blank=True)
+    content_type = models.CharField(max_length=100, null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.filename and self.file:
-            self.filename = self.file.name
-            self.file_size = self.file.size
-            self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
+        # Set filename if not already set
+        if self.file and not self.filename:
+            self.filename = self.file.public_id.split('/')[-1]
 
-        # Generate folder path dynamically
-        upload_path = datetime.now().strftime('response_attachments/%Y/%m/%d/')
-        file_name = os.path.basename(self.filename)
-        public_id = f"{upload_path}{file_name}"
-
-        # Upload file to Cloudinary with the correct public_id
-        if self.file and not self.pk:  # Only upload on creation
+        # Set file metadata (size and content type)
+        if self.file and not self.file_size:
             try:
-                upload_result = upload(
-                    self.file,
-                    public_id=public_id,
-                    resource_type="auto",
-                    overwrite=True
-                )
-                self.file = upload_result['public_id']
-                self.file_size = upload_result.get('bytes', self.file_size)
-                self.content_type = upload_result.get('resource_type', self.content_type)
+                resource = cloudinary.api.resource(
+                    self.file.public_id, resource_type='raw')
+                self.file_size = resource.get('bytes')
+                self.content_type = resource.get('resource_type')
             except Exception as e:
-                print(f"Cloudinary upload failed: {e}")
-                raise
+                print(f"Failed to fetch metadata for file: {e}")
+                # Log error (handled by settings.LOGGING)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Attachment: {self.filename} for Response {self.response.id}"
+        return f"Attachment: {self.filename or 'Unnamed'} for Response {self.response.id}"
