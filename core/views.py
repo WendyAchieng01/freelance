@@ -477,20 +477,13 @@ def chat_room(request, chat_id):
 @login_required
 def download_attachment(request, attachment_id):
     attachment = get_object_or_404(MessageAttachment, id=attachment_id)
-    
-    # Security check - only chat participants can download
+
+    # Security check
     if request.user.profile not in [attachment.message.chat.client, attachment.message.chat.freelancer]:
         raise Http404("You don't have permission to access this file")
-    
-    try:
-        # Stream the file from Cloudinary
-        response = FileResponse(attachment.file.open('rb'), as_attachment=True)
-        response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
-        response['Content-Type'] = attachment.content_type
-        response['Content-Length'] = attachment.file_size
-        return response
-    except Exception:
-        raise Http404("File not found")
+
+    # Redirect to Cloudinary-hosted file
+    return HttpResponseRedirect(attachment.file.url)
 
 
 @login_required
@@ -571,36 +564,19 @@ def job_matches(request, job_id):
 
 @login_required
 def download_response_file(request, response_id, filename):
-    """
-    View to handle downloading of response attachments
-    """
-    # Get the response object
     response = get_object_or_404(Response, id=response_id)
-    
-    # Get the associated job
     job = response.job
-    
-    # Check if user has permission to download
-    # Allow access if user is: staff, freelancer who submitted, or client who posted the job
+
     is_client = hasattr(request.user, 'profile') and request.user.profile == job.client
     if not (request.user.is_staff or request.user == response.user or is_client):
         raise Http404("You don't have permission to access this file")
-    
-    # Find the attachment by filename
+
     try:
         attachment = response.attachments.get(filename=filename)
     except ResponseAttachment.DoesNotExist:
         raise Http404("File not found")
-    
-    try:
-        # Stream the file from Cloudinary
-        file_response = FileResponse(attachment.file.open('rb'), as_attachment=True)
-        file_response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
-        file_response['Content-Type'] = attachment.content_type
-        file_response['Content-Length'] = attachment.file_size
-        return file_response
-    except Exception:
-        raise Http404("File not found")
+
+    return HttpResponseRedirect(attachment.file.url)
 
 
 @login_required
