@@ -481,11 +481,14 @@ def download_attachment(request, attachment_id):
         raise Http404("You don't have permission to access this file")
 
     try:
+        # Get Cloudinary URL
         file_url = attachment.file.url
+        if not file_url.startswith('https://res.cloudinary.com'):
+            raise Exception("Invalid Cloudinary URL")
         return HttpResponseRedirect(file_url)
-    except Exception:
+    except Exception as e:
+        print(f"Download error: {e}")
         raise Http404("File not found")
-
 
 @login_required
 @require_http_methods(["POST"])
@@ -564,19 +567,27 @@ def job_matches(request, job_id):
     })
 
 @login_required
-def download_response_file(request, response_id, filename):
+def download_response_field(request, response_id, field_name):
     response = get_object_or_404(Response, id=response_id)
     job = response.job
     is_client = hasattr(request.user, 'profile') and request.user.profile == job.client
     if not (request.user.is_staff or request.user == response.user or is_client):
         raise Http404("You don't have permission to access this file")
 
+    if field_name not in ['cv', 'cover_letter', 'portfolio']:
+        raise Http404("Invalid field")
+
+    file_field = getattr(response, field_name)
+    if not file_field:
+        raise Http404("File not found")
+
     try:
-        attachment = response.attachments.get(filename=filename)
-        # Get Cloudinary URL for the file
-        file_url = attachment.file.url
+        file_url = file_field.url
+        if not file_url.startswith('https://res.cloudinary.com'):
+            raise Exception("Invalid Cloudinary URL")
         return HttpResponseRedirect(file_url)
-    except ResponseAttachment.DoesNotExist:
+    except Exception as e:
+        print(f"Download error: {e}")
         raise Http404("File not found")
 
 
