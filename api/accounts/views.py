@@ -447,7 +447,7 @@ class PasswordResetRequestView(APIView):
                 token = default_token_generator.make_token(user)
 
                 # Build reset URL for frontend
-                base_url = settings.BACKEND_URL.rstrip("/")
+                base_url = settings.FRONTEND_URL.rstrip("/")
                 query_params = urlencode({"uid": uid, "token": token})
                 reset_url = f"{base_url}/auth/password-reset-confirm/?{query_params}"
 
