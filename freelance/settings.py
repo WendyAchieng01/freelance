@@ -418,7 +418,8 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Optional: Set a custom folder in Cloudinary for uploads (e.g., for organization)
 CLOUDINARY_STORAGE = {
-    'PREFIX': 'chat_attachments/',  # All uploads will be under this folder in Cloudinary
+    'PREFIX': 'chat_attachments/',  
+    'PREFIX': 'response_attachments/',
 }
 
 LOGGING = {
