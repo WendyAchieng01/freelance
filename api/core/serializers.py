@@ -1,5 +1,6 @@
 import os
 import mimetypes
+import cloudinary
 from django.conf import settings
 from django.db.models import Sum
 from django.utils import timezone
@@ -12,7 +13,7 @@ from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
 from accounts.models import Profile, Skill, FreelancerProfile
 from api.accounts.serializers import ProfileMiniSerializer, SkillSerializer
-from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification
+from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification,ResponseAttachment
 
 
 
@@ -226,29 +227,15 @@ class ApplyResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Response
-        fields = ['extra_data', 'cv', 'cover_letter', 'portfolio',
-                    'cv_url', 'cover_letter_url', 'portfolio_url']
+        fields = [
+            'extra_data', 'cv', 'cover_letter', 'portfolio',
+            'cv_url', 'cover_letter_url', 'portfolio_url'
+        ]
         extra_kwargs = {
             'cv': {'required': False, 'allow_null': True},
             'cover_letter': {'required': False, 'allow_null': True},
             'portfolio': {'required': False, 'allow_null': True}
         }
-
-    def validate_cv(self, value):
-        if value:
-            validate_file(value, ['.pdf', '.doc', '.docx'])
-        return value
-
-    def validate_cover_letter(self, value):
-        if value:
-            validate_file(value, ['.pdf', '.doc', '.docx'])
-        return value
-
-    def validate_portfolio(self, value):
-        if value:
-            validate_file(
-                value, ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'])
-        return value
 
     def get_cv_url(self, obj):
         return obj.cv.url if obj.cv else None
@@ -258,6 +245,25 @@ class ApplyResponseSerializer(serializers.ModelSerializer):
 
     def get_portfolio_url(self, obj):
         return obj.portfolio.url if obj.portfolio else None
+
+    def validate_cv(self, value):
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+    def validate_cover_letter(self, value):
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
+
+    def validate_portfolio(self, value):
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx',
+                      '.jpg', '.jpeg', '.png'])
+        return value
 
 
 class ResponseListSerializer(serializers.ModelSerializer):
@@ -269,8 +275,7 @@ class ResponseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
         fields = [
-            'user',
-            'id', 'extra_data', 'submitted_at',
+            'user', 'id', 'extra_data', 'submitted_at',
             'cv_url', 'cover_letter_url', 'portfolio_url',
             'slug', 'status', 'marked_for_review'
         ]
@@ -297,13 +302,23 @@ class ResponseListSerializer(serializers.ModelSerializer):
         return obj.portfolio.url if obj.portfolio else None
 
     def validate_cv(self, value):
-        return validate_file(value, ['pdf', 'doc', 'docx'])
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
 
     def validate_cover_letter(self, value):
-        return validate_file(value, ['pdf', 'doc', 'docx'])
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx'])
+        return value
 
     def validate_portfolio(self, value):
-        return validate_file(value, ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'])
+        if value is None or value == '':
+            return None
+        validate_file(value, ['.pdf', '.doc', '.docx',
+                        '.jpg', '.jpeg', '.png'])
+        return value
 
 
 class ResponseReviewSerializer(serializers.ModelSerializer):
@@ -464,46 +479,46 @@ class BookmarkedJobSerializer(serializers.ModelSerializer):
         return obj.job.responses.filter(user=user).exists()
 
 
-
-
 class MessageAttachmentSerializer(serializers.ModelSerializer):
-    download_url = serializers.SerializerMethodField()
-    preview_url = serializers.SerializerMethodField()
+    file_url = serializers.SerializerMethodField(read_only=True)
+    thumbnail_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = MessageAttachment
         fields = [
-            'id', 'file', 'filename', 'uploaded_at',
+            'id', 'message', 'file', 'filename', 'uploaded_at',
             'file_size', 'content_type', 'thumbnail',
-            'download_url', 'preview_url'
+            'file_url', 'thumbnail_url'
+        ]
+        read_only_fields = [
+            'filename', 'uploaded_at', 'file_size', 'content_type',
+            'file_url', 'thumbnail_url'
         ]
 
-    def get_download_url(self, obj):
-        request = self.context.get('request')
-        if request:
-            return request.build_absolute_uri(obj.file.url)
-        return f"{settings.MEDIA_URL}{obj.file}"
+    def get_file_url(self, obj):
+        return obj.file.url if obj.file else None
 
-    def get_preview_url(self, obj):
-        """Return preview URL for images, else None."""
-        if obj.thumbnail:  # If a generated thumbnail exists, use it
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.thumbnail.url) if request else f"{settings.MEDIA_URL}{obj.thumbnail}"
-
+    def get_thumbnail_url(self, obj):
+        if obj.thumbnail:
+            return obj.thumbnail.url
         # Fallback: if file is an image, use the file itself as preview
-        mime_type, _ = mimetypes.guess_type(obj.file.name)
-        if mime_type and mime_type.startswith('image/'):
-            request = self.context.get('request')
-            return request.build_absolute_uri(obj.file.url) if request else f"{settings.MEDIA_URL}{obj.file}"
-
+        if obj.content_type and obj.content_type.startswith('image/'):
+            return obj.file.url
         return None
+
+    def validate_file(self, value):
+        if value is None or value == '':
+            return None
+        return value
+
+    def validate_thumbnail(self, value):
+        if value is None or value == '':
+            return None
+        return value
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    # Existing: show attachments on read
     attachments = MessageAttachmentSerializer(many=True, read_only=True)
-
-    # New: allow multiple files on write
     new_attachments = serializers.ListField(
         child=serializers.FileField(
             max_length=100000,
@@ -513,7 +528,6 @@ class MessageSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
-
     sender = serializers.StringRelatedField(read_only=True)
 
     class Meta:
@@ -521,25 +535,23 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'chat', 'sender', 'content', 'is_read',
             'timestamp', 'is_deleted',
-            'attachments',  
-            'new_attachments', 
+            'attachments', 'new_attachments'
         ]
         read_only_fields = ['chat', 'sender', 'is_deleted', 'timestamp']
 
     def create(self, validated_data):
         attachments_data = validated_data.pop('new_attachments', [])
-
-        # Create the Message itself
         message = Message.objects.create(**validated_data)
 
         for file in attachments_data:
             MessageAttachment.objects.create(
                 message=message,
                 file=file,
-                filename=file.name,
-                file_size=file.size,
+                # Extract filename without path
+                filename=file.name.split('/')[-1],
+                file_size=file.size if hasattr(file, 'size') else 0,
                 content_type=file.content_type if hasattr(
-                    file, 'content_type') else ''
+                    file, 'content_type') else 'application/octet-stream'
             )
 
         return message
@@ -560,3 +572,25 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ['id', 'user', 'message', 'created_at', 'is_read', 'chat']
+        
+
+class ResponseAttachmentSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ResponseAttachment
+        fields = [
+            'id', 'response', 'file', 'filename', 'file_size',
+            'content_type', 'uploaded_at', 'file_url'
+        ]
+        read_only_fields = [
+            'filename', 'file_size', 'content_type', 'uploaded_at', 'file_url'
+        ]
+
+    def get_file_url(self, obj):
+        return obj.file.url if obj.file else None
+
+    def validate_file(self, value):
+        if value is None or value == '':
+            return None
+        return value
