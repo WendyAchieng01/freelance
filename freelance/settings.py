@@ -196,8 +196,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -406,11 +406,12 @@ SPECTACULAR_SETTINGS = {
 }
 
 # Cloudinary configuration
+
 cloudinary.config(
-    cloud_name='dfg91rvuz', 
-    api_key='165888911785752',    
-    api_secret='ZYAXmP9M_pkUsJOb4OG9xrtXz6c', 
-    secure=True 
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+    secure=True
 )
 
 # Use Cloudinary for media file storage

@@ -172,7 +172,7 @@ class Response(models.Model):
     extra_data = models.JSONField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
     cv = models.FileField(
-        upload_to='responses/cvs/%Y/%m/%d/',
+        upload_to='response_attachments/',
         null=True,
         blank=True,
         validators=[FileExtensionValidator(
@@ -377,22 +377,23 @@ class Message(models.Model):
 
 class MessageAttachment(models.Model):
     message = models.ForeignKey(
-        'Message', on_delete=models.CASCADE, related_name='attachments')
+        'Message', 
+        on_delete=models.CASCADE, 
+        related_name='attachments'
+    )
     file = models.FileField(
-        upload_to='chat_attachments/%Y/%m/%d/',
+        upload_to='chat_attachments/',  # Simplified path for Cloudinary
         validators=[FileExtensionValidator(
-            allowed_extensions=['jpg', 'jpeg', 'png',
-                                'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
         )]
     )
     filename = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file_size = models.IntegerField()  # Store file size in bytes
-    # MIME type, e.g., 'image/jpeg'
+    file_size = models.IntegerField()
     content_type = models.CharField(max_length=100)
     thumbnail = models.ImageField(
-        upload_to='thumbnails/',
-        null=True,
+        upload_to='thumbnails/', 
+        null=True, 
         blank=True,
         help_text="Auto-generated thumbnail for image files"
     )
@@ -401,29 +402,30 @@ class MessageAttachment(models.Model):
         return f"Attachment: {self.filename}"
 
     def save(self, *args, **kwargs):
-        # Set filename, size, content_type if not already set (e.g., from upload)
         if not self.filename and self.file:
             self.filename = self.file.name
         if not self.file_size and self.file:
             self.file_size = self.file.size
         if not self.content_type and self.file:
-            self.content_type = self.file.content_type
+            self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
 
-        # Generate thumbnail if it's an image
-        if self.content_type.startswith('image/') and not self.thumbnail:
+        # Generate thumbnail for images
+        if self.content_type and self.content_type.startswith('image/') and not self.thumbnail:
             try:
                 img = Image.open(self.file)
-                img.thumbnail((200, 200))  # Adjust size as needed
+                img.thumbnail((200, 200))
                 thumb_io = BytesIO()
-                img.save(thumb_io, format=img.format)
+                img_format = img.format or 'JPEG'
+                img.save(thumb_io, format=img_format)
                 thumb_file = SimpleUploadedFile(
                     f'thumb_{self.filename}',
                     thumb_io.getvalue(),
                     content_type=self.content_type
                 )
                 self.thumbnail = thumb_file
-            except Exception:
-                pass  # Skip if thumbnail fails (e.g., not an image)
+            except Exception as e:
+                print(f"Thumbnail generation failed: {e}")
+                pass
 
         super().save(*args, **kwargs)
 
@@ -482,10 +484,12 @@ class Review(models.Model):
 
 class ResponseAttachment(models.Model):
     response = models.ForeignKey(
-        'Response', on_delete=models.CASCADE, related_name='attachments'
+        'Response', 
+        on_delete=models.CASCADE, 
+        related_name='attachments'
     )
     file = models.FileField(
-        upload_to='responses/sample_work/%Y/%m/%d/',
+        upload_to='response_attachments/',  # Simplified path for Cloudinary
         validators=[FileExtensionValidator(
             allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip']
         )]
@@ -499,7 +503,7 @@ class ResponseAttachment(models.Model):
         if not self.filename and self.file:
             self.filename = self.file.name
             self.file_size = self.file.size
-            self.content_type = self.file.content_type
+            self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
         super().save(*args, **kwargs)
 
     def __str__(self):
