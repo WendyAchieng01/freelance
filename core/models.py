@@ -20,6 +20,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from cloudinary.uploader import upload
 import os
 from datetime import datetime
+from cloudinary import uploader
+from mimetypes import guess_type
 import logging
 
 logger = logging.getLogger(__name__)
@@ -216,26 +218,29 @@ class Response(models.Model):
         unique_together = ('job', 'user',)
 
     def save(self, *args, **kwargs):
-        # Set file metadata
+        # --- Set file metadata ---
         if self.cv and not self.cv_size:
             self.cv_size = self.cv.size
-            self.cv_content_type = self.cv.file.content_type
+            self.cv_content_type = getattr(self.cv.file, 'content_type', guess_type(self.cv.name)[0])
+
         if self.cover_letter and not self.cover_letter_size:
             self.cover_letter_size = self.cover_letter.size
-            self.cover_letter_content_type = self.cover_letter.file.content_type
+            self.cover_letter_content_type = getattr(self.cover_letter.file, 'content_type', guess_type(self.cover_letter.name)[0])
+
         if self.portfolio and not self.portfolio_size:
             self.portfolio_size = self.portfolio.size
-            self.portfolio_content_type = self.portfolio.file.content_type
+            self.portfolio_content_type = getattr(self.portfolio.file, 'content_type', guess_type(self.portfolio.name)[0])
 
-        # Upload files to Cloudinary
+        # --- Upload to Cloudinary ---
         for field in ['cv', 'cover_letter', 'portfolio']:
             file_field = getattr(self, field)
             if file_field and not getattr(self, f'{field}_size'):
                 upload_path = datetime.now().strftime(f'response_attachments/{field}s/%Y/%m/%d/')
                 file_name = os.path.basename(file_field.name)
                 public_id = f"{upload_path}{file_name}"
+
                 try:
-                    upload_result = upload(
+                    upload_result = uploader.upload(
                         file_field,
                         public_id=public_id,
                         resource_type="auto",
@@ -243,21 +248,29 @@ class Response(models.Model):
                     )
                     setattr(self, field, upload_result['public_id'])
                     setattr(self, f'{field}_size', upload_result.get('bytes'))
-                    setattr(self, f'{field}_content_type', upload_result.get('resource_type'))
+                    # keep MIME type separate
+                    setattr(self, f'{field}_content_type', upload_result.get('format', getattr(file_field, 'content_type', 'application/octet-stream')))
                 except Exception as e:
                     print(f"Cloudinary upload failed for {field}: {e}")
                     raise
 
-        # Generate thumbnail for portfolio if it's an image
-        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+        # --- Generate thumbnail for portfolio if it's an image ---
+        if (
+            self.portfolio
+            and self.portfolio_content_type
+            and self.portfolio_content_type.startswith('image/')
+            and not self.portfolio_thumbnail
+        ):
             try:
                 img = Image.open(self.portfolio)
                 img.thumbnail((200, 200))
                 thumb_io = BytesIO()
                 img.save(thumb_io, format=img.format)
+
                 thumb_filename = f'thumb_{os.path.basename(self.portfolio.name)}'
                 thumb_public_id = f'response_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/{thumb_filename}'
-                thumb_upload = upload(
+
+                thumb_upload = uploader.upload(
                     thumb_io.getvalue(),
                     public_id=thumb_public_id,
                     resource_type="image",
@@ -267,7 +280,7 @@ class Response(models.Model):
             except Exception as e:
                 print(f"Thumbnail generation failed: {e}")
 
-        # Auto-generate slug
+        # --- Generate slug ---
         if not self.slug:
             base_slug = slugify(f'{self.job.title}-{self.user.username}')
             unique_slug = base_slug
@@ -277,7 +290,7 @@ class Response(models.Model):
                 num += 1
             self.slug = unique_slug
 
-        # Auto-update response status
+        # --- Auto-update response status ---
         self.auto_update_status()
         super().save(*args, **kwargs)
 
