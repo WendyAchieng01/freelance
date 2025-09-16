@@ -408,8 +408,19 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    'RAW_MEDIA': 'chat_attachments/',
-    'RESPONSES': 'response_attachments/',
+    'FOLDER':'freelance',
+}
+
+CLOUDINARY_FOLDERS = {
+    'TRAINING': 'freelance/pdf_documents',
+    'PROFILE':'freelance/profile_pic',
+    'RESPONSE_CV': 'freelance/response_attachments/cvs',
+    'RESPONSE_COVER_LETTER': 'freelance/response_attachments/cover_letters',
+    'RESPONSE_PORTFOLIO': 'freelance/response_attachments/portfolios',
+    'RESPONSE_THUMBNAIL': 'freelance/response_attachments/thumbnails',
+    'MESSAGE_ATTACHMENT': 'freelance/chat_attachments',
+    'MESSAGE_THUMBNAIL': 'freelance/chat_attachments/thumbnails',
+    'RESPONSE_ATTACHMENT': 'freelance/response_attachments',
 }
 
 

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
 
 from core.models import Job
 
@@ -9,7 +10,8 @@ from core.models import Job
 class Training(models.Model):
     title = models.CharField(max_length=100)
     texts = models.TextField()
-    pdf_document = models.FileField(upload_to='pdf_documents/', null=True, blank=True)
+    pdf_document = CloudinaryField(
+        'file', folder='freelance/pdf_documents/', null=True, blank=True, resource_type='raw')
     video_url = models.URLField(max_length=200, null=True, blank=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='trainings')
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trainings', default=None, null=True, blank=True)

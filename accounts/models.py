@@ -6,6 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 import uuid
+from cloudinary.models import CloudinaryField
 
 
 def generate_unique_pay_id():
@@ -19,7 +20,8 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     location = models.CharField(max_length=200, blank=True)
     bio = models.TextField(blank=True)
-    profile_pic = models.ImageField(upload_to='profile_pic/', blank=True, null=True)
+    profile_pic = CloudinaryField(
+        'image', folder='freelance/profile_pic/', null=True, blank=True, resource_type='raw')
     pay_id = models.CharField(max_length=20, choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')), default='M-Pesa')
     id_card = models.CharField(max_length=10, blank=True)
     user_type = models.CharField(max_length=20, choices=(('freelancer', 'Freelancer'), ('client', 'Client')), default='freelancer')
@@ -319,11 +321,8 @@ class PortfolioProject(models.Model):
     description = models.TextField()
     link = models.URLField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
-    project_media = models.FileField(
-        upload_to=project_media_upload_path,
-        blank=True,
-        null=True
-    )
+    project_media = CloudinaryField(
+        'file', folder='freelance/portfolio_media/', null=True, blank=True, resource_type='raw')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
