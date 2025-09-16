@@ -126,6 +126,7 @@ class RegisterView(APIView):
 
             def build_verify_email_url(uid, token):
                 base_url = settings.BACKEND_URL.rstrip("/")
+                print(base_url)
                 query_params = urlencode({"uid": uid, "token": token})
                 return f"{base_url}/auth/verify-email/?{query_params}"
 
@@ -231,28 +232,39 @@ class ResendVerificationView(APIView):
     def post(self, request):
         serializer = ResendVerificationSerializer(data=request.data)
         if not serializer.is_valid():
+            logger.warning(
+                "Resend verification failed due to invalid data: %s", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         email = serializer.validated_data['email']
+        logger.info("Resend verification requested for email: %s", email)
 
         # Look up user
         try:
             user = User.objects.get(email__iexact=email)
+            logger.debug("User found for email %s with id %s", email, user.id)
         except User.DoesNotExist:
+            logger.warning(
+                "Resend verification attempted for non-existent email: %s", email)
             return Response({"error": "No user with this email found."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if already active
         if user.is_active:
+            logger.info(
+                "Resend verification attempted for already verified user: %s", email)
             return Response({"error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create UID and token
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
+        logger.debug("Generated verification token for user %s", user.id)
 
         # Build verification URL
         base_url = settings.BACKEND_URL.rstrip("/")
         query_params = urlencode({"uid": uid, "token": token})
         verification_url = f"{base_url}/auth/verify-email/?{query_params}"
+        logger.debug("Verification URL generated for user %s: %s",
+                     user.id, verification_url)
 
         # Email content
         subject = "Verify Your Email Address"
@@ -272,15 +284,21 @@ class ResendVerificationView(APIView):
             '</div>'
         )
 
-        # Send email
-        email_message = EmailMultiAlternatives(
-            subject,
-            message_text,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email]
-        )
-        email_message.attach_alternative(message_html, "text/html")
-        email_message.send()
+        try:
+            # Send email
+            email_message = EmailMultiAlternatives(
+                subject,
+                message_text,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email]
+            )
+            email_message.attach_alternative(message_html, "text/html")
+            email_message.send()
+            logger.info("Verification email resent successfully to %s", email)
+        except Exception as e:
+            logger.error("Failed to send verification email to %s: %s",
+                         email, str(e), exc_info=True)
+            return Response({"error": "Failed to send verification email."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"message": "Verification email resent."}, status=status.HTTP_200_OK)
 
