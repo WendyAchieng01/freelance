@@ -11,7 +11,6 @@ class TrainingSerializer(serializers.ModelSerializer):
     pdf_document = serializers.FileField(
         required=False,
         allow_null=True,
-        allow_empty_file=True,
         use_url=True
     )
     file_name = serializers.SerializerMethodField(read_only=True)
@@ -34,24 +33,14 @@ class TrainingSerializer(serializers.ModelSerializer):
         return value
 
     def validate_pdf_document(self, value):
-        if value == '':
+        if value is None or value == '':
             return None
         return value
 
-    def get_url(self, obj):
-        request = self.context.get('request')
-        job_slug = self.context.get('job_slug') or (
-            request and request.parser_context.get(
-                'kwargs', {}).get('job_slug')
-        )
-        if request and job_slug and obj.slug:
-            return request.build_absolute_uri(f'/api/v1/academy/trainings/{job_slug}/{obj.slug}/')
-        return None
-
     def get_file_name(self, obj):
         if obj.pdf_document:
-            filename = obj.pdf_document.name.split('/')[-1]
-            return os.path.splitext(filename)[0]
+            public_id = obj.pdf_document.public_id
+            return os.path.splitext(public_id.split('/')[-1])[0]
         return None
 
     def get_file_size(self, obj):
