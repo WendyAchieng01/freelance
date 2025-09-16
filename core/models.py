@@ -165,22 +165,51 @@ class JobBookmark(models.Model):
     def __str__(self):
         return f"{self.user.username} bookmarked {self.job.title}"
 
-
 class Response(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey(
-        'Job', related_name='responses', on_delete=models.CASCADE)
+    job = models.ForeignKey('Job', related_name='responses', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(auto_now_add=True)
     extra_data = models.JSONField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
-    cv = models.FileField(upload_to='responses/cvs/', null=True, blank=True)
+    cv = models.FileField(
+        upload_to='responses/cvs/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'doc', 'docx']
+        )]
+    )
     cover_letter = models.FileField(
-        upload_to='responses/cover_letters/', null=True, blank=True)
+        upload_to='responses/cover_letters/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'doc', 'docx']
+        )]
+    )
     portfolio = models.FileField(
-        upload_to='responses/portfolios/', null=True, blank=True)
+        upload_to='responses/portfolios/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip']
+        )]
+    )
+    cv_size = models.IntegerField(null=True, blank=True)  # Store file size
+    cover_letter_size = models.IntegerField(null=True, blank=True)
+    portfolio_size = models.IntegerField(null=True, blank=True)
+    cv_content_type = models.CharField(max_length=100, null=True, blank=True)  # MIME type
+    cover_letter_content_type = models.CharField(max_length=100, null=True, blank=True)
+    portfolio_content_type = models.CharField(max_length=100, null=True, blank=True)
+    portfolio_thumbnail = models.ImageField(
+        upload_to='responses/thumbnails/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        help_text="Auto-generated thumbnail for portfolio images"
+    )
     status = models.CharField(
-        max_length=20,choices=APPLICATION_STATUS_CHOICES,default='submitted',
-        null=True,blank=True
+        max_length=20, choices=APPLICATION_STATUS_CHOICES, default='submitted',
+        null=True, blank=True
     )
     marked_for_review = models.BooleanField(default=False)
 
@@ -188,6 +217,33 @@ class Response(models.Model):
         unique_together = ('job', 'user',)
 
     def save(self, *args, **kwargs):
+        # Set file metadata
+        if self.cv and not self.cv_size:
+            self.cv_size = self.cv.size
+            self.cv_content_type = self.cv.file.content_type
+        if self.cover_letter and not self.cover_letter_size:
+            self.cover_letter_size = self.cover_letter.size
+            self.cover_letter_content_type = self.cover_letter.file.content_type
+        if self.portfolio and not self.portfolio_size:
+            self.portfolio_size = self.portfolio.size
+            self.portfolio_content_type = self.portfolio.file.content_type
+
+        # Generate thumbnail for portfolio if it's an image
+        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+            try:
+                img = Image.open(self.portfolio)
+                img.thumbnail((200, 200))  # Adjust size as needed
+                thumb_io = BytesIO()
+                img.save(thumb_io, format=img.format)
+                thumb_file = SimpleUploadedFile(
+                    f'thumb_{self.portfolio.name.split("/")[-1]}',
+                    thumb_io.getvalue(),
+                    content_type=self.portfolio_content_type
+                )
+                self.portfolio_thumbnail = thumb_file
+            except Exception:
+                pass  # Skip if thumbnail fails
+
         # Auto-generate slug
         if not self.slug:
             base_slug = slugify(f'{self.job.title}-{self.user.username}')
@@ -198,7 +254,7 @@ class Response(models.Model):
                 num += 1
             self.slug = unique_slug
 
-        # Auto-update response status based on job status
+        # Auto-update response status
         self.auto_update_status()
         super().save(*args, **kwargs)
 
@@ -422,3 +478,29 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.reviewer.username}'s review for {self.recipient.username}"
+
+
+class ResponseAttachment(models.Model):
+    response = models.ForeignKey(
+        'Response', on_delete=models.CASCADE, related_name='attachments'
+    )
+    file = models.FileField(
+        upload_to='responses/sample_work/%Y/%m/%d/',
+        validators=[FileExtensionValidator(
+            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip']
+        )]
+    )
+    filename = models.CharField(max_length=255)
+    file_size = models.IntegerField()
+    content_type = models.CharField(max_length=100)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.filename and self.file:
+            self.filename = self.file.name
+            self.file_size = self.file.size
+            self.content_type = self.file.content_type
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Attachment: {self.filename} for Response {self.response.id}"
