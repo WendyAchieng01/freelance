@@ -477,34 +477,13 @@ def chat_room(request, chat_id):
 @login_required
 def download_attachment(request, attachment_id):
     attachment = get_object_or_404(MessageAttachment, id=attachment_id)
-    
-    # Security check
     if request.user.profile not in [attachment.message.chat.client, attachment.message.chat.freelancer]:
         raise Http404("You don't have permission to access this file")
-    
+
     try:
-        # Get the Cloudinary URL and redirect to it
         file_url = attachment.file.url
-        
-        # For direct download, we can either redirect or stream the file
-        # Option 1: Simple redirect (easier)
         return HttpResponseRedirect(file_url)
-        
-        # Option 2: Stream the file (more secure, uncomment if needed)
-        # response = requests.get(file_url)
-        # if response.status_code == 200:
-        #     http_response = HttpResponse(
-        #         response.content,
-        #         content_type=attachment.content_type
-        #     )
-        #     http_response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
-        #     http_response['Content-Length'] = len(response.content)
-        #     return http_response
-        # else:
-        #     raise Http404("File not found")
-            
-    except Exception as e:
-        print(f"Download error: {e}")
+    except Exception:
         raise Http404("File not found")
 
 
@@ -584,25 +563,20 @@ def job_matches(request, job_id):
         'matches': matches
     })
 
-@login_required 
+@login_required
 def download_response_file(request, response_id, filename):
     response = get_object_or_404(Response, id=response_id)
     job = response.job
-    
-    # Permission check
     is_client = hasattr(request.user, 'profile') and request.user.profile == job.client
     if not (request.user.is_staff or request.user == response.user or is_client):
         raise Http404("You don't have permission to access this file")
-    
+
     try:
         attachment = response.attachments.get(filename=filename)
+        # Get Cloudinary URL for the file
         file_url = attachment.file.url
         return HttpResponseRedirect(file_url)
-        
     except ResponseAttachment.DoesNotExist:
-        raise Http404("File not found")
-    except Exception as e:
-        print(f"Download error: {e}")
         raise Http404("File not found")
 
 

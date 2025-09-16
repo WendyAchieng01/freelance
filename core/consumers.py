@@ -65,7 +65,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             attachments.append({
                 'id': attachment.id,
                 'filename': attachment.filename,
-                'url': reverse('core:download_attachment', kwargs={'attachment_id': attachment.id}),
+                'url': attachment.file.url,  # Use Cloudinary URL
                 'file_size': attachment.file_size
             })
         return attachments
