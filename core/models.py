@@ -17,7 +17,10 @@ from .choices import CATEGORY_CHOICES,APPLICATION_STATUS_CHOICES,JOB_STATUS_CHOI
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from cloudinary.uploader import upload
+import logging
 
+logger = logging.getLogger(__name__)
 
 class JobCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -172,28 +175,22 @@ class Response(models.Model):
     extra_data = models.JSONField(null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, null=True, max_length=150)
     cv = models.FileField(
-        upload_to='response_attachments/',
+        upload_to='response_attachments/cvs/%Y/%m/%d/',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'doc', 'docx']
-        )]
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])]
     )
     cover_letter = models.FileField(
-        upload_to='responses/cover_letters/%Y/%m/%d/',
+        upload_to='response_attachments/cover_letters/%Y/%m/%d/',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'doc', 'docx']
-        )]
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx'])]
     )
     portfolio = models.FileField(
-        upload_to='responses/portfolios/%Y/%m/%d/',
+        upload_to='response_attachments/portfolios/%Y/%m/%d/',
         null=True,
         blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip']
-        )]
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip'])]
     )
     cv_size = models.IntegerField(null=True, blank=True)  # Store file size
     cover_letter_size = models.IntegerField(null=True, blank=True)
@@ -202,7 +199,7 @@ class Response(models.Model):
     cover_letter_content_type = models.CharField(max_length=100, null=True, blank=True)
     portfolio_content_type = models.CharField(max_length=100, null=True, blank=True)
     portfolio_thumbnail = models.ImageField(
-        upload_to='responses/thumbnails/%Y/%m/%d/',
+        upload_to='response_attachments/thumbnails/%Y/%m/%d/',
         null=True,
         blank=True,
         help_text="Auto-generated thumbnail for portfolio images"
@@ -217,46 +214,54 @@ class Response(models.Model):
         unique_together = ('job', 'user',)
 
     def save(self, *args, **kwargs):
-        # Set file metadata
-        if self.cv and not self.cv_size:
-            self.cv_size = self.cv.size
-            self.cv_content_type = self.cv.file.content_type
-        if self.cover_letter and not self.cover_letter_size:
-            self.cover_letter_size = self.cover_letter.size
-            self.cover_letter_content_type = self.cover_letter.file.content_type
-        if self.portfolio and not self.portfolio_size:
-            self.portfolio_size = self.portfolio.size
-            self.portfolio_content_type = self.portfolio.file.content_type
+        try:
+            # Set file metadata
+            if self.cv and not self.cv_size:
+                self.cv_size = self.cv.size
+                self.cv_content_type = self.cv.file.content_type
+            if self.cover_letter and not self.cover_letter_size:
+                self.cover_letter_size = self.cover_letter.size
+                self.cover_letter_content_type = self.cover_letter.file.content_type
+            if self.portfolio and not self.portfolio_size:
+                self.portfolio_size = self.portfolio.size
+                self.portfolio_content_type = self.portfolio.file.content_type
 
-        # Generate thumbnail for portfolio if it's an image
-        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
-            try:
-                img = Image.open(self.portfolio)
-                img.thumbnail((200, 200))  # Adjust size as needed
-                thumb_io = BytesIO()
-                img.save(thumb_io, format=img.format)
-                thumb_file = SimpleUploadedFile(
-                    f'thumb_{self.portfolio.name.split("/")[-1]}',
-                    thumb_io.getvalue(),
-                    content_type=self.portfolio_content_type
-                )
-                self.portfolio_thumbnail = thumb_file
-            except Exception:
-                pass  # Skip if thumbnail fails
+            # Generate thumbnail for portfolio if it's an image
+            if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+                try:
+                    img = Image.open(self.portfolio)
+                    img.thumbnail((200, 200))
+                    thumb_io = BytesIO()
+                    img.save(thumb_io, format=img.format)
+                    thumb_filename = f'thumb_{self.portfolio.name.split("/")[-1]}'
+                    # Upload thumbnail to Cloudinary
+                    thumb_upload = upload(
+                        thumb_io.getvalue(),
+                        resource_type="image",
+                        public_id=f'response_attachments/thumbnails/{thumb_filename}',
+                        overwrite=True
+                    )
+                    self.portfolio_thumbnail = thumb_upload['public_id']
+                except Exception as e:
+                    print(f"Thumbnail generation failed: {e}")
 
-        # Auto-generate slug
-        if not self.slug:
-            base_slug = slugify(f'{self.job.title}-{self.user.username}')
-            unique_slug = base_slug
-            num = 1
-            while Response.objects.filter(slug=unique_slug).exists():
-                unique_slug = f'{base_slug}-{num}'
-                num += 1
-            self.slug = unique_slug
+            # Auto-generate slug
+            if not self.slug:
+                base_slug = slugify(f'{self.job.title}-{self.user.username}')
+                unique_slug = base_slug
+                num = 1
+                while Response.objects.filter(slug=unique_slug).exists():
+                    unique_slug = f'{base_slug}-{num}'
+                    num += 1
+                self.slug = unique_slug
 
-        # Auto-update response status
-        self.auto_update_status()
-        super().save(*args, **kwargs)
+            # Auto-update response status
+            self.auto_update_status()
+            super().save(*args, **kwargs)
+
+        except Exception as e:
+            logger.error(f"Error saving Response: {e}")
+            raise
 
     def auto_update_status(self):
         """Automate response status updates based on job state."""
@@ -382,18 +387,16 @@ class MessageAttachment(models.Model):
         related_name='attachments'
     )
     file = models.FileField(
-        upload_to='chat_attachments/',  # Simplified path for Cloudinary
-        validators=[FileExtensionValidator(
-            allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx']
-        )]
+        upload_to='chat_attachments/%Y/%m/%d/',
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])]
     )
     filename = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     file_size = models.IntegerField()
     content_type = models.CharField(max_length=100)
     thumbnail = models.ImageField(
-        upload_to='thumbnails/', 
-        null=True, 
+        upload_to='chat_attachments/thumbnails/%Y/%m/%d/',
+        null=True,
         blank=True,
         help_text="Auto-generated thumbnail for image files"
     )
@@ -404,28 +407,26 @@ class MessageAttachment(models.Model):
     def save(self, *args, **kwargs):
         if not self.filename and self.file:
             self.filename = self.file.name
-        if not self.file_size and self.file:
             self.file_size = self.file.size
-        if not self.content_type and self.file:
             self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
 
         # Generate thumbnail for images
-        if self.content_type and self.content_type.startswith('image/') and not self.thumbnail:
+        if self.content_type.startswith('image/') and not self.thumbnail:
             try:
                 img = Image.open(self.file)
                 img.thumbnail((200, 200))
                 thumb_io = BytesIO()
-                img_format = img.format or 'JPEG'
-                img.save(thumb_io, format=img_format)
-                thumb_file = SimpleUploadedFile(
-                    f'thumb_{self.filename}',
+                img.save(thumb_io, format=img.format)
+                thumb_filename = f'thumb_{self.filename}'
+                thumb_upload = upload(
                     thumb_io.getvalue(),
-                    content_type=self.content_type
+                    resource_type="image",
+                    public_id=f'chat_attachments/thumbnails/{thumb_filename}',
+                    overwrite=True
                 )
-                self.thumbnail = thumb_file
+                self.thumbnail = thumb_upload['public_id']
             except Exception as e:
                 print(f"Thumbnail generation failed: {e}")
-                pass
 
         super().save(*args, **kwargs)
 
@@ -489,10 +490,8 @@ class ResponseAttachment(models.Model):
         related_name='attachments'
     )
     file = models.FileField(
-        upload_to='response_attachments/',  # Simplified path for Cloudinary
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip']
-        )]
+        upload_to='response_attachments/%Y/%m/%d/',
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip'])]
     )
     filename = models.CharField(max_length=255)
     file_size = models.IntegerField()

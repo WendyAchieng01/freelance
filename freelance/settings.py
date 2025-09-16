@@ -405,7 +405,8 @@ SPECTACULAR_SETTINGS = {
     #'ENUM_NAME_OVERRIDES': ENUM_NAME_OVERRIDES,
 }
 
-# Cloudinary configuration
+import cloudinary
+import os
 
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
@@ -414,14 +415,16 @@ cloudinary.config(
     secure=True
 )
 
-# Use Cloudinary for media file storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Optional: Set a custom folder in Cloudinary for uploads (e.g., for organization)
 CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     'RAW_MEDIA': 'chat_attachments/',
     'RESPONSES': 'response_attachments/',
 }
+
 
 LOGGING = {
     'version': 1,
