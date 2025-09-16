@@ -18,6 +18,8 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 from cloudinary.uploader import upload
+import os
+from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -214,54 +216,70 @@ class Response(models.Model):
         unique_together = ('job', 'user',)
 
     def save(self, *args, **kwargs):
-        try:
-            # Set file metadata
-            if self.cv and not self.cv_size:
-                self.cv_size = self.cv.size
-                self.cv_content_type = self.cv.file.content_type
-            if self.cover_letter and not self.cover_letter_size:
-                self.cover_letter_size = self.cover_letter.size
-                self.cover_letter_content_type = self.cover_letter.file.content_type
-            if self.portfolio and not self.portfolio_size:
-                self.portfolio_size = self.portfolio.size
-                self.portfolio_content_type = self.portfolio.file.content_type
+        # Set file metadata
+        if self.cv and not self.cv_size:
+            self.cv_size = self.cv.size
+            self.cv_content_type = self.cv.file.content_type
+        if self.cover_letter and not self.cover_letter_size:
+            self.cover_letter_size = self.cover_letter.size
+            self.cover_letter_content_type = self.cover_letter.file.content_type
+        if self.portfolio and not self.portfolio_size:
+            self.portfolio_size = self.portfolio.size
+            self.portfolio_content_type = self.portfolio.file.content_type
 
-            # Generate thumbnail for portfolio if it's an image
-            if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+        # Upload files to Cloudinary
+        for field in ['cv', 'cover_letter', 'portfolio']:
+            file_field = getattr(self, field)
+            if file_field and not getattr(self, f'{field}_size'):
+                upload_path = datetime.now().strftime(f'response_attachments/{field}s/%Y/%m/%d/')
+                file_name = os.path.basename(file_field.name)
+                public_id = f"{upload_path}{file_name}"
                 try:
-                    img = Image.open(self.portfolio)
-                    img.thumbnail((200, 200))
-                    thumb_io = BytesIO()
-                    img.save(thumb_io, format=img.format)
-                    thumb_filename = f'thumb_{self.portfolio.name.split("/")[-1]}'
-                    # Upload thumbnail to Cloudinary
-                    thumb_upload = upload(
-                        thumb_io.getvalue(),
-                        resource_type="image",
-                        public_id=f'response_attachments/thumbnails/{thumb_filename}',
+                    upload_result = upload(
+                        file_field,
+                        public_id=public_id,
+                        resource_type="auto",
                         overwrite=True
                     )
-                    self.portfolio_thumbnail = thumb_upload['public_id']
+                    setattr(self, field, upload_result['public_id'])
+                    setattr(self, f'{field}_size', upload_result.get('bytes'))
+                    setattr(self, f'{field}_content_type', upload_result.get('resource_type'))
                 except Exception as e:
-                    print(f"Thumbnail generation failed: {e}")
+                    print(f"Cloudinary upload failed for {field}: {e}")
+                    raise
 
-            # Auto-generate slug
-            if not self.slug:
-                base_slug = slugify(f'{self.job.title}-{self.user.username}')
-                unique_slug = base_slug
-                num = 1
-                while Response.objects.filter(slug=unique_slug).exists():
-                    unique_slug = f'{base_slug}-{num}'
-                    num += 1
-                self.slug = unique_slug
+        # Generate thumbnail for portfolio if it's an image
+        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+            try:
+                img = Image.open(self.portfolio)
+                img.thumbnail((200, 200))
+                thumb_io = BytesIO()
+                img.save(thumb_io, format=img.format)
+                thumb_filename = f'thumb_{os.path.basename(self.portfolio.name)}'
+                thumb_public_id = f'response_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/{thumb_filename}'
+                thumb_upload = upload(
+                    thumb_io.getvalue(),
+                    public_id=thumb_public_id,
+                    resource_type="image",
+                    overwrite=True
+                )
+                self.portfolio_thumbnail = thumb_upload['public_id']
+            except Exception as e:
+                print(f"Thumbnail generation failed: {e}")
 
-            # Auto-update response status
-            self.auto_update_status()
-            super().save(*args, **kwargs)
+        # Auto-generate slug
+        if not self.slug:
+            base_slug = slugify(f'{self.job.title}-{self.user.username}')
+            unique_slug = base_slug
+            num = 1
+            while Response.objects.filter(slug=unique_slug).exists():
+                unique_slug = f'{base_slug}-{num}'
+                num += 1
+            self.slug = unique_slug
 
-        except Exception as e:
-            logger.error(f"Error saving Response: {e}")
-            raise
+        # Auto-update response status
+        self.auto_update_status()
+        super().save(*args, **kwargs)
 
     def auto_update_status(self):
         """Automate response status updates based on job state."""
@@ -379,13 +397,8 @@ class Message(models.Model):
     def __str__(self):
         return f"Message from {self.sender.username} at {self.timestamp}"
     
-
 class MessageAttachment(models.Model):
-    message = models.ForeignKey(
-        'Message', 
-        on_delete=models.CASCADE, 
-        related_name='attachments'
-    )
+    message = models.ForeignKey('Message', on_delete=models.CASCADE, related_name='attachments')
     file = models.FileField(
         upload_to='chat_attachments/%Y/%m/%d/',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'xls', 'xlsx'])]
@@ -401,14 +414,32 @@ class MessageAttachment(models.Model):
         help_text="Auto-generated thumbnail for image files"
     )
 
-    def __str__(self):
-        return f"Attachment: {self.filename}"
-
     def save(self, *args, **kwargs):
         if not self.filename and self.file:
             self.filename = self.file.name
             self.file_size = self.file.size
             self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
+
+        # Generate folder path dynamically
+        upload_path = datetime.now().strftime('chat_attachments/%Y/%m/%d/')
+        file_name = os.path.basename(self.filename)
+        public_id = f"{upload_path}{file_name}"
+
+        # Upload file to Cloudinary with the correct public_id
+        if self.file and not self.pk:  # Only upload on creation
+            try:
+                upload_result = upload(
+                    self.file,
+                    public_id=public_id,
+                    resource_type="auto",  # Automatically detect file type
+                    overwrite=True
+                )
+                self.file = upload_result['public_id']  # Store Cloudinary public_id
+                self.file_size = upload_result.get('bytes', self.file_size)
+                self.content_type = upload_result.get('resource_type', self.content_type)
+            except Exception as e:
+                print(f"Cloudinary upload failed: {e}")
+                raise
 
         # Generate thumbnail for images
         if self.content_type.startswith('image/') and not self.thumbnail:
@@ -417,11 +448,12 @@ class MessageAttachment(models.Model):
                 img.thumbnail((200, 200))
                 thumb_io = BytesIO()
                 img.save(thumb_io, format=img.format)
-                thumb_filename = f'thumb_{self.filename}'
+                thumb_filename = f'thumb_{file_name}'
+                thumb_public_id = f'chat_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/{thumb_filename}'
                 thumb_upload = upload(
                     thumb_io.getvalue(),
+                    public_id=thumb_public_id,
                     resource_type="image",
-                    public_id=f'chat_attachments/thumbnails/{thumb_filename}',
                     overwrite=True
                 )
                 self.thumbnail = thumb_upload['public_id']
@@ -429,6 +461,9 @@ class MessageAttachment(models.Model):
                 print(f"Thumbnail generation failed: {e}")
 
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Attachment: {self.filename}"
 
 
 class Notification(models.Model):
@@ -503,6 +538,28 @@ class ResponseAttachment(models.Model):
             self.filename = self.file.name
             self.file_size = self.file.size
             self.content_type = getattr(self.file, 'content_type', 'application/octet-stream')
+
+        # Generate folder path dynamically
+        upload_path = datetime.now().strftime('response_attachments/%Y/%m/%d/')
+        file_name = os.path.basename(self.filename)
+        public_id = f"{upload_path}{file_name}"
+
+        # Upload file to Cloudinary with the correct public_id
+        if self.file and not self.pk:  # Only upload on creation
+            try:
+                upload_result = upload(
+                    self.file,
+                    public_id=public_id,
+                    resource_type="auto",
+                    overwrite=True
+                )
+                self.file = upload_result['public_id']
+                self.file_size = upload_result.get('bytes', self.file_size)
+                self.content_type = upload_result.get('resource_type', self.content_type)
+            except Exception as e:
+                print(f"Cloudinary upload failed: {e}")
+                raise
+
         super().save(*args, **kwargs)
 
     def __str__(self):
