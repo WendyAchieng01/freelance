@@ -74,9 +74,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             attachments.append({
                 'id': attachment.id,
                 'filename': attachment.filename,
-                'url': f'/attachment/{attachment.id}/download/',
+                'url': attachment.file.url,   
                 'file_size': attachment.file_size
             })
+
         
         return attachments
 
