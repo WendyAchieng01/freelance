@@ -23,6 +23,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from cloudinary.uploader import upload
 import os
 from datetime import datetime
+from cloudinary import uploader
+from mimetypes import guess_type
 import logging
 from cloudinary.models import CloudinaryField
 logger = logging.getLogger(__name__)
