@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import cloudinary
+from cloudinary.utils import cloudinary_url
 from django.conf import settings
 from django.db.models import Sum
 from django.utils import timezone
@@ -238,13 +239,29 @@ class ApplyResponseSerializer(serializers.ModelSerializer):
         }
 
     def get_cv_url(self, obj):
-        return obj.cv.url if obj.cv else None
+        if obj.cv:
+            url, _ = cloudinary_url(obj.cv.public_id, resource_type="raw")
+            return url
+        return None
 
     def get_cover_letter_url(self, obj):
-        return obj.cover_letter.url if obj.cover_letter else None
+        if obj.cover_letter:
+            url, _ = cloudinary_url(
+                obj.cover_letter.public_id, resource_type="raw")
+            return url
+        return None
 
     def get_portfolio_url(self, obj):
-        return obj.portfolio.url if obj.portfolio else None
+        if obj.portfolio:
+            # If portfolio is image → deliver as image, else → raw
+            resource_type = "image"
+            ext = obj.portfolio.public_id.split('.')[-1].lower()
+            if ext not in ["jpg", "jpeg", "png"]:
+                resource_type = "raw"
+            url, _ = cloudinary_url(
+                obj.portfolio.public_id, resource_type=resource_type)
+            return url
+        return None
 
     def validate_cv(self, value):
         if value is None or value == '':
