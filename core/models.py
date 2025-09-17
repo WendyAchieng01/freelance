@@ -1,4 +1,5 @@
 import uuid
+import mimetypes
 import cloudinary
 import cloudinary.uploader
 from django.db import models
@@ -243,38 +244,52 @@ class Response(models.Model):
                 num += 1
             self.slug = unique_slug
 
+        # Auto update status before saving
         self.auto_update_status()
 
+        # First save, so Cloudinary actually uploads and assigns public_id
+        super().save(*args, **kwargs)
+
+        # Now metadata fetching can work
         for field in ['cv', 'cover_letter', 'portfolio']:
             file_field = getattr(self, field)
             if file_field and not getattr(self, f'{field}_size'):
                 try:
                     resource = cloudinary.api.resource(
-                        file_field.public_id, resource_type='raw' if field != 'portfolio_thumbnail' else 'image')
+                        file_field.public_id,
+                        resource_type='raw' if field != 'portfolio_thumbnail' else 'image'
+                    )
                     setattr(self, f'{field}_size', resource.get('bytes'))
                     setattr(self, f'{field}_content_type',
                             resource.get('resource_type'))
                 except Exception as e:
                     print(f"Failed to fetch metadata for {field}: {e}")
 
-
-        if self.portfolio and self.portfolio_content_type.startswith('image/') and not self.portfolio_thumbnail:
+        # Portfolio thumbnail generation (only after Cloudinary upload)
+        if (
+            self.portfolio
+            and getattr(self, 'portfolio_content_type', None)
+            and self.portfolio_content_type.startswith('image/')
+            and not self.portfolio_thumbnail
+        ):
             try:
-                thumb_public_id = f'freelance/response_attachments/thumbnails/{datetime.now().strftime("%Y/%m/%d")}/thumb_{self.portfolio.public_id.split("/")[-1]}'
+                thumb_public_id = (
+                    f'freelance/response_attachments/thumbnails/'
+                    f'{datetime.now().strftime("%Y/%m/%d")}/'
+                    f'thumb_{self.portfolio.public_id.split("/")[-1]}'
+                )
                 upload_result = cloudinary.uploader.upload(
                     self.portfolio.url,
                     public_id=thumb_public_id,
                     resource_type='image',
                     transformation=[
                         {'width': 200, 'height': 200, 'crop': 'thumb'}],
-                    overwrite=True
+                    overwrite=True,
                 )
                 self.portfolio_thumbnail = upload_result['public_id']
+                super().save(update_fields=['portfolio_thumbnail'])
             except Exception as e:
                 print(f"Thumbnail generation failed: {e}")
-
-
-        super().save(*args, **kwargs)
 
     def auto_update_status(self):
         """Automate response status updates based on job state."""
