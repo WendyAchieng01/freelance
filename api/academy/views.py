@@ -67,22 +67,20 @@ class TrainingViewSet(viewsets.ModelViewSet):
                 detail="Unable to access the training.", code=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        try:
-            job_slug = self.kwargs.get('job_slug')
-            if not job_slug:
-                raise APIException(detail="Job slug is required.",
-                                   code=status.HTTP_400_BAD_REQUEST)
-            job = get_object_or_404(Job, slug=job_slug)
-            if job.client != self.request.user.profile:
-                raise PermissionDenied(
-                    "You can only create trainings for your own jobs.")
-            serializer.save(client=self.request.user, job=job)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except PermissionDenied:
-            raise
-        except Exception:
-            raise APIException(detail="Failed to create training.",
-                               code=status.HTTP_400_BAD_REQUEST)
+        job_slug = self.kwargs.get('job_slug')
+        if not job_slug:
+            raise APIException(detail="Job slug is required.",
+                            code=status.HTTP_400_BAD_REQUEST)
+
+        job = get_object_or_404(Job, slug=job_slug)
+
+        # Only job owner can create training
+        if job.client != self.request.user.profile:
+            raise PermissionDenied(
+                "You can only create trainings for your own jobs.")
+
+        # Training.client expects a User, not Profile
+        serializer.save(client=self.request.user, job=job)
 
     def perform_update(self, serializer):
         try:
@@ -92,7 +90,7 @@ class TrainingViewSet(viewsets.ModelViewSet):
             raise
         except Exception:
             raise APIException(detail="Failed to update training.",
-                               code=status.HTTP_400_BAD_REQUEST)
+                                code=status.HTTP_400_BAD_REQUEST)
 
     def perform_destroy(self, instance):
         try:
