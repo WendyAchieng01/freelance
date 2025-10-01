@@ -288,13 +288,11 @@ CHANNEL_LAYERS = {
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://freelance-w8gc.onrender.com',
     "https://nilltech-frontend.onrender.com",
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com'
-    "http://nilltech.brainversetechnologies.co.ke",
-    "https://nilltech.brainversetechnologies.co.ke",
-    "http://freelance-w8gc.onrender.com",
-    "https://freelance-w8gc.onrender.com"
+
 ]
 
 # Secure cookies and redirects
@@ -345,8 +343,6 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://nilltechsolutions.com",
-    "http://nilltech.brainversetechnologies.co.ke",
-    "https://nilltech.brainversetechnologies.co.ke",
     "https://nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
     "http://freelance-w8gc.onrender.com",
@@ -369,7 +365,6 @@ CORS_ALLOW_HEADERS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
-    "https://nilltech.brainversetechnologies.co.ke",
     "https://freelance-w8gc.onrender.com",
     "https://nilltech-frontend.onrender.com",
 ]
@@ -400,16 +395,16 @@ SPECTACULAR_SETTINGS = {
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dfg91rvuz',
-    'API_KEY': '769588735978123',
-    'API_SECRET': 'lHmFwTKYGgpWqilcjBRJMpGgj4I',
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     'FOLDER': 'freelance',
 }
 
 cloudinary.config(
-    cloud_name='dfg91rvuz',
-    api_key='769588735978123',
-    api_secret='lHmFwTKYGgpWqilcjBRJMpGgj4I',
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
     secure=True
 )
 
