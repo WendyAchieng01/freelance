@@ -1,6 +1,7 @@
 import os
 from rest_framework import serializers
 from academy.models import Training
+from django.urls import reverse
 
 
 class TrainingSerializer(serializers.ModelSerializer):
@@ -51,3 +52,17 @@ class TrainingSerializer(serializers.ModelSerializer):
                     return f"{size:.2f} {unit}"
                 size /= 1024.0
         return None
+    
+    def get_url(self, obj):
+        request = self.context.get("request")
+        if not request:
+            return None
+        return request.build_absolute_uri(
+            reverse(
+                "training-detail",
+                kwargs={
+                    "job_slug": obj.job.slug,  # required
+                    "slug": obj.slug           # required
+                }
+            )
+        )

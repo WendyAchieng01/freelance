@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -186,7 +186,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
-#MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
@@ -288,7 +288,7 @@ CHANNEL_LAYERS = {
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://web-production-b953.up.railway.app/'
+    "https://nilltech-frontend.onrender.com",
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com'
     "http://nilltech.brainversetechnologies.co.ke",
@@ -347,6 +347,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com",
     "http://nilltech.brainversetechnologies.co.ke",
     "https://nilltech.brainversetechnologies.co.ke",
+    "https://nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
     "http://freelance-w8gc.onrender.com",
 ]
@@ -370,6 +371,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://nilltech.brainversetechnologies.co.ke",
     "https://freelance-w8gc.onrender.com",
+    "https://nilltech-frontend.onrender.com",
 ]
 
 SESSION_COOKIE_SAMESITE = "None"
@@ -397,19 +399,19 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
-)
-
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': 'dfg91rvuz',
+    'API_KEY': '769588735978123',
+    'API_SECRET': 'lHmFwTKYGgpWqilcjBRJMpGgj4I',
     'FOLDER': 'freelance',
 }
+
+cloudinary.config(
+    cloud_name='dfg91rvuz',
+    api_key='769588735978123',
+    api_secret='lHmFwTKYGgpWqilcjBRJMpGgj4I',
+    secure=True
+)
 
 
 
