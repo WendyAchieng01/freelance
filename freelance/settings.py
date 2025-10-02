@@ -28,9 +28,10 @@ ALLOWED_HOSTS = [
     'localhost:3000',
     '127.0.0.1',
     'web-production-b953.up.railway.app',  
-    'www.nilltechsolutions.com',
     'nilltechsolutions.com',
     'freelance-w8gc.onrender.com',
+    'www.nilltechsolutions.com',
+    'www.freelance-w8gc.onrender.com',
 ]
 
 
@@ -288,7 +289,9 @@ CHANNEL_LAYERS = {
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://www.freelance-w8gc.onrender.com',
     'https://freelance-w8gc.onrender.com',
+    "https://www.nilltech-frontend.onrender.com",
     "https://nilltech-frontend.onrender.com",
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com'
@@ -343,9 +346,11 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://nilltechsolutions.com",
+    "https://www.nilltechsolutions.com",
     "https://nilltech-frontend.onrender.com",
+    "https://www.nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
-    "http://freelance-w8gc.onrender.com",
+    "http://www.freelance-w8gc.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
