@@ -44,7 +44,7 @@ from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, La
 from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
 from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
-
+from .google_auth import GoogleAuthSerializer
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,AuthUserSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,VerifyEmailSerializer,
@@ -397,6 +397,44 @@ class LogoutView(APIView):
             except TokenError:
                 return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GoogleAuthView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @extend_schema(
+        summary="Google Sign Up / Login",
+        description="Authenticate a user using Google ID token and issue JWT tokens.",
+        request=GoogleAuthSerializer,
+        responses={
+            200: OpenApiResponse(description="Google login successful."),
+            201: OpenApiResponse(description="Google signup successful.")
+        }
+    )
+    def post(self, request):
+        
+        print("=== RAW REQUEST DATA ===")
+        print(request.data)           
+        print("======================") 
+        
+        serializer = GoogleAuthSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        created = serializer.validated_data['created']
+
+        # Issue tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        response_data = {
+            'message': 'Google signup successful.' if created else 'Google login successful.',
+            'user': AuthUserSerializer(user, context={'request': request}).data,
+            'access': str(access),
+            'refresh': str(refresh)
+        }
+
+        return Response(response_data,
+                        status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class PasswordChangeView(APIView):
