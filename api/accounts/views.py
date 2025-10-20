@@ -413,9 +413,6 @@ class GoogleAuthView(APIView):
     )
     def post(self, request):
         
-        print("=== RAW REQUEST DATA ===")
-        print(request.data)           
-        print("======================") 
         
         serializer = GoogleAuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
