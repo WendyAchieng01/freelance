@@ -8,11 +8,11 @@ from core.models import Job
 
 # Create your models here.
 class Training(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=255)
     texts = models.TextField()
     pdf_document = CloudinaryField(
         'file', folder='freelance/pdf_documents/', null=True, blank=True, resource_type='raw')
-    video_url = models.URLField(max_length=200, null=True, blank=True)
+    video_url = models.URLField(max_length=500, null=True, blank=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='trainings')
     client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trainings', default=None, null=True, blank=True)
     slug = models.SlugField(null=True,blank=True,unique=True)
