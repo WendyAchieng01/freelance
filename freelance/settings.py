@@ -10,7 +10,7 @@ import socket
 import dj_database_url
 from decouple import config
 import cloudinary
-#from api.spectacular_settings import ENUM_NAME_OVERRIDES
+# from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'localhost:3000',
     '127.0.0.1',
-    'web-production-b953.up.railway.app',  
+    'web-production-b953.up.railway.app',
     'nilltechsolutions.com',
     'freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
@@ -35,13 +35,13 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL =  os.getenv('FRONTEND_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN = os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
-LOGIN_URL = '/' 
+LOGIN_URL = '/'
 
 # Application definition
 
@@ -53,10 +53,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #api
-    'api',    
-    
-    #custom
+    # api
+    'api',
+
+    # custom
     'core',
     'accounts',
     'academy',
@@ -64,8 +64,8 @@ INSTALLED_APPS = [
     'payment',
     'payments',
     'wallet',
-    
-    #pypi
+
+    # pypi
     'paypal.standard.ipn',
     'channels',
     'rest_framework',
@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'tz_detect',
     'corsheaders',
-    
+
     'cloudinary_storage',
     'cloudinary',
 ]
@@ -99,7 +99,7 @@ ROOT_URLCONF = 'freelance.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,7 +128,7 @@ DATABASES = {
     }
 }
 
-# Use PostgreSQL in production (Railway)
+# Use PostgreSQL in productioos.getenv('DATABASE_URL')n (Railway)
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
@@ -188,17 +188,16 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 MEDIA_URL = '/media/'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
-STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 
 PAYSTACK_SECRET_KEY = 'sk_test_fe4eb40364e4a71a3b387c7a334861ed7977538f'
@@ -209,9 +208,9 @@ PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
 # PayPal configuration
 
 PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
-PAYPAL_TEST = True  #when live change to False
+PAYPAL_TEST = True  # when live change to False
 
-PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q" 
+PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q"
 PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
 PAYPAL_MODE = "sandbox"  # or "live"
 
@@ -273,18 +272,16 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '352LfAv8unud')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 
-#for attachment files
-#DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+# for attachment files
+# DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-#for heroku csrf_token
+# for heroku csrf_token
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
@@ -298,6 +295,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 ]
 
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
+
 # Secure cookies and redirects
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
@@ -308,7 +308,8 @@ SECURE_HSTS_PRELOAD = not DEBUG
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR', 'RU', 'DE', 'FR', 'GB','KE',)
+TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR',
+                       'RU', 'DE', 'FR', 'GB', 'KE',)
 
 
 REST_FRAMEWORK = {
@@ -395,7 +396,7 @@ SPECTACULAR_SETTINGS = {
             }
         }
     ],
-    #'ENUM_NAME_OVERRIDES': ENUM_NAME_OVERRIDES,
+    # 'ENUM_NAME_OVERRIDES': ENUM_NAME_OVERRIDES,
 }
 
 
@@ -414,10 +415,9 @@ cloudinary.config(
 )
 
 
-
 CLOUDINARY_FOLDERS = {
     'TRAINING': 'freelance/pdf_documents',
-    'PROFILE':'freelance/profile_pic',
+    'PROFILE': 'freelance/profile_pic',
     'RESPONSE_CV': 'freelance/response_attachments/cvs',
     'RESPONSE_COVER_LETTER': 'freelance/response_attachments/cover_letters',
     'RESPONSE_PORTFOLIO': 'freelance/response_attachments/portfolios',

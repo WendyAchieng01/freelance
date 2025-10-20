@@ -20,6 +20,7 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from api.accounts.views import PasswordResetConfirmView
+from accounts.views import google_test_page
 
 
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path('payment/', include('payments.urls', namespace='payments')),
     path('admin/', admin.site.urls),
     path('paypal/', include('paypal.standard.ipn.urls')),
+    path("google-login-test/", google_test_page, name="google_test"),
 
     # Password reset paths
     path('accounts/password_reset/',
