@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -299,17 +299,17 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
 
 # Secure cookies and redirects
-SECURE_SSL_REDIRECT = not DEBUG
+#SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR',
-                       'RU', 'DE', 'FR', 'GB', 'KE',)
+                    'RU', 'DE', 'FR', 'GB', 'KE',)
 
 
 REST_FRAMEWORK = {
