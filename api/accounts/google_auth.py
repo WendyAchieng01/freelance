@@ -19,12 +19,12 @@ class GoogleAuthSerializer(serializers.Serializer):
         token = attrs.get("id_token")
         user_type = attrs.get("user_type")
 
-        #Local testing bypass
+        # --- Local testing bypass ---
         if settings.DEBUG and token == "test":
             email = "testuser@example.com"
             name = "Test User"
         else:
-            #Verify with Google
+            # --- Verify token with Google ---
             try:
                 id_info = id_token.verify_oauth2_token(
                     token, requests.Request(), settings.GOOGLE_CLIENT_ID
@@ -45,26 +45,28 @@ class GoogleAuthSerializer(serializers.Serializer):
                 {"error": "Google account missing email."}
             )
 
-        #Check if user already exists 
-        try:
-            user = User.objects.get(email=email)
-            created = False
-        except User.DoesNotExist:
-            #Signup case
-            if not user_type:
-                raise serializers.ValidationError(
-                    {"user_type": "This field is required for new users."}
-                )
+        # --- Get or create user ---
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": email.split("@")[0],
+                "first_name": first_name,
+                "last_name": last_name,
+                "is_active": True,
+            },
+        )
 
-            user = User.objects.create(
-                email=email,
-                username=email.split("@")[0],
-                first_name=first_name,
-                last_name=last_name,
-                is_active=True,
-            )
-            Profile.objects.create(user=user, user_type=user_type)
-            created = True
+        # --- Ensure profile exists ---
+        profile, _ = Profile.objects.get_or_create(
+            user=user,
+            # fallback if missing
+            defaults={"user_type": user_type or "freelancer"},
+        )
+
+        # --- If user already existed but user_type was passed, update it ---
+        if user_type and profile.user_type != user_type:
+            profile.user_type = user_type
+            profile.save(update_fields=["user_type"])
 
         attrs["user"] = user
         attrs["created"] = created

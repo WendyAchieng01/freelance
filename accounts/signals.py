@@ -29,3 +29,20 @@ def create_user_profile(sender, instance, created, **kwargs):
         FreelancerProfile.objects.get_or_create(profile=profile)
     elif instance.profile.user_type == 'client':
         ClientProfile.objects.get_or_create(profile=profile)
+
+#profile created through google auth
+@receiver(post_save, sender=Profile)
+def handle_profile_creation_or_update(sender, instance, created, **kwargs):
+    if created:
+        if instance.user_type == "freelancer":
+            FreelancerProfile.objects.get_or_create(profile=instance)
+        elif instance.user_type == "client":
+            ClientProfile.objects.get_or_create(profile=instance)
+    else:
+        # Handle updates and ensure only one sub-profile exists
+        if instance.user_type == "freelancer":
+            FreelancerProfile.objects.get_or_create(profile=instance)
+            ClientProfile.objects.filter(profile=instance).delete()
+        elif instance.user_type == "client":
+            ClientProfile.objects.get_or_create(profile=instance)
+            FreelancerProfile.objects.filter(profile=instance).delete()
