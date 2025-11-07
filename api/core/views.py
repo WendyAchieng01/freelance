@@ -49,9 +49,10 @@ from .permissions import (
 from core.choices import JOB_STATUS_CHOICES, ALLOWED_STATUS_FILTERS
 from payment.models import Payment
 from payments.models import PaypalPayments
-from wallet.models import WalletTransaction
+from wallet.models import WalletTransaction,Rate
 
 import logging
+from decimal import Decimal
 from datetime import datetime
 from datetime import timedelta
 from django.utils import timezone
@@ -59,8 +60,6 @@ from django.utils import timezone
 
 
 logger = logging.getLogger(__name__)
-
-
 User = get_user_model()
 
 
@@ -757,64 +756,66 @@ class AcceptFreelancerView(APIView):
     def post(self, request, slug, identifier):
         job = get_object_or_404(Job, slug=slug)
 
-        # Ensure only the job owner can accept
+        # Check if requester is job owner
         if job.client.user != request.user:
             return DRFResponse(
                 {'detail': 'You are not the owner of this job.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Resolve freelancer
+        # Find freelancer by username or ID
         freelancer = (
             User.objects.filter(username=identifier).first()
             or User.objects.filter(id__iexact=identifier).first()
         )
         if not freelancer:
-            return DRFResponse(
-                {'error': 'Freelancer not found.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return DRFResponse({'error': 'Freelancer not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Ensure this freelancer applied to this job
+        # Ensure freelancer applied
         if not JobResponse.objects.filter(job=job, user=freelancer).exists():
-            return DRFResponse(
-                {'error': 'This freelancer did not apply to this job.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return DRFResponse({'error': 'This freelancer did not apply to this job.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Ensure no freelancer is already selected
+        # Ensure no one already selected
         if job.selected_freelancer:
-            return DRFResponse(
-                {'error': 'A freelancer has already been accepted for this job.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return DRFResponse({'error': 'A freelancer has already been accepted for this job.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Ensure payment is verified
         if not job.payment_verified:
             return DRFResponse(
                 {'message': f'{request.user.username}, you can only accept a freelancer after making the full deposit.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Accept freelancer
+        # Accept the freelancer
         job.selected_freelancer = freelancer
         job.status = 'in_progress'
         job.save()
 
-        # Email setup
+        # Determine correct rate & net amount
+        try:
+            current_rate = Rate.objects.latest('effective_from').rate_amount
+        except Rate.DoesNotExist:
+            # fallback if no dynamic rate exists
+            current_rate = Decimal('8.00')
+
+        gross_amount = job.price
+        fee = (current_rate / Decimal('100')) * gross_amount
+        net_amount = gross_amount - fee
+
+
+        # Send email
         current_site = get_current_site(request)
         client_name = f"{request.user.first_name} {request.user.last_name}".strip(
         ) or request.user.username
-        subject = f"🎉 You’ve been selected for the job: {job.title}"
+        subject = f"🎉 You've been selected for the job: {job.title}"
 
-        # Text fallback
         text_content = (
             f"Hi {freelancer.first_name or freelancer.username},\n\n"
-            f"You have been selected by {client_name} for the job '{job.title}'.\n"
-            f"The offered payment is ${job.price} upon completion.Note you might be charged a fee which may reduce the amount. Please confirm on your dashboard\n\n"
-            f"Visit {current_site.domain} to view your job details and start chatting.\n\n"
-            "Best regards,\n"
-            "The Team"
+            f"You've been selected by {client_name} for the job '{job.title}'.\n"
+            f"Gross amount: Kes {gross_amount}\n"
+            f"Platform fee: {current_rate}%\n"
+            f"Your net payout: Kes {net_amount}\n\n"
+            f"Visit {current_site.domain}/jobs/{job.slug} for full details.\n\n"
+            "Best regards,\nThe Team"
         )
 
         html_content = format_html(
@@ -826,11 +827,11 @@ class AcceptFreelancerView(APIView):
                     for the job <strong>“{job.title}”</strong>.
                 </p>
                 <p style="font-size: 15px; color: #4b5563;">
-                    The total amount offered for this job is 
-                    <span style="font-weight: bold; color: #6b21a8;">${job.price}</span> 
-                    upon completion.
+                    <strong>Gross amount:</strong> ${gross_amount}<br>
+                    <strong>Platform fee:</strong> {current_rate}%<br>
+                    <strong>Net payout:</strong> ${net_amount}
                 </p>
-                <a href="https://{settings.DOMAIN}/freelancer/jobs/{job.slug}" 
+                <a href="https://{current_site.domain}/jobs/{job.slug}" 
                    style="display:inline-block; margin-top:20px; background-color:#6b21a8; color:#ffffff; text-decoration:none; padding:12px 25px; border-radius:8px; font-size:16px;">
                     View Job Details
                 </a>
@@ -839,29 +840,20 @@ class AcceptFreelancerView(APIView):
                 </p>
                 <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
                 <p style="font-size:13px; color:#9ca3af;">
-                    © {settings.DOMAIN or "Our Platform"} | This is an automated message, please do not reply.
+                    © {current_site.name or "Our Platform"} | This is an automated message, please do not reply.
                 </p>
             </div>
             """
         )
 
-        # Send email (with both plain and HTML)
-        try:
-            email = EmailMultiAlternatives(
-                subject,
-                text_content,
-                settings.DEFAULT_FROM_EMAIL,
-                [freelancer.email],
-            )
-            email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=False)
-        except Exception as e:
-            print(f"Email send failed: {e}")
+        msg = EmailMultiAlternatives(
+            subject, text_content, to=[freelancer.email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
-        return DRFResponse(
-            {'message': f'{freelancer.username} has been accepted for this job and notified via email.'},
-            status=status.HTTP_200_OK
-        )
+        return DRFResponse({'message': f'{freelancer.username} has been accepted for this job and notified via email.'}, status=status.HTTP_200_OK)
+
+
 
 @extend_schema(
     summary="Unassign freelancer from job --> Application Rejected",
