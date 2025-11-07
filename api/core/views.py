@@ -808,6 +808,31 @@ class RejectFreelancerView(APIView):
         return DRFResponse({'message': f'{freelancer.username} has been unassigned from this job.'}, status=status.HTTP_200_OK)
 
 
+class AppliedJobsByFreelancerView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Get all the user's responses
+        responses = JobResponse.objects.filter(user=user).select_related('job')
+        response_map = {r.job_id: r.status for r in responses}
+
+        # Get the related jobs
+        jobs = Job.objects.filter(id__in=response_map.keys()).distinct()
+
+        # Serialize job data
+        serializer = JobSearchSerializer(
+            jobs, many=True, context={'request': request})
+
+        # Add application status to each job
+        data = serializer.data
+        for item in data:
+            item["application_status"] = response_map.get(item["id"])
+
+        return DRFResponse(data)
+
+
 @method_decorator(cache_page(60 * 5), name='dispatch')
 class AdvancedJobSearchAPIView(generics.ListAPIView):
     serializer_class = JobSearchSerializer
