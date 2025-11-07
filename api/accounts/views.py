@@ -397,34 +397,44 @@ class GoogleAuthView(APIView):
 
     @extend_schema(
         summary="Google Sign Up / Login",
-        description="Authenticate a user using Google ID token and issue JWT tokens.",
+        description=(
+            "Authenticate a user using a Google ID token. "
+            "If the user exists → log in and issue JWT tokens. "
+            "If not, and a user_type is provided → create a new user and issue tokens. "
+            "Otherwise, return a 400 error prompting signup."
+        ),
         request=GoogleAuthSerializer,
         responses={
             200: OpenApiResponse(description="Google login successful."),
-            201: OpenApiResponse(description="Google signup successful.")
+            201: OpenApiResponse(description="Google signup successful."),
+            400: OpenApiResponse(description="User not found or invalid Google token."),
         }
     )
     def post(self, request):
-        
-        
         serializer = GoogleAuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        created = serializer.validated_data['created']
 
-        # Issue tokens
+        user = serializer.validated_data["user"]
+        created = serializer.validated_data["created"]
+
+        # --- Issue JWT tokens ---
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
 
+        # --- Build response payload ---
         response_data = {
-            'message': 'Google signup successful.' if created else 'Google login successful.',
-            'user': AuthUserSerializer(user, context={'request': request}).data,
-            'access': str(access),
-            'refresh': str(refresh)
+            "message": "Google signup successful." if created else "Google login successful.",
+            "is_new": created,
+            "user": AuthUserSerializer(user, context={"request": request}).data,
+            'user_type': user.profile.user_type,
+            "access": str(access),
+            "refresh": str(refresh),
         }
 
-        return Response(response_data,
-                        status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        return Response(
+            response_data,
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
 
 
 class PasswordChangeView(APIView):
