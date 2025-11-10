@@ -35,9 +35,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = 'http://localhost:3000'  #os.getenv('FRONTEND_URL')
-BACKEND_URL = 'http://localhost:8000'  #os.getenv('BACKEND_URL')
-DOMAIN ='http://localhost:3000'  #os.getenv('DOMAIN')
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+BACKEND_URL = os.getenv('BACKEND_URL')
+DOMAIN =os.getenv('DOMAIN')
 
 LOGIN_REDIRECT_URL = "core:index"
 LOGOUT_REDIRECT_URL = "core:index1"
@@ -400,7 +400,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-'''CLOUDINARY_STORAGE = {
+CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
@@ -412,22 +412,8 @@ cloudinary.config(
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
     secure=True
-)'''
-
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dfg91rvuz',
-    'API_KEY': '769588735978123',
-    'API_SECRET': 'lHmFwTKYGgpWqilcjBRJMpGgj4I',
-    'FOLDER': 'freelance',
-}
-
-cloudinary.config(
-    cloud_name='dfg91rvuz',
-    api_key='769588735978123',
-    api_secret='lHmFwTKYGgpWqilcjBRJMpGgj4I',
-    secure=True
 )
+
 
 
 
