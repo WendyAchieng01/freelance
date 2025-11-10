@@ -875,24 +875,56 @@ class RejectFreelancerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, slug, identifier):
+        """
+        Allows a client to unassign (reject) a freelancer from a job.
+        - Removes freelancer from selected_freelancer if assigned.
+        - Deletes their JobResponse record if it exists.
+        """
         job = get_object_or_404(Job, slug=slug)
 
+        # Only the job owner can reject/unassign
         if job.client.user != request.user:
-            return DRFResponse({'detail': 'You are not the owner of this job.'}, status=status.HTTP_403_FORBIDDEN)
+            return DRFResponse(
+                {"detail": "You are not the owner of this job."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
-        freelancer = User.objects.filter(username=identifier).first(
-        ) or User.objects.filter(id__iexact=identifier).first()
+        # Find freelancer by username or ID
+        freelancer = (
+            User.objects.filter(username=identifier).first()
+            or User.objects.filter(id__iexact=identifier).first()
+        )
         if not freelancer:
-            return DRFResponse({'error': 'Freelancer not found.'}, status=status.HTTP_404_NOT_FOUND)
+            return DRFResponse(
+                {"error": "Freelancer not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        if job.selected_freelancer != freelancer:
-            return DRFResponse({'error': 'This freelancer is not currently selected for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Delete their application (JobResponse)
+        response = JobResponse.objects.filter(job=job, user=freelancer).first()
+        if response:
+            response.delete()
 
-        job.selected_freelancer = None
-        job.status = 'open'
-        job.save()
+        # If currently assigned,unassign them
+        if job.selected_freelancer == freelancer:
+            job.selected_freelancer = None
+            job.status = "open"
+            job.save()
 
-        return DRFResponse({'message': f'{freelancer.username} has been unassigned from this job.'}, status=status.HTTP_200_OK)
+            return DRFResponse(
+                {
+                    "message": f"{freelancer.username} has been unassigned and their application removed."
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Handle case where freelancer wasn't assigned
+        return DRFResponse(
+            {
+                "message": f"{freelancer.username}'s application has been removed from this job."
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class AppliedJobsByFreelancerView(APIView):
