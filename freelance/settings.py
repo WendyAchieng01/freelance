@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     'freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
     'www.freelance-w8gc.onrender.com',
+    'freelance-nuxt-latest.onrender.com',
 ]
 
 
@@ -291,7 +292,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.nilltech-frontend.onrender.com",
     "https://nilltech-frontend.onrender.com",
     'https://www.nilltechsolutions.com',
-    'https://nilltechsolutions.com'
+    'https://nilltechsolutions.com',
+    'https://freelance-nuxt-latest.onrender.com',
 
 ]
 
@@ -352,6 +354,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
     "http://www.freelance-w8gc.onrender.com",
+    "https://freelance-nuxt-latest.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -373,6 +376,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://freelance-w8gc.onrender.com",
     "https://nilltech-frontend.onrender.com",
+    "https://freelance-nuxt-latest.onrender.com",
 ]
 
 SESSION_COOKIE_SAMESITE = "None"
@@ -413,7 +417,6 @@ cloudinary.config(
     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
     secure=True
 )
-
 
 
 
