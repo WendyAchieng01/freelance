@@ -348,12 +348,12 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://nilltech-frontend.onrender.com",
     "https://www.nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
-    "http://www.freelance-w8gc.onrender.com",
     "https://freelance-nuxt-latest.onrender.com",
 ]
 
@@ -377,6 +377,10 @@ CSRF_TRUSTED_ORIGINS = [
     "https://freelance-w8gc.onrender.com",
     "https://nilltech-frontend.onrender.com",
     "https://freelance-nuxt-latest.onrender.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    
+
 ]
 
 SESSION_COOKIE_SAMESITE = "None"
