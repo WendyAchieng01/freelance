@@ -63,6 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
         
 class ProfileMiniSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Profile
@@ -386,11 +387,14 @@ class FreelancerProfileReadSerializer(serializers.ModelSerializer):
     recent_reviews = serializers.SerializerMethodField()
 
     portfolio_projects = serializers.SerializerMethodField()
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
+    
+    
 
     class Meta:
         model = FreelancerProfile
         fields = [
-            'id', 'full_name', 'profile', 'experience_years',
+            'id', 'full_name', 'profile', 'experience_years','profile_pic',
             'hourly_rate', 'portfolio_link', 'availability', 'languages',
             'skills', 'is_visible', 'slug',
             'rating', 'review_count', 'recent_reviews',
@@ -444,6 +448,7 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
         source="profile.bio", required=False, allow_blank=True)
     profile_picture = serializers.ImageField(
         source="profile.profile_pic", required=False, allow_null=True)
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
 
     skills = serializers.ListField(
         child=serializers.CharField(), required=False)
@@ -454,7 +459,7 @@ class FreelancerProfileWriteSerializer(serializers.ModelSerializer):
         model = FreelancerProfile
         fields = [
             "first_name", "last_name", "email", "username",
-            "phone", "location", "bio", "profile_picture",
+            "phone", "location", "bio", "profile_picture","profile_pic",
             "skills", "languages", "experience_years", "hourly_rate",
             "availability", "is_visible"
         ]
