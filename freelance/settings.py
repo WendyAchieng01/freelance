@@ -25,7 +25,6 @@ DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
-    'localhost:3000',
     '127.0.0.1',
     'web-production-b953.up.railway.app',
     'nilltechsolutions.com',
@@ -285,7 +284,7 @@ CHANNEL_LAYERS = {
 # for heroku csrf_token
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
+    'http://localhost',
     'http://127.0.0.1:8000',
     'https://www.freelance-w8gc.onrender.com',
     'https://freelance-w8gc.onrender.com',
@@ -347,8 +346,8 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost",
+    "http://127.0.0.1",
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://nilltech-frontend.onrender.com",
@@ -377,8 +376,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://freelance-w8gc.onrender.com",
     "https://nilltech-frontend.onrender.com",
     "https://freelance-nuxt-latest.onrender.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost",
+    "http://127.0.0.1",
     
 
 ]
