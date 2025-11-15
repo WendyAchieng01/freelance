@@ -653,19 +653,32 @@ class ClientProfileWriteSerializer(serializers.ModelSerializer):
         profile = instance.profile
         user = profile.user
 
+        # Update User
         for attr, value in user_data.items():
             setattr(user, attr, value)
         user.save()
 
+        # Handle profile_picture explicitly
+        profile_picture = None
+        if "profile_pic" in profile_data:
+            profile_picture = profile_data.pop("profile_pic")
+
+        # Update other profile fields
         for attr, value in profile_data.items():
             setattr(profile, attr, value)
+
+        if profile_picture is not None:
+            profile.profile_pic = profile_picture
+
         profile.user_type = "client"
         profile.save()
 
+        # Update ClientProfile fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
+        # Update languages
         if languages:
             language_objs = [Language.objects.get_or_create(
                 name=lang)[0] for lang in languages]
