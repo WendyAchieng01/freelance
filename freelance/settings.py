@@ -40,8 +40,8 @@ FRONTEND_URL = os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN =os.getenv('DOMAIN')
 
-LOGIN_REDIRECT_URL = "core:index"
-LOGOUT_REDIRECT_URL = "core:index1"
+LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
+LOGOUT_REDIRECT_URL = "https://nilltechsolutions.com/"
 LOGIN_URL = '/'
 
 # Application definition
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     # api
     'api',
 
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'payment',
     'payments',
     'wallet',
+    'analytics',
 
     # pypi
     'paypal.standard.ipn',

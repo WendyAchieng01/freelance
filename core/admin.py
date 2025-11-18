@@ -59,6 +59,11 @@ class JobAdmin(admin.ModelAdmin):
         return obj.is_max_freelancers_reached
     is_max_freelancers_reached_display.boolean = True
     is_max_freelancers_reached_display.short_description = "Max Freelancers Reached"
+    
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["analytics_url"] = reverse("admin-analytics")
+        return super().changelist_view(request, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
         # Ensure slug is generated if not already set
@@ -82,6 +87,11 @@ class JobCategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
     ordering = ('name',)
+    
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["analytics_url"] = reverse("admin-analytics")
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 @admin.register(Response)
@@ -108,6 +118,11 @@ class ResponseAdmin(admin.ModelAdmin):
             response.marked_for_review = False
             response.status = 'submitted'
             response.save()
+            
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["analytics_url"] = reverse("admin-analytics")
+        return super().changelist_view(request, extra_context=extra_context)
 
     def save_model(self, request, obj, form, change):
         if not obj.slug:
@@ -119,6 +134,8 @@ class ResponseAdmin(admin.ModelAdmin):
                 num += 1
             obj.slug = unique_slug
         super().save_model(request, obj, form, change)
+        
+        
 
 
 @admin.register(Chat)
