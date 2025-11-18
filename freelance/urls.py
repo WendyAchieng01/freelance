@@ -21,6 +21,12 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from api.accounts.views import PasswordResetConfirmView
 from accounts.views import google_test_page
+from django.contrib.auth import views as auth_views
+
+
+admin.site.site_header = "NillTech Solutions"
+admin.site.site_title = "Admin Portal"
+admin.site.index_title = "Welcome to Admin"
 
 
 
@@ -32,9 +38,14 @@ urlpatterns = [
     path('invoice/', include('invoicemgmt.urls', namespace='invoicemgmt')),
     path('payments/', include('payment.urls', namespace='payment')),
     path('payment/', include('payments.urls', namespace='payments')),
-    path('admin/', admin.site.urls),
     path('paypal/', include('paypal.standard.ipn.urls')),
     path("google-login-test/", google_test_page, name="google_test"),
+    
+    path('admin/', admin.site.urls),
+    path('admin/logout/',
+         auth_views.LogoutView.as_view(next_page=f"{settings.DOMAIN}"),
+        name='admin_logout'),
+    path("analytics/", include("analytics.urls")),
 
     # Password reset paths
     path('accounts/password_reset/',
