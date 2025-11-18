@@ -587,11 +587,23 @@ class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
     client = serializers.StringRelatedField()
     freelancer = serializers.StringRelatedField()
+    client_profile_pic = serializers.SerializerMethodField()
+    freelancer_profile_pic = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
         fields = ['id', 'chat_uuid', 'job', 'client', 'freelancer',
+                'client_profile_pic','freelancer_profile_pic',
                     'created_at', 'slug', 'active', 'messages']
+        
+    def get_client_profile_pic(self, obj):
+        return obj.client.profile_pic.url if obj.client.profile_pic else None
+
+    def get_freelancer_profile_pic(self, obj):
+        return (
+            obj.freelancer.profile_pic.url
+            if obj.freelancer and obj.freelancer.profile_pic else None
+        )
 
 
 class NotificationSerializer(serializers.ModelSerializer):

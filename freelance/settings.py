@@ -21,10 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = True #os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
+    'localhost:3000',
     '127.0.0.1',
     'web-production-b953.up.railway.app',
     'nilltechsolutions.com',
@@ -285,6 +286,7 @@ CHANNEL_LAYERS = {
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
+    'http://localhost:3000',
     'http://127.0.0.1:8000',
     'https://www.freelance-w8gc.onrender.com',
     'https://freelance-w8gc.onrender.com',
@@ -347,6 +349,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
+    'http://localhost:3000',
     "http://127.0.0.1",
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
