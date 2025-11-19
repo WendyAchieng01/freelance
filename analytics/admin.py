@@ -1,20 +1,42 @@
 from django.contrib import admin
-from django.urls import path
-from .views import analytics_dashboard
+from .models import DailyAnalytics
 
 
-def register_admin_analytics():
-    def get_urls(original_get_urls):
-        def inner():
-            urls = original_get_urls()
-            custom = [
-                path("analytics/", admin.site.admin_view(analytics_dashboard),
-                     name="admin-analytics")
-            ]
-            return custom + urls
-        return inner
+@admin.register(DailyAnalytics)
+class DailyAnalyticsAdmin(admin.ModelAdmin):
+    list_display = (
+        'date',
+        'new_users',
+        'new_freelancers',
+        'new_clients',
+        'new_jobs',
+        'new_applications',
+        'new_hires',
+        'revenue',
+        'payouts',
+        'platform_fees',
+    )
 
-    admin.site.get_urls = get_urls(admin.site.get_urls)
+    list_filter = ('date',)
+    search_fields = ('date',)
+    ordering = ('-date',)
 
+    readonly_fields = (
+        'new_users',
+        'new_freelancers',
+        'new_clients',
+        'new_jobs',
+        'new_applications',
+        'new_hires',
+        'revenue',
+        'payouts',
+        'platform_fees',
+    )
 
-register_admin_analytics()
+    actions = ['update_today_stats']
+
+    @admin.action(description="Update today's analytics")
+    def update_today_stats(self, request, queryset):
+        DailyAnalytics.update_today()
+        self.message_user(
+            request, "Today's analytics have been updated successfully.")
