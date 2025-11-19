@@ -27,16 +27,14 @@ class Profile(models.Model):
     user_type = models.CharField(max_length=20, choices=(('freelancer', 'Freelancer'), ('client', 'Client')), default='freelancer')
     email_verified = models.BooleanField(default=False)
     device = models.CharField(max_length=100, blank=True)
-
-    class Meta:
-        unique_together = (('user', 'user_type'), )
         
     def __str__(self):
         return self.user.username
 
 
 class FreelancerProfile(models.Model):
-    profile = models.OneToOneField('Profile', on_delete=models.CASCADE, related_name='freelancer_profile')
+    profile = models.OneToOneField('Profile', on_delete=models.CASCADE,
+                                related_name='freelancer_profile', limit_choices_to={'user_type': 'freelancer'})
     skills = models.ManyToManyField('Skill', blank=True)
     languages = models.ManyToManyField('Language', blank=True)
     portfolio_link = models.URLField(blank=True, null=True)
@@ -105,7 +103,8 @@ class ClientProfile(models.Model):
         ('other', 'Other'),
     )
 
-    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='client_profile')
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE,
+                                   related_name='client_profile', limit_choices_to={'user_type': 'client'})
     company_name = models.CharField(max_length=200, blank=True)
     company_website = models.URLField(
         blank=True, null=True, help_text="Enter URL in the format https://nilltechsolutions.com/")
