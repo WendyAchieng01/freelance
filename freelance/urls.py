@@ -42,8 +42,7 @@ urlpatterns = [
     path("google-login-test/", google_test_page, name="google_test"),
     
     path('admin/', admin.site.urls),
-    path('admin/logout/',
-         auth_views.LogoutView.as_view(next_page=f"{settings.DOMAIN}"),
+    path('admin/logout/',auth_views.LogoutView.as_view(next_page=f"{settings.DOMAIN}"),
         name='admin_logout'),
     path("analytics/", include("analytics.urls")),
 
