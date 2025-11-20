@@ -1045,7 +1045,7 @@ window.testAPIEndpoint = async function() {
 
 // Fetch analytics data - GLOBAL SCOPE
 window.fetchAnalyticsData = async function() {
-    console.log('🔄 Starting fetchAnalyticsData...');
+    console.log(' Starting fetchAnalyticsData...');
     
     // Show loading state without clearing canvas
     showLoadingState();
@@ -1063,8 +1063,8 @@ window.fetchAnalyticsData = async function() {
             credentials: 'include',
         });
 
-        console.log('📨 Response received. Status:', response.status);
-        console.log('📨 Response OK:', response.ok);
+        console.log(' Response received. Status:', response.status);
+        console.log(' Response OK:', response.ok);
 
         if (!response.ok) {
             if (response.status === 403) {
@@ -1076,7 +1076,7 @@ window.fetchAnalyticsData = async function() {
         }
 
         const data = await response.json();
-        console.log('✅ Data loaded successfully:', data);
+        console.log(' Data loaded successfully:', data);
         
         updateDashboardStats(data);
         initializeCharts(data);
@@ -1085,7 +1085,7 @@ window.fetchAnalyticsData = async function() {
         document.getElementById('updateBadge').textContent = 'Updated just now';
         
     } catch (error) {
-        console.error('❌ Error in fetchAnalyticsData:', error);
+        console.error(' Error in fetchAnalyticsData:', error);
         showError(`Failed to load analytics data: ${error.message}`);
         showFallbackState();
     }
@@ -1201,7 +1201,7 @@ function showFallbackState() {
         `;
         overlay.innerHTML = `
             <div>
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">❌</div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">Not Ready</div>
                 <div>Chart data unavailable</div>
                 <small>Check console for errors</small>
             </div>
@@ -1330,9 +1330,9 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Growth chart created successfully');
+            console.log(' Growth chart created successfully');
         } else {
-            console.error('❌ Growth chart canvas not found');
+            console.error(' Growth chart canvas not found');
         }
 
         // 2. Job Status Chart
@@ -1386,9 +1386,9 @@ function initializeCharts(data) {
                     cutout: '60%'
                 }
             });
-            console.log('✅ Job status chart created successfully');
+            console.log(' Job status chart created successfully');
         } else {
-            console.error('❌ Job status chart canvas not found');
+            console.error(' Job status chart canvas not found');
         }
 
         // 3. Categories Chart
@@ -1446,7 +1446,7 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Categories chart created successfully');
+            console.log('Categories chart created successfully');
         }
 
         // 4. Skills Chart
@@ -1506,7 +1506,7 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Skills chart created successfully');
+            console.log('Skills chart created successfully');
         }
 
         // 5. Geographic Chart
@@ -1572,7 +1572,7 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Geographic chart created successfully');
+            console.log('Geographic chart created successfully');
         }
 
         // 6. Payment Method Chart
@@ -1621,7 +1621,7 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Payment method chart created successfully');
+            console.log('Payment method chart created successfully');
         }
 
         // 7. Radar Chart
@@ -1698,10 +1698,10 @@ function initializeCharts(data) {
                     }
                 }
             });
-            console.log('✅ Radar chart created successfully');
+            console.log('Radar chart created successfully');
         }
 
-        console.log('✅ All charts initialized successfully!');
+        console.log('All charts initialized successfully!');
         
         // Force chart resize
         setTimeout(() => {
@@ -1742,7 +1742,7 @@ function showError(message) {
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM Content Loaded - Initializing Analytics Dashboard');
+    console.log('DOM Content Loaded - Initializing Analytics Dashboard');
     console.log('Chart.js available:', typeof Chart !== 'undefined' ? 'Yes' : 'No');
     
     // Check if all canvas elements exist
@@ -1759,9 +1759,9 @@ document.addEventListener('DOMContentLoaded', function() {
     canvases.forEach(canvasId => {
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
-            console.error(`❌ Canvas element not found: ${canvasId}`);
+            console.error(`Canvas element not found: ${canvasId}`);
         } else {
-            console.log(`✅ Canvas element found: ${canvasId}`);
+            console.log(`Canvas element found: ${canvasId}`);
         }
     });
 
@@ -1780,10 +1780,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Test the API endpoint first
     window.testAPIEndpoint().then(isReachable => {
         if (isReachable) {
-            console.log('✅ API endpoint is reachable, fetching data...');
+            console.log('API endpoint is reachable, fetching data...');
             window.fetchAnalyticsData();
         } else {
-            console.error('❌ API endpoint is not reachable');
+            console.error('API endpoint is not reachable');
             showError('API endpoint is not reachable. Check URL configuration and authentication.');
             showFallbackState();
         }
@@ -1791,7 +1791,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Auto-refresh every 5 minutes
     setInterval(() => {
-        console.log('🔄 Auto-refreshing dashboard data...');
+        console.log('Auto-refreshing dashboard data...');
         window.fetchAnalyticsData();
     }, 300000);
 });
