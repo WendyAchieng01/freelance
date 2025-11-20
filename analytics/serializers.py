@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from accounts.models import Profile, Skill
-from core.models import Job
+from accounts.models import Profile, Skill, Language
+from core.models import Job, JobCategory
 from payment.models import Payment
+from payments.models import PaypalPayments
 from wallet.models import WalletTransaction
 from django.db.models import Sum, Count, Avg
 from django.utils import timezone
@@ -42,3 +43,23 @@ class AnalyticsSerializer(serializers.Serializer):
     # Radar chart data
     radar_labels = serializers.ListField(child=serializers.CharField())
     radar_data = serializers.ListField(child=serializers.FloatField())
+
+    # Geographic Distribution
+    geographic_labels = serializers.ListField(child=serializers.CharField())
+    geographic_data = serializers.ListField(child=serializers.IntegerField())
+
+    # Payment Methods
+    payment_methods_labels = serializers.ListField(
+        child=serializers.CharField())
+    payment_methods_data = serializers.ListField(
+        child=serializers.FloatField())
+
+    # Top Categories
+    top_categories_labels = serializers.ListField(
+        child=serializers.CharField())
+    top_categories_data = serializers.ListField(
+        child=serializers.IntegerField())
+
+    # Most In-Demand Skills (for radar chart)
+    top_skills_labels = serializers.ListField(child=serializers.CharField())
+    top_skills_data = serializers.ListField(child=serializers.IntegerField())
