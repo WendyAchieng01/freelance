@@ -646,6 +646,30 @@
             line-height: 1.4;
         }
 
+        /* Loading states */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: 'Loading...';
+            display: block;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Error states */
+        .error-message {
+            background: var(--danger);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            border-left: 4px solid #c9302c;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .dashboard-container {
@@ -812,17 +836,23 @@
             <h1>Analytics Dashboard</h1>
             <p>Real-time performance overview • {{ "now"|date:"d F Y" }}</p>
         </div>
-        <div class="update-badge">
+        <div class="update-badge" id="updateBadge">
             Updated just now
         </div>
     </div>
 
-    <!-- Debug Info -->
+    <!-- Debug Controls -->
     <div class="debug-info">
-        <strong>Debug Info:</strong> 
-        Total Users: {{ total_users }}, 
-        Total Jobs: {{ total_jobs }}, 
-        Chart Labels: {{ chart_labels_json|length }} items
+        <strong>Debug Controls:</strong><br>
+        API URL: <code id="apiUrl">{% url 'admin-analytics-api' %}</code><br>
+        <button onclick="testAPIEndpoint().then(result => alert('API Reachable: ' + result))" 
+                style="padding: 5px 10px; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px 0;">
+            Test API Connection
+        </button>
+        <button onclick="fetchAnalyticsData()" 
+                style="padding: 5px 10px; background: var(--success); color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px;">
+            Load Data Manually
+        </button>
     </div>
 
     <!-- Main KPI Cards -->
@@ -834,7 +864,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-label">Total Users</div>
-                    <div class="stat-value">{{ total_users|intcomma }}</div>
+                    <div class="stat-value" data-stat="total_users">0</div>
                     <div class="stat-change text-success">+12% from last month</div>
                 </div>
             </div>
@@ -847,7 +877,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-label">Active Freelancers</div>
-                    <div class="stat-value">{{ total_freelancers|intcomma }}</div>
+                    <div class="stat-value" data-stat="total_freelancers">0</div>
                     <div class="stat-change text-success">Growing strong</div>
                 </div>
             </div>
@@ -860,7 +890,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="stat-label">Clients</div>
-                    <div class="stat-value">{{ total_clients|intcomma }}</div>
+                    <div class="stat-value" data-stat="total_clients">0</div>
                     <div class="stat-change text-info">Hiring actively</div>
                 </div>
             </div>
@@ -874,9 +904,9 @@
                 <div class="stat-info">
                     <div class="stat-label">Total Revenue</div>
                     <div class="revenue-content">
-                        <div class="revenue-main">KES {{ total_revenue|floatformat:0|intcomma }}</div>
-                        <div class="revenue-details text-success">
-                            KES {{ platform_fees|floatformat:0|intcomma }} in platform fees
+                        <div class="revenue-main" data-stat="total_revenue">KES 0</div>
+                        <div class="revenue-details text-success" data-stat="platform_profit">
+                            KES 0 in platform fees
                         </div>
                     </div>
                 </div>
@@ -906,36 +936,37 @@
             <div class="stat-icon">
                 <i class="bi bi-briefcase"></i>
             </div>
-            <div class="value text-primary">{{ total_jobs|intcomma }}</div>
+            <div class="value text-primary" data-stat="total_jobs">0</div>
             <div class="stat-label">Total Jobs</div>
         </div>
         <div class="mini-card">
             <div class="stat-icon" style="background: rgba(240, 173, 78, 0.2); color: var(--warning);">
                 <i class="bi bi-hourglass-split"></i>
             </div>
-            <div class="value text-warning">{{ in_progress_jobs|intcomma }}</div>
+            <div class="value text-warning" data-stat="in_progress_jobs">0</div>
             <div class="stat-label">In Progress</div>
         </div>
         <div class="mini-card">
             <div class="stat-icon" style="background: rgba(92, 184, 92, 0.2); color: var(--success);">
                 <i class="bi bi-check2-all"></i>
             </div>
-            <div class="value text-success">{{ completed_jobs|intcomma }}</div>
+            <div class="value text-success" data-stat="completed_jobs">0</div>
             <div class="stat-label">Completed</div>
         </div>
         <div class="mini-card">
             <div class="stat-icon" style="background: rgba(217, 83, 79, 0.2); color: var(--danger);">
                 <i class="bi bi-star-fill"></i>
             </div>
-            <div class="value" style="color: var(--danger);">{{ average_rating|floatformat:1 }}/5.0</div>
-            <div class="stat-label">{{ total_reviews|intcomma }} reviews</div>
+            <div class="value" style="color: var(--danger);" data-stat="avg_rating">0/5.0</div>
+            <div class="stat-label" data-stat="total_reviews">0 reviews</div>
         </div>
     </div>
 
-    <!-- Bottom Charts -->
+    <!-- ADDITIONAL CHARTS SECTION -->
+    <!-- Categories and Skills Charts -->
     <div class="charts-grid">
         <div class="chart-card">
-            <h3 class="chart-title">Top 10 Categories</h3>
+            <h3 class="chart-title">Top Categories</h3>
             <div class="chart-container">
                 <canvas id="categoriesChart"></canvas>
             </div>
@@ -948,7 +979,7 @@
         </div>
     </div>
 
-    <!-- Additional Charts -->
+    <!-- Geographic and Payment Charts -->
     <div class="charts-grid">
         <div class="chart-card">
             <h3 class="chart-title">Geographic Distribution</h3>
@@ -975,100 +1006,250 @@
 </div>
 {% endblock %}
 
-{% block extrajs %}
+{% block footer %}
+{{ block.super }}
 <script>
-// Mobile menu functionality
-document.addEventListener("DOMContentLoaded", function() {
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (mobileMenuBtn && navMenu) {
-        mobileMenuBtn.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            this.classList.toggle('active');
-            
-            // Prevent body scroll when menu is open
-            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
-        });
-        
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                navMenu.classList.remove('active');
-                mobileMenuBtn.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // Close mobile menu when clicking on a nav item
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                navMenu.classList.remove('active');
-                mobileMenuBtn.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
-    }
+// Configuration
+const API_URL = "{% url 'admin-analytics-api' %}";
+console.log('API URL:', API_URL);
 
-    // Add active class to current page
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.nav-item').forEach(item => {
-        if (item.getAttribute('href') === currentPath) {
-            item.classList.add('active');
-        }
-    });
+// Chart instances storage
+let charts = {};
 
-    // User dropdown functionality
-    const userMenu = document.querySelector('.user-menu');
-    if (userMenu) {
-        userMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const dropdown = this.querySelector('.user-dropdown');
-            dropdown.style.opacity = dropdown.style.opacity === '1' ? '0' : '1';
-            dropdown.style.visibility = dropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
-            dropdown.style.transform = dropdown.style.transform === 'translateY(0px)' ? 'translateY(-10px)' : 'translateY(0)';
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function() {
-        const dropdowns = document.querySelectorAll('.user-dropdown');
-        dropdowns.forEach(dropdown => {
-            dropdown.style.opacity = '0';
-            dropdown.style.visibility = 'hidden';
-            dropdown.style.transform = 'translateY(-10px)';
-        });
-    });
-});
-
-// Chart initialization code
-console.log('Starting chart initialization...');
-console.log('Chart labels:', {{ chart_labels_json|safe }});
-console.log('User growth data:', {{ user_growth_data_json|safe }});
-
-// Set global chart defaults to match our theme
+// Set global chart defaults
 Chart.defaults.color = '#a0a0a0';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.font.size = 12;
 
-// Function to initialize all charts
-function initializeCharts() {
-    console.log('Initializing charts...');
+// Test function to check if API is reachable - GLOBAL SCOPE
+window.testAPIEndpoint = async function() {
+    console.log('Testing API endpoint...');
+    try {
+        const testResponse = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'include'
+        });
+        console.log('API Test Response Status:', testResponse.status);
+        console.log('API Test Response OK:', testResponse.ok);
+        return testResponse.ok;
+    } catch (error) {
+        console.error('API Test Failed:', error);
+        return false;
+    }
+}
+
+// Fetch analytics data - GLOBAL SCOPE
+window.fetchAnalyticsData = async function() {
+    console.log('🔄 Starting fetchAnalyticsData...');
+    
+    // Show loading state without clearing canvas
+    showLoadingState();
+
+    try {
+        console.log('📡 Making API request to:', API_URL);
+        
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'include',
+        });
+
+        console.log('📨 Response received. Status:', response.status);
+        console.log('📨 Response OK:', response.ok);
+
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error('Authentication failed. Please ensure you are logged in as a staff user.');
+            }
+            const errorText = await response.text();
+            console.error('❌ Response not OK. Status:', response.status);
+            throw new Error(`HTTP error! status: ${response.status}. ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Data loaded successfully:', data);
+        
+        updateDashboardStats(data);
+        initializeCharts(data);
+        
+        // Update timestamp
+        document.getElementById('updateBadge').textContent = 'Updated just now';
+        
+    } catch (error) {
+        console.error('❌ Error in fetchAnalyticsData:', error);
+        showError(`Failed to load analytics data: ${error.message}`);
+        showFallbackState();
+    }
+}
+
+// Show loading state without destroying canvas
+function showLoadingState() {
+    console.log('Showing loading state');
+    // Add loading overlay instead of replacing canvas content
+    document.querySelectorAll('.chart-container').forEach(container => {
+        // Remove existing loading overlays
+        const existingOverlay = container.querySelector('.loading-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+        
+        // Create loading overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 45, 45, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            z-index: 10;
+            border-radius: var(--radius);
+        `;
+        overlay.innerHTML = `
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                <div>Loading chart data...</div>
+            </div>
+        `;
+        container.style.position = 'relative';
+        container.appendChild(overlay);
+    });
+}
+
+// Hide loading state
+function hideLoadingState() {
+    document.querySelectorAll('.loading-overlay').forEach(overlay => {
+        overlay.remove();
+    });
+}
+
+// Update dashboard statistics
+function updateDashboardStats(data) {
+    console.log('Updating dashboard stats with data:', data);
     
     try {
-        // Growth Chart - Line Chart
+        // Helper function to safely update elements
+        function updateElement(selector, value, formatter = null) {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.textContent = formatter ? formatter(value) : value;
+                console.log(`Updated ${selector}: ${element.textContent}`);
+            } else {
+                console.warn(`Element not found: ${selector}`);
+            }
+        }
+        
+        // Update main stats cards
+        updateElement('[data-stat="total_users"]', data.total_users, val => val.toLocaleString());
+        updateElement('[data-stat="total_freelancers"]', data.total_freelancers, val => val.toLocaleString());
+        updateElement('[data-stat="total_clients"]', data.total_clients, val => val.toLocaleString());
+        updateElement('[data-stat="total_revenue"]', data.total_revenue, val => `KES ${Math.round(val).toLocaleString()}`);
+        updateElement('[data-stat="platform_profit"]', data.platform_profit, val => `KES ${Math.round(val).toLocaleString()} in platform fees`);
+        
+        // Update secondary stats
+        updateElement('[data-stat="total_jobs"]', data.total_jobs, val => val.toLocaleString());
+        updateElement('[data-stat="in_progress_jobs"]', data.in_progress_jobs, val => val.toLocaleString());
+        updateElement('[data-stat="completed_jobs"]', data.completed_jobs, val => val.toLocaleString());
+        updateElement('[data-stat="avg_rating"]', data.avg_responses_per_job, val => `${val.toFixed(1)}`);
+        
+    } catch (error) {
+        console.error('Error updating dashboard stats:', error);
+    }
+}
+
+// Show fallback state when data fails to load
+function showFallbackState() {
+    console.log('Showing fallback state');
+    document.querySelectorAll('.chart-container').forEach(container => {
+        // Clear any existing content but keep canvas
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+            container.innerHTML = '';
+            container.appendChild(canvas);
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'error-overlay';
+        overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 45, 45, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            z-index: 10;
+            border-radius: var(--radius);
+            text-align: center;
+        `;
+        overlay.innerHTML = `
+            <div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">❌</div>
+                <div>Chart data unavailable</div>
+                <small>Check console for errors</small>
+            </div>
+        `;
+        container.style.position = 'relative';
+        container.appendChild(overlay);
+    });
+}
+
+// Initialize all charts
+function initializeCharts(data) {
+    console.log('Initializing charts with data:', data);
+    
+    try {
+        // Remove loading overlays first
+        hideLoadingState();
+        
+        // Destroy existing charts
+        Object.values(charts).forEach(chart => {
+            if (chart && typeof chart.destroy === 'function') {
+                chart.destroy();
+            }
+        });
+        charts = {};
+
+        // 1. Growth Chart
         const growthCtx = document.getElementById('growthChart');
         if (growthCtx) {
-            console.log('Creating growth chart...');
-            new Chart(growthCtx, {
+            console.log('Creating growth chart with data:', {
+                months: data.months,
+                user_growth: data.user_growth,
+                job_growth: data.job_growth,
+                revenue_growth: data.revenue_growth
+            });
+            
+            // Ensure canvas is properly prepared
+            growthCtx.style.display = 'block';
+            growthCtx.width = growthCtx.offsetWidth;
+            growthCtx.height = growthCtx.offsetHeight;
+            
+            charts.growthChart = new Chart(growthCtx, {
                 type: 'line',
                 data: {
-                    labels: {{ chart_labels_json|safe }},
+                    labels: data.months,
                     datasets: [
                         {
                             label: 'Users',
-                            data: {{ user_growth_data_json|safe }},
+                            data: data.user_growth,
                             borderColor: '#79aec8',
                             backgroundColor: 'rgba(121, 174, 200, 0.15)',
                             tension: 0.4,
@@ -1077,7 +1258,7 @@ function initializeCharts() {
                         },
                         {
                             label: 'Jobs Posted',
-                            data: {{ job_growth_data_json|safe }},
+                            data: data.job_growth,
                             borderColor: '#5cb85c',
                             backgroundColor: 'rgba(92, 184, 92, 0.15)',
                             tension: 0.4,
@@ -1086,7 +1267,7 @@ function initializeCharts() {
                         },
                         {
                             label: 'Revenue (KES)',
-                            data: {{ revenue_growth_data_json|safe }},
+                            data: data.revenue_growth,
                             borderColor: '#f0ad4e',
                             backgroundColor: 'rgba(240, 173, 78, 0.15)',
                             tension: 0.4,
@@ -1101,7 +1282,7 @@ function initializeCharts() {
                     plugins: {
                         legend: {
                             position: 'top',
-                            labels: {
+                            labels: { 
                                 color: '#e0e0e0',
                                 font: {
                                     size: 12
@@ -1112,38 +1293,67 @@ function initializeCharts() {
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: {
-                                color: 'rgba(255,255,255,0.1)'
+                            grid: { 
+                                color: 'rgba(255,255,255,0.1)',
+                                drawBorder: false
                             },
-                            ticks: {
-                                color: '#a0a0a0'
+                            ticks: { 
+                                color: '#a0a0a0',
+                                font: {
+                                    size: 11
+                                }
                             }
                         },
                         x: {
-                            grid: {
-                                color: 'rgba(255,255,255,0.1)'
+                            grid: { 
+                                color: 'rgba(255,255,255,0.1)',
+                                drawBorder: false
                             },
-                            ticks: {
+                            ticks: { 
                                 color: '#a0a0a0',
+                                font: {
+                                    size: 11
+                                },
                                 maxRotation: 45
                             }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear'
                         }
                     }
                 }
             });
-            console.log('Growth chart created successfully');
+            console.log('✅ Growth chart created successfully');
+        } else {
+            console.error('❌ Growth chart canvas not found');
         }
 
-        // Job Status Chart - Doughnut
+        // 2. Job Status Chart
         const jobStatusCtx = document.getElementById('jobStatusChart');
         if (jobStatusCtx) {
-            new Chart(jobStatusCtx, {
+            console.log('Creating job status chart with data:', {
+                labels: data.job_status_labels,
+                data: data.job_status_data
+            });
+            
+            jobStatusCtx.style.display = 'block';
+            jobStatusCtx.width = jobStatusCtx.offsetWidth;
+            jobStatusCtx.height = jobStatusCtx.offsetHeight;
+            
+            charts.jobStatusChart = new Chart(jobStatusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: {{ job_status_labels_json|safe }},
+                    labels: data.job_status_labels,
                     datasets: [{
-                        data: {{ job_status_data_json|safe }},
-                        backgroundColor: ['#5cb85c', '#f0ad4e', '#79aec8'],
+                        data: data.job_status_data,
+                        backgroundColor: ['#f0ad4e', '#5cb85c', '#79aec8'],
                         borderWidth: 0,
                         hoverOffset: 8
                     }]
@@ -1154,28 +1364,52 @@ function initializeCharts() {
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: {
+                            labels: { 
                                 color: '#e0e0e0',
                                 font: {
                                     size: 12
                                 }
                             }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
                         }
-                    }
+                    },
+                    cutout: '60%'
                 }
             });
-            console.log('Job status chart created successfully');
+            console.log('✅ Job status chart created successfully');
+        } else {
+            console.error('❌ Job status chart canvas not found');
         }
 
-        // Categories Chart - Bar
+        // 3. Categories Chart
         const categoriesCtx = document.getElementById('categoriesChart');
-        if (categoriesCtx) {
-            new Chart(categoriesCtx, {
+        if (categoriesCtx && data.top_categories_labels && data.top_categories_data) {
+            console.log('Creating categories chart with data:', {
+                labels: data.top_categories_labels,
+                data: data.top_categories_data
+            });
+            
+            categoriesCtx.style.display = 'block';
+            categoriesCtx.width = categoriesCtx.offsetWidth;
+            categoriesCtx.height = categoriesCtx.offsetHeight;
+            
+            charts.categoriesChart = new Chart(categoriesCtx, {
                 type: 'bar',
                 data: {
-                    labels: {{ top_categories_labels_json|safe }},
+                    labels: data.top_categories_labels,
                     datasets: [{
-                        data: {{ top_categories_data_json|safe }},
+                        label: 'Jobs',
+                        data: data.top_categories_data,
                         backgroundColor: 'rgba(121, 174, 200, 0.8)',
                         borderRadius: 6,
                         borderWidth: 0
@@ -1212,23 +1446,36 @@ function initializeCharts() {
                     }
                 }
             });
+            console.log('✅ Categories chart created successfully');
         }
 
-        // Skills Chart - Radar
+        // 4. Skills Chart
         const skillsCtx = document.getElementById('skillsChart');
-        if (skillsCtx) {
-            new Chart(skillsCtx, {
+        if (skillsCtx && data.top_skills_labels && data.top_skills_data) {
+            console.log('Creating skills chart with data:', {
+                labels: data.top_skills_labels,
+                data: data.top_skills_data
+            });
+            
+            skillsCtx.style.display = 'block';
+            skillsCtx.width = skillsCtx.offsetWidth;
+            skillsCtx.height = skillsCtx.offsetHeight;
+            
+            charts.skillsChart = new Chart(skillsCtx, {
                 type: 'radar',
                 data: {
-                    labels: {{ top_skills_labels_json|safe }},
+                    labels: data.top_skills_labels,
                     datasets: [{
-                        data: {{ top_skills_data_json|safe }},
+                        label: 'Demand Score',
+                        data: data.top_skills_data,
                         backgroundColor: 'rgba(121, 174, 200, 0.2)',
                         borderColor: '#79aec8',
                         pointBackgroundColor: '#79aec8',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#79aec8'
+                        pointHoverBorderColor: '#79aec8',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
@@ -1250,25 +1497,335 @@ function initializeCharts() {
                             },
                             ticks: {
                                 color: '#a0a0a0',
-                                backdropColor: 'transparent'
+                                backdropColor: 'transparent',
+                                stepSize: 20
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            console.log('✅ Skills chart created successfully');
+        }
+
+        // 5. Geographic Chart
+        const geographicCtx = document.getElementById('geographicChart');
+        if (geographicCtx && data.geographic_labels && data.geographic_data) {
+            console.log('Creating geographic chart with data:', {
+                labels: data.geographic_labels,
+                data: data.geographic_data
+            });
+            
+            geographicCtx.style.display = 'block';
+            geographicCtx.width = geographicCtx.offsetWidth;
+            geographicCtx.height = geographicCtx.offsetHeight;
+            
+            charts.geographicChart = new Chart(geographicCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.geographic_labels,
+                    datasets: [{
+                        label: 'Users',
+                        data: data.geographic_data,
+                        backgroundColor: [
+                            'rgba(92, 184, 92, 0.8)',
+                            'rgba(121, 174, 200, 0.8)',
+                            'rgba(240, 173, 78, 0.8)',
+                            'rgba(217, 83, 79, 0.8)',
+                            'rgba(91, 192, 222, 0.8)',
+                            'rgba(152, 105, 192, 0.8)'
+                        ],
+                        borderRadius: 6,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0a0',
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#a0a0a0'
                             }
                         }
                     }
                 }
             });
+            console.log('✅ Geographic chart created successfully');
         }
 
-        console.log('All charts initialized successfully!');
+        // 6. Payment Method Chart
+        const paymentMethodCtx = document.getElementById('paymentMethodChart');
+        if (paymentMethodCtx && data.payment_methods_labels && data.payment_methods_data) {
+            console.log('Creating payment method chart with data:', {
+                labels: data.payment_methods_labels,
+                data: data.payment_methods_data
+            });
+            
+            paymentMethodCtx.style.display = 'block';
+            paymentMethodCtx.width = paymentMethodCtx.offsetWidth;
+            paymentMethodCtx.height = paymentMethodCtx.offsetHeight;
+            
+            charts.paymentMethodChart = new Chart(paymentMethodCtx, {
+                type: 'pie',
+                data: {
+                    labels: data.payment_methods_labels,
+                    datasets: [{
+                        data: data.payment_methods_data,
+                        backgroundColor: [
+                            'rgba(92, 184, 92, 0.8)',
+                            'rgba(121, 174, 200, 0.8)',
+                            'rgba(240, 173, 78, 0.8)',
+                            'rgba(217, 83, 79, 0.8)',
+                            'rgba(91, 192, 222, 0.8)'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('✅ Payment method chart created successfully');
+        }
+
+        // 7. Radar Chart
+        const radarCtx = document.getElementById('radarChart');
+        if (radarCtx && data.radar_labels && data.radar_data) {
+            console.log('Creating radar chart with data:', {
+                labels: data.radar_labels,
+                data: data.radar_data
+            });
+            
+            radarCtx.style.display = 'block';
+            radarCtx.width = radarCtx.offsetWidth;
+            radarCtx.height = radarCtx.offsetHeight;
+            
+            charts.radarChart = new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: data.radar_labels,
+                    datasets: [{
+                        label: 'Platform Health Score',
+                        data: data.radar_data,
+                        backgroundColor: 'rgba(121, 174, 200, 0.2)',
+                        borderColor: '#79aec8',
+                        pointBackgroundColor: '#79aec8',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#79aec8',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { 
+                                color: 'rgba(255,255,255,0.1)',
+                                lineWidth: 1
+                            },
+                            grid: { 
+                                color: 'rgba(255,255,255,0.1)',
+                                circular: true
+                            },
+                            pointLabels: { 
+                                color: '#e0e0e0',
+                                font: { 
+                                    size: 11,
+                                    family: "'Inter', sans-serif"
+                                }
+                            },
+                            ticks: { 
+                                color: '#a0a0a0',
+                                backdropColor: 'transparent',
+                                max: 100,
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('✅ Radar chart created successfully');
+        }
+
+        console.log('✅ All charts initialized successfully!');
+        
+        // Force chart resize
+        setTimeout(() => {
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.resize === 'function') {
+                    chart.resize();
+                }
+            });
+        }, 100);
         
     } catch (error) {
-        console.error('Error initializing charts:', error);
+        console.error('❌ Error initializing charts:', error);
+        showError(`Chart initialization failed: ${error.message}`);
+        showFallbackState();
     }
 }
 
-// Initialize charts when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeCharts);
+// Error handling
+function showError(message) {
+    console.error('Dashboard Error:', message);
+    
+    // Remove any existing error messages
+    const existingErrors = document.querySelectorAll('.error-message');
+    existingErrors.forEach(error => error.remove());
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = `
+        <strong>Error Loading Dashboard Data:</strong> ${message}
+        <br><small>Check browser console for detailed errors.</small>
+    `;
+    
+    const header = document.querySelector('.header');
+    if (header) {
+        header.parentNode.insertBefore(errorDiv, header.nextSibling);
+    }
+}
 
-// Also try initializing after a short delay as a fallback
-setTimeout(initializeCharts, 100);
+// Initialize dashboard when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM Content Loaded - Initializing Analytics Dashboard');
+    console.log('Chart.js available:', typeof Chart !== 'undefined' ? 'Yes' : 'No');
+    
+    // Check if all canvas elements exist
+    const canvases = [
+        'growthChart',
+        'jobStatusChart', 
+        'categoriesChart',
+        'skillsChart',
+        'geographicChart',
+        'paymentMethodChart',
+        'radarChart'
+    ];
+    
+    canvases.forEach(canvasId => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.error(`❌ Canvas element not found: ${canvasId}`);
+        } else {
+            console.log(`✅ Canvas element found: ${canvasId}`);
+        }
+    });
+
+    // Initialize mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+    }
+
+    // Test the API endpoint first
+    window.testAPIEndpoint().then(isReachable => {
+        if (isReachable) {
+            console.log('✅ API endpoint is reachable, fetching data...');
+            window.fetchAnalyticsData();
+        } else {
+            console.error('❌ API endpoint is not reachable');
+            showError('API endpoint is not reachable. Check URL configuration and authentication.');
+            showFallbackState();
+        }
+    });
+
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+        console.log('🔄 Auto-refreshing dashboard data...');
+        window.fetchAnalyticsData();
+    }, 300000);
+});
+
+// Add resize handler for charts
+window.addEventListener('resize', function() {
+    Object.values(charts).forEach(chart => {
+        if (chart && typeof chart.resize === 'function') {
+            chart.resize();
+        }
+    });
+});
 </script>
+
+<style>
+/* Additional styles for chart containers */
+.chart-container {
+    position: relative;
+    min-height: 300px;
+}
+
+.chart-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.loading-overlay, .error-overlay {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+</style>
 {% endblock %}

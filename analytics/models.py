@@ -15,6 +15,7 @@ class DailyAnalytics(models.Model):
     new_jobs = models.IntegerField(default=0)
     new_applications = models.IntegerField(default=0)
     new_hires = models.IntegerField(default=0)
+    total_users = models.IntegerField(default=0)
     revenue = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     payouts = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     platform_fees = models.DecimalField(

@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import analytics_dashboard
-from analytics.api import AnalyticsDataAPI
+from analytics.api_views import AnalyticsAPIView
 
 urlpatterns = [
     path("", analytics_dashboard, name="admin-analytics"),
-    path('api/data/', AnalyticsDataAPI.as_view(), name='analytics-data'),
+    path('api/', AnalyticsAPIView.as_view(),name='admin-analytics-api'),
 ]
