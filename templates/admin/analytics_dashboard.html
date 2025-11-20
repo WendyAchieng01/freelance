@@ -1051,7 +1051,7 @@ window.fetchAnalyticsData = async function() {
     showLoadingState();
 
     try {
-        console.log('📡 Making API request to:', API_URL);
+        console.log(' Making API request to:', API_URL);
         
         const response = await fetch(API_URL, {
             method: 'GET',
@@ -1071,7 +1071,7 @@ window.fetchAnalyticsData = async function() {
                 throw new Error('Authentication failed. Please ensure you are logged in as a staff user.');
             }
             const errorText = await response.text();
-            console.error('❌ Response not OK. Status:', response.status);
+            console.error(' Response not OK. Status:', response.status);
             throw new Error(`HTTP error! status: ${response.status}. ${errorText}`);
         }
 
@@ -1713,7 +1713,7 @@ function initializeCharts(data) {
         }, 100);
         
     } catch (error) {
-        console.error('❌ Error initializing charts:', error);
+        console.error(' Error initializing charts:', error);
         showError(`Chart initialization failed: ${error.message}`);
         showFallbackState();
     }
