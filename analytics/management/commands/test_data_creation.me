@@ -1,15 +1,15 @@
 README WHEN SIMULATING aNALYTICS
 1. CREATE USERS AND JOBS
-python manage.py seed_analysis_data --clear --clients 50 --freelancers 30
+python manage.py seed_analysis --clear --clients 50 --freelancers 30
 
 OR 
-python manage.py seed_analysis_data --clear 
+python manage.py seed_analysis --clear 
 
 OR
-python manage.py seed_analysis_data --clients 50
+python manage.py seed_analysis --clients 50
 
 OR
-python manage.py seed_analysis_data --freelancers 30
+python manage.py seed_analysis --freelancers 30
 
 2. SIMULATE PAYMENT OF JOBS BY CLIENT
 
@@ -56,7 +56,7 @@ python manage.py seed_assignments --dry-run
 
 
 So to creat test sample run:
-1. python manage.py seed_analysis_data
+1. python manage.py seed_analysis
 2. python manage.py seed_payments --only-missing
 3. python manage.py seed_applications
 4. python manage.py seed_assignments
