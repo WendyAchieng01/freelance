@@ -1,39 +1,43 @@
-from .serializers import ClientProfileWriteSerializer, ClientProfileReadSerializer
-from drf_spectacular.utils import extend_schema, OpenApiResponse
-from rest_framework_simplejwt.tokens import RefreshToken
-from datetime import timedelta, datetime
-from rest_framework.exceptions import ValidationError, NotFound,PermissionDenied
-from rest_framework.decorators import action
+import logging
+from datetime import timedelta
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
-from rest_framework import viewsets, status, permissions,generics,filters,mixins
+from datetime import timedelta, datetime
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken,TokenError
-from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
+from rest_framework.throttling import AnonRateThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken,TokenError
+from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
+from rest_framework.exceptions import ValidationError, NotFound,PermissionDenied
+from rest_framework import viewsets, status, permissions,generics,filters,mixins
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter, extend_schema_view
 
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.core.mail import EmailMultiAlternatives
-from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
+from django.conf import settings
+from django.utils import timezone
+from urllib.parse import urlencode
 from django.utils.html import format_html
-from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
 from django.http import FileResponse, Http404
 from django.contrib.auth import get_user_model
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import password_validation
-from django.utils.encoding import force_bytes
-from django.shortcuts import get_object_or_404,redirect
-from django.conf import settings
-from urllib.parse import urlencode
+from django.utils.encoding import force_bytes, force_str
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language,PortfolioProject
+
+
+from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language,PortfolioProject,ContactUs
 from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
 from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
 from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
@@ -41,13 +45,12 @@ from .google_auth import GoogleAuthSerializer
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,AuthUserSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,VerifyEmailSerializer,
-    PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,FreelancerProfileReadSerializer,
-    LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,ProfileWriteSerializer,
+    PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,FreelancerProfileReadSerializer,ContactUsListSerializer,
+    LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,ProfileWriteSerializer,ContactUsCreateSerializer,
     ClientProfileWriteSerializer, ClientProfileReadSerializer,ClientListSerializer,PortfolioProjectReadSerializer,PortfolioProjectSerializer
 )
 
-import logging
-from datetime import timedelta
+
 #from api.tasks import send_verification_email
 
 logger = logging.getLogger(__name__)
@@ -1209,3 +1212,201 @@ class PortfolioProjectViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+
+
+class ContactUsThrottle(AnonRateThrottle):
+    """Custom throttle for contact submissions"""
+    scope = 'contact_us'
+    rate = '5/hour'  # 5 submissions per hour
+
+
+class ContactUsCreateView(generics.CreateAPIView):
+    queryset = ContactUs.objects.all()
+    serializer_class = ContactUsCreateSerializer
+    throttle_classes = [ContactUsThrottle]
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['timestamp'] = timezone.now().isoformat()
+
+        serializer = self.get_serializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)  # saves instance
+
+        contact = serializer.instance
+
+        # --- SEND EMAILS ---
+        try:
+            self._send_confirmation_and_notify(contact)
+        except Exception as e:
+            print("Failed to send notification emails:", e)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            {
+                'message': 'Thank you for your message. We will get back to you soon.',
+                'submission_id': str(contact.submission_token)
+            },
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
+    def _send_confirmation_and_notify(self, contact):
+        """
+        Sends:
+         - confirmation email to the submitter (contact.email)
+         - notification email to the internal admin inbox (settings.EMAIL_HOST_USER)
+        Both emails will use settings.EMAIL_HOST_USER as the FROM address.
+        """
+        from_email = getattr(
+            settings,
+            "EMAIL_HOST_USER",
+            getattr(settings, "DEFAULT_FROM_EMAIL", None)
+        )
+        admin_email = getattr(settings, "EMAIL_HOST_USER", None)
+        support_email = getattr(settings, "SUPPORT_EMAIL", admin_email)
+
+        print("sending email now")
+
+        # Plain text for user
+        subject_user = (
+            f"Thanks for contacting "
+            f"{getattr(settings, 'PLATFORM_NAME', 'Our Platform')} from view"
+        )
+
+        text_user = f"""Hi {contact.name},
+
+            Thanks for reaching out about: {contact.subject}
+
+            We received your message and will get back to you shortly.
+
+            Your submission ID: {contact.tracking_id}
+
+            Best,
+            {getattr(settings, 'PLATFORM_NAME', 'Support')}
+            """
+
+        # HTML for user
+        html_user = render_to_string(
+            "admin/contact/respond.html",
+            {"contact": contact}
+        ) if True else None
+
+        # Send to the user
+        msg_user = EmailMultiAlternatives(
+            subject=subject_user,
+            body=text_user,
+            from_email=from_email,
+            to=[contact.email],
+            reply_to=[support_email] if support_email else None
+        )
+
+        if html_user:
+            msg_user.attach_alternative(html_user, "text/html")
+
+        msg_user.send(fail_silently=False)
+
+        # --- INTERNAL NOTIFICATION ---
+        subject_admin = (
+            f"New Contact Submission: {contact.subject} from view"
+        )
+
+        text_admin = f"""
+            New contact submission:
+
+            Name: {contact.name}
+            Email: {contact.email}
+            Subject: {contact.subject}
+            Message:
+            {contact.message}
+
+            Tracking ID: {contact.tracking_id}
+            Submitted at: {contact.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+
+            Admin URL: {contact.get_absolute_url()}
+            """
+
+        html_admin = render_to_string(
+            "admin/contact/respond.html",
+            {"contact": contact}
+        ) if True else None
+
+        msg_admin = EmailMultiAlternatives(
+            subject=subject_admin,
+            body=text_admin,
+            from_email=from_email,
+            to=[admin_email] if admin_email else [
+                getattr(settings, "DEFAULT_FROM_EMAIL", )
+            ],
+            reply_to=[contact.email]
+        )
+
+        if html_admin:
+            msg_admin.attach_alternative(html_admin, "text/html")
+
+        msg_admin.send(fail_silently=False)
+
+
+
+class UserContactInquiriesView(generics.ListAPIView):
+    """
+    GET-only endpoint for authenticated users to view their contact inquiries.
+    Users can only see inquiries submitted with their email address.
+    """
+    serializer_class = ContactUsListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Return contact inquiries that match the authenticated user's email.
+        """
+        user = self.request.user
+        queryset = ContactUs.objects.filter(email=user.email)
+
+        # Filters
+        contact_type = self.request.query_params.get('contact_type')
+        if contact_type:
+            queryset = queryset.filter(contact_type=contact_type)
+
+        priority = self.request.query_params.get('priority')
+        if priority:
+            queryset = queryset.filter(priority=priority)
+
+        is_read = self.request.query_params.get('is_read')
+        if is_read is not None:
+            queryset = queryset.filter(is_read=is_read.lower() == 'true')
+
+        responded = self.request.query_params.get('responded')
+        if responded is not None:
+            queryset = queryset.filter(responded=responded.lower() == 'true')
+
+        # Search
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(subject__icontains=search) |
+                Q(message__icontains=search)
+            )
+
+        return queryset.order_by('-timestamp')
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        queryset = self.get_queryset()
+
+        response.data = {
+            'results': response.data,
+            'summary': {
+                'total': queryset.count(),
+                'unread': queryset.filter(is_read=False).count(),
+                'awaiting_response': queryset.filter(responded=False).count(),
+                'responded': queryset.filter(responded=True).count(),
+            }
+        }
+
+        return response

@@ -94,22 +94,22 @@ class AnalyticsAPIView(APIView):
                 max(total_jobs or 1, 1) * 100, 100)
         ]
 
-        # === NEW: GEOGRAPHIC DISTRIBUTION ===
+        # GEOGRAPHIC DISTRIBUTION
         geographic_data = self.get_geographic_distribution()
         geographic_labels = list(geographic_data.keys())
         geographic_values = list(geographic_data.values())
 
-        # === NEW: PAYMENT METHODS ===
+        # PAYMENT METHODS
         payment_methods_data = self.get_payment_methods_distribution()
         payment_methods_labels = list(payment_methods_data.keys())
         payment_methods_values = list(payment_methods_data.values())
 
-        # === NEW: TOP CATEGORIES ===
+        # TOP CATEGORIES
         top_categories_data = self.get_top_categories()
         top_categories_labels = list(top_categories_data.keys())
         top_categories_values = list(top_categories_data.values())
 
-        # === NEW: MOST IN-DEMAND SKILLS (for radar chart) ===
+        # MOST IN-DEMAND SKILLS (for radar chart)
         top_skills_data = self.get_most_in_demand_skills()
         top_skills_labels = list(top_skills_data.keys())
         top_skills_values = list(top_skills_data.values())

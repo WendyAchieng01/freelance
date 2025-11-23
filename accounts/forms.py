@@ -1,3 +1,5 @@
+from cloudinary.forms import CloudinaryFileField
+from .models import ContactUs
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from django.contrib.auth.models import User
@@ -252,3 +254,22 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['phone', 'location', 'bio', 'profile_pic', 'pay_id', 'id_card']
 
+
+class ContactUsAdminForm(forms.ModelForm):
+    attachment = CloudinaryFileField(
+        required=False,
+        options={
+            "folder": "freelance/contactus/",
+            "resource_type": "raw"
+        }
+    )
+
+    class Meta:
+        model = ContactUs
+        fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if "timestamp" in self.fields:
+            cleaned_data.pop("timestamp", None)
+        return cleaned_data
