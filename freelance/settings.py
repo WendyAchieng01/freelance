@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN =os.getenv('DOMAIN')
+PLATFORM_NAME = "Nilltech Solutions"
 
 LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
 LOGOUT_REDIRECT_URL = "https://nilltechsolutions.com/"
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',
     # api
     'api',
 
@@ -98,6 +100,8 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = 'freelance.urls'
+SITE_ID = 1
+
 
 TEMPLATES = [
     {

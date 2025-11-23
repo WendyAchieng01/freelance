@@ -1,0 +1,738 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #dbeafe;
+    --success: #059669;
+    --success-light: #dcfce7;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    --radius: 8px;
+    --radius-sm: 6px;
+}
+
+body {
+    background: var(--gray-50);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: var(--gray-800);
+}
+
+.response-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.module {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+}
+
+.module h2 {
+    background: white;
+    color: var(--gray-800);
+    margin: 0;
+    padding: 24px 32px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.module h2::after {
+    content: "Contact Response";
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* Contact Information Card */
+.contact-info-card {
+    background: white;
+    margin: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.contact-info-card h3 {
+    background: var(--gray-50);
+    margin: 0;
+    padding: 16px 24px;
+    color: var(--gray-800);
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-info-card h3::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.contact-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+}
+
+.contact-detail {
+    padding: 20px 24px;
+    border-right: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    transition: background-color 0.15s ease;
+}
+
+.contact-detail:hover {
+    background: var(--gray-50);
+}
+
+.contact-detail:nth-child(2n) {
+    background: var(--gray-50);
+}
+
+.contact-detail:last-child {
+    border-right: none;
+}
+
+.contact-detail:nth-last-child(-n+2) {
+    border-bottom: none;
+}
+
+.contact-detail strong {
+    color: var(--gray-600);
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.contact-detail, .contact-detail small {
+    color: var(--gray-800);
+    font-weight: 500;
+}
+
+/* Message Card */
+.message-card {
+    background: white;
+    margin: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.message-card h4 {
+    background: var(--gray-50);
+    margin: 0;
+    padding: 16px 24px;
+    color: var(--gray-800);
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.message-card h4::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    background: var(--warning);
+    border-radius: 2px;
+}
+
+.message-content {
+    white-space: pre-wrap;
+    color: var(--gray-700);
+    font-family: inherit;
+    background: white;
+    padding: 24px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin: 0;
+    border-left: 3px solid var(--warning-light);
+    background: var(--warning-light);
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+/* Form Container */
+.form-container {
+    background: white;
+    margin: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.form-section {
+    padding: 32px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-row {
+    margin-bottom: 24px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-label::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    resize: vertical;
+    box-sizing: border-box;
+    background: white;
+    color: var(--gray-800);
+    line-height: 1.5;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.textarea-large {
+    min-height: 200px;
+}
+
+.textarea-small {
+    min-height: 80px;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.char-count {
+    font-size: 0.875rem;
+    margin-top: 8px;
+    text-align: right;
+    font-weight: 500;
+    color: var(--gray-500);
+}
+
+.char-count.low { color: var(--danger); }
+.char-count.medium { color: var(--warning); }
+.char-count.good { color: var(--success); }
+
+/* Email Option */
+.email-option {
+    background: var(--success-light);
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid #bbf7d0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: var(--gray-800);
+    cursor: pointer;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--gray-300);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--success);
+    border-color: var(--success);
+}
+
+.email-help {
+    margin: 8px 0 0 0;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    line-height: 1.4;
+    padding-left: 30px;
+}
+
+/* Submit Row */
+.submit-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.submit-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.cancel-btn {
+    background: white;
+    color: var(--gray-700);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border: 1px solid var(--gray-300);
+    gap: 8px;
+}
+
+.cancel-btn:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-400);
+    color: var(--gray-800);
+    text-decoration: none;
+}
+
+/* Preview Card */
+.preview-card {
+    background: white;
+    margin: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+}
+
+.preview-card h4 {
+    background: var(--gray-50);
+    margin: 0;
+    padding: 16px 24px;
+    color: var(--gray-800);
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-card h4::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+    background: var(--gray-500);
+    border-radius: 2px;
+}
+
+.preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0;
+}
+
+.preview-item {
+    padding: 20px 24px;
+    border-right: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    transition: background-color 0.15s ease;
+}
+
+.preview-item:hover {
+    background: var(--gray-50);
+}
+
+.preview-item:nth-child(2n) {
+    background: var(--gray-50);
+}
+
+.preview-item:nth-child(2n) {
+    border-right: none;
+}
+
+.preview-item:nth-last-child(-n+2) {
+    border-bottom: none;
+}
+
+.preview-item strong {
+    color: var(--gray-600);
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Priority colors */
+.priority-high { 
+    color: var(--danger);
+    font-weight: 600;
+    background: var(--danger-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    border: 1px solid #fecaca;
+}
+.priority-medium { 
+    color: var(--warning);
+    font-weight: 600;
+    background: var(--warning-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    border: 1px solid #fed7aa;
+}
+.priority-low { 
+    color: var(--success);
+    font-weight: 600;
+    background: var(--success-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    border: 1px solid #bbf7d0;
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-indicator::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .response-container {
+        padding: 16px;
+    }
+    
+    .contact-details,
+    .preview-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-detail,
+    .preview-item {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .contact-detail:last-child,
+    .preview-item:last-child {
+        border-bottom: none;
+    }
+    
+    .submit-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .submit-btn,
+    .cancel-btn {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .contact-info-card,
+    .message-card,
+    .form-container,
+    .preview-card {
+        margin: 16px;
+    }
+    
+    .form-section {
+        padding: 24px;
+    }
+    
+    .module h2 {
+        padding: 20px 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .module h2::after {
+        align-self: flex-start;
+    }
+}
+
+/* Focus states */
+.form-control:focus,
+.submit-btn:focus,
+.cancel-btn:focus,
+.checkbox-label input[type="checkbox"]:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Smooth transitions */
+.form-control,
+.submit-btn,
+.cancel-btn,
+.contact-detail,
+.preview-item {
+    transition: all 0.2s ease;
+}
+
+/* Custom scrollbar */
+.form-control::-webkit-scrollbar {
+    width: 6px;
+}
+
+.form-control::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 3px;
+}
+
+.form-control::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 3px;
+}
+
+.form-control::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="response-container">
+    <div class="module">
+        <h2>Respond to: {{ contact.subject }}</h2>
+        
+        <!-- Contact Information Card -->
+        <div class="contact-info-card">
+            <h3>Contact Information</h3>
+            <div class="contact-details">
+                <div class="contact-detail">
+                    <strong>From</strong>
+                    {{ contact.name }}<br>
+                    <small>{{ contact.email }}</small>
+                </div>
+                <div class="contact-detail">
+                    <strong>Contact Type</strong>
+                    {{ contact.get_contact_type_display }}
+                </div>
+                <div class="contact-detail">
+                    <strong>Priority</strong>
+                    <span class="priority-{{ contact.priority }}">
+                        {{ contact.get_priority_display }}
+                    </span>
+                </div>
+                <div class="contact-detail">
+                    <strong>Submitted</strong>
+                    {{ contact.timestamp|date:"F j, Y g:i A" }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Original Message Card -->
+        <div class="message-card">
+            <h4>Original Message</h4>
+            <div class="message-content">{{ contact.message }}</div>
+        </div>
+        
+        <!-- Response Form -->
+        <div class="form-container">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <div class="form-row">
+                        <label class="form-label" for="response_text">
+                            Your Professional Response
+                        </label>
+                        <textarea name="response_text" id="response_text" 
+                                  class="form-control textarea-large"
+                                  placeholder="Type your professional response here...">{{ default_response }}</textarea>
+                        <div id="charCount" class="char-count">0 characters</div>
+                        <p class="help-text">
+                            This response will be sent as a professionally formatted email with both HTML and plain text versions.
+                        </p>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="admin_notes">
+                            Internal Admin Notes
+                        </label>
+                        <textarea name="admin_notes" id="admin_notes" 
+                                  class="form-control textarea-small"
+                                  placeholder="Add any internal notes for your team...">{{ contact.admin_notes }}</textarea>
+                        <p class="help-text">
+                            Optional internal notes that will not be sent to the contact.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="email-option">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="send_email" checked>
+                            Send professional email response to {{ contact.email }}
+                        </label>
+                        <p class="email-help">
+                            When checked, a professionally formatted email will be sent using EmailMultiAlternatives 
+                            with both HTML and plain text versions.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="submit-row">
+                        <input type="submit" value="Send Professional Response" class="submit-btn">
+                        <a href="{% url 'admin:accounts_contactus_changelist' %}" class="cancel-btn">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Email Preview -->
+        <div class="preview-card">
+            <h4>Email Preview</h4>
+            <ul class="preview-list">
+                <li class="preview-item">
+                    <strong>Subject</strong>
+                    Re: {{ contact.subject }}
+                </li>
+                <li class="preview-item">
+                    <strong>Recipient</strong>
+                    {{ contact.name }} &lt;{{ contact.email }}&gt;
+                </li>
+                <li class="preview-item">
+                    <strong>Format</strong>
+                    HTML + Plain Text (MultiPart)
+                </li>
+                <li class="preview-item">
+                    <strong>Branding</strong>
+                    {{ platform_name }}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('response_text');
+    const charCount = document.getElementById('charCount');
+    
+    function updateCharCount() {
+        const length = textarea.value.length;
+        charCount.textContent = `${length} characters`;
+        
+        // Update color based on length
+        charCount.className = 'char-count ';
+        if (length < 50) {
+            charCount.className += 'low';
+        } else if (length < 100) {
+            charCount.className += 'medium';
+        } else {
+            charCount.className += 'good';
+        }
+    }
+    
+    textarea.addEventListener('input', updateCharCount);
+    updateCharCount();
+});
+</script>
+{% endblock %}

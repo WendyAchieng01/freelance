@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from . import views
-from.views import FreelancerReadOnlyViewSet,FreelancerWriteViewSet,GoogleAuthView
+from.views import FreelancerReadOnlyViewSet,FreelancerWriteViewSet,GoogleAuthView,ContactUsCreateView,UserContactInquiriesView
 
 
 
@@ -24,6 +24,9 @@ urlpatterns = [
      path('freelance/', include('api.accounts.urls_freelancer')),
      path('clients/', include('api.accounts.urls_client')),
      path('', include('api.accounts.urls_accounts')),
+     
+     path('contact/', ContactUsCreateView.as_view(), name='contact-us-submit'),
+     path('my-inquiries/', UserContactInquiriesView.as_view(),name='my-contact-inquiries'),
 
 ]
 
