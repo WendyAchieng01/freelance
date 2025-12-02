@@ -1,0 +1,757 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls static i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Dark Django Admin Theme - cohesive, high-contrast, readable */
+    :root{
+        --bg:#1c1e21;            
+        --panel:#232629;          
+        --panel-2:#2b2f33;        
+        --muted:#9aa0a6;    
+        --text:#e6eef3;       
+        --primary:#417690;          
+        --primary-dark:#305068;
+        --border:#34373a;
+        --success:#2ecc71;
+        --warning:#f1c40f;
+        --danger:#e74c3c;
+        --info:#3498db;
+        --white:#ffffff;
+    }
+
+    /* Base */
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Container */
+    .payout-details-container {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin: 8px 0 28px 0;
+        overflow: hidden;
+    }
+
+    /* Header */
+    .module-header {
+        background: var(--primary);
+        color: var(--white);
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(0,0,0,0.25);
+        display:flex;
+        align-items:center;
+        gap:12px;
+    }
+
+    .module-icon {
+        background: rgba(255,255,255,0.12);
+        width:40px;
+        height:40px;
+        border-radius:6px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:16px;
+        color:var(--white);
+    }
+
+    .module-title h1 {
+        margin:0;
+        font-size:18px;
+        font-weight:600;
+        color:var(--white);
+    }
+
+    .module-subtitle {
+        margin-top:4px;
+        font-size:13px;
+        color: rgba(230,238,243,0.85);
+        display:flex;
+        gap:8px;
+        align-items:center;
+    }
+
+    /* Controls */
+    .controls-section {
+        padding:14px 18px;
+        border-bottom:1px solid var(--border);
+        background: var(--panel);
+    }
+
+    .controls-toolbar {
+        display:flex;
+        justify-content:space-between;
+        gap:16px;
+        align-items:center;
+        flex-wrap:wrap;
+    }
+
+    .filter-form {
+        display:flex;
+        gap:12px;
+        align-items:flex-end;
+        flex-wrap:wrap;
+    }
+
+    .form-group label {
+        display:block;
+        font-size:11px;
+        color:var(--muted);
+        text-transform:uppercase;
+        letter-spacing:0.6px;
+        margin-bottom:6px;
+        font-weight:700;
+    }
+
+    .form-control {
+        height:36px;
+        padding:6px 10px;
+        background:var(--panel-2);
+        border:1px solid var(--border);
+        color:var(--text);
+        border-radius:4px;
+        min-width:160px;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(65,118,144,0.12);
+        border-color: var(--primary);
+    }
+
+    /* Buttons */
+    .action-buttons { display:flex; gap:10px; align-items:center; }
+    .btn {
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:8px 16px;
+        border-radius:4px;
+        font-weight:600;
+        cursor:pointer;
+        border:1px solid transparent;
+        text-decoration:none;
+        color:var(--text) !important;
+        background:transparent !important;
+        font-family: inherit;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+    .btn i { font-size:13px; color:inherit; }
+
+    .btn-primary {
+        background: var(--primary);
+        color:var(--white);
+        border-color: rgba(0,0,0,0.2);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn-secondary {
+        background:var(--panel-2);
+        color:var(--text);
+        border-color:var(--border);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: var(--primary);
+    }
+
+    .btn-success { 
+        background:var(--success); 
+        border-color:rgba(0,0,0,0.08);
+    }
+
+    .btn-success:hover {
+        background: #27ae60;
+        color:#0b2b12; 
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+    }
+
+    .btn-info { 
+        background:var(--info); 
+        color:var(--white); 
+        border-color:rgba(0,0,0,0.08);
+    }
+
+    .btn-info:hover {
+        background: #2980b9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+    }
+
+
+    /* Batch alert */
+    .batch-alert {
+        background: var(--panel-2);
+        border-left: 4px solid var(--success);
+        padding:14px 18px;
+        margin:12px 18px;
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        align-items:center;
+        border-radius:4px;
+        border: 1px solid var(--border);
+    }
+
+    .batch-info h3 { margin:0; font-size:15px; color:var(--text); font-weight:700; }
+    .batch-description { color:var(--muted); }
+
+    .batch-count {
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:6px 12px;
+        background: rgba(46,204,113,0.15);
+        color:var(--white);
+        border-radius:12px;
+        font-weight:700;
+        font-size: 13px;
+    }
+
+    /* Table */
+    .table-responsive {
+        width:100%;
+        overflow:auto;
+        padding:10px 18px 0 18px;
+    }
+
+    #result_list {
+        width:100%;
+        border-collapse:collapse;
+        min-width:900px;
+        background:transparent;
+        color:var(--text);
+        table-layout:fixed;
+    }
+
+    #result_list thead {
+        background: var(--panel-2);
+        border-bottom:1px solid var(--border);
+    }
+
+    #result_list th {
+        padding:12px 14px;
+        text-align:left;
+        font-weight:700;
+        font-size:12px;
+        color:var(--text);
+        text-transform:uppercase;
+        letter-spacing:0.6px;
+        white-space:nowrap;
+        border-right:1px solid rgba(255,255,255,0.02);
+    }
+
+    #result_list tbody tr {
+        border-bottom:1px solid var(--border);
+    }
+
+    #result_list td {
+        padding:12px 14px;
+        vertical-align:middle;
+        color:var(--text);
+        background:transparent;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    #result_list tbody tr:hover {
+        background: rgba(255,255,255,0.02);
+    }
+
+    .row1 { background: transparent; }
+    .row2 { background: rgba(255,255,255,0.01); }
+
+    .checkbox-column { width:48px; text-align:center; }
+    .checkbox-column input[type="checkbox"] { width:16px; height:16px; accent-color:var(--primary); }
+
+    .admin-link { color:var(--primary); text-decoration:none; font-weight:700; }
+    .admin-link:hover { color:var(--white); text-decoration:underline; }
+
+    /* Improved number styling */
+    .amount-cell { 
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; 
+        font-size: 13px; 
+        font-weight: 700; 
+        letter-spacing: 0.3px;
+    }
+    .gross-amount { color: var(--text); }
+    .fee-amount { color: var(--muted); font-weight:600; }
+    .net-amount { 
+        color: var(--success); 
+        font-weight: 800;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    /* Status badges */
+    .status-badge {
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:6px 12px;
+        border-radius:999px;
+        font-weight:700;
+        font-size:11px;
+        text-transform:uppercase;
+        border:1px solid rgba(0,0,0,0.15);
+        min-width:110px;
+        justify-content:center;
+        letter-spacing: 0.5px;
+    }
+    .status-pending { background: rgba(241,196,15,0.15); color:var(--warning); border-color: rgba(241,196,15,0.3); }
+    .status-completed { background: rgba(46,204,113,0.15); color:var(--success); border-color: rgba(46,204,113,0.3); }
+    .status-failed { background: rgba(231,76,60,0.15); color:var(--danger); border-color: rgba(231,76,60,0.3); }
+    .status-in_progress { background: rgba(52,152,219,0.15); color:var(--info); border-color: rgba(52,152,219,0.3); }
+    .status-cancelled { background: rgba(255,255,255,0.05); color:var(--muted); border-color: rgba(255,255,255,0.1); }
+
+    .payment-type { 
+        padding:6px 10px; 
+        border-radius:6px; 
+        background:transparent; 
+        color:var(--muted); 
+        border:1px solid var(--border); 
+        font-weight:700; 
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Empty state */
+    .empty-state { padding:48px 24px; color:var(--muted); text-align:center; }
+    .empty-icon { font-size:44px; color:rgba(255,255,255,0.06); margin-bottom:14px; }
+
+    /* Summary */
+    .summary-section {
+        padding:18px;
+        background: var(--panel-2);
+        border-top:1px solid var(--border);
+    }
+
+    .summary-grid {
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(200px,1fr));
+        gap:16px;
+    }
+
+    .summary-card {
+        background:var(--panel);
+        border:1px solid var(--border);
+        padding:16px;
+        border-radius:6px;
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+        transition: all 0.3s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        border-color: var(--primary);
+    }
+
+    .summary-label { 
+        color:var(--muted); 
+        font-size:11px; 
+        text-transform:uppercase; 
+        font-weight:800; 
+        letter-spacing:0.6px; 
+    }
+    
+    .summary-value { 
+        font-family: 'SFMono-Regular', Consolas, monospace; 
+        font-size: 22px; 
+        font-weight: 800; 
+        color: var(--text);
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+    }
+
+    .summary-icon { 
+        background:rgba(255,255,255,0.03); 
+        width:36px; 
+        height:36px; 
+        display:flex; 
+        align-items:center; 
+        justify-content:center; 
+        border-radius:6px; 
+        color:var(--white); 
+    }
+
+    /* Footer */
+    .page-footer {
+        padding:12px 18px;
+        border-top:1px solid var(--border);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        background:transparent;
+    }
+
+    .timestamp { color:var(--muted); font-size:12px; display:flex; gap:8px; align-items:center; }
+
+    /* Responsive */
+    @media (max-width:900px){
+        #result_list { min-width:700px; }
+        .filter-form { flex-direction:column; align-items:stretch; }
+        .action-buttons { width:100%; justify-content:flex-start; }
+        .module-subtitle { font-size:12px; }
+        .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width:600px){
+        .summary-grid { grid-template-columns: 1fr; }
+        .controls-toolbar { flex-direction: column; align-items: stretch; }
+        .action-buttons { justify-content: center; }
+    }
+
+    /* Print */
+    @media print {
+        .controls-section, .batch-alert, .page-footer, .btn { display:none !important; }
+        .payout-details-container { border:none; box-shadow:none; }
+        #result_list { min-width:auto; color:#000; background:#fff; }
+        .module-header { background:#fff !important; color:#000 !important; border-bottom:2px solid #000; }
+        .summary-card { break-inside: avoid; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payout-details-container">
+    <!-- Header -->
+    <div class="module-header">
+        <div class="module-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="module-title">
+            <h1>Payout Details</h1>
+            <div class="module-subtitle">
+                <i class="fas fa-calendar-alt"></i>
+                {{ period.name }} &nbsp;|&nbsp; {{ period.start_date|date:"M d, Y" }} - {{ period.end_date|date:"M d, Y" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-section">
+        <div class="controls-toolbar">
+            <form method="get" class="filter-form" style="margin:0;">
+                <div class="form-group">
+                    <label for="search">Search</label>
+                    <input id="search" name="q" class="form-control" placeholder="User, Job, or Transaction ID" value="{{ search_query }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" class="form-control">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                        <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>Failed</option>
+                        <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="align-self:flex-end;">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+                    {% if search_query or status_filter %}
+                    <a href="." class="btn btn-secondary" style="margin-left:8px;"><i class="fas fa-times"></i> Clear</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="action-buttons">
+                <a href="?download_csv=true&q={{ search_query }}&status={{ status_filter }}" class="btn btn-success"><i class="fas fa-download"></i> Download CSV</a>
+                <a href="javascript:window.print()" class="btn btn-info"><i class="fas fa-print"></i> Print Report</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch -->
+    {% if pending_count > 0 %}
+    <form method="post" class="batch-alert">
+        {% csrf_token %}
+        <div style="display:flex;gap:12px;align-items:center;">
+            <div>
+                <h3 style="margin:0;"><i class="fas fa-play-circle"></i> Ready to Process Batch</h3>
+                <div class="batch-description" style="margin-top:6px;">There are <span class="batch-count"><i class="fas fa-layer-group"></i> {{ pending_count }} pending</span> transactions ready.</div>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-play"></i> Process Batch Now</button>
+        </div>
+    </form>
+    {% elif not search_query and not status_filter %}
+    <div class="batch-alert">
+        <div>
+            <h3 style="margin:0;color:var(--text);"><i class="fas fa-check-circle"></i> All Transactions Processed</h3>
+            <div class="batch-description" style="margin-top:6px;color:var(--muted);">No pending transactions for this period.</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Table -->
+    <div class="table-responsive" role="region" aria-label="Transactions table">
+        <table id="result_list" aria-describedby="table-summary">
+            <thead>
+                <tr>
+                    <th class="checkbox-column"><i class="far fa-check-square" aria-hidden="true"></i></th>
+                    <th><i class="fas fa-user-tie"></i> Freelancer</th>
+                    <th><i class="fas fa-hashtag"></i> Transaction ID</th>
+                    <th><i class="fas fa-briefcase"></i> Job</th>
+                    <th style="text-align:right"><i class="fas fa-money-bill-wave"></i> Gross (KES)</th>
+                    <th style="text-align:right"><i class="fas fa-percentage"></i> Fees (KES)</th>
+                    <th style="text-align:right"><i class="fas fa-wallet"></i> Net (KES)</th>
+                    <th><i class="fas fa-tag"></i> Status</th>
+                    <th><i class="fas fa-credit-card"></i> Payment Type</th>
+                    <th><i class="far fa-clock"></i> Date & Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in transactions %}
+                <tr class="{% cycle 'row1' 'row2' %}">
+                    <td class="checkbox-column" style="text-align:center;">
+                        <input type="checkbox" {% if tx.status == 'completed' %}checked{% endif %} disabled aria-label="completed">
+                    </td>
+                    <td>
+                        <a href="{% url 'admin:auth_user_change' tx.user.id %}" class="admin-link">
+                            <i class="fas fa-user-circle"></i>
+                            {{ tx.user.get_full_name|default:tx.user.username }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if tx.transaction_id %}
+                        <a href="{% url 'admin:wallet_wallettransaction_change' tx.id %}" class="admin-link">
+                            <i class="fas fa-receipt"></i> {{ tx.transaction_id|truncatechars:15 }}
+                        </a>
+                        {% else %}
+                        <span class="empty-text" style="color:var(--muted)">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tx.job %}
+                        <a href="{% url 'admin:core_job_change' tx.job.id %}" class="admin-link">
+                            <i class="fas fa-file-alt"></i> {{ tx.job.title|truncatechars:35 }}
+                        </a>
+                        {% else %}
+                        <span class="empty-text" style="color:var(--muted)">-</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align:right;">
+                        <span class="amount-cell gross-amount" data-value="{{ tx.gross_amount|default:0 }}">
+                            {{ tx.gross_amount|default:"0.00"|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td style="text-align:right;">
+                        <span class="amount-cell fee-amount" data-value="{{ tx.fee_amount|default:0 }}">
+                            {{ tx.fee_amount|default:"0.00"|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td style="text-align:right;">
+                        <span class="amount-cell net-amount" data-value="{{ tx.amount|default:0 }}">
+                            {{ tx.amount|default:"0.00"|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ tx.status|lower }}">
+                            <i class="fas fa-circle"></i> {{ tx.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if tx.payment_type %}
+                        <span class="payment-type"><i class="fas fa-credit-card"></i> {{ tx.payment_type }}</span>
+                        {% else %}
+                        <span class="empty-text" style="color:var(--muted)">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span style="color:var(--muted)">{{ tx.timestamp|date:"M d, Y H:i" }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10">
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-search"></i></div>
+                            <h3 style="margin:0 0 8px 0;">No Transactions Found</h3>
+                            <p style="margin:0 0 12px 0;color:var(--muted);">
+                                {% if search_query or status_filter %}
+                                    No transactions match your current filters.
+                                {% else %}
+                                    No transactions recorded for this payment period.
+                                {% endif %}
+                            </p>
+                            {% if search_query or status_filter %}
+                            <a href="." class="btn btn-secondary"><i class="fas fa-redo"></i> Show All Transactions</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-section" id="table-summary" aria-live="polite">
+        <h3 style="margin:0 0 12px 0; font-size:13px; color:var(--text);"><i class="fas fa-chart-bar"></i> Transaction Summary</h3>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="summary-label">Total Gross Amount</div>
+                    <div class="summary-icon"><i class="fas fa-money-bill-wave"></i></div>
+                </div>
+                <div class="summary-value" id="sum-gross">0.00 <span style="font-size:12px;color:var(--muted);">KES</span></div>
+            </div>
+
+            <div class="summary-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="summary-label">Total Fees</div>
+                    <div class="summary-icon"><i class="fas fa-percentage"></i></div>
+                </div>
+                <div class="summary-value" id="sum-fees">0.00 <span style="font-size:12px;color:var(--muted);">KES</span></div>
+            </div>
+
+            <div class="summary-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="summary-label">Total Net Amount</div>
+                    <div class="summary-icon"><i class="fas fa-wallet"></i></div>
+                </div>
+                <div class="summary-value" id="sum-net">0.00 <span style="font-size:12px;color:var(--muted);">KES</span></div>
+            </div>
+
+            <div class="summary-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="summary-label">Total Transactions</div>
+                    <div class="summary-icon"><i class="fas fa-list-alt"></i></div>
+                </div>
+                <div class="summary-value" id="sum-count">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+        <div class="timestamp"><i class="fas fa-info-circle"></i> Generated on {% now "F j, Y, g:i a" %}</div>
+        <div class="action-buttons">
+            <a href="?download_csv=true&q={{ search_query }}&status={{ status_filter }}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> CSV</a>
+            <a href="javascript:window.print()" class="btn btn-info btn-sm"><i class="fas fa-print"></i> Print</a>
+        </div>
+    </div>
+</div>
+
+<!-- JS: auto-sum the table and populate summary cards -->
+<script>
+(function(){
+    function parseNumber(v){
+        // If data-value attribute present, use it; else parse visible text
+        if (v === null || v === undefined) return 0;
+        if (typeof v === 'number') return v;
+        // Remove commas, spaces, non-numeric except dot and minus
+        var s = String(v).trim().replace(/,/g,'').replace(/[^\d\.\-]/g,'');
+        if (s === '') return 0;
+        var n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+    }
+
+    function recalc(){
+        try {
+            var grossEls = document.querySelectorAll('.gross-amount');
+            var feeEls   = document.querySelectorAll('.fee-amount');
+            var netEls   = document.querySelectorAll('.net-amount');
+
+            var gross = 0, fees = 0, net = 0, count = 0;
+
+            function sumNodes(nodes, accumulator){
+                for (var i=0;i<nodes.length;i++){
+                    var el = nodes[i];
+                    // Prefer data-value if present
+                    var dv = el.getAttribute('data-value');
+                    if (dv !== null) {
+                        accumulator += parseNumber(dv);
+                    } else {
+                        accumulator += parseNumber(el.textContent);
+                    }
+                }
+                return accumulator;
+            }
+
+            gross = sumNodes(grossEls, 0);
+            fees  = sumNodes(feeEls, 0);
+            net   = sumNodes(netEls, 0);
+
+            // Count rows with a gross amount (approximate count of transactions)
+            count = Math.max(grossEls.length, feeEls.length, netEls.length);
+            // fallback to tbody rows
+            if (!count || count === 0) {
+                var tbodies = document.querySelectorAll('#result_list tbody tr');
+                count = tbodies.length;
+            }
+
+            // Format to 2 decimals with thousand separators
+            function fmt(n){ 
+                return Number(Math.round(n * 100) / 100).toLocaleString('en-US', {
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2,
+                    useGrouping: true
+                }); 
+            }
+
+            var elGross = document.getElementById('sum-gross');
+            var elFees  = document.getElementById('sum-fees');
+            var elNet   = document.getElementById('sum-net');
+            var elCount = document.getElementById('sum-count');
+
+            if (elGross) elGross.innerHTML = fmt(gross) + ' <span style="font-size:12px;color:var(--muted)">KES</span>';
+            if (elFees)  elFees.innerHTML  = fmt(fees)  + ' <span style="font-size:12px;color:var(--muted)">KES</span>';
+            if (elNet)   elNet.innerHTML   = fmt(net)   + ' <span style="font-size:12px;color:var(--muted)">KES</span>';
+            if (elCount) elCount.textContent = count.toLocaleString();
+
+            // Accessibility: announce totals (screen readers)
+            var summaryRegion = document.getElementById('table-summary');
+            if (summaryRegion) {
+                summaryRegion.setAttribute('aria-label', 'Transaction summary: ' + fmt(gross) + ' gross, ' + fmt(fees) + ' fees, ' + fmt(net) + ' net, ' + count + ' transactions');
+            }
+        } catch (e){
+            // fail silently but log for debugging
+            if (window.console && console.error) console.error('Recalc error', e);
+        }
+    }
+
+    // Run after DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', recalc);
+    } else {
+        recalc();
+    }
+
+    // If table may be updated dynamically, observe changes and recalc
+    var table = document.getElementById('result_list');
+    if (table && window.MutationObserver) {
+        var obs = new MutationObserver(function(){ 
+            setTimeout(recalc, 10); // Small delay to ensure DOM is updated
+        });
+        obs.observe(table, { childList:true, subtree:true, characterData:true });
+    }
+
+})();
+</script>
+{% endblock %}

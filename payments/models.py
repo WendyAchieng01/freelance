@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class PaypalPayments(models.Model):
@@ -18,6 +19,7 @@ class PaypalPayments(models.Model):
     verified = models.BooleanField(default=False)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     # Stores additional data like response_id
     extra_data = models.JSONField(default=dict)
 

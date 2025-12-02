@@ -1,10 +1,14 @@
+import logging
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from .models import Profile, FreelancerProfile, ClientProfile
 from .utils import is_disposable_email 
+from api.wallet.gateways.paystack import PaystackGateway
 
+
+logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=User)
 def update_email_verified(sender, instance, **kwargs):
@@ -46,3 +50,51 @@ def handle_profile_creation_or_update(sender, instance, created, **kwargs):
         elif instance.user_type == "client":
             ClientProfile.objects.get_or_create(profile=instance)
             FreelancerProfile.objects.filter(profile=instance).delete()
+
+
+@receiver(post_save, sender=Profile)
+def create_paystack_recipient_on_profile_save(sender, instance, created, **kwargs):
+    if not instance.phone:
+        return
+
+    if instance.paystack_recipient:
+        return
+
+    try:
+        gateway = PaystackGateway()
+        provider_map = {
+            "mpesa": "MPESA",
+            "airtel": "AIRTEL",
+            "tkash": "TKASH",
+        }
+
+        
+        payload = {
+            "type": "mobile_money",
+            "name": f"{instance.user.first_name} {instance.user.last_name}",
+            "account_number": instance.phone.replace("+", ""),
+            "currency": "KES",
+            "bank_code": provider_map.get(instance.mobile_money_provider.upper(), "MPESA"),
+        }
+        print(payload)
+
+
+        result = gateway.create_transfer_recipient_payload(payload)
+        print("SIGNAL FIRED for profile:", instance.id)
+
+        logger.warning("SIGNAL FIRED for profile %s", instance.id)
+
+        if result.get("success"):
+            instance.paystack_recipient = result["recipient_code"]
+            instance.save(update_fields=["paystack_recipient"])
+            logger.info(
+                f"Auto-created Paystack recipient for user {instance.user.id}")
+ 
+
+        else:
+            logger.error(
+                f"Failed to auto-create recipient for user {instance.user.id}: {result}"
+            )
+    except Exception as e:
+        logger.exception(
+            f"Error creating Paystack recipient automatically: {e}")
