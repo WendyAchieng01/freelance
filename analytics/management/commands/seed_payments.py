@@ -49,10 +49,10 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(
                 f"Using platform fee: {rate_value}%"))
         except Rate.DoesNotExist:
-            rate_obj = Rate.objects.create(rate_amount=Decimal('8.00'))
+            rate_obj = Rate.objects.get_or_create(rate_amount=Decimal('10.00'))
             rate_value = rate_obj.rate_amount
             self.stdout.write(self.style.WARNING(
-                "No rate found → created 8.00%"))
+                "No rate found → created 10.00%"))
 
         # Auto-load or create current payment period
         today = timezone.now().date()
@@ -153,7 +153,7 @@ class Command(BaseCommand):
                 defaults={
                     'user': client_user,
                     'transaction_type': 'payment_received',
-                    'rate': rate_value,
+                    'rate': rate_obj,
                     'payment_type': 'paystack',
                     'amount': amount,
                     'status': 'completed',

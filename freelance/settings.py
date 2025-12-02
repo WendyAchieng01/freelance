@@ -62,7 +62,7 @@ INSTALLED_APPS = [
 
     # custom
     'core',
-    'accounts',
+    "accounts.apps.AccountsConfig",
     'academy',
     'invoicemgmt',
     'payment',
@@ -82,6 +82,8 @@ INSTALLED_APPS = [
 
     'cloudinary_storage',
     'cloudinary',
+    'django_q',
+
 ]
 
 MIDDLEWARE = [
@@ -206,20 +208,32 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+PAYOUT_DEFAULT_PROVIDER = "paystack"  # or "paypal"
+PAYOUT_PROVIDER_CHOICES = ("paystack", "paypal")
+
 
 PAYSTACK_SECRET_KEY = 'sk_test_fe4eb40364e4a71a3b387c7a334861ed7977538f'
-
 PAYSTACK_PUBLIC_KEY = 'pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3'
+
+PAYOUT_EXCHANGE_RATES = {
+    "KES_USD": 0.0077,
+}
 
 
 # PayPal configuration
 
-PAYPAL_RECEIVER_EMAIL = "niltestbusiness@business.example.com"
+PAYPAL_RECEIVER_EMAIL = os.getenv('PAYPAL_RECEIVER_EMAIL')
 PAYPAL_TEST = True  # when live change to False
 
-PAYPAL_CLIENT_ID = "AVyJLECov8YpYvif_IRguvgjh5vGBspN6Aqhg5mYoDRNhVQITTnnzSryjk8PSubZJ5KqUXp7UqDTAo9Q"
-PAYPAL_SECRET = "EEYypYfyXGky0fxaw48xMMARgkfqYfAYP9pBP6-HcCpZO8CGs_YmdqxS3koL4dEilYh9p5s9YPNuxm0g"
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
 PAYPAL_MODE = "sandbox"  # or "live"
+
+PAYPAL_PAYOUTS_URL = os.getenv('PAYPAL_PAYOUTS_URL')
+
+PAYPAL_VERIFY_WEBHOOK_URL = os.getenv('PAYPAL_VERIFY_WEBHOOK_URL')
+PAYSTACK_WEBHOOK_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_WEBHOOK_ID = os.getenv('PAYPAL_WEBHOOK_ID')
 
 PAYPAL_URL = (
     "https://api-m.sandbox.paypal.com"
@@ -230,6 +244,21 @@ PAYPAL_URL = (
 PAYPAL_OAUTH_URL = f"{PAYPAL_URL}/v1/oauth2/token"
 PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
+
+
+
+Q_CLUSTER = {
+    "name": "freelance",
+    "workers": 4,
+    "retry": 300,
+    "timeout": 90,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+    "scheduler": True,
+}
+
+
 
 '''
 REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1")
