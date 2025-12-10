@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     'web-production-b953.up.railway.app',
     'nilltechsolutions.com',
     'freelance-w8gc.onrender.com',
+    'https://freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
     'www.freelance-w8gc.onrender.com',
     'freelance-nuxt-latest.onrender.com',
@@ -320,16 +321,10 @@ CHANNEL_LAYERS = {
 # for heroku csrf_token
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost',
-    'http://localhost:3000',
-    'http://127.0.0.1:8000',
-    'https://www.freelance-w8gc.onrender.com',
-    'https://freelance-w8gc.onrender.com',
-    "https://www.nilltech-frontend.onrender.com",
     "https://nilltech-frontend.onrender.com",
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com',
-    'https://freelance-nuxt-latest.onrender.com',
+    'https://freelance-w8gc.onrender.com',
 
 ]
 
@@ -383,15 +378,11 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost",
-    'http://localhost:3000',
-    "http://127.0.0.1",
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://nilltech-frontend.onrender.com",
     "https://www.nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
-    "https://freelance-nuxt-latest.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -412,11 +403,6 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://freelance-w8gc.onrender.com",
-    "https://nilltech-frontend.onrender.com",
-    "https://freelance-nuxt-latest.onrender.com",
-    "http://localhost",
-    "http://127.0.0.1",
-    
 
 ]
 
