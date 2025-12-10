@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = os.getenv('FRONTEND_URL')
+FRONTEND_URL = os.getenv('FRONTEND_URL', '127.0.0.1:3000')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN =os.getenv('DOMAIN')
 PLATFORM_NAME = "Nilltech Solutions"
