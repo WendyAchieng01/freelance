@@ -387,6 +387,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltech-frontend.onrender.com",
     "https://www.nilltech-frontend.onrender.com",
     "https://freelance-w8gc.onrender.com",
+    "https://freelance-production-46dc.up.railway.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -407,6 +408,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://freelance-w8gc.onrender.com",
+    "https://freelance-production-46dc.up.railway.app",
 
 ]
 
