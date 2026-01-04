@@ -27,13 +27,15 @@ ALLOWED_HOSTS = [
     'localhost',
     'localhost:3000',
     '127.0.0.1',
-    'web-production-b953.up.railway.app',
     'nilltechsolutions.com',
     'freelance-w8gc.onrender.com',
     'https://freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
     'www.freelance-w8gc.onrender.com',
     'freelance-nuxt-latest.onrender.com',
+    'freelance-production-46dc.up.railway.app',
+    'http://freelance-production-46dc.up.railway.app',
+    'https://freelance-production-46dc.up.railway.app',
 ]
 
 
@@ -325,6 +327,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com',
     'https://freelance-w8gc.onrender.com',
+    'http://freelance-production-46dc.up.railway.app',
+    'https://freelance-production-46dc.up.railway.app',
 
 ]
 
