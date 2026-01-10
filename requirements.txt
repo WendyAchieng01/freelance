@@ -1,15 +1,16 @@
 amqp==5.3.1
+arrow==1.4.0
 asgiref==3.8.1
 attrs==25.3.0
 autobahn==24.4.2
 Automat==24.8.1
 billiard==4.2.1
+blessed==1.25.0
 cachetools==6.2.1
 celery==5.5.3
 certifi==2025.1.31
 cffi==1.17.1
 channels==4.0.0
-channels-redis==4.1.0
 chardet==5.2.0
 charset-normalizer==3.4.1
 click==8.2.1
@@ -27,7 +28,8 @@ django-cloudinary-storage==0.3.0
 django-cors-headers==4.7.0
 django-filter==25.1
 django-paypal==2.1
-django-redis==6.0.0
+django-picklefield==3.3
+django-q2==1.8.0
 django-tz-detect==0.5.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
@@ -72,7 +74,7 @@ python-decouple==3.8
 python-dotenv==1.1.1
 pytz==2025.2
 PyYAML==6.0.2
-redis==5.0.1
+redis==3.5.3
 referencing==0.36.2
 reportlab==4.2.5
 requests==2.32.3
