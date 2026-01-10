@@ -64,14 +64,15 @@ class DailyAnalytics(models.Model):
         obj.revenue = payments_today.aggregate(t=models.Sum('amount'))[
             't'] or Decimal('0')
 
-        # Payouts today
+        # Payouts today (Net amount paid to freelancers)
         payouts_today = WalletTransaction.objects.filter(
             timestamp__date=today, status='completed')
         obj.payouts = payouts_today.aggregate(t=models.Sum('amount'))[
             't'] or Decimal('0')
 
-        # Platform fees
-        obj.platform_fees = obj.revenue - obj.payouts
+        # Platform fees today (Correct calculation)
+        obj.platform_fees = payouts_today.aggregate(t=models.Sum('fee_amount'))[
+            't'] or Decimal('0')
 
         obj.save()
 
@@ -156,24 +157,19 @@ class PaymentMethodAnalytics(models.Model):
             payment_method='paystack'
         )
         paystack_obj.transaction_count = paystack_payments.count()
-        paystack_obj.total_amount = sum(p.amount for p in paystack_payments)
+        paystack_obj.total_amount = paystack_payments.aggregate(t=models.Sum('amount'))['t'] or Decimal('0')
         paystack_obj.successful_count = paystack_payments.filter(
             verified=True).count()
         paystack_obj.save()
 
         # PayPal payments
-        paypal_payments = PaypalPayments.objects.filter(
-            models.Q(extra_data__has_key='created_date') |
-            # Fallback - you might need to add a date field
-            models.Q(id__isnull=False)
-        )
-        # Filter by date if possible, or use creation logic
+        paypal_payments = PaypalPayments.objects.filter(created_at__date=date)
         paypal_obj, _ = cls.objects.get_or_create(
             date=date,
             payment_method='paypal'
         )
         paypal_obj.transaction_count = paypal_payments.count()
-        paypal_obj.total_amount = sum(p.amount for p in paypal_payments)
+        paypal_obj.total_amount = paypal_payments.aggregate(t=models.Sum('amount'))['t'] or Decimal('0')
         paypal_obj.successful_count = paypal_payments.filter(
             status='completed').count()
         paypal_obj.save()
@@ -264,8 +260,7 @@ class SkillsAnalytics(models.Model):
 
             # Supply: Freelancers with this skill
             obj.supply_count = FreelancerProfile.objects.filter(
-                skills=skill,
-                profile__user__date_joined__date=date
+                skills=skill
             ).count()
 
             # Average hourly rate for this skill
@@ -302,3 +297,5 @@ class ComprehensiveAnalytics(models.Model):
         # Get or create comprehensive record
         obj, created = cls.objects.get_or_create(date=date)
         obj.save()
+
+1

@@ -28,9 +28,10 @@ class ProfileInline(admin.StackedInline):
             "fields": ("phone", "location", "bio", "profile_pic", "email_verified")
         }),
         ("Account Details", {
-            "fields": ("user_type", "id_card", "pay_id", "device")
+            "fields": ("user_type", "id_card", "pay_id", "paystack_recipient", "mobile_money_provider", "device")
         }),
     )
+    readonly_fields = ("paystack_recipient","mobile_money_provider",)
 
 
 # Attach profile information inside the Django User admin

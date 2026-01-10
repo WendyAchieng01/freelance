@@ -1,0 +1,246 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Custom styling */
+    .payout-module {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin: 20px 0;
+    }
+    
+    .payout-module .module-header {
+        background: #417690;
+        color: white;
+        padding: 15px 20px;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .payout-module .module-header i {
+        font-size: 20px;
+    }
+    
+    .payout-module .results {
+        padding: 0;
+    }
+    
+    .payout-module table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .payout-module thead th {
+        background-color: #f5f5f5;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #666;
+        border-bottom: 2px solid #eaeaea;
+        font-size: 14px;
+    }
+    
+    .payout-module tbody td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+    
+    .payout-module tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+    
+    .payout-module .row1 {
+        background-color: #fff;
+    }
+    
+    .payout-module .row2 {
+        background-color: #fafafa;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 24px;
+        text-align: center;
+    }
+    
+    .badge-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .badge-zero {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background-color: #417690;
+        color: white;
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: 1px solid #417690;
+    }
+    
+    .btn-action:hover {
+        background-color: #2a5b7a;
+        border-color: #2a5b7a;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .btn-action i {
+        font-size: 12px;
+    }
+    
+    .date-cell {
+        font-family: monospace;
+        color: #555;
+    }
+    
+    .period-name {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+    
+    .empty-state i {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: #ddd;
+    }
+    
+    .info-box {
+        background: #f0f9ff;
+        border: 1px solid #b6e0fe;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .info-box i {
+        color: #417690;
+        font-size: 18px;
+        margin-top: 2px;
+    }
+    
+    .info-box p {
+        margin: 0;
+        color: #555;
+        line-height: 1.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .payout-module .module-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .payout-module table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payout-module">
+    <h1 class="module-header">
+        <i class="fas fa-calendar-alt"></i>
+        Select a Payment Period for Batch Payout
+    </h1>
+    
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <p>Select a payment period below to view and process pending payouts. Each period represents a specific time frame for which payments need to be processed.</p>
+    </div>
+    
+    <div class="results">
+        {% if periods %}
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-file-invoice-dollar"></i> Payment Period</th>
+                        <th><i class="fas fa-calendar-start"></i> Start Date</th>
+                        <th><i class="fas fa-calendar-end"></i> End Date</th>
+                        <th><i class="fas fa-clock"></i> Pending Payouts</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for period in periods %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <td class="period-name">
+                            <i class="fas fa-calendar-week"></i> {{ period.name }}
+                        </td>
+                        <td class="date-cell">
+                            {{ period.start_date|date:"Y-m-d" }}
+                        </td>
+                        <td class="date-cell">
+                            {{ period.end_date|date:"Y-m-d" }}
+                        </td>
+                        <td>
+                            {% if period.pending_payouts > 0 %}
+                                <span class="badge badge-success">
+                                    <i class="fas fa-hourglass-half"></i> {{ period.pending_payouts }}
+                                </span>
+                            {% else %}
+                                <span class="badge badge-zero">
+                                    <i class="fas fa-check-circle"></i> 0
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'admin:wallet_period_payout_detail' period.id %}" class="btn-action">
+                                <i class="fas fa-eye"></i> View Payouts
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No Payment Periods Available</h3>
+                <p>There are currently no payment periods configured for payout processing.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

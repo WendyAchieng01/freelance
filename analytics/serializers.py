@@ -32,6 +32,7 @@ class AnalyticsSerializer(serializers.Serializer):
     user_growth = serializers.ListField(child=serializers.IntegerField())
     job_growth = serializers.ListField(child=serializers.IntegerField())
     revenue_growth = serializers.ListField(child=serializers.FloatField())
+    profit_growth = serializers.ListField(child=serializers.FloatField())
 
     # Job status data
     job_status_labels = serializers.ListField(child=serializers.CharField())

@@ -5,7 +5,7 @@ from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from core.models import Job,Chat,Profile,Response,Message
 from django.core.exceptions import ValidationError
-from wallet.models import WalletTransaction
+from wallet.models import WalletTransaction,Rate
 from decimal import Decimal
 
 @receiver(pre_save, sender=Job)
@@ -120,9 +120,6 @@ def manage_chat_on_job_update(sender, instance, created, **kwargs):
 
 
 def send_initial_chat_message(job, client_profile, freelancer_profile):
-    """
-    Auto-create a welcome message from the client once a freelancer is accepted.
-    """
     chat, _ = Chat.objects.get_or_create(
         job=job,
         client=client_profile,
@@ -130,27 +127,34 @@ def send_initial_chat_message(job, client_profile, freelancer_profile):
         defaults={'active': True},
     )
 
-    # Get latest platform fee rate
-    latest_tx = WalletTransaction.objects.order_by('-timestamp').first()
-    fee_rate = latest_tx.rate if latest_tx else Decimal('10.00')
+    # 1. Get latest rate (always a Decimal)
+    try:
+        rate_obj = Rate.objects.latest('effective_from')
+        rate_pct = Decimal(rate_obj.rate_amount)
+    except Rate.DoesNotExist:
+        rate_pct = Decimal('10.00')
+    except Exception:
+        rate_pct = Decimal('10.00')
 
-    gross = job.price or Decimal('0.00')
-    fee = (fee_rate / Decimal('100')) * gross
+    # 2. Gross, Fee, Net amount calculations
+    gross = Decimal(job.price) if getattr(
+        job, 'price', None) else Decimal('0.00')
+    fee = (rate_pct / Decimal('100')) * gross
     net_amount = gross - fee
 
-    # Compose a friendly message
+    # 3. Friendly first message
     message_text = (
         f"👋 Hi {freelancer_profile.user.first_name or freelancer_profile.user.username},\n\n"
         f"I’m {client_profile.user.first_name or client_profile.user.username}, "
         f"and I’ve just accepted you for the job **'{job.title}'**.\n\n"
+        f"Platform fee rate: {rate_pct}%\n"
         f"Project rate (after platform fee): Kes {net_amount:.2f}\n"
-        f"📅 Expected deadline: {job.deadline_date.strftime('%b %d, %Y') if job.deadline_date else 'Not specified'}\n\n"
-        f"Welcome aboard! Feel free to ask any questions or share your ideas here — "
-        f"we’re excited to get started.\n\n"
+        f"Expected deadline: "
+        f"{job.deadline_date.strftime('%b %d, %Y') if job.deadline_date else 'Not specified'}\n\n"
+        f"Welcome aboard! Let’s get started — feel free to ask anything.\n\n"
         f"— {client_profile.user.first_name or client_profile.user.username}"
     )
 
-    # Save as a message in the chat
     Message.objects.create(
         chat=chat,
         sender=client_profile.user,

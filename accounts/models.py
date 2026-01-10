@@ -27,7 +27,15 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)
     profile_pic = CloudinaryField(
         'image', folder='freelance/profile_pic/', null=True, blank=True, resource_type='raw')
-    pay_id = models.CharField(max_length=20, choices=(('M-Pesa', 'M-Pesa'), ('Binance', 'Binance')), default='M-Pesa')
+    pay_id = models.CharField(max_length=20, choices=(
+        ('MPESA', 'MPESA'), ('Airtel Money', 'Airtel Money')), default='mpesa')
+    paystack_recipient = models.CharField(max_length=50, blank=True, null=True)
+
+    mobile_money_provider = models.CharField(
+        max_length=50,
+        choices=(('MPESA', 'MPESA'), ('Airtel Money', 'Airtel Money')),
+        blank=True,null=True,default='MPESA'
+    )
     id_card = models.CharField(max_length=10, blank=True)
     user_type = models.CharField(max_length=20, choices=(('freelancer', 'Freelancer'), ('client', 'Client')), default='freelancer')
     email_verified = models.BooleanField(default=False)
@@ -35,6 +43,13 @@ class Profile(models.Model):
         
     def __str__(self):
         return self.user.username
+    
+    def save(self, *args, **kwargs):
+        if self.pay_id != self.mobile_money_provider:
+            self.mobile_money_provider = self.pay_id
+        super().save(*args, **kwargs)
+
+            
 
 
 class FreelancerProfile(models.Model):
@@ -309,7 +324,7 @@ def create_profile(sender, instance, created, **kwargs):
         user_profile = Profile(user=instance)
         user_profile.save()
 
-post_save.connect(create_profile, sender=User)
+#post_save.connect(create_profile, sender=User)
 
 
 def project_media_upload_path(instance, filename):

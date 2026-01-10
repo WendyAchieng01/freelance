@@ -40,6 +40,7 @@ class AnalyticsAPIView(APIView):
         user_growth = []
         job_growth = []
         revenue_growth = []
+        profit_growth = []
 
         for i in range(11, -1, -1):
             date = (now.date().replace(day=1) - relativedelta(months=i))
@@ -55,6 +56,10 @@ class AnalyticsAPIView(APIView):
             rev = Payment.objects.filter(date_created__gte=start, date_created__lt=end, verified=True)\
                 .aggregate(s=Sum('amount'))['s'] or Decimal('0')
             revenue_growth.append(float(rev))
+            
+            profit = WalletTransaction.objects.filter(status='completed', timestamp__gte=start, timestamp__lt=end)\
+                .aggregate(s=Sum('fee_amount'))['s'] or Decimal('0')
+            profit_growth.append(float(profit))
 
         # === BASIC STATS ===
         total_users = User.objects.count()
@@ -71,7 +76,8 @@ class AnalyticsAPIView(APIView):
             s=Sum('amount'))['s'] or Decimal('0')
         total_payouts = WalletTransaction.objects.filter(
             status='completed').aggregate(s=Sum('amount'))['s'] or Decimal('0')
-        platform_profit = total_revenue - total_payouts
+        platform_profit = WalletTransaction.objects.filter(status='completed').aggregate(
+            s=Sum('fee_amount'))['s'] or Decimal('0')
 
         avg_responses = Job.objects.annotate(num_apps=Count(
             'responses')).aggregate(avg=Avg('num_apps'))['avg'] or 0
@@ -133,6 +139,7 @@ class AnalyticsAPIView(APIView):
             'user_growth': user_growth,
             'job_growth': job_growth,
             'revenue_growth': revenue_growth,
+            'profit_growth': profit_growth,
 
             # Job status
             'job_status_labels': ['Open', 'In Progress', 'Completed'],

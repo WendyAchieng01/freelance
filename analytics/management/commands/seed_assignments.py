@@ -1,49 +1,112 @@
-
-
 import random
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django.db.models import Q, Count, Avg,F
+from django.db.models import Count
 
-from accounts.models import FreelancerProfile
 from core.models import Job, Response, Chat
-from payment.models import Payment
 
 
 class Command(BaseCommand):
-    help = "Assign ONE top freelancer to the first N eligible jobs (default: 20)"
+    help = (
+        "Assign ONE top freelancer to the first N eligible jobs (default: 20)\n"
+        "OPTIONAL: Mark N in-progress jobs as completed using --complete N"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--num-jobs',
             type=int,
             default=20,
-            help='Number of jobs to assign a freelancer to (default: 20)'
+            help='Number of jobs to assign freelancers to (default: 20)',
         )
-        parser.add_argument('--unassign', action='store_true',
-                            help='Remove ALL current assignments first')
-        parser.add_argument('--dry-run', action='store_true',
-                            help='Show what would happen without saving')
-        parser.add_argument('--only', type=int, nargs='*',
-                            help='Only process specific job IDs')
+        parser.add_argument(
+            '--complete',
+            type=int,
+            help='Mark the first N in-progress jobs as completed',
+        )
+        parser.add_argument(
+            '--unassign',
+            action='store_true',
+            help='Remove ALL current assignments first',
+        )
+        parser.add_argument(
+            '--dry-run',
+            action='store_true',
+            help='Show what would happen without saving',
+        )
+        parser.add_argument(
+            '--only',
+            type=int,
+            nargs='*',
+            help='Only process specific job IDs',
+        )
 
     def handle(self, *args, **options):
         num_jobs = max(1, options['num_jobs'])
-        unassign_first = options['unassign']
         dry_run = options['dry_run']
-        only_job_ids = options['only']
 
-        if unassign_first:
+        # 1) Unassign everything
+        if options['unassign']:
             self.stdout.write(
-                "Unassigning all freelancers and resetting jobs...")
+                "Unassigning all jobs & clearing chats/responses…")
             Job.objects.update(selected_freelancer=None,
                                assigned_at=None, status='open')
             Chat.objects.filter(freelancer__isnull=False).delete()
             Response.objects.update(status='submitted')
             self.stdout.write(self.style.SUCCESS("All assignments cleared!"))
 
-        # Build query for eligible jobs
-        eligible_jobs = Job.objects.filter(
+        # 2) Mark N in-progress jobs as completed
+        if options['complete']:
+            self.complete_jobs(options['complete'], dry_run)
+            return  # stop here, do NOT continue to assignment
+
+        # 3) Assign freelancers to jobs
+        self.assign_jobs(num_jobs, dry_run, options['only'])
+
+    # PART A — COMPLETE JOBS
+    def complete_jobs(self, n, dry_run):
+        """
+        Mark the first N in-progress jobs as completed.
+        """
+        # Get jobs that are in-progress
+        jobs = Job.objects.filter(status='in_progress').order_by('assigned_at')[:n]
+
+        if not jobs:
+            self.stdout.write(self.style.WARNING(
+                "No jobs are currently in progress."))
+            return
+
+        self.stdout.write(
+            f"Found {len(jobs)} in-progress jobs → marking {len(jobs)} as completed")
+
+        for job in jobs:
+            if dry_run:
+                self.stdout.write(
+                    f"[DRY] Would COMPLETE job #{job.id} — {job.title[:50]}")
+                continue
+
+            # Update job status to completed
+            job.status = 'completed'
+            job.save(update_fields=['status'])
+
+            # Update accepted response (if exists) to mark it as completed
+            Response.objects.filter(
+                job=job, status='accepted'
+            ).update(status='completed')
+
+            # Close chat
+            Chat.objects.filter(job=job).update(active=False)
+
+            self.stdout.write(self.style.SUCCESS(
+                f"COMPLETED → #{job.id} {job.title[:55]}"
+            ))
+
+        self.stdout.write(self.style.SUCCESS("\nJobs completed successfully!"))
+
+    # PART B — ASSIGN FREELANCERS
+    def assign_jobs(self, num_jobs, dry_run, only_job_ids):
+        # Build eligible jobs queryset
+        eligible = Job.objects.filter(
             status='open',
             payment_verified=True,
             responses__isnull=False
@@ -51,28 +114,28 @@ class Command(BaseCommand):
             applicant_count=Count('responses')
         ).filter(
             applicant_count__gt=0,
-            selected_freelancer__isnull=True  # Not already assigned
-        ).order_by('posted_date')  # Oldest first (feels natural)
+            selected_freelancer__isnull=True
+        ).order_by('posted_date')
 
         if only_job_ids:
-            eligible_jobs = eligible_jobs.filter(id__in=only_job_ids)
+            eligible = eligible.filter(id__in=only_job_ids)
 
-        # Get extra in case some fail
-        jobs = list(eligible_jobs[:num_jobs * 2])
+        jobs = list(eligible[:num_jobs * 2])
         if not jobs:
             self.stdout.write(self.style.WARNING(
-                "No eligible jobs found! Need open + paid + has applications."))
+                "No eligible jobs found (need: open + paid + has applications)."
+            ))
             return
 
         self.stdout.write(
-            f"Found {len(jobs)} eligible jobs → assigning 1 freelancer to up to {num_jobs} of them")
+            f"Found {len(jobs)} eligible jobs → assigning freelancers to up to {num_jobs}"
+        )
 
-        assigned_count = 0
+        assigned = 0
         for job in jobs:
-            if assigned_count >= num_jobs:
+            if assigned >= num_jobs:
                 break
 
-            # Get best applicant
             best_response = self.get_best_applicant(job)
             if not best_response:
                 continue
@@ -81,13 +144,12 @@ class Command(BaseCommand):
 
             if dry_run:
                 self.stdout.write(
-                    f"[DRY] Hiring {freelancer_user.get_full_name() or freelancer_user.username} "
-                    f"→ Job #{job.id}: \"{job.title[:50]}...\""
+                    f"[DRY] Would hire {freelancer_user.username} → Job #{job.id}"
                 )
-                assigned_count += 1
+                assigned += 1
                 continue
 
-            # === HIRE FREELANCER ===
+            # Assign job
             job.selected_freelancer = freelancer_user
             job.assigned_at = timezone.now()
             job.status = 'in_progress'
@@ -99,7 +161,7 @@ class Command(BaseCommand):
             best_response.extra_data = best_response.extra_data or {}
             best_response.extra_data.update({
                 "hired_at": timezone.now().isoformat(),
-                "note": "Congratulations! You have been selected for this job."
+                "note": "You have been selected!",
             })
             best_response.save(update_fields=['status', 'extra_data'])
 
@@ -111,35 +173,31 @@ class Command(BaseCommand):
                 defaults={'active': True}
             )
 
-            assigned_count += 1
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"HIRED → {freelancer_user.username:<18} → #{job.id} {job.title[:55]}"
-                )
-            )
+            assigned += 1
+            self.stdout.write(self.style.SUCCESS(
+                f"HIRED → {freelancer_user.username:<18} → #{job.id} {job.title[:55]}"
+            ))
 
-        # Final Summary
+        # Summary
         self.stdout.write("\n" + "═" * 90)
         if dry_run:
             self.stdout.write(self.style.WARNING(
-                f" DRY RUN: Would assign {assigned_count} freelancers to {assigned_count} jobs"))
+                f"DRY RUN: Would assign {assigned} freelancers"
+            ))
         else:
             self.stdout.write(self.style.SUCCESS(
-                f" SUCCESS: {assigned_count} jobs now have a hired freelancer!"))
+                f"ASSIGNED: {assigned} jobs now have freelancers!"
+            ))
             self.stdout.write(self.style.SUCCESS(
-                f" {Job.objects.filter(status='in_progress').count()} jobs IN PROGRESS"))
-            self.stdout.write(self.style.SUCCESS(
-                f" {Chat.objects.filter(active=True).count()} active client-freelancer chats"))
+                f"{Job.objects.filter(status='in_progress').count()} jobs IN PROGRESS"
+            ))
         self.stdout.write("═" * 90)
-        self.stdout.write(self.style.SUCCESS(
-            "Your platform looks REAL and ACTIVE!"))
 
+    # PART C — CHOOSE BEST APPLICANT
     def get_best_applicant(self, job):
-        """Return the single best Response for this job"""
         responses = job.responses.select_related(
-            'user__profile__freelancer_profile').all()
-        if not responses:
-            return None
+            'user__profile__freelancer_profile'
+        )
 
         best = None
         best_score = -1
@@ -150,9 +208,11 @@ class Command(BaseCommand):
                 continue
 
             score = 0
+
             # Skill match
             matched = set(fp.skills.values_list('id', flat=True)) & set(
-                job.skills_required.values_list('id', flat=True))
+                job.skills_required.values_list('id', flat=True)
+            )
             score += len(matched) * 20
 
             # Experience
@@ -165,6 +225,7 @@ class Command(BaseCommand):
                 if rate <= base * 1.3:
                     score += 30
 
+            # Random noise
             score += random.randint(0, 10)
 
             if score > best_score:
