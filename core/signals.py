@@ -1,35 +1,15 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.db.models.signals import m2m_changed
-from django.db.models.signals import post_save,pre_save
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from core.models import Job,Chat,Profile,Response,Message
 from django.core.exceptions import ValidationError
-from wallet.models import WalletTransaction,Rate
 from decimal import Decimal
 
-@receiver(pre_save, sender=Job)
-def cache_old_job_values(sender, instance, **kwargs):
-    if instance.pk:
-        try:
-            old_instance = Job.objects.get(pk=instance.pk)
-            instance._old_selected_freelancer = old_instance.selected_freelancer
-            instance._old_payment_verified = old_instance.payment_verified
-        except Job.DoesNotExist:
-            instance._old_selected_freelancer = None
-            instance._old_payment_verified = False
-    else:
-        instance._old_selected_freelancer = None
-        instance._old_payment_verified = False
+from core.models import Job, Chat, Profile, Response, Message
+from wallet.models import Rate
 
 
-@receiver(post_save, sender=Job)
-def update_response_status_on_job_change(sender, instance, **kwargs):
-    responses = instance.responses.all()
-    for response in responses:
-        response.save()
-
-
+# Reviewed responses logic
 @receiver(m2m_changed, sender=Job.reviewed_responses.through)
 def validate_and_update_reviewed_responses(sender, instance, action, pk_set, **kwargs):
     """
@@ -38,10 +18,13 @@ def validate_and_update_reviewed_responses(sender, instance, action, pk_set, **k
     """
     if action == 'pre_add':
         invalid_response_ids = Response.objects.filter(
-            pk__in=pk_set).exclude(job=instance).values_list('id', flat=True)
+            pk__in=pk_set
+        ).exclude(job=instance).values_list('id', flat=True)
+
         if invalid_response_ids:
             raise ValidationError(
-                f"Responses {list(invalid_response_ids)} do not belong to job '{instance.title}'.")
+                f"Responses {list(invalid_response_ids)} do not belong to job '{instance.title}'."
+            )
 
     if action == 'post_add':
         valid_responses = Response.objects.filter(pk__in=pk_set, job=instance)
@@ -52,73 +35,54 @@ def validate_and_update_reviewed_responses(sender, instance, action, pk_set, **k
                 response.save()
 
 
-@receiver(pre_save, sender=Job)
-def store_old_job_values(sender, instance, **kwargs):
-    """Store old values before saving to detect changes in post_save."""
-    if instance.pk:
-        try:
-            old_instance = Job.objects.get(pk=instance.pk)
-            instance._old_selected_freelancer = old_instance.selected_freelancer
-            instance._old_payment_verified = old_instance.payment_verified
-        except Job.DoesNotExist:
-            instance._old_selected_freelancer = None
-            instance._old_payment_verified = False
-    else:
-        instance._old_selected_freelancer = None
-        instance._old_payment_verified = False
-
-
-@receiver(post_save, sender=Job)
-def manage_chat_on_job_update(sender, instance, created, **kwargs):
+# Selected freelancers logic
+@receiver(m2m_changed, sender=Job.selected_freelancers.through)
+def handle_selected_freelancers(sender, instance, action, pk_set, **kwargs):
     job = instance
-    old_freelancer = getattr(job, "_old_selected_freelancer", None)
-    old_payment = getattr(job, "_old_payment_verified", False)
-    new_freelancer = job.selected_freelancer
-    new_payment = job.payment_verified
 
-    # --- If a new freelancer is assigned ---
-    if new_freelancer:
-        try:
-            freelancer_profile = Profile.objects.get(user=new_freelancer)
-        except Profile.DoesNotExist:
-            return
+    if action == "post_add":
+        # Set assigned_at when at least one freelancer exists
+        if job.selected_freelancers.exists():
+            job.assigned_at = job.assigned_at or job.posted_date
+            job.save(update_fields=["assigned_at"])
 
-        # Create or get chat
-        chat, chat_created = Chat.objects.get_or_create(
-            job=job,
-            client=job.client,
-            freelancer=freelancer_profile,
-            defaults={'active': new_payment},
-        )
-
-        # Deactivate old freelancer chat if changed
-        if old_freelancer and old_freelancer != new_freelancer:
+        for user_id in pk_set:
             try:
-                old_profile = Profile.objects.get(user=old_freelancer)
-                Chat.objects.filter(
-                    job=job, freelancer=old_profile).update(active=False)
+                freelancer_profile = Profile.objects.get(user_id=user_id)
             except Profile.DoesNotExist:
-                pass
+                continue
 
-        # Activate chat if payment verified
-        if new_payment and not chat.active:
-            chat.active = True
-            chat.save()
+            chat, created = Chat.objects.get_or_create(
+                job=job,
+                client=job.client,
+                freelancer=freelancer_profile,
+                defaults={'active': job.payment_verified},
+            )
 
-        # Create the first chat message automatically
-        if not old_freelancer or old_freelancer != new_freelancer:
-            send_initial_chat_message(job, job.client, freelancer_profile)
+            # Send first message only when newly added
+            if created:
+                send_initial_chat_message(job, job.client, freelancer_profile)
 
-    # --- If freelancer removed, deactivate chats ---
-    elif old_freelancer and not new_freelancer:
-        try:
-            old_profile = Profile.objects.get(user=old_freelancer)
-            Chat.objects.filter(
-                job=job, freelancer=old_profile).update(active=False)
-        except Profile.DoesNotExist:
-            pass
+    elif action in ("post_remove", "post_clear"):
+        # Deactivate chats for removed freelancers
+        profiles = Profile.objects.filter(user_id__in=pk_set)
+        Chat.objects.filter(
+            job=job, freelancer__in=profiles).update(active=False)
+
+        # If no freelancers remain, clear assignment time
+        if not job.selected_freelancers.exists():
+            job.assigned_at = None
+            job.save(update_fields=["assigned_at"])
 
 
+# Activate chats when payment becomes verified
+@receiver(post_save, sender=Job)
+def activate_chats_on_payment(sender, instance, created, **kwargs):
+    if instance.payment_verified:
+        Chat.objects.filter(job=instance).update(active=True)
+
+
+# First chat message helper
 def send_initial_chat_message(job, client_profile, freelancer_profile):
     chat, _ = Chat.objects.get_or_create(
         job=job,
@@ -127,7 +91,7 @@ def send_initial_chat_message(job, client_profile, freelancer_profile):
         defaults={'active': True},
     )
 
-    # 1. Get latest rate (always a Decimal)
+    # Get latest rate
     try:
         rate_obj = Rate.objects.latest('effective_from')
         rate_pct = Decimal(rate_obj.rate_amount)
@@ -136,13 +100,12 @@ def send_initial_chat_message(job, client_profile, freelancer_profile):
     except Exception:
         rate_pct = Decimal('10.00')
 
-    # 2. Gross, Fee, Net amount calculations
+    # Gross, Fee, Net
     gross = Decimal(job.price) if getattr(
         job, 'price', None) else Decimal('0.00')
     fee = (rate_pct / Decimal('100')) * gross
     net_amount = gross - fee
 
-    # 3. Friendly first message
     message_text = (
         f"👋 Hi {freelancer_profile.user.first_name or freelancer_profile.user.username},\n\n"
         f"I’m {client_profile.user.first_name or client_profile.user.username}, "

@@ -1,114 +1,100 @@
 import logging
-from django.db.models import Sum
 from decimal import Decimal
-from django.db.models.signals import pre_save, post_save
+
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from django.utils import timezone
 
 from core.models import Job
-from wallet.models import WalletTransaction, Rate, PaymentBatch, PaymentPeriod
+from wallet.models import WalletTransaction, Rate, PaymentBatch
 
 logger = logging.getLogger(__name__)
 
 
-@receiver(pre_save, sender=Job)
-def handle_wallet_transaction_on_freelancer_change(sender, instance, **kwargs):
-    if not instance.pk:
-        return
+# Handle freelancer assignment / removal (M2M)
+@receiver(m2m_changed, sender=Job.selected_freelancers.through)
+def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, **kwargs):
+    job = instance
 
-    previous = Job.objects.get(pk=instance.pk)
+    if action == "post_add":
+        # Ensure job is in progress
+        if job.status != "in_progress":
+            job.status = "in_progress"
+            job.save(update_fields=["status"])
 
-    # Newly assigned freelancer → create transaction
-    if not previous.selected_freelancer and instance.selected_freelancer:
-        instance.status = 'in_progress'
+        try:
+            rate = Rate.objects.latest("effective_from")
+        except Rate.DoesNotExist:
+            rate = Decimal("10.00")
 
-        if not WalletTransaction.objects.filter(job=instance, status__in=['in_progress', 'pending']).exists():
-            try:
-                rate_obj = Rate.objects.latest('effective_from')
-            except Rate.DoesNotExist:
-                rate_obj = Decimal('10.00')
+        for user_id in pk_set:
+            # Avoid duplicates
+            if WalletTransaction.objects.filter(
+                job=job,
+                user_id=user_id,
+                status__in=["in_progress", "pending"]
+            ).exists():
+                continue
 
             WalletTransaction.objects.create(
-                user=instance.selected_freelancer,
-                transaction_type='job_picked',
-                status='in_progress',
-                job=instance,
-                rate=rate_obj
+                user_id=user_id,
+                transaction_type="job_picked",
+                status="in_progress",
+                job=job,
+                rate=rate,
             )
 
-    # Freelancer unassigned → cancel latest active transaction
-    elif previous.selected_freelancer and not instance.selected_freelancer:
-        tx = WalletTransaction.objects.filter(
-            job=instance, status__in=['in_progress', 'pending']).last()
-        if tx:
-            tx.status = 'cancelled'
-            tx.save(update_fields=['status'])
-
-    # Freelancer changed → cancel old transaction & create new one
-    elif previous.selected_freelancer and instance.selected_freelancer and previous.selected_freelancer != instance.selected_freelancer:
-        # Cancel old active tx
-        tx = WalletTransaction.objects.filter(
-            job=instance, status__in=['in_progress', 'pending']).last()
-        if tx:
-            tx.status = 'cancelled'
-            tx.save(update_fields=['status'])
-
-        # Create new tx
-        try:
-            rate = Rate.objects.latest('effective_from')
-        except Rate.DoesNotExist:
-            rate = Decimal('10.00')
-
-        WalletTransaction.objects.create(
-            user=instance.selected_freelancer,
-            transaction_type='job_picked',
-            status='in_progress',
-            job=instance,
-            rate=rate
-        )
+    elif action in ("post_remove", "post_clear"):
+        # Cancel active transactions for removed freelancers
+        WalletTransaction.objects.filter(
+            job=job,
+            user_id__in=pk_set,
+            status__in=["in_progress", "pending"],
+        ).update(status="cancelled")
 
 
+# Handle job completion & batching (MULTI freelancer)
 @receiver(post_save, sender=Job)
-def handle_wallet_transactions_on_job_completion_and_batch(sender, instance, created, **kwargs):
+def handle_wallet_transactions_on_job_completion(sender, instance, created, **kwargs):
     if created:
         return
 
-    # Only act if job is completed and a freelancer is assigned
-    if instance.status == 'completed' and instance.selected_freelancer:
+    if instance.status != "completed":
+        return
 
-        # Create or get WalletTransaction for this job if none exists
-        wallet_tx, created_tx = WalletTransaction.objects.get_or_create(
-            user=instance.selected_freelancer,
+    freelancers = instance.selected_freelancers.all()
+    if not freelancers.exists():
+        return
+
+    for user in freelancers:
+        wallet_tx, _ = WalletTransaction.objects.get_or_create(
+            user=user,
             job=instance,
             defaults={
-                'transaction_type': 'payment_processing',  # new type
-                'status': 'pending'  # pending until batch payout is made
-            }
+                "transaction_type": "payment_processing",
+                "status": "pending",
+            },
         )
 
-        # Ensure transaction_type and status are correct
-        wallet_tx.transaction_type = 'payment_processing'
-        wallet_tx.status = 'pending'
-        wallet_tx.save(update_fields=['transaction_type', 'status'])
+        wallet_tx.transaction_type = "payment_processing"
+        wallet_tx.status = "pending"
+        wallet_tx.save(update_fields=["transaction_type", "status"])
 
-        # Create PaymentBatch for this user & period if it doesn't exist
         period = wallet_tx.payment_period
-        provider = 'paystack'  # or set dynamically if needed
+        provider = "paystack"  # or dynamic
+
         batch, created_batch = PaymentBatch.objects.get_or_create(
             period=period,
             provider=provider,
-            user=wallet_tx.user,  # required field
+            user=user,
             defaults={
-                'total_amount': wallet_tx.amount or Decimal('0.00'),
-                'status': 'pending'
-            }
+                "total_amount": wallet_tx.amount or Decimal("0.00"),
+                "status": "pending",
+            },
         )
 
-        # If batch already exists, just update total_amount
         if not created_batch:
-            batch.total_amount += wallet_tx.amount or Decimal('0.00')
-            batch.save(update_fields=['total_amount'])
+            batch.total_amount += wallet_tx.amount or Decimal("0.00")
+            batch.save(update_fields=["total_amount"])
 
-        # Link WalletTransaction to batch
         wallet_tx.batch = batch
-        wallet_tx.save(update_fields=['batch'])
+        wallet_tx.save(update_fields=["batch"])

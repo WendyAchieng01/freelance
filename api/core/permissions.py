@@ -22,12 +22,19 @@ class IsFreelancer(permissions.BasePermission):
 
 
 class IsJobOwner(permissions.BasePermission):
+    """
+    Permission to ensure only the client who owns the job can modify it.
+    Works for object-level checks (update, delete, mark_completed, etc.)
+    """
+
     def has_permission(self, request, view):
-        # Only enforce object-level check for update/delete actions
-        return view.action in ['update', 'partial_update', 'destroy']
+        # Allow access; object-level checks happen in has_object_permission
+        return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
+        # Ensure the object has a client and that client.user is the requester
         return hasattr(obj, 'client') and obj.client.user == request.user
+
 
 
 class IsResponseOwner(permissions.BasePermission):

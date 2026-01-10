@@ -13,6 +13,7 @@ from api.core.utils import validate_file
 from payments.models import PaypalPayments
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
+from django.db.models import Count
 from accounts.models import Profile, Skill, FreelancerProfile
 from api.accounts.serializers import ProfileMiniSerializer, SkillSerializer
 from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification, ResponseAttachment
@@ -58,7 +59,7 @@ class JobCategorySerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField()
-    selected_freelancer = serializers.SerializerMethodField()
+    selected_freelancers = serializers.SerializerMethodField()
 
     category = serializers.CharField(write_only=True)
     category_display = serializers.SerializerMethodField(read_only=True)
@@ -82,13 +83,13 @@ class JobSerializer(serializers.ModelSerializer):
             'client', 'id', 'status', 'title', 'category', 'category_display', 'description', 'price',
             'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
-            'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count', 'application_count',
+            'preferred_freelancer_level', 'required_freelancers', 'slug',
+            'selected_freelancers', 'payment_verified', 'client_rating', 'client_review_count', 'application_count',
             'bookmarked', 'has_applied',
 
         ]
         read_only_fields = ['posted_date',
-                            'payment_verified', 'required_freelancers']
+                            'payment_verified']
 
     def validate_skills_required(self, value):
         skill_objs = []
@@ -179,8 +180,8 @@ class JobSerializer(serializers.ModelSerializer):
 
             hired_count = Job.objects.filter(
                 client__user=user,
-                selected_freelancer__isnull=False
-            ).values('selected_freelancer').distinct().count()
+                selected_freelancers__isnull=False
+            ).distinct().count()
 
             return {
                 'id': user.id,
@@ -197,19 +198,22 @@ class JobSerializer(serializers.ModelSerializer):
             }
         return None
 
-    def get_selected_freelancer(self, obj):
-        if not obj.selected_freelancer:
-            return None
+    def get_selected_freelancers(self, obj):
+        users = obj.selected_freelancers.all()
+        result = []
 
-        user = obj.selected_freelancer
-        rating = round(Review.average_rating_for(user), 2)
-        recent_reviews = Review.recent_reviews_for(user)
-        return {
-            'id': user.id,
-            'username': user.username,
-            'rating': rating,
-            'recent_reviews': ReviewSerializer(recent_reviews, many=True).data
-        }
+        for user in users:
+            rating = round(Review.average_rating_for(user), 2)
+            recent_reviews = Review.recent_reviews_for(user)
+            result.append({
+                'id': user.id,
+                'username': user.username,
+                'rating': rating,
+                'recent_reviews': ReviewSerializer(recent_reviews, many=True).data
+            })
+
+        return result
+
 
     def get_responses(self, obj):
         user = self.context['request'].user
@@ -405,7 +409,7 @@ class JobSearchSerializer(serializers.ModelSerializer):
         child=serializers.CharField(), write_only=True)
     skills_required_display = SkillSerializer(
         many=True, read_only=True, source='skills_required')
-    selected_freelancer = serializers.SerializerMethodField()
+    selected_freelancers = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -413,9 +417,11 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'client',
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
-            'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified',
+            'selected_freelancers', 'skills_required', 'skills_required_display', 'payment_verified',
 
         ]
+
+
 
     def get_client(self, obj):
         client = getattr(obj, 'client', None)
@@ -427,6 +433,7 @@ class JobSearchSerializer(serializers.ModelSerializer):
         if not profile:
             return None
 
+        # Total payments
         paypal_total = PaypalPayments.objects.filter(
             user=user, verified=True, status='completed'
         ).aggregate(total=Sum('amount'))['total'] or 0
@@ -437,9 +444,12 @@ class JobSearchSerializer(serializers.ModelSerializer):
 
         total_paid = round(paypal_total + payment_total, 2)
 
+        # Count of freelancers hired (selected_freelancers ManyToMany)
         hired_count = Job.objects.filter(
-            client__user=user, selected_freelancer__isnull=False
-        ).values('selected_freelancer').distinct().count()
+            client=profile, selected_freelancers__isnull=False
+        ).distinct().annotate(
+            num_selected=Count('selected_freelancers')
+        ).aggregate(total_hired=Sum('num_selected'))['total_hired'] or 0
 
         return {
             'id': user.id,
@@ -455,13 +465,13 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'total_freelancers_hired': hired_count
         }
 
-    def get_selected_freelancer(self, obj):
+
+    def get_selected_freelancers(self, obj):
         """
-        Return the username instead of ID for the selected freelancer.
+        Return a list of usernames for the selected freelancers.
         """
-        if not obj.selected_freelancer:
-            return None
-        return obj.selected_freelancer.username
+        return [f.username for f in obj.selected_freelancers.all()]
+
 
     def get_urgency(self, obj):
         if obj.deadline_date:

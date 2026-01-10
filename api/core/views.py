@@ -111,9 +111,9 @@ def get_skills_required_choices():
 
 
 class JobViewSet(viewsets.ModelViewSet):
-    queryset = Job.objects.all().select_related(
-        'client', 'selected_freelancer'
-    ).prefetch_related('skills_required')
+    queryset = Job.objects.all().select_related('client', 'category').prefetch_related(
+    'skills_required','selected_freelancers', 'responses',)
+
     serializer_class = JobSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_class = JobDiscoveryFilter
@@ -127,22 +127,23 @@ class JobViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ['list', 'retrieve', 'discover']:
             return [AllowAny()]
-        if self.action in ['applications', 'underreview', 'mark_for_review']:
-            return [IsAuthenticated(), IsClient()]
+        if self.action in ['my_jobs', 'underreview', 'mark_for_review', 'matches', 'mark_completed']:
+            return [IsAuthenticated(), IsJobOwner()]
         if self.action == 'create':
             return [IsAuthenticated(), IsClient()]
         if self.action in ['update', 'partial_update', 'destroy']:
             return [IsAuthenticated(), IsJobOwner()]
         return [IsAuthenticated()]
 
+
     def perform_create(self, serializer):
         serializer.save(client=self.request.user.profile)
 
     def perform_update(self, serializer):
         job = self.get_object()
-        if job.selected_freelancer and self.request.user.profile != job.client:
+        if job.selected_freelancers.all() and self.request.user.profile != job.client:
             raise ValidationError("You cannot modify this job.")
         serializer.save()
 
@@ -433,9 +434,9 @@ class JobViewSet(viewsets.ModelViewSet):
         try:
             response = JobResponse.objects.get(job=job, slug=response_slug)
         except JobResponse.DoesNotExist:
-            return JobResponse(
-                {'detail': 'Response not found for this job.'},
-                status=drf_status.HTTP_400_BAD_REQUEST
+            return DRFResponse(
+                {'detail': 'Response not found for this job.'}, 
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         serializer = ResponseReviewSerializer(
@@ -500,15 +501,18 @@ class ApplyToJobView(APIView):
         if job.is_max_freelancers_reached:
             return DRFResponse({'detail': 'Maximum number of freelancers already applied.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if job.selected_freelancer:
-            return DRFResponse({'error': 'A freelancer has already been accepted and only one freelancer is needed'}, status=status.HTTP_423_LOCKED)
+        if job.selected_freelancers.count() >= job.required_freelancers:
+            return DRFResponse(
+                {'error': 'Maximum number of freelancers already selected for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
         if JobResponse.objects.filter(job=job, user=request.user).exists():
             return DRFResponse({'detail': 'You have already applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         serializer = ApplyResponseSerializer(data=request.data)
-        print(request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user, job=job)
+
 
         job_response = JobResponse.objects.create(
             job=job,
@@ -651,7 +655,7 @@ class ResponseListForJobView(generics.GenericAPIView):
         response_status = request.query_params.get('response_status')
 
         job_status = (
-            'open' if job.selected_freelancer is None
+            'open' if job.selected_freelancers.all() is None
             else 'complete' if job.status == 'completed'
             else 'in progress'
         )
@@ -690,8 +694,8 @@ class ResponseListForJobView(generics.GenericAPIView):
             serializer = self.get_serializer(response)
 
             accepted_or_rejected = (
-                'pending' if job.selected_freelancer is None
-                else 'rejected' if job.selected_freelancer != user
+                'pending' if job.selected_freelancers.all() is None
+                else 'rejected' if job.selected_freelancers.all() != user
                 else 'accepted'
             )
 
@@ -775,9 +779,11 @@ class AcceptFreelancerView(APIView):
         if not JobResponse.objects.filter(job=job, user=freelancer).exists():
             return DRFResponse({'error': 'This freelancer did not apply to this job.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Ensure no one already selected
-        if job.selected_freelancer:
-            return DRFResponse({'error': 'A freelancer has already been accepted for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Ensure we haven't reached the required number of freelancers yet
+        if job.selected_freelancers.count() >= job.required_freelancers:
+            return DRFResponse(
+                {'error': f'Maximum of {job.required_freelancers} freelancers already accepted for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
 
         if not job.payment_verified:
             return DRFResponse(
@@ -786,9 +792,11 @@ class AcceptFreelancerView(APIView):
             )
 
         # Accept the freelancer
-        job.selected_freelancer = freelancer
-        job.status = 'in_progress'
+        job.selected_freelancers.add(freelancer)
+        if job.selected_freelancers.count() >= job.required_freelancers:
+            job.status = 'in_progress'
         job.save()
+
 
         # Determine correct rate & net amount
         try:
@@ -875,11 +883,6 @@ class RejectFreelancerView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, slug, identifier):
-        """
-        Allows a client to unassign (reject) a freelancer from a job.
-        - Removes freelancer from selected_freelancer if assigned.
-        - Deletes their JobResponse record if it exists.
-        """
         job = get_object_or_404(Job, slug=slug)
 
         # Only the job owner can reject/unassign
@@ -905,10 +908,12 @@ class RejectFreelancerView(APIView):
         if response:
             response.delete()
 
-        # If currently assigned,unassign them
-        if job.selected_freelancer == freelancer:
-            job.selected_freelancer = None
-            job.status = "open"
+        # If currently assigned, unassign them
+        if job.selected_freelancers.filter(id=freelancer.id).exists():
+            job.selected_freelancers.remove(freelancer)
+            # If no freelancers left, reset job status
+            if job.selected_freelancers.count() == 0:
+                job.status = "open"
             job.save()
 
             return DRFResponse(
@@ -918,7 +923,7 @@ class RejectFreelancerView(APIView):
                 status=status.HTTP_200_OK,
             )
 
-        # Handle case where freelancer wasn't assigned
+        # Freelancer wasn't assigned, but we already deleted their application
         return DRFResponse(
             {
                 "message": f"{freelancer.username}'s application has been removed from this job."
@@ -1380,7 +1385,7 @@ class DashboardSummaryView(APIView):
                     'jobs_open': jobs.filter(status='open').count(),
                     'jobs_in_progress': jobs.filter(status='in_progress').count(),
                     'jobs_completed': jobs.filter(status='completed').count(),
-                    'jobs_with_selected_freelancers': jobs.filter(selected_freelancer__isnull=False).count(),
+                    'jobs_with_selected_freelancers': jobs.filter(selected_freelancers__isnull=False).distinct().count(),
                     'responses_under_review': responses.filter(status='under_review').count()
                 }
 
@@ -1401,12 +1406,10 @@ class DashboardSummaryView(APIView):
                     user=user, status__in=['in_progress', 'pending']
                 ).aggregate(total=Sum('amount'))['total'] or 0
 
-                completed_jobs = Job.objects.filter(
-                    selected_freelancer=user, status='completed'
-                )
-                in_progress_jobs = Job.objects.filter(
-                    selected_freelancer=user, status='in_progress'
-                )
+                completed_jobs = Job.objects.filter(selected_freelancers=user, status='completed').distinct()
+
+                in_progress_jobs = Job.objects.filter(selected_freelancers=user, status='in_progress').distinct()
+
 
                 summary['activity'] = {
                     'jobs_applied': responses.count(),
