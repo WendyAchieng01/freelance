@@ -1,5 +1,4 @@
 
-
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
@@ -41,7 +40,7 @@ ALLOWED_HOSTS = [
 
 FRONTEND_URL = os.getenv('FRONTEND_URL', '127.0.0.1:3000')
 BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN =os.getenv('DOMAIN')
+DOMAIN = os.getenv('DOMAIN')
 PLATFORM_NAME = "Nilltech Solutions"
 
 LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
@@ -249,7 +248,6 @@ PAYPAL_ORDERS_URL = f"{PAYPAL_URL}/v2/checkout/orders"
 PAYPAL_VERIFY_URL = "https://api.paystack.co/transaction/verify"
 
 
-
 Q_CLUSTER = {
     "name": "freelance",
     "workers": 4,
@@ -260,7 +258,6 @@ Q_CLUSTER = {
     "orm": "default",
     "scheduler": True,
 }
-
 
 
 '''
@@ -336,17 +333,17 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
 
 # Secure cookies and redirects
-#SECURE_SSL_REDIRECT = not DEBUG
+# SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 
-#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR',
-                    'RU', 'DE', 'FR', 'GB', 'KE',)
+                       'RU', 'DE', 'FR', 'GB', 'KE',)
 
 
 REST_FRAMEWORK = {
@@ -382,6 +379,8 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://nilltech-frontend.onrender.com",
@@ -406,6 +405,8 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
     "https://nilltechsolutions.com",
     "https://freelance-w8gc.onrender.com",
     "https://freelance-production-46dc.up.railway.app",
@@ -450,7 +451,6 @@ cloudinary.config(
     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
     secure=True
 )
-
 
 
 CLOUDINARY_FOLDERS = {

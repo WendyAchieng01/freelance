@@ -10,7 +10,6 @@ class JobAdmin(admin.ModelAdmin):
         'category',
         'status',
         'client',
-        'selected_freelancer',
         'assigned_at',
         'price',
         'deadline_date',
@@ -27,7 +26,7 @@ class JobAdmin(admin.ModelAdmin):
         'assigned_at'
     )
     search_fields = ('title', 'description',
-                     'client__user__username', 'selected_freelancer__username')
+                     'client__user__username', 'selected_freelancers__username')
     ordering = ('-posted_date',)
     #date_hierarchy = 'posted_date'
     readonly_fields = ('posted_date', 'slug', 'assigned_at',
@@ -42,7 +41,7 @@ class JobAdmin(admin.ModelAdmin):
                 'deadline_date',
                 'status',
                 'client',
-                'selected_freelancer',
+                'selected_freelancers',
                 'assigned_at',
                 'max_freelancers',
                 'required_freelancers',

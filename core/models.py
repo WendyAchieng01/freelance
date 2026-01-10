@@ -55,7 +55,7 @@ class Job(models.Model):
     skills_required = models.ManyToManyField(Skill, related_name="required_skills")
     preferred_freelancer_level = models.CharField(max_length=50, choices=EXPERIENCE_LEVEL, default='intermediate')
     reviewed_responses = models.ManyToManyField('Response', related_name='marked_jobs', blank=True)
-    selected_freelancer = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='selected_jobs')
+    selected_freelancers = models.ManyToManyField(User,blank=True,related_name='selected_jobs')
     assigned_at = models.DateTimeField(null=True, blank=True, help_text="When a freelancer was assigned")
     payment_verified = models.BooleanField(default=False)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)  
@@ -76,34 +76,27 @@ class Job(models.Model):
         return reverse('payment-initiate-id', kwargs={'id': self.id})
     
     def mark_as_completed(self, force=True):
-        """
-        Marks the job as completed if all conditions are met.
-        """
         if self.status == 'completed':
-            return False  # Already completed
+            return False
 
         if not force:
-            # Only allow marking as completed if in progress
             if self.status != 'in_progress':
                 return False
 
-            # Only allow if payment has been verified
             if not self.payment_verified:
                 return False
 
-            # Must have a selected freelancer to complete the job
-            if not self.selected_freelancer < self.required_freelancers:
+            # Must have required number of freelancers
+            if self.selected_freelancers.count() < self.required_freelancers:
                 return False
-
 
         self.status = 'completed'
         self.save(update_fields=['status'])
         return True
-    
+
     def add_selected_freelancer(self, user):
         """
-        Adds a freelancer to selected_freelancers if limit not exceeded.
-        Returns True if added, False otherwise.
+        Adds a freelancer if limit not exceeded.
         """
         if self.selected_freelancers.filter(id=user.id).exists():
             return False  # Already selected
@@ -112,10 +105,14 @@ class Job(models.Model):
             return False  # Limit reached
 
         self.selected_freelancers.add(user)
-        self.status = 'in_progress'
-        self.save(update_fields=['status'])
+
+        if self.status != 'in_progress':
+            self.status = 'in_progress'
+            self.save(update_fields=['status'])
+
         return True
-    
+
+
     def mark_response_for_review(self, response):
         if response.job != self:
             raise ValidationError("Cannot mark response for a different job.")
@@ -135,26 +132,9 @@ class Job(models.Model):
                 unique_slug = f'{base_slug}-{num}'
                 num += 1
             self.slug = unique_slug
-        
-        # Detect changes in selected_freelancer
-        if self.pk: 
-            old_job = Job.objects.filter(pk=self.pk).only(
-                "selected_freelancer").first()
-            if old_job and old_job.selected_freelancer != self.selected_freelancer:
-                if self.selected_freelancer:
-                    # new freelancer assigned
-                    from django.utils import timezone
-                    self.assigned_at = timezone.now()
-                else:
-                    # freelancer unassigned (reset assignment date)
-                    self.assigned_at = None
-        else:
-            # new job creation with freelancer pre-set
-            if self.selected_freelancer and not self.assigned_at:
-                from django.utils import timezone
-                self.assigned_at = timezone.now()
-        
+
         super().save(*args, **kwargs)
+
     
     def __str__(self):
         try:
@@ -297,8 +277,11 @@ class Response(models.Model):
         """Automate response status updates based on job state."""
         if self.job.status == 'completed' and self.status not in ['rejected', 'accepted']:
             self.status = 'rejected'
-        elif self.job.selected_freelancer == self.user:
+
+        elif self.job.selected_freelancers.filter(id=self.user_id).exists():
+            # This user is one of the selected freelancers
             self.status = 'accepted'
+
         elif self.job.status == 'in_progress' and self.status == 'submitted':
             self.status = 'under_review'
 
