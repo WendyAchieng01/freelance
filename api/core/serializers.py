@@ -7,6 +7,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from payment.models import Payment
 from datetime import datetime, time
+from django.utils.text import slugify
 from rest_framework import serializers
 from api.core.utils import validate_file
 from payments.models import PaypalPayments
@@ -14,8 +15,7 @@ from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample
 from accounts.models import Profile, Skill, FreelancerProfile
 from api.accounts.serializers import ProfileMiniSerializer, SkillSerializer
-from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification,ResponseAttachment
-
+from core.models import Job, JobCategory, Response, Chat, Message, MessageAttachment, Review, JobBookmark, Notification, ResponseAttachment
 
 
 User = get_user_model()
@@ -26,11 +26,12 @@ class NestedResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Response
-        fields = ['user','id', 'submitted_at', 'extra_data', 'cv', 'cover_letter', 'portfolio']
+        fields = ['user', 'id', 'submitted_at',
+                  'extra_data', 'cv', 'cover_letter', 'portfolio']
 
     def get_user(self, obj):
         try:
-            profile = obj.user.profile 
+            profile = obj.user.profile
             freelancer_profile = profile.freelancer_profile
             return {
                 'id': obj.user.id,
@@ -55,40 +56,40 @@ class JobCategorySerializer(serializers.ModelSerializer):
         }
 
 
-
 class JobSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField()
     selected_freelancer = serializers.SerializerMethodField()
-    
+
     category = serializers.CharField(write_only=True)
     category_display = serializers.SerializerMethodField(read_only=True)
-    
-    skills_required = serializers.ListField(child=serializers.CharField(),write_only=True)
-    skills_required_display = SkillSerializer(many=True, read_only=True, source='skills_required')
-    
+
+    skills_required = serializers.ListField(
+        child=serializers.CharField(), write_only=True)
+    skills_required_display = SkillSerializer(
+        many=True, read_only=True, source='skills_required')
+
     client_rating = serializers.SerializerMethodField()
     client_review_count = serializers.SerializerMethodField()
-    #client_recent_reviews = serializers.SerializerMethodField()
-    
+    # client_recent_reviews = serializers.SerializerMethodField()
+
     application_count = serializers.SerializerMethodField(read_only=True)
     bookmarked = serializers.BooleanField(read_only=True)
     has_applied = serializers.BooleanField(read_only=True)
 
-
     class Meta:
         model = Job
         fields = [
-            'client','id','status','title', 'category', 'category_display', 'description', 'price',
+            'client', 'id', 'status', 'title', 'category', 'category_display', 'description', 'price',
             'posted_date', 'deadline_date',
             'max_freelancers', 'required_freelancers', 'skills_required', 'skills_required_display',
             'preferred_freelancer_level', 'slug',
-            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count','application_count',
+            'selected_freelancer', 'payment_verified', 'client_rating', 'client_review_count', 'application_count',
             'bookmarked', 'has_applied',
-            
+
         ]
-        read_only_fields = ['posted_date', 'payment_verified','required_freelancers']
-        
-        
+        read_only_fields = ['posted_date',
+                            'payment_verified', 'required_freelancers']
+
     def validate_skills_required(self, value):
         skill_objs = []
         for name in value:
@@ -98,8 +99,13 @@ class JobSerializer(serializers.ModelSerializer):
         return skill_objs
 
     def validate_category(self, value):
-        value = value.strip().lower()
-        category, created = JobCategory.objects.get_or_create(name=value)
+        name = value.strip().lower()
+        slug = slugify(name)
+
+        category, created = JobCategory.objects.get_or_create(
+            slug=slug,
+            defaults={"name": name},
+        )
         return category
 
     def create(self, validated_data):
@@ -120,7 +126,7 @@ class JobSerializer(serializers.ModelSerializer):
         if skills is not None:
             instance.skills_required.set(skills)
         return instance
-    
+
     def get_application_count(self, obj):
         if hasattr(obj, "application_count"):
             return obj.application_count
@@ -137,10 +143,10 @@ class JobSerializer(serializers.ModelSerializer):
         if not user.is_authenticated:
             return False
         return Response.objects.filter(user=user, job__slug=obj.slug).exists()
-    
+
     def get_category_display(self, obj):
         return obj.category.name if obj.category else None
-    
+
     def get_client_rating(self, obj):
         return round(Review.average_rating_for(obj.client.user), 2)
 
@@ -190,12 +196,11 @@ class JobSerializer(serializers.ModelSerializer):
                 'total_freelancers_hired': hired_count
             }
         return None
-        
 
     def get_selected_freelancer(self, obj):
         if not obj.selected_freelancer:
             return None
-    
+
         user = obj.selected_freelancer
         rating = round(Review.average_rating_for(user), 2)
         recent_reviews = Review.recent_reviews_for(user)
@@ -205,7 +210,7 @@ class JobSerializer(serializers.ModelSerializer):
             'rating': rating,
             'recent_reviews': ReviewSerializer(recent_reviews, many=True).data
         }
-    
+
     def get_responses(self, obj):
         user = self.context['request'].user
         if not user.is_authenticated:
@@ -219,7 +224,7 @@ class JobSerializer(serializers.ModelSerializer):
             responses = obj.responses.filter(user=user)
 
         return NestedResponseSerializer(responses, many=True).data
-            
+
 
 class ApplyResponseSerializer(serializers.ModelSerializer):
     cv_url = serializers.SerializerMethodField(read_only=True)
@@ -334,7 +339,7 @@ class ResponseListSerializer(serializers.ModelSerializer):
         if value is None or value == '':
             return None
         validate_file(value, ['.pdf', '.doc', '.docx',
-                        '.jpg', '.jpeg', '.png'])
+                              '.jpg', '.jpeg', '.png'])
         return value
 
 
@@ -342,7 +347,7 @@ class ResponseReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
         fields = ['marked_for_review']
-        read_only_fields = [] 
+        read_only_fields = []
 
     def update(self, instance, validated_data):
         marked_for_review = validated_data.get(
@@ -352,7 +357,7 @@ class ResponseReviewSerializer(serializers.ModelSerializer):
         else:
             instance.unmark_review()
         return instance
-    
+
 
 class FreelancerBriefSerializer(serializers.ModelSerializer):
     class Meta:
@@ -375,8 +380,7 @@ class JobWithResponsesSerializer(serializers.ModelSerializer):
         model = Job
         fields = ['id', 'title', 'description', 'responses']
 
-    
-    
+
 class ReviewSerializer(serializers.ModelSerializer):
     reviewer = serializers.SlugRelatedField(
         read_only=True,
@@ -390,7 +394,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'reviewer', 'recipient', 'rating',
-                    'comment', 'created_at', 'updated_at']
+                  'comment', 'created_at', 'updated_at']
         read_only_fields = ['reviewer', 'created_at', 'updated_at']
 
 
@@ -410,9 +414,9 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
             'selected_freelancer', 'skills_required', 'skills_required_display', 'payment_verified',
-            
+
         ]
-        
+
     def get_client(self, obj):
         client = getattr(obj, 'client', None)
         if not client or not hasattr(client, 'user'):
@@ -450,7 +454,7 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'total_amount_paid': total_paid,
             'total_freelancers_hired': hired_count
         }
-    
+
     def get_selected_freelancer(self, obj):
         """
         Return the username instead of ID for the selected freelancer.
@@ -593,9 +597,9 @@ class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ['id', 'chat_uuid', 'job', 'client', 'freelancer',
-                'client_profile_pic','freelancer_profile_pic',
-                    'created_at', 'slug', 'active', 'messages']
-        
+                  'client_profile_pic', 'freelancer_profile_pic',
+                  'created_at', 'slug', 'active', 'messages']
+
     def get_client_profile_pic(self, obj):
         return obj.client.profile_pic.url if obj.client.profile_pic else None
 
@@ -610,7 +614,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ['id', 'user', 'message', 'created_at', 'is_read', 'chat']
-        
+
 
 class ResponseAttachmentSerializer(serializers.ModelSerializer):
     file_url = serializers.SerializerMethodField(read_only=True)
