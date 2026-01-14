@@ -273,3 +273,16 @@ class ContactUsAdminForm(forms.ModelForm):
         if "timestamp" in self.fields:
             cleaned_data.pop("timestamp", None)
         return cleaned_data
+
+
+class SkillAdminForm(forms.ModelForm):
+    class Meta:
+        model = Skill
+        fields = '__all__'
+        widgets = {
+            'name': forms.Select(attrs={
+                'class': 'admin-autocomplete',
+                'data-placeholder': 'Start typing to filter skills...',
+                'style': 'width: 100%;',
+            }),
+        }
