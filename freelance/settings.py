@@ -28,10 +28,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'nilltechsolutions.com',
     'freelance-w8gc.onrender.com',
-    'https://freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
-    'www.freelance-w8gc.onrender.com',
-    'freelance-nuxt-latest.onrender.com',
     'freelance-production-46dc.up.railway.app',
     'http://freelance-production-46dc.up.railway.app',
     'https://freelance-production-46dc.up.railway.app',
@@ -318,16 +315,7 @@ CHANNEL_LAYERS = {
 # DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # for heroku csrf_token
-# CSRF Settings
-CSRF_TRUSTED_ORIGINS = [
-    "https://nilltech-frontend.onrender.com",
-    'https://www.nilltechsolutions.com',
-    'https://nilltechsolutions.com',
-    'https://freelance-w8gc.onrender.com',
-    'http://freelance-production-46dc.up.railway.app',
-    'https://freelance-production-46dc.up.railway.app',
 
-]
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
@@ -379,13 +367,13 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
+    # Local development
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
+
+    # Production
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
-    "https://nilltech-frontend.onrender.com",
-    "https://www.nilltech-frontend.onrender.com",
-    "https://freelance-w8gc.onrender.com",
     "https://freelance-production-46dc.up.railway.app",
 ]
 
@@ -404,14 +392,16 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+# CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "https://nilltechsolutions.com",
-    "https://freelance-w8gc.onrender.com",
-    "https://freelance-production-46dc.up.railway.app",
-
+    "http://127.0.0.1:3000",
+    'https://www.nilltechsolutions.com',
+    'https://nilltechsolutions.com',
+    'http://freelance-production-46dc.up.railway.app',
+    'https://freelance-production-46dc.up.railway.app',
 ]
+
 
 SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = True
