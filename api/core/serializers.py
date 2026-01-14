@@ -207,6 +207,8 @@ class JobSerializer(serializers.ModelSerializer):
             recent_reviews = Review.recent_reviews_for(user)
             result.append({
                 'id': user.id,
+                'full_name':f"{user.first_name} {user.last_name}",
+                'profile_pic': user.profile.profile_pic.url if user.profile.profile_pic else None,
                 'username': user.username,
                 'rating': rating,
                 'recent_reviews': ReviewSerializer(recent_reviews, many=True).data

@@ -1,3 +1,4 @@
+from .forms import SkillAdminForm
 from django.contrib import admin
 from django.conf import settings
 from django.utils import timezone
@@ -72,8 +73,10 @@ admin.site.register(User, UserAdmin)
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+    form = SkillAdminForm
+    list_display = ('name',)
+    ordering = ('name',)
+
 
 
 @admin.register(Language)
