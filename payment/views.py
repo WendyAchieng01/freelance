@@ -56,7 +56,7 @@ def initiate_payment(request, amount, email, job_form):
             'payment': payment,
             'paystack_pub_key': settings.PAYSTACK_PUBLIC_KEY,
             'amount_value': payment.amount_value(),
-            'job_id': job.id,  # Add the job_id to the context
+            'job_id': job.id,
         }
         return render(request, 'make_payment.html', context)
 

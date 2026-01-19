@@ -50,6 +50,8 @@ db.sqlite3
 debug.log
 db.sqlite3-journal
 database_backup.sql
+wallet.txt
+
 
 
 

@@ -6,6 +6,8 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Avg
 from django.utils import timezone
+from decimal import Decimal, ROUND_DOWN
+from django.db import transaction
 from accounts.models import Profile
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
@@ -27,6 +29,7 @@ from cloudinary import uploader
 from mimetypes import guess_type
 import logging
 from cloudinary.models import CloudinaryField
+
 logger = logging.getLogger(__name__)
 
 class JobCategory(models.Model):
@@ -49,7 +52,7 @@ class Job(models.Model):
     posted_date = models.DateTimeField(auto_now_add=True)
     deadline_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default='open')
-    client = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='jobs')
+    client = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='jobs')
     max_freelancers = models.IntegerField(default=1, help_text="Set total number of applications to receive")
     required_freelancers = models.PositiveSmallIntegerField(default=1, help_text="If the job requires more than one freelancer")
     skills_required = models.ManyToManyField(Skill, related_name="required_skills")
@@ -75,6 +78,7 @@ class Job(models.Model):
             return reverse('payment-initiate-slug', kwargs={'slug': self.slug})
         return reverse('payment-initiate-id', kwargs={'id': self.id})
     
+    
     def mark_as_completed(self, force=True):
         if self.status == 'completed':
             return False
@@ -82,21 +86,21 @@ class Job(models.Model):
         if not force:
             if self.status != 'in_progress':
                 return False
-
             if not self.payment_verified:
                 return False
-
-            # Must have required number of freelancers
             if self.selected_freelancers.count() < self.required_freelancers:
                 return False
 
         self.status = 'completed'
         self.save(update_fields=['status'])
+
         return True
+
 
     def add_selected_freelancer(self, user):
         """
         Adds a freelancer if limit not exceeded.
+        When the last required freelancer is added.
         """
         if self.selected_freelancers.filter(id=user.id).exists():
             return False  # Already selected
@@ -106,11 +110,14 @@ class Job(models.Model):
 
         self.selected_freelancers.add(user)
 
+        # Move job into in_progress
         if self.status != 'in_progress':
             self.status = 'in_progress'
-            self.save(update_fields=['status'])
+            self.assigned_at = timezone.now()
+            self.save(update_fields=['status', 'assigned_at'])
 
         return True
+
 
 
     def mark_response_for_review(self, response):

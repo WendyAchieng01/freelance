@@ -290,7 +290,7 @@ class ApplyResponseSerializer(serializers.ModelSerializer):
         if value is None or value == '':
             return None
         validate_file(value, ['.pdf', '.doc', '.docx',
-                      '.jpg', '.jpeg', '.png'])
+                        '.jpg', '.jpeg', '.png'])
         return value
 
 
@@ -345,7 +345,7 @@ class ResponseListSerializer(serializers.ModelSerializer):
         if value is None or value == '':
             return None
         validate_file(value, ['.pdf', '.doc', '.docx',
-                              '.jpg', '.jpeg', '.png'])
+                                '.jpg', '.jpeg', '.png'])
         return value
 
 
@@ -400,7 +400,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'reviewer', 'recipient', 'rating',
-                  'comment', 'created_at', 'updated_at']
+                    'comment', 'created_at', 'updated_at']
         read_only_fields = ['reviewer', 'created_at', 'updated_at']
 
 
@@ -420,7 +420,6 @@ class JobSearchSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'category', 'description',
             'price', 'posted_date', 'deadline_date', 'status',
             'selected_freelancers', 'skills_required', 'skills_required_display', 'payment_verified',
-
         ]
 
 

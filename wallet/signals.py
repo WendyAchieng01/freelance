@@ -1,22 +1,25 @@
 import logging
 from decimal import Decimal
-
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
+from django.utils import timezone
+from django.db import transaction
 
 from core.models import Job
-from wallet.models import WalletTransaction, Rate, PaymentBatch
+from wallet.models import WalletTransaction, Rate,PayoutLog
+from wallet.services.payment_periods import get_or_create_payment_period_for_date
+from .models import PayoutLog, WalletTransaction, PaymentBatch
+from wallet.services.paystack_bulk_reconcile import reconcile_paystack_batch
+
 
 logger = logging.getLogger(__name__)
 
 
-# Handle freelancer assignment / removal (M2M)
 @receiver(m2m_changed, sender=Job.selected_freelancers.through)
 def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, **kwargs):
     job = instance
 
     if action == "post_add":
-        # Ensure job is in progress
         if job.status != "in_progress":
             job.status = "in_progress"
             job.save(update_fields=["status"])
@@ -24,10 +27,9 @@ def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, *
         try:
             rate = Rate.objects.latest("effective_from")
         except Rate.DoesNotExist:
-            rate = Decimal("10.00")
+            rate = None
 
         for user_id in pk_set:
-            # Avoid duplicates
             if WalletTransaction.objects.filter(
                 job=job,
                 user_id=user_id,
@@ -44,7 +46,6 @@ def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, *
             )
 
     elif action in ("post_remove", "post_clear"):
-        # Cancel active transactions for removed freelancers
         WalletTransaction.objects.filter(
             job=job,
             user_id__in=pk_set,
@@ -52,13 +53,9 @@ def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, *
         ).update(status="cancelled")
 
 
-# Handle job completion & batching (MULTI freelancer)
 @receiver(post_save, sender=Job)
-def handle_wallet_transactions_on_job_completion(sender, instance, created, **kwargs):
-    if created:
-        return
-
-    if instance.status != "completed":
+def handle_job_completion(sender, instance, created, **kwargs):
+    if created or instance.status != "completed":
         return
 
     freelancers = instance.selected_freelancers.all()
@@ -66,35 +63,81 @@ def handle_wallet_transactions_on_job_completion(sender, instance, created, **kw
         return
 
     for user in freelancers:
-        wallet_tx, _ = WalletTransaction.objects.get_or_create(
+        tx, _ = WalletTransaction.objects.get_or_create(
             user=user,
             job=instance,
-            defaults={
-                "transaction_type": "payment_processing",
-                "status": "pending",
-            },
         )
 
-        wallet_tx.transaction_type = "payment_processing"
-        wallet_tx.status = "pending"
-        wallet_tx.save(update_fields=["transaction_type", "status"])
+        tx.transaction_type = "payment_processing"
+        tx.status = "pending"
 
-        period = wallet_tx.payment_period
-        provider = "paystack"  # or dynamic
-
-        batch, created_batch = PaymentBatch.objects.get_or_create(
-            period=period,
-            provider=provider,
-            user=user,
-            defaults={
-                "total_amount": wallet_tx.amount or Decimal("0.00"),
-                "status": "pending",
-            },
+        # Assign payment period (AUTO CREATE)
+        period = get_or_create_payment_period_for_date(
+            instance.completed_at.date()
+            if hasattr(instance, "completed_at") and instance.completed_at
+            else timezone.now().date()
         )
+        tx.payment_period = period
 
-        if not created_batch:
-            batch.total_amount += wallet_tx.amount or Decimal("0.00")
-            batch.save(update_fields=["total_amount"])
+        tx.save()
 
-        wallet_tx.batch = batch
-        wallet_tx.save(update_fields=["batch"])
+
+def interpret_provider_status(provider, payload):
+    """
+    Normalize gateway responses into: success | failed | pending
+    Adjust this per provider format.
+    """
+    if not payload:
+        return "pending"
+
+    # Example for Paystack-like responses
+    status = str(payload.get("status") or payload.get(
+        "data", {}).get("status", "")).lower()
+
+    if status in ("success", "successful", "completed","True"):
+        return "success"
+    if status in ("failed", "error", "reversed"):
+        return "failed"
+
+    return "pending"
+
+
+@receiver(post_save, sender=PayoutLog)
+def payout_log_activity(sender, instance, created, **kwargs):
+    # We only care about Paystack logs with a response payload and a batch
+    if instance.provider != "paystack":
+        return
+
+    if not instance.response_payload or not instance.batch:
+        return
+
+    # If this log has already been reconciled, skip
+    # (Assumes you add something like instance.reconciled = True after success)
+    if getattr(instance, "reconciled", False):
+        return
+
+    def _run_reconciliation():
+        try:
+            print(
+                f"[PAYOUT LOG] Reconciling batch {instance.batch} "
+                f"from log {instance.id}"
+            )
+
+            result = reconcile_paystack_batch(
+                instance.batch,
+                instance.response_payload
+            )
+
+            # Mark as reconciled to prevent re-running
+            instance.reconciled = True
+            instance.save(update_fields=["reconciled"])
+
+            print(f"[PAYOUT LOG] Reconciliation result: {result}")
+
+        except Exception as e:
+            # Never crash the save pipeline
+            print(f"[PAYOUT LOG] Reconciliation failed: {e}")
+
+    # Run after the DB transaction commits
+    transaction.on_commit(_run_reconciliation)
+    

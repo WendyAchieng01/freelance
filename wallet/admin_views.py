@@ -8,9 +8,8 @@ from django_q.tasks import async_task
 from django.contrib import admin, messages
 
 from django.shortcuts import render, redirect, get_object_or_404
-
-
 from wallet.payouts.manager import PayoutManager
+
 from wallet.models import PaymentPeriod, WalletTransaction, PaymentBatch
 
 
