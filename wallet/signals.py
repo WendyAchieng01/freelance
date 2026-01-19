@@ -20,7 +20,7 @@ def handle_wallet_transactions_on_assignment(sender, instance, action, pk_set, *
     job = instance
 
     if action == "post_add":
-        if job.status != "in_progress":
+        if job.status != "in_progress" and job.selected_freelancers == job.required_freelancers:
             job.status = "in_progress"
             job.save(update_fields=["status"])
 
@@ -62,82 +62,106 @@ def handle_job_completion(sender, instance, created, **kwargs):
     if not freelancers.exists():
         return
 
+    # Calculate amounts once (outside loop)
+    rate_pct = Decimal('8.00')
+    try:
+        latest_rate = Rate.objects.latest('effective_from')
+        rate_pct = Decimal(latest_rate.rate_amount)
+    except Rate.DoesNotExist:
+        pass
+
+    total_gross = Decimal(instance.price or '0.00')
+    total_fee = (total_gross * (rate_pct / Decimal('100'))
+                 ).quantize(Decimal('0.01'))
+    net_per_person = ((total_gross - total_fee) /
+                      Decimal(instance.required_freelancers)).quantize(Decimal('0.01'))
+
+    period_date = (
+        instance.completed_at.date() if hasattr(instance, 'completed_at') and instance.completed_at
+        else timezone.now().date()
+    )
+    period = get_or_create_payment_period_for_date(
+        period_date)  # your helper function
+
     for user in freelancers:
-        tx, _ = WalletTransaction.objects.get_or_create(
+        # Only create if no payout-like transaction exists yet
+        if WalletTransaction.objects.filter(
+            job=instance,
+            user=user,
+            transaction_type='payment_processing',
+            status__in=['pending', 'in_progress']
+        ).exists():
+            continue  # already has a payout record → skip
+
+        WalletTransaction.objects.create(
             user=user,
             job=instance,
+            transaction_type="payment_processing",
+            status="pending",
+            gross_amount=total_gross,
+            fee_amount=total_fee,
+            amount=net_per_person,
+            rate=latest_rate if 'latest_rate' in locals() else None,
+            payment_period=period,
         )
 
-        tx.transaction_type = "payment_processing"
-        tx.status = "pending"
-
-        # Assign payment period (AUTO CREATE)
-        period = get_or_create_payment_period_for_date(
-            instance.completed_at.date()
-            if hasattr(instance, "completed_at") and instance.completed_at
-            else timezone.now().date()
-        )
-        tx.payment_period = period
-
-        tx.save()
-
-
-def interpret_provider_status(provider, payload):
-    """
-    Normalize gateway responses into: success | failed | pending
-    Adjust this per provider format.
-    """
-    if not payload:
-        return "pending"
-
-    # Example for Paystack-like responses
-    status = str(payload.get("status") or payload.get(
-        "data", {}).get("status", "")).lower()
-
-    if status in ("success", "successful", "completed","True"):
-        return "success"
-    if status in ("failed", "error", "reversed"):
-        return "failed"
-
-    return "pending"
 
 
 @receiver(post_save, sender=PayoutLog)
 def payout_log_activity(sender, instance, created, **kwargs):
-    # We only care about Paystack logs with a response payload and a batch
+    logger.debug(
+        "[PayoutLog Signal] Fired | id=%s created=%s provider=%s",
+        instance.id, created, instance.provider
+    )
+
+    # Only Paystack logs
     if instance.provider != "paystack":
+        logger.debug("[PayoutLog Signal] Skipped: not paystack")
         return
 
     if not instance.response_payload or not instance.batch:
+        logger.warning(
+            "[PayoutLog Signal] Skipped: missing payload or batch | id=%s",
+            instance.id
+        )
         return
 
-    # If this log has already been reconciled, skip
-    # (Assumes you add something like instance.reconciled = True after success)
-    if getattr(instance, "reconciled", False):
+    # Already processed?
+    if instance.processed:
+        logger.info(
+            "[PayoutLog Signal] Already processed | id=%s",
+            instance.id
+        )
         return
 
     def _run_reconciliation():
-        try:
-            print(
-                f"[PAYOUT LOG] Reconciling batch {instance.batch} "
-                f"from log {instance.id}"
-            )
+        logger.info(
+            "[PayoutLog] Starting reconciliation | log_id=%s batch_id=%s",
+            instance.id,
+            instance.batch_id,
+        )
 
+        try:
             result = reconcile_paystack_batch(
                 instance.batch,
                 instance.response_payload
             )
 
-            # Mark as reconciled to prevent re-running
-            instance.reconciled = True
-            instance.save(update_fields=["reconciled"])
+            instance.processed = True
+            instance.save(update_fields=["processed"])
 
-            print(f"[PAYOUT LOG] Reconciliation result: {result}")
+            logger.info(
+                "[PayoutLog] Reconciliation completed | log_id=%s result=%s",
+                instance.id,
+                result
+            )
 
-        except Exception as e:
-            # Never crash the save pipeline
-            print(f"[PAYOUT LOG] Reconciliation failed: {e}")
+        except Exception:
+            logger.exception(
+                "[PayoutLog] Reconciliation FAILED | log_id=%s batch_id=%s",
+                instance.id,
+                instance.batch_id,
+            )
 
-    # Run after the DB transaction commits
     transaction.on_commit(_run_reconciliation)
     

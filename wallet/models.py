@@ -109,16 +109,6 @@ class WalletTransaction(models.Model):
     provider_reference = models.CharField(
         max_length=255, blank=True, null=True)
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['user']),
-            models.Index(fields=['status']),
-            models.Index(fields=['transaction_type']),
-            models.Index(fields=['timestamp']),
-        ]
-        ordering = ['-timestamp']
-        verbose_name_plural = "Wallet Transactions"
-
     def __str__(self):
         return f"{self.user.username} - {self.transaction_type} - {self.transaction_id or 'N/A'}"
 
@@ -242,6 +232,26 @@ class WalletTransaction(models.Model):
         return cls.objects.filter(status='completed', payment_period=period).aggregate(
             total=models.Sum('amount')
         )['total'] or Decimal('0.00')
+        
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['status']),
+            models.Index(fields=['transaction_type']),
+            models.Index(fields=['timestamp']),
+        ]
+        ordering = ['-timestamp']
+        verbose_name_plural = "Wallet Transactions"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['job', 'user', 'transaction_type'],
+                name='unique_job_user_tx_type'
+            )
+        ]
+        
+        
+
 
 
 class PaymentBatch(models.Model):

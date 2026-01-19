@@ -1,14 +1,18 @@
+from wallet.services.payout_intent_service import PayoutIntentService
+from wallet.models import WalletTransaction, Rate, PaymentPeriod
+from core.models import Job
+from django.db.models.signals import pre_save
 from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
 from decimal import Decimal
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from django.db.models.signals import m2m_changed, post_save, pre_save
 
 from core.models import Job, Chat, Profile, Response, Message
-from wallet.models import Rate
-#from api.core.utils import create_wallet_transactions
+from wallet.models import Rate, WalletTransaction, Rate, PaymentPeriod
 
 
 # Reviewed responses logic
@@ -144,9 +148,26 @@ def send_initial_chat_message(job, client_profile, freelancer_profile):
         content=message_text
     )
 
-'''
+
 @receiver(post_save, sender=Job)
-def handle_job_completed(sender, instance, created, **kwargs):
-    print("Signal fired to avarage the payment sum")
-    if instance.status == 'completed':
-        create_wallet_transactions(instance)'''
+def trigger_payout_intents_on_completion(sender, instance, created, **kwargs):
+    if created:
+        return
+
+    # Only act when job is completed
+
+
+@receiver(post_save, sender=Job)
+def trigger_payout_intents_on_completion(sender, instance, created, **kwargs):
+    if created:
+        return
+
+    # Only act when job is completed
+    if instance.status != "completed":
+        return
+
+    PayoutIntentService.create_for_completed_job(instance)
+    if instance.status != "completed":
+        return
+
+    PayoutIntentService.create_for_completed_job(instance)
