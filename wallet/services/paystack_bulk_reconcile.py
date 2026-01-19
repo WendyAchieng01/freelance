@@ -1,6 +1,10 @@
+import logging
 from django.db import transaction
 from wallet.models import WalletTransaction, PaymentBatch
 from accounts.models import Profile
+
+
+logger = logging.getLogger(__name__)
 
 
 def find_transfer_by_recipient(recipient, transfers):
@@ -20,22 +24,21 @@ def find_transfer_by_recipient(recipient, transfers):
     return None
 
 
-
 def reconcile_paystack_batch(batch: PaymentBatch, paystack_response: dict):
-    """
-    Reconcile a Paystack bulk transfer response against a PaymentBatch.
+    logger.info(
+        "[PaystackReconcile] Starting | batch_id=%s",
+        batch.id
+    )
 
-    Args:
-        batch (PaymentBatch): The batch being reconciled.
-        paystack_response (dict): Full response from Paystack bulk transfer list.
-    """
-
-    # All wallet transactions in this batch
     qs = WalletTransaction.objects.select_related(
         "user", "user__profile"
     ).filter(batch=batch)
 
     if not qs.exists():
+        logger.error(
+            "[PaystackReconcile] No transactions found | batch_id=%s",
+            batch.id
+        )
         return {
             "updated": 0,
             "skipped": 0,
@@ -46,17 +49,19 @@ def reconcile_paystack_batch(batch: PaymentBatch, paystack_response: dict):
     skipped = 0
     errors = []
 
-    # Group by user
     users = set(qs.values_list("user_id", flat=True))
 
     with transaction.atomic():
         for user_id in users:
             user_txs = qs.filter(user_id=user_id)
+            user = user_txs.first().user
+            profile = getattr(user, "profile", None)
 
-            profile = getattr(user_txs.first().user, "profile", None)
             if not profile or not profile.paystack_recipient:
+                msg = f"User {user_id} missing paystack_recipient"
+                logger.warning("[PaystackReconcile] %s", msg)
                 skipped += user_txs.count()
-                errors.append(f"User {user_id} has no paystack_recipient")
+                errors.append(msg)
                 continue
 
             transfer = find_transfer_by_recipient(
@@ -65,29 +70,37 @@ def reconcile_paystack_batch(batch: PaymentBatch, paystack_response: dict):
             )
 
             if not transfer:
+                msg = f"No transfer for recipient {profile.paystack_recipient}"
+                logger.warning("[PaystackReconcile] %s", msg)
                 skipped += user_txs.count()
-                errors.append(
-                    f"No transfer found for recipient {profile.paystack_recipient}"
-                )
+                errors.append(msg)
                 continue
 
-            # Update all that user's transactions in this batch
             for tx in user_txs:
                 tx.transaction_type = "payment_received"
-                tx.transaction_id = transfer.get("transfer_code")
                 tx.status = "completed"
                 tx.completed = True
+
+                tx.provider_reference = transfer.get("transfer_code")
                 tx.extra_data = transfer
+
                 tx.save(update_fields=[
                     "transaction_type",
-                    "transaction_id",
                     "status",
                     "completed",
+                    "provider_reference",
                     "extra_data",
                 ])
+
                 updated += 1
 
-        # Optionally update batch status
+            logger.info(
+                "[PaystackReconcile] User reconciled | user_id=%s tx_count=%s",
+                user_id,
+                user_txs.count()
+            )
+
+        # Batch status
         if updated and skipped == 0:
             batch.status = "completed"
         elif updated and skipped > 0:
@@ -97,7 +110,16 @@ def reconcile_paystack_batch(batch: PaymentBatch, paystack_response: dict):
 
         batch.provider_reference = paystack_response.get(
             "meta", {}).get("batch_code")
+
         batch.save(update_fields=["status", "provider_reference"])
+
+        logger.info(
+            "[PaystackReconcile] Batch finalized | batch_id=%s status=%s updated=%s skipped=%s",
+            batch.id,
+            batch.status,
+            updated,
+            skipped
+        )
 
     return {
         "updated": updated,

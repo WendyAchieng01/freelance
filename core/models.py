@@ -117,6 +117,73 @@ class Job(models.Model):
             self.save(update_fields=['status', 'assigned_at'])
 
         return True
+    
+    def _get_effective_rate(self) -> Decimal:
+        from wallet.models import Rate
+        """
+        Returns current platform fee percentage (as Decimal)
+        Priority order same as your WalletTransaction:
+        1. From existing transaction if any
+        2. Latest Rate model
+        3. Hard fallback 8%
+        """
+        if self.wallet_transactions.exists():
+            tx = self.wallet_transactions.first()
+            if tx.rate and tx.rate.rate_amount:
+                return Decimal(tx.rate.rate_amount)
+
+        try:
+            latest_rate = Rate.objects.latest('effective_from')
+            return Decimal(latest_rate.rate_amount)
+        except Rate.DoesNotExist:
+            return Decimal('8.00')
+
+    @property
+    def platform_fee_percentage(self) -> Decimal:
+        """The % fee the platform takes (for display/documentation)"""
+        return self._get_effective_rate()
+
+    @property
+    def total_platform_fee(self) -> Decimal:
+        """Total amount the platform keeps from this job"""
+        if not self.price:
+            return Decimal('0.00')
+        rate = self._get_effective_rate()
+        fee = Decimal(self.price) * (rate / Decimal('100'))
+        return fee.quantize(Decimal('0.01'))
+
+    @property
+    def total_net_for_freelancers(self) -> Decimal:
+        """Total amount that will be distributed to all freelancers after fee"""
+        if not self.price:
+            return Decimal('0.00')
+        return (Decimal(self.price) - self.total_platform_fee).quantize(Decimal('0.01'))
+
+    @property
+    def net_per_freelancer(self) -> Decimal:
+        """
+        The actual net amount EACH freelancer should receive
+        
+        Important: 
+        - gross_amount in WalletTransaction stays = job.price (full amount client paid)
+        - The amount field (net to freelancer) = this value
+        """
+        if self.required_freelancers <= 0:
+            return Decimal('0.00')
+
+        net_total = self.total_net_for_freelancers
+        share = net_total / Decimal(self.required_freelancers)
+        return share.quantize(Decimal('0.01'))
+
+    @property
+    def gross_per_freelancer(self) -> Decimal:
+        """
+        Just for information / display
+        The "apparent" gross per person before splitting (job.price / required_freelancers)
+        """
+        if self.required_freelancers <= 0 or not self.price:
+            return Decimal('0.00')
+        return (Decimal(self.price) / Decimal(self.required_freelancers)).quantize(Decimal('0.01'))
 
 
 
