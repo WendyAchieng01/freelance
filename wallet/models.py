@@ -106,6 +106,8 @@ class WalletTransaction(models.Model):
     extra_data = models.JSONField(default=dict, blank=True)
     batch = models.ForeignKey('PaymentBatch', on_delete=models.SET_NULL,
                                 null=True, blank=True, related_name='transactions')
+    provider_reference = models.CharField(
+        max_length=255, blank=True, null=True)
 
     class Meta:
         indexes = [
@@ -250,6 +252,8 @@ class PaymentBatch(models.Model):
         'paystack', 'Paystack'), ('paypal', 'PayPal')])
     period = models.ForeignKey(
         PaymentPeriod, on_delete=models.CASCADE, related_name='batches', null=True, blank=True)
+    provider_reference = models.CharField(
+        max_length=255, blank=True, null=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='payment_batches')
     total_amount = models.DecimalField(
@@ -265,7 +269,7 @@ class PaymentBatch(models.Model):
         unique_together = ('user', 'period', 'provider')
 
     def __str__(self):
-        return f"{self.reference} ({self.provider}) - {self.user.username}"
+        return f"{self.reference}"
 
 
 
@@ -284,6 +288,7 @@ class PayoutLog(models.Model):
     response_payload = models.JSONField(null=True, blank=True)
     status_code = models.IntegerField(null=True, blank=True)
     error = models.TextField(null=True, blank=True)
+    processed = models.BooleanField(default=False)
     idempotency_key = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:

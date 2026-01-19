@@ -1,3 +1,5 @@
+from django.db import transaction
+from celery import shared_task
 import logging
 from wallet.payouts.manager import PayoutManager
 from wallet.models import PaymentBatch, PayoutLog, WalletTransaction
@@ -52,46 +54,10 @@ def process_batch_payment_v2(batch_id):
     transactions = batch.transactions.filter(status='pending')
     successful_payouts = 0
 
-    for tx in transactions:
-        try:
-            # Use PayoutManager to handle the specific gateway logic
-            success = PayoutManager.execute_payout(tx)
-            if success:
-                tx.status = 'completed'
-                tx.completed = True
-                tx.save(update_fields=['status', 'completed'])
-                successful_payouts += 1
-                PayoutLog.objects.create(
-                    batch=batch,
-                    wallet_transaction=tx,
-                    provider=batch.provider,
-                    endpoint="batch_payout_v2",
-                    status_code=200,
-                    response_payload={"status": "success",
-                                      "message": "Payout completed via batch v2."}
-                )
-            else:
-                # If execute_payout returns False, it's a controlled failure
-                tx.status = 'failed'
-                tx.save(update_fields=['status'])
-                # The PayoutManager should have created a PayoutLog with details
-
-        except Exception as e:
-            logger.error(
-                f"Error processing payout for WalletTransaction {tx.id} in batch {batch.id}: {e}")
-            tx.status = 'failed'
-            tx.save(update_fields=['status'])
-            PayoutLog.objects.create(
-                batch=batch,
-                wallet_transaction=tx,
-                provider=batch.provider,
-                endpoint="batch_payout_v2",
-                status_code=500,
-                error=str(e),
-                response_payload={"status": "error",
-                                  "message": "An unexpected error occurred."}
-            )
-
+    if batch.provider == "paystack":
+        PayoutManager.execute_batch(batch)
+        return
+    
     # Update batch status based on the outcome
     if successful_payouts == transactions.count():
         batch.status = 'completed'
@@ -103,3 +69,45 @@ def process_batch_payment_v2(batch_id):
     batch.save(update_fields=['status'])
     logger.info(
         f"Batch {batch.id} processing finished with status: {batch.status}")
+
+
+# wallet/tasks.py
+
+
+@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=30, retry_kwargs={"max_retries": 5})
+def process_payout_batch(self, batch_id):
+    from api.wallet.gateways import get_payout_gateway
+
+    batch = PaymentBatch.objects.select_for_update().get(id=batch_id)
+
+    if batch.status != "created":
+        return
+
+    txs = list(
+        WalletTransaction.objects.select_for_update().filter(
+            batch=batch,
+            status=WalletTransaction.Status.PENDING,
+        )
+    )
+
+    if not txs:
+        return
+
+    gateway = get_payout_gateway(batch.provider)
+
+    with transaction.atomic():
+        batch.status = "sending"
+        batch.save(update_fields=["status"])
+
+        result = gateway.send_bulk(batch, txs)
+
+        batch.provider_reference = result["reference"]
+        batch.status = "sent"
+        batch.save(update_fields=["provider_reference", "status"])
+
+        ref_map = {i["tx_id"]: i["provider_ref"] for i in result["items"]}
+
+        for tx in txs:
+            tx.status = WalletTransaction.Status.IN_PROGRESS
+            tx.provider_reference = ref_map.get(tx.id)
+            tx.save(update_fields=["status", "provider_reference"])

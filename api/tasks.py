@@ -38,3 +38,4 @@ def send_verification_email(username, email_address, verification_url):
             f"An unexpected error occurred while sending email to {email_address}: {e}")
         raise e
     
+

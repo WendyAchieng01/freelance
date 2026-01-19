@@ -38,6 +38,7 @@ urlpatterns = [
     path('invoice/', include('invoicemgmt.urls', namespace='invoicemgmt')),
     path('payments/', include('payment.urls', namespace='payment')),
     path('payment/', include('payments.urls', namespace='payments')),
+    path('bulk/', include('wallet.urls', namespace='bulk_payments')),
     path('paypal/', include('paypal.standard.ipn.urls')),
     path("google-login-test/", google_test_page, name="google_test"),
     

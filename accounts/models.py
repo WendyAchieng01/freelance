@@ -49,8 +49,6 @@ class Profile(models.Model):
             self.mobile_money_provider = self.pay_id
         super().save(*args, **kwargs)
 
-            
-
 
 class FreelancerProfile(models.Model):
     profile = models.OneToOneField('Profile', on_delete=models.CASCADE,

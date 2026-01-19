@@ -41,7 +41,6 @@ class PaymentInitiateView(APIView):
         
         # Prevent duplicate verified payments
         if job.payment_verified:
-            #print(f"This is job payment url {job.get_payment_url()} while this is job absolute {job.get_absolute_url()}")
 
             return redirect(job.get_absolute_url())
 
@@ -58,8 +57,6 @@ class PaymentInitiateView(APIView):
         callback_url = request.build_absolute_uri(
             reverse("payment-callback")
         )
-        print('this is the callback url')
-        print(callback_url)
 
         # Call Paystack to initialize the transaction
         paystack = Paystack()

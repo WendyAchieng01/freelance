@@ -1,3 +1,4 @@
+from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models.signals import m2m_changed, post_save
@@ -7,6 +8,7 @@ from decimal import Decimal
 
 from core.models import Job, Chat, Profile, Response, Message
 from wallet.models import Rate
+#from api.core.utils import create_wallet_transactions
 
 
 # Reviewed responses logic
@@ -35,15 +37,30 @@ def validate_and_update_reviewed_responses(sender, instance, action, pk_set, **k
                 response.save()
 
 
-# Selected freelancers logic
 @receiver(m2m_changed, sender=Job.selected_freelancers.through)
 def handle_selected_freelancers(sender, instance, action, pk_set, **kwargs):
     job = instance
 
+    # ── Skip when pk_set is None (happens on .clear() / bulk clear) ──
+    if pk_set is None:
+        if action == "post_clear":
+            # After full clear: deactivate ALL chats for this job
+            Chat.objects.filter(job=job).update(active=False)
+
+            # Clear assigned_at if no freelancers left (should be true after clear)
+            if not job.selected_freelancers.exists():
+                job.assigned_at = None
+                job.save(update_fields=["assigned_at"])
+
+        # For pre_clear we usually do nothing
+        return
+
+    # ── Normal cases with actual pk_set ──
+
     if action == "post_add":
         # Set assigned_at when at least one freelancer exists
         if job.selected_freelancers.exists():
-            job.assigned_at = job.assigned_at or job.posted_date
+            job.assigned_at = job.assigned_at or timezone.now() 
             job.save(update_fields=["assigned_at"])
 
         for user_id in pk_set:
@@ -59,20 +76,23 @@ def handle_selected_freelancers(sender, instance, action, pk_set, **kwargs):
                 defaults={'active': job.payment_verified},
             )
 
-            # Send first message only when newly added
             if created:
                 send_initial_chat_message(job, job.client, freelancer_profile)
 
-    elif action in ("post_remove", "post_clear"):
-        # Deactivate chats for removed freelancers
+    elif action == "post_remove":
+        # Deactivate chats only for the removed freelancers
         profiles = Profile.objects.filter(user_id__in=pk_set)
         Chat.objects.filter(
-            job=job, freelancer__in=profiles).update(active=False)
+            job=job,
+            freelancer__in=profiles
+        ).update(active=False)
 
-        # If no freelancers remain, clear assignment time
+        # If no freelancers remain after removal
         if not job.selected_freelancers.exists():
             job.assigned_at = None
             job.save(update_fields=["assigned_at"])
+
+    # post_clear is already handled above when pk_set is None
 
 
 # Activate chats when payment becomes verified
@@ -123,3 +143,10 @@ def send_initial_chat_message(job, client_profile, freelancer_profile):
         sender=client_profile.user,
         content=message_text
     )
+
+'''
+@receiver(post_save, sender=Job)
+def handle_job_completed(sender, instance, created, **kwargs):
+    print("Signal fired to avarage the payment sum")
+    if instance.status == 'completed':
+        create_wallet_transactions(instance)'''

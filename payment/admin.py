@@ -16,7 +16,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_filter = ('verified', 'date_created')
     search_fields = ('user__username', 'job__title', 'email', 'ref')
     readonly_fields = ('ref', 'verified', 'date_created',
-                       'amount_value_display', 'extra_data')
+                        'amount_value_display', 'extra_data')
     ordering = ('-date_created',)
 
     fieldsets = (

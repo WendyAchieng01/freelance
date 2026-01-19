@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     'freelance-production-46dc.up.railway.app',
     'http://freelance-production-46dc.up.railway.app',
     'https://freelance-production-46dc.up.railway.app',
+    '10aa823479b1.ngrok-free.app',
 ]
 
 
@@ -66,7 +67,7 @@ INSTALLED_APPS = [
     'invoicemgmt',
     'payment',
     'payments',
-    'wallet',
+    'wallet.apps.WalletConfig',
     'analytics',
 
     # pypi
@@ -331,7 +332,7 @@ SECURE_HSTS_PRELOAD = not DEBUG
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR',
-                       'RU', 'DE', 'FR', 'GB', 'KE',)
+                        'RU', 'DE', 'FR', 'GB', 'KE',)
 
 
 REST_FRAMEWORK = {
@@ -375,6 +376,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://freelance-production-46dc.up.railway.app",
+    "https://10aa823479b1.ngrok-free.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -456,25 +458,62 @@ CLOUDINARY_FOLDERS = {
 }
 
 
+# Logs directory
+logs_dir = BASE_DIR / "logs"
+logs_dir.mkdir(exist_ok=True)
+
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "default": {
+            "format": "{levelname} {asctime} {name} {filename}:{lineno} {message}",
+            "style": "{",
         },
     },
-    'loggers': {
-        '': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "default",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "filename": str(logs_dir / "app.log"),
+            "formatter": "default",
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "mail_admins": {
+            "class": "django.utils.log.AdminEmailHandler",
+            "level": "ERROR",
+            "formatter": "default",
+        },
+    },
+
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "kyiosk": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "analytics": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
 }

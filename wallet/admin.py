@@ -1,35 +1,70 @@
-import logging
-from decimal import Decimal
-from django.db.models import Sum, Q
-from django_q.tasks import async_task
-from payments.tasks import process_batch
-from django.utils.html import format_html
 from django.contrib import admin, messages
 from django.urls import reverse, path, re_path
-from django.contrib.admin import SimpleListFilter
 from django.shortcuts import redirect, get_object_or_404
-from wallet.models import WalletTransaction, PaymentPeriod, PaymentBatch, PayoutLog, Rate
-from api.wallet.gateways.batch_creator import create_batches_for_period
-from wallet.admin_views import run_batch_view, single_pay_view, retry_pay_view,list_periods_for_batching_view, period_payout_detail_view
+from django.utils.html import format_html
 
-logger = logging.getLogger(__name__)
+from wallet.models import (
+    WalletTransaction,PaymentBatch,
+    PaymentPeriod,PayoutLog,Rate,
+)
+from django.contrib.admin import SimpleListFilter
+
+from wallet.services.batch_discovery import auto_discover_batches
+from wallet.admin_views import (
+    single_pay_view,
+    retry_pay_view,list_periods_for_batching_view,
+    period_payout_detail_view,
+)
 
 
-
-class BatchAssignedFilter(SimpleListFilter):
-    title = 'Batch Assigned'
-    parameter_name = 'batch_assigned'
+class UserTypeFilter(SimpleListFilter):
+    title = "User Type"
+    parameter_name = "user_type"
 
     def lookups(self, request, model_admin):
         return (
-            ('yes', 'Assigned'),
-            ('no', 'Not Assigned'),
+            ("freelancer", "Freelancer"),
+            ("client", "Client"),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'yes':
+        if self.value():
+            return queryset.filter(user__profile__user_type=self.value())
+        return queryset
+
+
+class HasJobFilter(SimpleListFilter):
+    title = "Has Job"
+    parameter_name = "has_job"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", "Yes"),
+            ("no", "No"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "yes":
+            return queryset.filter(job__isnull=False)
+        if self.value() == "no":
+            return queryset.filter(job__isnull=True)
+        return queryset
+
+
+class BatchStatusFilter(SimpleListFilter):
+    title = "Batch Status"
+    parameter_name = "batch_status"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("batched", "Assigned to Batch"),
+            ("unbatched", "Not Batched"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "batched":
             return queryset.filter(batch__isnull=False)
-        if self.value() == 'no':
+        if self.value() == "unbatched":
             return queryset.filter(batch__isnull=True)
         return queryset
 
@@ -46,36 +81,33 @@ class PayoutLogInline(admin.TabularInline):
         "short_request",
         "short_response",
     )
-    fields = readonly_fields
 
     def short_request(self, obj):
-        if not obj.request_payload:
-            return "-"
-        return format_html(
-            "<pre style='max-width:420px; white-space:pre-wrap'>{}</pre>",
-            obj.request_payload
-        )
+        return format_html("<pre>{}</pre>", obj.request_payload or "-")
 
     def short_response(self, obj):
-        if not obj.response_payload:
-            return "-"
-        return format_html(
-            "<pre style='max-width:420px; white-space:pre-wrap'>{}</pre>",
-            obj.response_payload
-        )
+        return format_html("<pre>{}</pre>", obj.response_payload or "-")
 
 
 @admin.register(WalletTransaction)
 class WalletTransactionAdmin(admin.ModelAdmin):
+    date_hierarchy = "timestamp"
+
     list_display = (
         "user",
+        "user_type",
         "transaction_type",
+        "payment_type",
+        "gross_amount",
+        "fee_amount",
         "amount",
         "status",
         "payment_period",
         "batch",
+        "provider_reference",
         "single_pay_button",
         "retry_button",
+        "timestamp",
     )
 
     list_filter = (
@@ -83,13 +115,41 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         "payment_type",
         "status",
         "payment_period",
-        "batch",
+        UserTypeFilter,
+        HasJobFilter,
+        BatchStatusFilter,
     )
 
-    search_fields = ("transaction_id", "user__username")
+    search_fields = (
+        "transaction_id",
+        "provider_reference",
+        "user__username",
+        "user__email",
+    )
+
+    readonly_fields = (
+        "gross_amount",
+        "fee_amount",
+        "amount",
+        "provider_reference",
+        "timestamp",
+    )
+
+    inlines = [PayoutLogInline]
+
+    list_select_related = (
+        "user",
+        "job",
+        "payment_period",
+        "batch",
+        "rate",
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("user__profile")
 
     def get_urls(self):
-        urls = super().get_urls()
         custom = [
             re_path(
                 r"^single-pay/(?P<pk>[-\w]+)/$",
@@ -102,88 +162,74 @@ class WalletTransactionAdmin(admin.ModelAdmin):
                 name="wallet_retry_pay",
             ),
         ]
-        return custom + urls
+        return custom + super().get_urls()
+
+    @admin.display(description="User Type")
+    def user_type(self, obj):
+        return getattr(obj.user.profile, "user_type", "-")
+
+    # -------------------------
+    # PAY / RETRY BUTTON RULES
+    # -------------------------
+
+    def _can_trigger_payment(self, obj):
+        return (
+            obj.transaction_type == "payment_processing"
+            and obj.status in ("failed", "cancelled")
+        )
 
     @admin.display(description="Pay")
     def single_pay_button(self, obj):
+        if not self._can_trigger_payment(obj):
+            return "-"
         url = reverse("admin:wallet_single_pay", args=[obj.id])
-        return format_html("<a class='button' style='color:white;background:green;padding:4px 8px' href='{}'>Pay</a>", url)
+        return format_html(
+            '<a class="button" style="background:#28a745;color:white;padding:4px 8px;border-radius:4px;" href="{}">Pay</a>',
+            url,
+        )
 
     @admin.display(description="Retry")
     def retry_button(self, obj):
+        if not self._can_trigger_payment(obj):
+            return "-"
         url = reverse("admin:wallet_retry_pay", args=[obj.id])
-        return format_html("<a class='button' style='color:white;background:orange;padding:4px 8px' href='{}'>Retry</a>", url)
+        return format_html(
+            '<a class="button" style="background:#f0ad4e;color:white;padding:4px 8px;border-radius:4px;" href="{}">Retry</a>',
+            url,
+        )
 
 
 
 @admin.register(PaymentPeriod)
 class PaymentPeriodAdmin(admin.ModelAdmin):
-    list_display = ("name", "start_date", "end_date", "create_batch_btn", "batch_payouts_v2_button")
+    list_display = ("name", "start_date", "end_date", "batch_payouts_button")
     search_fields = ("name",)
-    actions = ["create_batch_for_period_action"]
-
-    def create_batch_btn(self, obj):
-        url = reverse("admin:create_batch_for_period", args=[obj.id])
-        return format_html(
-            "<a class='button' style='background:#007bff; color:white; padding:5px 10px; border-radius:4px;' href='{}'>Create Batch</a>",
-            url
-        )
-    create_batch_btn.short_description = "Batch"
-
-    def batch_payouts_v2_button(self, obj):
-        url = reverse('admin:wallet_period_payout_detail', args=[obj.id])
-        return format_html(
-            "<a class='button' style='background:#28a745; color:white; padding:5px 10px; border-radius:4px;' href='{}'>Batch Payouts V2</a>",
-            url
-        )
-    batch_payouts_v2_button.short_description = "Batch Payouts (New)"
 
     def get_urls(self):
-        urls = super().get_urls()
-        custom = [
-            path(
-                "create-batch/<int:period_id>/",
-                self.admin_site.admin_view(self.create_batch_for_period),
-                name="create_batch_for_period"
-            ),
+        custom_urls = [
             path(
                 "batch-payouts-v2/",
                 self.admin_site.admin_view(list_periods_for_batching_view),
-                name="wallet_period_payout_list"
+                name="wallet_period_payout_list",
             ),
             path(
-                "batch-payouts-v2/<int:period_id>/",
+                "batch-payouts-v2/<int:period_id>/",  # <-- FIXED: int instead of uuid
                 self.admin_site.admin_view(period_payout_detail_view),
-                name="wallet_period_payout_detail"
+                name="wallet_paymentperiod_batch_payouts",
             ),
         ]
-        return custom + urls
+        return custom_urls + super().get_urls()
 
-    def create_batch_for_period(self, request, period_id):
-        try:
-            period = PaymentPeriod.objects.get(id=period_id)
-        except PaymentPeriod.DoesNotExist:
-            messages.error(request, "Payment period not found.")
-            return redirect(request.META.get("HTTP_REFERER", "/admin/"))
-
-        batches = create_batches_for_period(period)
-        if not batches:
-            messages.warning(
-                request, "No pending completed-job payouts found for this period.")
-            return redirect(request.META.get("HTTP_REFERER", "/admin/"))
-
-        messages.success(
-            request, f"Created {len(batches)} batch(es) for period {period.name}.")
-        return redirect("/admin/wallet/paymentbatch/")
-
-    def create_batch_for_period_action(self, request, queryset):
-        total = 0
-        for period in queryset:
-            batches = create_batches_for_period(period)
-            total += len(batches)
-        messages.success(
-            request, f"Created {total} batches across selected periods.")
-    create_batch_for_period_action.short_description = "Create batch for selected payment periods"
+    @admin.display(description="Batch Payouts")
+    def batch_payouts_button(self, obj):
+        url = reverse(
+            "admin:wallet_paymentperiod_batch_payouts",
+            kwargs={"period_id": obj.id},  # integer now works
+        )
+        return format_html(
+            '<a class="button" style="background:#28a745;color:white;padding:5px 10px;border-radius:4px;" href="{}">View / Run Payouts</a>',
+            url
+        )
 
 
 @admin.register(PaymentBatch)
@@ -192,66 +238,48 @@ class PaymentBatchAdmin(admin.ModelAdmin):
         "reference",
         "provider",
         "period",
-        "user",
         "total_amount",
         "status",
-        "created_at",
-        "run_batch_button",
+        "run_button",
     )
-
     list_filter = ("provider", "status", "period")
-    search_fields = ("reference", "user__username")
-
-    def get_urls(self):
-        urls = super().get_urls()
-        custom = [
-            path(
-                "run-batch/<uuid:pk>/",
-                self.admin_site.admin_view(self.run_batch_view),
-                name="wallet_run_batch",
-            ),
-        ]
-        return custom + urls
-
-    def run_batch_button(self, obj):
-        url = reverse("admin:wallet_run_batch", args=[obj.id])
-        return format_html(
-            "<a class='button' style='padding:5px 10px;background:#007bff;color:white;' href='{}'>Run Batch</a>",
-            url,
-        )
-    run_batch_button.short_description = "Run Batch"
-
-    #  BATCH EXECUTION LOGIC
-
-    def run_batch_view(self, request, pk):
-        batch = get_object_or_404(PaymentBatch, pk=pk)
-
-        txs = batch.transactions.filter(status="pending")
-
-        if not txs.exists():
-            messages.warning(request, "No pending transactions in this batch.")
-            return redirect("admin:wallet_paymentbatch_changelist")
-
-        # TODO: integrate gateway payout logic here
-
-
-        messages.success(
-            request, f"Batch executed for {txs.count()} payout(s)!")
-        return redirect("admin:wallet_paymentbatch_changelist")
-    
-    #change_list_template = "admin/analytics_dashboard.html"
 
     def changelist_view(self, request, extra_context=None):
-        stats = {
-            "pending": PaymentBatch.objects.filter(status="pending").count(),
-            "completed": PaymentBatch.objects.filter(status="completed").count(),
-            "failed": PaymentBatch.objects.filter(status="failed").count(),
-            "total_amount": PaymentBatch.objects.all().aggregate(Sum("total_amount"))["total_amount__sum"],
-        }
-        extra_context = extra_context or {}
-        extra_context["stats"] = stats
+        auto_discover_batches()
         return super().changelist_view(request, extra_context)
 
+    def run_button(self, obj):
+        if obj.status != "pending":
+            return "-"
+        return format_html(
+            '<a class="button" href="run/{}/">Run Now</a>', obj.pk
+        )
+
+    run_button.short_description = "Payout"
+
+    def get_urls(self):
+        custom_urls = [
+            path(
+                "run/<uuid:batch_id>/",
+                self.admin_site.admin_view(self.run_now),
+                name="wallet_run_batch_now",
+            ),
+        ]
+        return custom_urls + super().get_urls()
+
+    def run_now(self, request, batch_id):
+        batch = get_object_or_404(PaymentBatch, pk=batch_id)
+
+        try:
+            from wallet.payouts.manager import PayoutManager
+            PayoutManager.execute_batch(batch, async_run=False)
+            messages.success(
+                request, f"Batch {batch.reference} executed successfully."
+            )
+        except Exception as exc:
+            messages.error(request, str(exc))
+
+        return redirect("..")
 
 
 @admin.register(Rate)
@@ -259,88 +287,32 @@ class RateAdmin(admin.ModelAdmin):
     list_display = ("rate_amount", "effective_from")
     readonly_fields = ("effective_from",)
 
+# ----------------------------
+# PAYOUT LOG ADMIN
+# ----------------------------
+
 
 @admin.register(PayoutLog)
 class PayoutLogAdmin(admin.ModelAdmin):
-
     list_display = (
-        "created_at","provider","wallet_transaction","batch",
-        "status_readable","has_error",
+        "created_at",
+        "provider",
+        "wallet_transaction",
+        "batch",
+        "status_readable",
+        "has_error",
     )
 
-    list_filter = (
-        "provider","endpoint","batch",
-        ("created_at", admin.DateFieldListFilter),
-    )
-
+    list_filter = ("provider", "endpoint", "batch")
     date_hierarchy = "created_at"
-
-    search_fields = (
-        "provider","endpoint","idempotency_key","error",
-    )
-
     readonly_fields = ("created_at",)
 
-    fieldsets = (
-        (None, {
-            "fields": (
-                "provider",
-                "endpoint",
-                "wallet_transaction",
-                "batch",
-                "status_code",
-                "idempotency_key",
-                "error",
-            )
-        }),
-        ("Payloads", {
-            "classes": ("collapse",),
-            "fields": (
-                "request_payload",
-                "response_payload",
-            )
-        }),
-        ("Timestamps", {
-            "fields": ("created_at",)
-        }),
-    )
-
-
     def status_readable(self, obj):
-        """
-        Make status human readable.
-        200, 201, 204 → Successful
-        >=400 → Failed
-        None → Unknown
-        """
         if obj.status_code is None:
             return "Unknown"
-        if 200 <= obj.status_code < 300:
-            return "Successful"
-        return "Failed"
-
-    status_readable.short_description = "Status"
+        return "Successful" if 200 <= obj.status_code < 300 else "Failed"
 
     def has_error(self, obj):
-        """
-        Boolean flag for filtering.
-        """
         return bool(obj.error)
 
-    has_error.boolean = True 
-    has_error.short_description = "Error?"
-
-    def status_group(self, obj):
-        """
-        Used only for filtering.
-        """
-        if obj.status_code is None:
-            return "Unknown"
-        if 200 <= obj.status_code < 300:
-            return "Successful"
-        if obj.status_code >= 400:
-            return "Failed"
-        return "Other"
-
-    status_group.short_description = "Status Category"
-
+    has_error.boolean = True
