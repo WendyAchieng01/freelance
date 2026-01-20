@@ -81,7 +81,7 @@ def handle_job_completion(sender, instance, created, **kwargs):
         else timezone.now().date()
     )
     period = get_or_create_payment_period_for_date(
-        period_date)  # your helper function
+        period_date) 
 
     for user in freelancers:
         # Only create if no payout-like transaction exists yet

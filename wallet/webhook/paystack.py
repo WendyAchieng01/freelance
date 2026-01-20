@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 logger.info("Webhook hit at %s", timezone.now())
-print("Webhook received")
 
 
 @csrf_exempt

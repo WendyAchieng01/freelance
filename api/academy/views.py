@@ -79,7 +79,7 @@ class TrainingViewSet(viewsets.ModelViewSet):
             raise PermissionDenied(
                 "You can only create trainings for your own jobs.")
 
-        # Training.client expects a User, not Profile
+        # Training.client expects a User
         serializer.save(client=self.request.user, job=job)
 
     def perform_update(self, serializer):

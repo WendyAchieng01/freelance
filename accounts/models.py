@@ -591,12 +591,11 @@ class ContactUs(models.Model):
             "response_by": getattr(self.responded_by, "get_full_name", lambda: None)() if self.responded_by else None,
         }
 
-        # Prefer template-based email if templates are present; if not, use inline generators.
+
         text_content = None
         html_content = None
         try:
-            # You can place templates at:
-            # templates/emails/contact_response.txt and templates/emails/contact_response.html
+
             text_content = render_to_string(
                 "emails/contact_response.txt", context).strip()
             html_content = render_to_string(
@@ -618,7 +617,7 @@ class ContactUs(models.Model):
             if html_content:
                 email.attach_alternative(html_content, "text/html")
 
-            # attach any uploaded attachment (optional; ensure proper permissions/security)
+            # attach any uploaded attachment
             if self.attachment:
                 try:
                     email.attach(self.attachment.name, self.attachment.read())

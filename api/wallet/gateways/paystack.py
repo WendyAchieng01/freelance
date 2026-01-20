@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PaystackGateway(BaseGateway):
     provider_name = "paystack"
     base_url = getattr(settings, "PAYSTACK_BASE_URL",
-                       "https://api.paystack.co")
+                        "https://api.paystack.co")
 
     def __init__(self):
         self.sk = settings.PAYSTACK_SECRET_KEY
@@ -356,7 +356,6 @@ class PaystackGateway(BaseGateway):
                 "raw": data,
                 "error": None,
             }
-        # ==================
 
         err = data.get("message") or data.get("error") or str(data)
         logger.error("Paystack bulk payout failed batch=%s err=%s",

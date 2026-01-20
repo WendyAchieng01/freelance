@@ -61,8 +61,8 @@ class TrainingSerializer(serializers.ModelSerializer):
             reverse(
                 "training-detail",
                 kwargs={
-                    "job_slug": obj.job.slug,  # required
-                    "slug": obj.slug           # required
+                    "job_slug": obj.job.slug,
+                    "slug": obj.slug 
                 }
             )
         )

@@ -35,7 +35,7 @@ class AnalyticsAPIView(APIView):
 
         now = timezone.now()
 
-        # === LAST 12 MONTHS DATA ===
+        #LAST 12 MONTHS DATA
         months = []
         user_growth = []
         job_growth = []
@@ -61,7 +61,7 @@ class AnalyticsAPIView(APIView):
                 .aggregate(s=Sum('fee_amount'))['s'] or Decimal('0')
             profit_growth.append(float(profit))
 
-        # === BASIC STATS ===
+        #BASIC STATS
         total_users = User.objects.count()
         total_freelancers = Profile.objects.filter(
             user_type='freelancer').count()
@@ -82,12 +82,12 @@ class AnalyticsAPIView(APIView):
         avg_responses = Job.objects.annotate(num_apps=Count(
             'responses')).aggregate(avg=Avg('num_apps'))['avg'] or 0
 
-        # === TOP SKILLS ===
+        #TOP SKILLS
         top_skills = list(Skill.objects.annotate(count=Count('required_skills'))
                           .filter(count__gt=0).order_by('-count')[:10]
                           .values('name', 'count'))
 
-        # === RADAR CHART DATA ===
+        #RADAR CHART DATA 
         radar_labels = ['Users', 'Jobs', 'Revenue',
                         'Hires', 'Profit', 'Activity']
         radar_data = [
@@ -197,7 +197,6 @@ class AnalyticsAPIView(APIView):
         )['total'] or Decimal('0')
         payment_data['PayPal'] = float(paypal_total)
 
-        # If you have other payment methods, add them here
         # payment_data['Other'] = float(other_total)
 
         return payment_data

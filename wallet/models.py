@@ -250,8 +250,6 @@ class WalletTransaction(models.Model):
             )
         ]
         
-        
-
 
 
 class PaymentBatch(models.Model):
@@ -270,13 +268,13 @@ class PaymentBatch(models.Model):
         max_digits=12, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='pending', choices=[
-        ('pending', 'Pending'), ('processing', 'Processing'),
+        ('pending', 'Pending'), ('processing', 'Processing'),('late','Late'),
         ('completed', 'Completed'), ('partial', 'Partial'), ('failed', 'Failed')])
     note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created_at']
-        unique_together = ('user', 'period', 'provider')
+        #unique_together = ('user', 'period', 'provider')
 
     def __str__(self):
         return f"{self.reference}"

@@ -71,8 +71,6 @@ def process_batch_payment_v2(batch_id):
         f"Batch {batch.id} processing finished with status: {batch.status}")
 
 
-# wallet/tasks.py
-
 
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=30, retry_kwargs={"max_retries": 5})
 def process_payout_batch(self, batch_id):

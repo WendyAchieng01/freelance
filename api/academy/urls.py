@@ -2,7 +2,6 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 from .views import TrainingViewSet
 
-# Manual URL patterns for clarity
 urlpatterns = [
     # List and create trainings for a specific job
     path(
