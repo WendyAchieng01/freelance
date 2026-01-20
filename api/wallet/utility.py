@@ -28,7 +28,7 @@ def get_wallet_stats(user):
         # Only consider transactions linked to jobs where this user was selected
         transactions = WalletTransaction.objects.filter(
             user=user,
-            job__selected_freelancer=user
+            job__selected_freelancers=user
         ).select_related('job')
 
         total_picked_jobs = transactions.filter(
@@ -36,7 +36,7 @@ def get_wallet_stats(user):
         ).count()
 
         in_progress_jobs = Job.objects.filter(
-            selected_freelancer=user,
+            selected_freelancers=user,
             status='in_progress'
         )
 

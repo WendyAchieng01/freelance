@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 def normalize_dt(dt):
     if dt is None:
-        # Make sure datetime.min is tz-aware
+        # datetime.min is tz-aware
         return datetime.min.replace(tzinfo=timezone.utc)
     if dj_timezone.is_naive(dt):
         return dj_timezone.make_aware(dt, dj_timezone.get_current_timezone())

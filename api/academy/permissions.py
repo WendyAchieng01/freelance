@@ -23,8 +23,8 @@ class IsClientAndOwnerOrReadOnly(BasePermission):
             # Write permissions only for the job owner
             return (
                 user.profile.user_type == 'client'
-                and obj.job.client == user.profile  # Job owner
-                and obj.client == user              # Training.client is a User
+                and obj.job.client == user.profile
+                and obj.client == user 
             )
         except Exception:
             return False

@@ -39,17 +39,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from accounts.models import Profile, FreelancerProfile, ClientProfile, Skill, Language,PortfolioProject,ContactUs
 from api.accounts.filters import FreelancerProfileFilter,ClientProfileFilter
-from core.models import Job, Response as CoreResponse, Chat, Message, MessageAttachment, Review
-from .permissions import IsOwnerOrAdmin,IsClient, IsFreelancer, IsJobOwner,CanReview,IsFreelancerOrAdminOrClientReadOnly,IsClientOrAdminFreelancerReadOnly,IsOwnerOrReadOnly
-from .google_auth import GoogleAuthSerializer
-from .serializers import (
+from api.accounts.permissions import IsOwnerOrAdmin,IsOwnerOrReadOnly
+from api.accounts.google_auth import GoogleAuthSerializer
+from api.accounts.serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,LogoutSerializer,AuthUserSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,ResendVerificationSerializer,VerifyEmailSerializer,
     PasswordResetConfirmSerializer, ProfileSerializer, SkillSerializer,FreelancerProfileReadSerializer,ContactUsListSerializer,
     LanguageSerializer,FreelancerListSerializer,FreelancerProfileWriteSerializer,ProfileWriteSerializer,ContactUsCreateSerializer,
     ClientProfileWriteSerializer, ClientProfileReadSerializer,ClientListSerializer,PortfolioProjectReadSerializer,PortfolioProjectSerializer
 )
-
 
 #from api.tasks import send_verification_email
 
@@ -420,11 +418,11 @@ class GoogleAuthView(APIView):
         user = serializer.validated_data["user"]
         created = serializer.validated_data["created"]
 
-        # --- Issue JWT tokens ---
+        # Issue JWT tokens 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
 
-        # --- Build response payload ---
+        # Build response payload 
         response_data = {
             "message": "Google signup successful." if created else "Google login successful.",
             "is_new": created,
@@ -1239,7 +1237,7 @@ class ContactUsCreateView(generics.CreateAPIView):
 
         contact = serializer.instance
 
-        # --- SEND EMAILS ---
+        #SEND EMAILS
         try:
             self._send_confirmation_and_notify(contact)
         except Exception as e:
@@ -1310,7 +1308,7 @@ class ContactUsCreateView(generics.CreateAPIView):
 
         msg_user.send(fail_silently=False)
 
-        # --- INTERNAL NOTIFICATION ---
+        #INTERNAL NOTIFICATION
         subject_admin = (
             f"New Contact Submission: {contact.subject} from view"
         )

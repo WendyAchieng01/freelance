@@ -11,7 +11,6 @@ from api.wallet.gateways.paypal import PayPalGateway
 
 logger = logging.getLogger(__name__)
 
-# Allow either class or instance in mapping
 GATEWAYS = {
     "paystack": PaystackGateway,
     "paypal": PayPalGateway,

@@ -1,7 +1,5 @@
 from django.urls import path, include
 
-
-
 urlpatterns = [
     path('jobs/', include('api.core.urls_jobs')),
     path('messages/', include('api.core.urls_messages')),

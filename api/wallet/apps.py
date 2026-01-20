@@ -6,4 +6,5 @@ class WalletConfig(AppConfig):
     name = 'api.wallet'
 
     def ready(self):
-        import api.wallet.signals  # Connect signals
+        pass
+        #import api.wallet.signals  # Connect signals

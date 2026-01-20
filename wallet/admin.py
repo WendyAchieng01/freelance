@@ -98,6 +98,7 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         "user_type",
         "transaction_type",
         "payment_type",
+        "job_link",
         "gross_amount",
         "fee_amount",
         "amount",
@@ -125,14 +126,7 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         "provider_reference",
         "user__username",
         "user__email",
-    )
-
-    readonly_fields = (
-        "gross_amount",
-        "fee_amount",
-        "amount",
-        "provider_reference",
-        "timestamp",
+        "job__title",
     )
 
     inlines = [PayoutLogInline]
@@ -145,9 +139,36 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         "rate",
     )
 
+    base_readonly = (
+        "gross_amount",
+        "fee_amount",
+        "amount",
+        "provider_reference",
+        "timestamp",
+        "payment_period",
+        "batch",
+    )
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("user__profile")
+        return qs.select_related("user__profile", "job")
+
+    def get_readonly_fields(self, request, obj=None):
+        if not obj:
+            # On create: lock computed/system fields
+            return self.base_readonly
+
+        # If finalized or already batched, hard-lock the record
+        if obj.status in ("completed", "failed", "cancelled") or obj.batch_id:
+            return [f.name for f in self.model._meta.fields]
+
+        # Otherwise allow limited operational edits
+        return self.base_readonly + (
+            "user",
+            "job",
+            "transaction_type",
+            "transaction_id",
+        )
 
     def get_urls(self):
         custom = [
@@ -168,9 +189,14 @@ class WalletTransactionAdmin(admin.ModelAdmin):
     def user_type(self, obj):
         return getattr(obj.user.profile, "user_type", "-")
 
-    # -------------------------
+    @admin.display(description="Job")
+    def job_link(self, obj):
+        if not obj.job:
+            return "-"
+        url = reverse("admin:core_job_change", args=[obj.job.pk])
+        return format_html('<a href="{}">{}</a>', url, obj.job.title)
+
     # PAY / RETRY BUTTON RULES
-    # -------------------------
 
     def _can_trigger_payment(self, obj):
         return (
@@ -199,12 +225,52 @@ class WalletTransactionAdmin(admin.ModelAdmin):
         )
 
 
+class PaymentBatchInline(admin.TabularInline):
+    model = PaymentBatch
+    extra = 0
+    can_delete = False
+    show_change_link = True
+
+    fields = (
+        "reference",
+        "provider",
+        "status",
+        "total_amount",
+        "provider_reference",
+        "created_at",
+    )
+
+    readonly_fields = fields
+
+    ordering = ("-created_at",)
+
 
 @admin.register(PaymentPeriod)
 class PaymentPeriodAdmin(admin.ModelAdmin):
-    list_display = ("name", "start_date", "end_date", "batch_payouts_button")
-    search_fields = ("name",)
+    list_display = (
+        "name",
+        "start_date",
+        "end_date",
+        "batch_count",
+        "completed_batches",
+        "batch_payouts_button"
+    )
 
+    search_fields = ("name",)
+    ordering = ("-start_date",)
+
+    inlines = [PaymentBatchInline]
+
+    readonly_fields = ()
+
+    def batch_count(self, obj):
+        return obj.batches.count()
+    batch_count.short_description = "Total Batches"
+
+    def completed_batches(self, obj):
+        return obj.batches.filter(status="completed").count()
+    completed_batches.short_description = "Completed"
+    
     def get_urls(self):
         custom_urls = [
             path(
@@ -213,7 +279,7 @@ class PaymentPeriodAdmin(admin.ModelAdmin):
                 name="wallet_period_payout_list",
             ),
             path(
-                "batch-payouts-v2/<int:period_id>/",  # <-- FIXED: int instead of uuid
+                "batch-payouts-v2/<int:period_id>/",
                 self.admin_site.admin_view(period_payout_detail_view),
                 name="wallet_paymentperiod_batch_payouts",
             ),
@@ -224,12 +290,36 @@ class PaymentPeriodAdmin(admin.ModelAdmin):
     def batch_payouts_button(self, obj):
         url = reverse(
             "admin:wallet_paymentperiod_batch_payouts",
-            kwargs={"period_id": obj.id},  # integer now works
+            kwargs={"period_id": obj.id},
         )
         return format_html(
-            '<a class="button" style="background:#28a745;color:white;padding:5px 10px;border-radius:4px;" href="{}">View / Run Payouts</a>',
+            '<a class="button" style="background:#28a745;color:white;padding:5px 10px;border-radius:4px;" href="{}">View Payouts</a>',
             url
         )
+
+
+class PayoutLogInline(admin.TabularInline):
+    model = PayoutLog
+    extra = 0
+    can_delete = False
+    readonly_fields = (
+        "created_at",
+        "wallet_transaction",
+        "provider",
+        "endpoint",
+        "idempotency_key",
+        "status_code",
+        "short_request",
+        "short_response",
+        "processed",
+    )
+    show_change_link = True
+
+    def short_request(self, obj):
+        return format_html("<pre>{}</pre>", obj.request_payload or "-")
+
+    def short_response(self, obj):
+        return format_html("<pre>{}</pre>", obj.response_payload or "-")
 
 
 @admin.register(PaymentBatch)
@@ -243,6 +333,35 @@ class PaymentBatchAdmin(admin.ModelAdmin):
         "run_button",
     )
     list_filter = ("provider", "status", "period")
+
+    base_readonly_fields = (
+        "id",
+        "reference",
+        "created_at",
+        "total_amount",
+    )
+
+    inlines = [PayoutLogInline]
+
+    def get_readonly_fields(self, request, obj=None):
+        if not obj:
+            return self.base_readonly_fields
+
+        if obj.status == "completed":
+            # Hard lock – no mutation after money is settled
+            return [f.name for f in self.model._meta.fields]
+
+        # Editable only: status, note, provider_reference (if needed)
+        return self.base_readonly_fields + (
+            "provider",
+            "period",
+            "user",
+        )
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.status == "completed":
+            return False
+        return super().has_delete_permission(request, obj)
 
     def changelist_view(self, request, extra_context=None):
         auto_discover_batches()
@@ -282,14 +401,13 @@ class PaymentBatchAdmin(admin.ModelAdmin):
         return redirect("..")
 
 
+
 @admin.register(Rate)
 class RateAdmin(admin.ModelAdmin):
     list_display = ("rate_amount", "effective_from")
     readonly_fields = ("effective_from",)
 
-# ----------------------------
 # PAYOUT LOG ADMIN
-# ----------------------------
 
 
 @admin.register(PayoutLog)
@@ -297,15 +415,26 @@ class PayoutLogAdmin(admin.ModelAdmin):
     list_display = (
         "created_at",
         "provider",
-        "wallet_transaction",
+        "endpoint",
+        "status_code",
+        "processed",
         "batch",
-        "status_readable",
-        "has_error",
+        "wallet_transaction",
     )
-
-    list_filter = ("provider", "endpoint", "batch")
+    list_filter = ("provider", "processed", "status_code", "batch")
+    search_fields = ("endpoint", "idempotency_key")
+    
     date_hierarchy = "created_at"
-    readonly_fields = ("created_at",)
+
+    def get_readonly_fields(self, request, obj=None):
+        # Entire model is immutable – audit log
+        return [f.name for f in self.model._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def status_readable(self, obj):
         if obj.status_code is None:

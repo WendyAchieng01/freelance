@@ -1,62 +1,51 @@
-from drf_spectacular.utils import extend_schema_field, OpenApiTypes, OpenApiResponse, extend_schema, OpenApiParameter, OpenApiRequest, extend_schema_view
-from rest_framework.throttling import ScopedRateThrottle
-from rest_framework.exceptions import PermissionDenied,NotFound,ValidationError
-from rest_framework import generics, permissions
-from rest_framework import viewsets, status,filters,permissions,generics
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated,AllowAny
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.pagination import PageNumberPagination
-from rest_framework import serializers
-from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response as DRFResponse
-from rest_framework.views import APIView
-
-from django.shortcuts import get_object_or_404,redirect
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMultiAlternatives
-from django.utils.html import format_html
-from django.conf import settings
-from django.http import FileResponse
-from django.db.models import Exists, OuterRef
-from django.db.models import Count,Prefetch
-from django.contrib.auth import get_user_model
-from django.db.models.functions import Coalesce
-from django.db import IntegrityError, DatabaseError
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.db.models import Q, F, Value, IntegerField, Sum, DecimalField
-
-
-from accounts.models import Profile, FreelancerProfile,Skill
-from core.models import Job, JobCategory,Chat, Message, MessageAttachment, Review,JobBookmark,Notification,Response as JobResponse
-from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
-from api.core.jobsmatch import JobMatcher
-from api.wallet.utility import get_wallet_stats
-
-from api.core.filters import JobFilter,AdvancedJobFilter,JobDiscoveryFilter,get_job_filters
-from api.core.serializers import ( 
-    JobSerializer,JobCategorySerializer, ApplyResponseSerializer,ResponseListSerializer,ResponseReviewSerializer,JobWithResponsesSerializer,NotificationSerializer,
-    ChatSerializer, MessageSerializer, MessageAttachmentSerializer, ReviewSerializer,JobSearchSerializer,BookmarkedJobSerializer
-)
-from .permissions import (
-        IsClient, IsFreelancer, IsJobOwner, IsChatParticipant, 
-        CanReview, IsResponseOwner,IsClientOfJob, 
-        IsJobOwnerCanEditEvenIfAssigned,CanAccessChat,CanDeleteOwnMessage
-        
-)
-from core.choices import JOB_STATUS_CHOICES, ALLOWED_STATUS_FILTERS
-from payment.models import Payment
-from payments.models import PaypalPayments
-from wallet.models import WalletTransaction,Rate
 
 import logging
 from decimal import Decimal
-from datetime import datetime
-from datetime import timedelta
 from django.utils import timezone
+from rest_framework import serializers
+from datetime import datetime,timedelta
+from rest_framework.views import APIView
+from rest_framework.decorators import action
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response as DRFResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import viewsets, status,filters,permissions,generics
+from rest_framework.exceptions import PermissionDenied,NotFound,ValidationError
 
+from django.conf import settings
+from django.utils.html import format_html
+from django.db.models import Exists, OuterRef
+from django.contrib.auth import get_user_model
+from django.db.models.functions import Coalesce
+from django.core.mail import EmailMultiAlternatives
+from django.db import IntegrityError, DatabaseError
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.shortcuts import get_object_or_404,redirect
+from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q, F, Sum, Count,DecimalField,Prefetch
+
+from api.core.jobsmatch import JobMatcher
+from api.wallet.utility import get_wallet_stats
+from accounts.models import Profile, FreelancerProfile,Skill
+from api.core.permissions import IsClient, IsJobOwner, IsChatParticipant, CanReview
+from api.core.matching import match_freelancers_to_job, recommend_jobs_to_freelancer
+from api.core.filters import JobFilter,AdvancedJobFilter,JobDiscoveryFilter,get_job_filters
+from core.models import Job, JobCategory,Chat, Message, MessageAttachment, Review,JobBookmark,Notification,Response as JobResponse
+
+from api.core.serializers import ( 
+    JobSerializer,JobCategorySerializer, ApplyResponseSerializer,ResponseListSerializer,ResponseReviewSerializer,JobWithResponsesSerializer,NotificationSerializer,
+    ChatSerializer, MessageSerializer, ReviewSerializer,JobSearchSerializer,BookmarkedJobSerializer
+)
+
+from payment.models import Payment
+from payments.models import PaypalPayments
+from wallet.models import WalletTransaction,Rate
+from core.choices import JOB_STATUS_CHOICES, ALLOWED_STATUS_FILTERS
+from drf_spectacular.utils import extend_schema_field, OpenApiTypes, OpenApiResponse, extend_schema, OpenApiParameter, OpenApiRequest, extend_schema_view
 
 
 logger = logging.getLogger(__name__)

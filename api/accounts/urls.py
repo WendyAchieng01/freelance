@@ -5,10 +5,6 @@ from . import views
 from.views import FreelancerReadOnlyViewSet,FreelancerWriteViewSet,GoogleAuthView,ContactUsCreateView,UserContactInquiriesView
 
 
-
-
-
-
 urlpatterns = [
      path('auth/register/', views.RegisterView.as_view(), name='register'),
      path('auth/verify-email/',views.VerifyEmailView.as_view(), name='verify-email'),

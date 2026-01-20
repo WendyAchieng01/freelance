@@ -52,7 +52,7 @@ class Job(models.Model):
     posted_date = models.DateTimeField(auto_now_add=True)
     deadline_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default='open')
-    client = models.ForeignKey(Profile, on_delete=models.DO_NOTHING, related_name='jobs')
+    client = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name='jobs')
     max_freelancers = models.IntegerField(default=1, help_text="Set total number of applications to receive")
     required_freelancers = models.PositiveSmallIntegerField(default=1, help_text="If the job requires more than one freelancer")
     skills_required = models.ManyToManyField(Skill, related_name="required_skills")

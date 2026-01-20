@@ -1563,6 +1563,29 @@
 </style>
 
 <script>
+
+    function formatNumber(value) {
+    const abs = Math.abs(value);
+
+    if (abs >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (abs >= 1_000_000) return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (abs >= 1_000) return (value / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+
+        return value.toString();
+    }
+
+    function formatCurrencyKES(value) {
+        return `KES ${value.toLocaleString('en-KE')}`;
+    }
+
+    function updateStat(element, value, suffix = '') {
+        if (!element) return;
+
+        element.dataset.value = value;
+        element.textContent = `KES ${formatNumber(value)}${suffix}`;
+        element.title = formatCurrencyKES(value);
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         // Mobile menu functionality
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');

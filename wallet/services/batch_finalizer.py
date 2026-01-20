@@ -51,14 +51,13 @@ def finalize_batch_status(batch: PaymentBatch) -> None:
             # Still waiting for some transfers
             batch.status = "processing"
 
-        # Optional: update total_amount if not already set
+        # update total_amount if not already set
         if batch.total_amount == Decimal("0.00"):
             batch.total_amount = qs.aggregate(
                 total=models.Sum("amount")
             )["total"] or Decimal("0.00")
 
-        # Optional: store the batch reference from Paystack if available
-        # (you may get this from the initiate-batch response earlier)
+        # store the batch reference from Paystack if available
 
         batch.save(update_fields=["status", "total_amount"])
 
