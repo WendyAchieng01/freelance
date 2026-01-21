@@ -45,9 +45,12 @@ LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
 LOGOUT_REDIRECT_URL = "https://nilltechsolutions.com/"
 LOGIN_URL = '/'
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
+    
     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
