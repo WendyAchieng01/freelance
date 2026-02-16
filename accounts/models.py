@@ -181,6 +181,7 @@ class Skill(models.Model):
         ('react', 'React'),
         ('angular', 'Angular'),
         ('vue', 'Vue.js'),
+        ('nextjs', 'Next.js'),
         ('django', 'Django'),
         ('flask', 'Flask'),
         ('nodejs', 'Node.js'),
@@ -231,6 +232,7 @@ class Skill(models.Model):
         ('scikit', 'Scikit-Learn'),
         ('nlp', 'Natural Language Processing'),
         ('computer_vision', 'Computer Vision'),
+        ('datacleaning', 'Data Cleaning'),
         
         # Design
         ('uiux', 'UI/UX Design'),
@@ -259,6 +261,14 @@ class Skill(models.Model):
         ('seo', 'SEO'),
         ('data_analysis', 'Data Analysis'),
         ('technical_writing', 'Technical Writing'),
+        ('qa_testing', 'QA Testing'),
+        ('ebay_seller_hub_navigation', 'Ebay Seler Hub Navigation'),
+        ('inventory_tracking', 'Inventory Tracking'),
+        ('product_research', 'Product Research'),
+        ('excel', 'Excel'),
+        ('google_sheets', 'Google Sheets'),
+        ('ai_training', 'AI Training'),
+        ('other', 'Other'),
     )
     
     name = models.CharField(max_length=100, choices=SKILL_CHOICES, unique=True)
