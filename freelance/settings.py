@@ -11,7 +11,9 @@ from decouple import config
 import cloudinary
 # from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
-load_dotenv()
+# Load environment variables from .env file
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -35,9 +37,13 @@ ALLOWED_HOSTS = [
 ]
 
 
-FRONTEND_URL = os.getenv('FRONTEND_URL', '127.0.0.1:3000')
-BACKEND_URL = os.getenv('BACKEND_URL')
-DOMAIN = os.getenv('DOMAIN')
+# URLs and domain configuration
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000').rstrip('/')
+BACKEND_URL  = os.environ.get('BACKEND_URL',  'http://127.0.0.1:8000').rstrip('/')
+DOMAIN       = os.environ.get('DOMAIN')
+
+# Optional: normalized versions without protocol (useful for cookies, allowed hosts, etc.)
+BASE_DOMAIN = DOMAIN.replace('http://', '').replace('https://', '').split(':')[0]
 PLATFORM_NAME = "Nilltech Solutions"
 
 LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
@@ -140,7 +146,7 @@ DATABASES = {
 }
 
 # Use PostgreSQL in productioos.getenv('DATABASE_URL')n (Railway)
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
         default=DATABASE_URL,
@@ -214,8 +220,8 @@ PAYOUT_DEFAULT_PROVIDER = "paystack"  # or "paypal"
 PAYOUT_PROVIDER_CHOICES = ("paystack", "paypal")
 
 
-PAYSTACK_SECRET_KEY = "sk_test_add55b64a12feea71c49aa3a5ecfd7c561eec6b8"
-PAYSTACK_PUBLIC_KEY = "pk_test_6255b092a137c0d37a6e9e8168012bf73eaec6d3"
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY')
 
 PAYOUT_EXCHANGE_RATES = {
     "KES_USD": 0.0077,
@@ -223,19 +229,21 @@ PAYOUT_EXCHANGE_RATES = {
 
 
 # PayPal configuration
+PAYPAL_RECEIVER_EMAIL = os.environ.get('PAYPAL_RECEIVER_EMAIL')  # Usually your business email; no default
+PAYPAL_TEST = os.environ.get('PAYPAL_TEST', 'True') == 'True'   # Boolean: True for dev/sandbox
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')           # Required
+PAYPAL_SECRET    = os.environ.get('PAYPAL_SECRET')              # Required
+PAYPAL_MODE      = os.environ.get('PAYPAL_MODE', 'sandbox')     # 'sandbox' or 'live'
 
-PAYPAL_RECEIVER_EMAIL = os.getenv('PAYPAL_RECEIVER_EMAIL')
-PAYPAL_TEST = True  # when live change to False
+# Optional/advanced PayPal (payouts, webhooks) – often only needed in specific flows
+PAYPAL_PAYOUTS_URL         = os.environ.get('PAYPAL_PAYOUTS_URL')
+PAYPAL_VERIFY_WEBHOOK_URL  = os.environ.get('PAYPAL_VERIFY_WEBHOOK_URL')
+PAYPAL_WEBHOOK_ID          = os.environ.get('PAYPAL_WEBHOOK_ID')
 
-PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
-PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
-PAYPAL_MODE = "sandbox"  # or "live"
-
-PAYPAL_PAYOUTS_URL = os.getenv('PAYPAL_PAYOUTS_URL')
-
-PAYPAL_VERIFY_WEBHOOK_URL = os.getenv('PAYPAL_VERIFY_WEBHOOK_URL')
-PAYSTACK_WEBHOOK_SECRET = os.getenv('PAYPAL_SECRET')
-PAYPAL_WEBHOOK_ID = os.getenv('PAYPAL_WEBHOOK_ID')
+# Note: There's a typo/mismatch in your original code:
+# PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYPAL_SECRET')   ← probably should be 'PAYSTACK_WEBHOOK_SECRET'
+# Fix suggestion:
+PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYSTACK_WEBHOOK_SECRET')
 
 PAYPAL_URL = (
     "https://api-m.sandbox.paypal.com"
@@ -304,7 +312,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = "info@nilltechsolutions.com"
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '352LfAv8unud')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '352LfAv8unud')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -320,8 +328,8 @@ CHANNEL_LAYERS = {
 # for heroku csrf_token
 
 
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
-GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')    # Required
+GOOGLE_SECRET    = os.environ.get('GOOGLE_SECRET')
 
 # Secure cookies and redirects
 # SECURE_SSL_REDIRECT = not DEBUG
@@ -432,18 +440,21 @@ SPECTACULAR_SETTINGS = {
 }
 
 
+# Cloudinary (media storage)
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    'FOLDER': 'freelance',
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY':    os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'FOLDER':     'freelance',  # Hardcoded is fine unless you want to env-var it too
 }
 
+# Usually placed after the dict above (or in a separate file)
+import cloudinary
 cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key    = os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
+    secure     = True
 )
 
 
