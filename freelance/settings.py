@@ -11,9 +11,7 @@ from decouple import config
 import cloudinary
 # from api.spectacular_settings import ENUM_NAME_OVERRIDES
 
-# Load environment variables from .env file
-env_path = Path('.') / '.env'
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g)!b+mp+adw_fc1r-$fq2gd1os(6-!6e=fbpsd6!j0)7b-kek0'
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
     'localhost:3000',
     '127.0.0.1',
     'nilltechsolutions.com',
+    'freelance-w8gc.onrender.com',
     'www.nilltechsolutions.com',
     'freelance-production-46dc.up.railway.app',
     'http://freelance-production-46dc.up.railway.app',
@@ -37,13 +36,9 @@ ALLOWED_HOSTS = [
 ]
 
 
-# URLs and domain configuration
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000').rstrip('/')
-BACKEND_URL  = os.environ.get('BACKEND_URL',  'http://127.0.0.1:8000').rstrip('/')
-DOMAIN       = os.environ.get('DOMAIN')
-
-# Optional: normalized versions without protocol (useful for cookies, allowed hosts, etc.)
-BASE_DOMAIN = DOMAIN.replace('http://', '').replace('https://', '').split(':')[0]
+FRONTEND_URL = os.getenv('FRONTEND_URL', '127.0.0.1:3000')
+BACKEND_URL = os.getenv('BACKEND_URL')
+DOMAIN = os.getenv('DOMAIN')
 PLATFORM_NAME = "Nilltech Solutions"
 
 LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
@@ -51,11 +46,10 @@ LOGOUT_REDIRECT_URL = "https://nilltechsolutions.com/"
 LOGIN_URL = '/'
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    
+
     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -146,7 +140,7 @@ DATABASES = {
 }
 
 # Use PostgreSQL in productioos.getenv('DATABASE_URL')n (Railway)
-DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
         default=DATABASE_URL,
@@ -229,19 +223,19 @@ PAYOUT_EXCHANGE_RATES = {
 
 
 # PayPal configuration
-PAYPAL_RECEIVER_EMAIL = os.environ.get('PAYPAL_RECEIVER_EMAIL') 
-PAYPAL_TEST = os.environ.get('PAYPAL_TEST', 'True') == 'True'  
-PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')    
-PAYPAL_SECRET    = os.environ.get('PAYPAL_SECRET')    
-PAYPAL_MODE      = os.environ.get('PAYPAL_MODE', 'sandbox') 
 
+PAYPAL_RECEIVER_EMAIL = os.getenv('PAYPAL_RECEIVER_EMAIL')
+PAYPAL_TEST = True  # when live change to False
 
-PAYPAL_PAYOUTS_URL         = os.environ.get('PAYPAL_PAYOUTS_URL')
-PAYPAL_VERIFY_WEBHOOK_URL  = os.environ.get('PAYPAL_VERIFY_WEBHOOK_URL')
-PAYPAL_WEBHOOK_ID          = os.environ.get('PAYPAL_WEBHOOK_ID')
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_MODE = "sandbox"  # or "live"
 
+PAYPAL_PAYOUTS_URL = os.getenv('PAYPAL_PAYOUTS_URL')
 
-PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYSTACK_WEBHOOK_SECRET')
+PAYPAL_VERIFY_WEBHOOK_URL = os.getenv('PAYPAL_VERIFY_WEBHOOK_URL')
+PAYSTACK_WEBHOOK_SECRET = os.getenv('PAYPAL_SECRET')
+PAYPAL_WEBHOOK_ID = os.getenv('PAYPAL_WEBHOOK_ID')
 
 PAYPAL_URL = (
     "https://api-m.sandbox.paypal.com"
@@ -310,7 +304,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = "info@nilltechsolutions.com"
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '352LfAv8unud')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '352LfAv8unud')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -326,8 +320,8 @@ CHANNEL_LAYERS = {
 # for heroku csrf_token
 
 
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') 
-GOOGLE_SECRET    = os.environ.get('GOOGLE_SECRET')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_SECRET = os.getenv('GOOGLE_SECRET')
 
 # Secure cookies and redirects
 # SECURE_SSL_REDIRECT = not DEBUG
@@ -340,7 +334,7 @@ SECURE_HSTS_PRELOAD = not DEBUG
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 TZ_DETECT_COUNTRIES = ('CN', 'US', 'IN', 'JP', 'BR',
-                        'RU', 'DE', 'FR', 'GB', 'KE',)
+                       'RU', 'DE', 'FR', 'GB', 'KE',)
 
 
 REST_FRAMEWORK = {
@@ -402,15 +396,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
@@ -418,6 +403,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com',
     'http://freelance-production-46dc.up.railway.app',
+    'https://freelance-production-46dc.up.railway.app',
 ]
 
 
@@ -447,18 +433,17 @@ SPECTACULAR_SETTINGS = {
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY':    os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    'FOLDER':     'freelance', 
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'FOLDER': 'freelance',
 }
 
-import cloudinary
 cloudinary.config(
-    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    api_key    = os.environ.get('CLOUDINARY_API_KEY'),
-    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
-    secure     = True
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+    secure=True
 )
 
 
