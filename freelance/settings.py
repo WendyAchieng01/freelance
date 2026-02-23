@@ -229,20 +229,18 @@ PAYOUT_EXCHANGE_RATES = {
 
 
 # PayPal configuration
-PAYPAL_RECEIVER_EMAIL = os.environ.get('PAYPAL_RECEIVER_EMAIL')  # Usually your business email; no default
-PAYPAL_TEST = os.environ.get('PAYPAL_TEST', 'True') == 'True'   # Boolean: True for dev/sandbox
-PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')           # Required
-PAYPAL_SECRET    = os.environ.get('PAYPAL_SECRET')              # Required
-PAYPAL_MODE      = os.environ.get('PAYPAL_MODE', 'sandbox')     # 'sandbox' or 'live'
+PAYPAL_RECEIVER_EMAIL = os.environ.get('PAYPAL_RECEIVER_EMAIL') 
+PAYPAL_TEST = os.environ.get('PAYPAL_TEST', 'True') == 'True'  
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')    
+PAYPAL_SECRET    = os.environ.get('PAYPAL_SECRET')    
+PAYPAL_MODE      = os.environ.get('PAYPAL_MODE', 'sandbox') 
 
-# Optional/advanced PayPal (payouts, webhooks) – often only needed in specific flows
+
 PAYPAL_PAYOUTS_URL         = os.environ.get('PAYPAL_PAYOUTS_URL')
 PAYPAL_VERIFY_WEBHOOK_URL  = os.environ.get('PAYPAL_VERIFY_WEBHOOK_URL')
 PAYPAL_WEBHOOK_ID          = os.environ.get('PAYPAL_WEBHOOK_ID')
 
-# Note: There's a typo/mismatch in your original code:
-# PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYPAL_SECRET')   ← probably should be 'PAYSTACK_WEBHOOK_SECRET'
-# Fix suggestion:
+
 PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYSTACK_WEBHOOK_SECRET')
 
 PAYPAL_URL = (
@@ -328,7 +326,7 @@ CHANNEL_LAYERS = {
 # for heroku csrf_token
 
 
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')    # Required
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') 
 GOOGLE_SECRET    = os.environ.get('GOOGLE_SECRET')
 
 # Secure cookies and redirects
@@ -386,7 +384,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://freelance-production-46dc.up.railway.app",
-    "https://10aa823479b1.ngrok-free.app",
+    "null",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -420,7 +418,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.nilltechsolutions.com',
     'https://nilltechsolutions.com',
     'http://freelance-production-46dc.up.railway.app',
-    'https://freelance-production-46dc.up.railway.app',
 ]
 
 
@@ -449,15 +446,13 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Cloudinary (media storage)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY':    os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    'FOLDER':     'freelance',  # Hardcoded is fine unless you want to env-var it too
+    'FOLDER':     'freelance', 
 }
 
-# Usually placed after the dict above (or in a separate file)
 import cloudinary
 cloudinary.config(
     cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'),
