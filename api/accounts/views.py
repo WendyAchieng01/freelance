@@ -120,7 +120,6 @@ class RegisterView(APIView):
 
             def build_verify_email_url(uid, token):
                 base_url = settings.BACKEND_URL.rstrip("/")
-                print(base_url)
                 query_params = urlencode({"uid": uid, "token": token})
                 return f"{base_url}/auth/verify-email/?{query_params}"
 
@@ -254,7 +253,7 @@ class ResendVerificationView(APIView):
         logger.debug("Generated verification token for user %s", user.id)
 
         # Build verification URL
-        base_url = settings.BACKEND_URL.rstrip("/")
+        base_url = settings.DOMAIN.rstrip("/")
         query_params = urlencode({"uid": uid, "token": token})
         verification_url = f"{base_url}/auth/verify-email/?{query_params}"
         logger.debug("Verification URL generated for user %s: %s",
@@ -311,6 +310,7 @@ class LoginView(APIView):
     )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             user = serializer.validated_data['user']
             remember_me = serializer.validated_data.get('remember_me', False)

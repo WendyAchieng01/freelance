@@ -32,7 +32,6 @@ ALLOWED_HOSTS = [
     'freelance-production-46dc.up.railway.app',
     'http://freelance-production-46dc.up.railway.app',
     'https://freelance-production-46dc.up.railway.app',
-    '10aa823479b1.ngrok-free.app',
 ]
 
 
@@ -378,7 +377,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://nilltechsolutions.com",
     "https://www.nilltechsolutions.com",
     "https://freelance-production-46dc.up.railway.app",
-    "null",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
