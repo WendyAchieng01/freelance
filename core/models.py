@@ -44,6 +44,7 @@ class JobCategory(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+
 class Job(models.Model):
     title = models.CharField(max_length=100)
     category = models.ForeignKey(JobCategory, on_delete=models.SET_NULL, null=True, related_name='jobs')
@@ -242,27 +243,21 @@ class Response(models.Model):
         folder='freelance/response_attachments/cvs',
         resource_type='raw',
         null=True,
-        blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'doc', 'docx'])]
+        blank=True
     )
     cover_letter = CloudinaryField(
         'file',
         folder='freelance/response_attachments/cover_letters',
         resource_type='raw',
         null=True,
-        blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'doc', 'docx'])]
+        blank=True
     )
     portfolio = CloudinaryField(
         'file',
         folder='freelance/response_attachments/portfolios',
         resource_type='raw',
         null=True,
-        blank=True,
-        validators=[FileExtensionValidator(
-            allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'zip'])]
+        blank=True
     )
     cv_size = models.IntegerField(null=True, blank=True)
     cover_letter_size = models.IntegerField(null=True, blank=True)
