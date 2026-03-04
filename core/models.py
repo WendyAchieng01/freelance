@@ -1,6 +1,6 @@
 import uuid
 import mimetypes
-import cloudinary
+from cloudinary import api
 import cloudinary.uploader
 from django.db import models
 from django.conf import settings

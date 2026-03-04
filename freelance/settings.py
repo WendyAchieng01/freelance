@@ -38,7 +38,7 @@ ALLOWED_HOSTS = [
 FRONTEND_URL = os.getenv('FRONTEND_URL', '127.0.0.1:3000')
 BACKEND_URL = os.getenv('BACKEND_URL')
 DOMAIN = os.getenv('DOMAIN')
-PLATFORM_NAME = "Nilltech Solutions"
+PLATFORM_NAME = "NillTech Solutions"
 
 LOGIN_REDIRECT_URL = "https://nilltechsolutions.com/client/dashboard"
 LOGOUT_REDIRECT_URL = "https://nilltechsolutions.com/"
@@ -380,6 +380,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 
 
 CORS_ALLOW_HEADERS = [

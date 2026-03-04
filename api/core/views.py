@@ -485,35 +485,46 @@ class ApplyToJobView(APIView):
         job = get_object_or_404(Job, slug=slug)
 
         if request.user.profile.user_type != 'freelancer':
-            return DRFResponse({'detail': 'Only freelancers can apply.'}, status=status.HTTP_403_FORBIDDEN)
+            return DRFResponse(
+                {'detail': 'Only freelancers can apply.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         if job.is_max_freelancers_reached:
-            return DRFResponse({'detail': 'Maximum number of freelancers already applied.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return DRFResponse(
+                {'detail': 'Maximum number of freelancers already applied.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if job.selected_freelancers.count() >= job.required_freelancers:
             return DRFResponse(
-                {'error': 'Maximum number of freelancers already selected for this job.'}, status=status.HTTP_400_BAD_REQUEST)
-
+                {'error': 'Maximum number of freelancers already selected for this job.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if JobResponse.objects.filter(job=job, user=request.user).exists():
-            return DRFResponse({'detail': 'You have already applied to this job.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return DRFResponse(
+                {'detail': 'You have already applied to this job.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = ApplyResponseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user, job=job)
 
-
-        job_response = JobResponse.objects.create(
-            job=job,
+        job_response = serializer.save(
             user=request.user,
-            extra_data=serializer.validated_data.get('extra_data', None),
-            cv=serializer.validated_data.get('cv',None),
-            portfolio=serializer.validated_data.get('portfolio',None),
-            cover_letter=serializer.validated_data.get('cover_letter',None)
+            job=job
         )
 
         response_serializer = ApplyResponseSerializer(job_response)
-        return DRFResponse({'detail': 'Successfully applied.', 'data': response_serializer.data}, status=status.HTTP_201_CREATED)
+
+        return DRFResponse(
+            {
+                'detail': 'Successfully applied.',
+                'data': response_serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )
 
 
 @extend_schema(
