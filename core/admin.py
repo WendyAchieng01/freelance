@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django.contrib import messages
 from django.utils import timezone
 from django.urls import reverse, path
+from core.forms import ResponseAdminForm
 
 
 # Filters
@@ -213,6 +214,7 @@ class ResponseAdmin(admin.ModelAdmin):
     )
     search_fields = ("user__username", "user__email", "job__title", "slug")
     list_filter = ("status", "marked_for_review", "submitted_at")
+    form = ResponseAdminForm
 
     readonly_fields = (
         "slug",

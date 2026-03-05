@@ -1,3 +1,5 @@
+from .models import Response
+from django.contrib import admin
 import os
 from django import forms
 from .models import Job, Response, Review,JobCategory
@@ -268,3 +270,43 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 5}),
         }
+
+#response form for admin forms -> Needed by APi
+class ResponseAdminForm(forms.ModelForm):
+
+    FILE_RULES = {
+        "cv": ["pdf", "doc", "docx"],
+        "cover_letter": ["pdf", "doc", "docx"],
+        "portfolio": ["pdf", "jpg", "jpeg", "png", "zip"],
+    }
+
+    def _validate_file(self, field_name):
+        file = self.cleaned_data.get(field_name)
+
+        if not file:
+            return file
+
+        # Only validate when it's still an UploadedFile
+        if hasattr(file, "name"):
+            ext = file.name.split('.')[-1].lower()
+            allowed = self.FILE_RULES.get(field_name, [])
+
+            if ext not in allowed:
+                raise forms.ValidationError(
+                    f"{field_name.replace('_', ' ').title()} "
+                    f"must be one of: {', '.join(allowed)}"
+                )
+
+        return file
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        for field in self.FILE_RULES.keys():
+            self._validate_file(field)
+
+        return cleaned_data
+
+    class Meta:
+        model = Response
+        fields = "__all__"

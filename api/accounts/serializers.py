@@ -300,32 +300,57 @@ class VerifyEmailSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     profile_pic = serializers.ImageField(required=False, allow_null=True)
 
+    # Accept lists of IDs
+    skills = serializers.PrimaryKeyRelatedField(
+        queryset=Skill.objects.all(),
+        many=True,
+        required=False
+    )
+    languages = serializers.PrimaryKeyRelatedField(
+        queryset=Language.objects.all(),
+        many=True,
+        required=False
+    )
+
     class Meta:
         model = Profile
         fields = [
             'phone', 'location', 'bio', 'profile_pic',
-            'pay_id', 'id_card', 'user_type'
+            'pay_id', 'id_card', 'skills', 'languages'
         ]
-        read_only_fields = ['user', 'user_type','pay_id_no',
-                            'date_modified', 'email_verified', 'device']
-
-    def validate_pay_id(self, value):
-        valid_choices = [choice[0]
-                         for choice in Profile._meta.get_field('pay_id').choices]
-        if value not in valid_choices:
-            raise serializers.ValidationError(
-                f"{value} is not a valid choice.")
-        return value
+        read_only_fields = [
+            'user', 'user_type', 'pay_id_no',
+            'date_modified', 'email_verified', 'device'
+        ]
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
-        if request:
-            user_agent = request.META.get('HTTP_USER_AGENT', '')
-            instance.device = user_agent
 
+        # update profile fields
+        skills = validated_data.pop("skills", None)
+        languages = validated_data.pop("languages", None)
+
+        # device tracking
+        if request:
+            instance.device = request.META.get('HTTP_USER_AGENT', '')
+
+        # normal fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
+
+        # ensure freelancer_profile exists
+        freelancer_profile = getattr(instance, "freelancer_profile", None)
+        if freelancer_profile:
+
+            # update M2M
+            if skills is not None:
+                freelancer_profile.skills.set(skills)
+            if languages is not None:
+                freelancer_profile.languages.set(languages)
+
+            freelancer_profile.save()
+
         return instance
 
 

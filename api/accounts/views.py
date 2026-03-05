@@ -713,7 +713,7 @@ class SkillViewSet(viewsets.ModelViewSet):
 class LanguageViewSet(viewsets.ModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
-    permission_classes = [permissions.IsAdminUser]
+    #permission_classes = [permissions.IsAdminUser]
 
     @extend_schema(summary="List languages", responses=LanguageSerializer(many=True))
     def list(self, request, *args, **kwargs):
